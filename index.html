@@ -4248,7 +4248,6 @@ async function saveSwap(swap) {
     document.getElementById("loadingSpinner").style.display = "none";
   }
 }
-
 async function loadSwaps() {
   const container = document.querySelector("#swapCardContainer");
   container.innerHTML = "";
@@ -4304,7 +4303,7 @@ async function loadSwaps() {
           : "";
 
         const vipBtn = isAdminUser && isHotCounty && !s.isVIP
-          ? `<button onclick="markAsVIPSwap('${s.id}')" style="background:#6a1b9a;color:white;padding:6px 12px;font-size:13px;border:none;border-radius:6px;cursor:pointer;">🔥 Sell VIP</button>`
+          ? `<button onclick="markAsVIPSwap('${s.id}')" style="background:#6a1b9a;color:white;padding:6px 12px;font-size:13px;border:none;border-radius:6px;cursor:pointer;">🔥 Sell VIP</button>` 
           : s.isVIP ? `<span style="color:crimson;font-weight:bold;font-size:13px;">🔥 VIP</span>` : "-";
 
         const showVerifiedBadge = s.verified
@@ -4314,13 +4313,13 @@ async function loadSwaps() {
         let verifyBtnHTML = "";
         if (!s.verified) {
           if (isPoster && !isAdminUser) {
-            verifyBtnHTML = `
+            verifyBtnHTML = ` 
               <button onclick="showPaymentModalFor('swapVerification', 250, '${s.id}', '${s.teacherName || ''}')"
                 style="margin-left:6px;background:#4CAF50;color:white;padding:4px 8px;border:none;border-radius:6px;font-size:12px;cursor:pointer;">
                 ✅ Get Verified – Ksh 250
               </button>`;
           } else if (isAdminUser) {
-            verifyBtnHTML = `
+            verifyBtnHTML = ` 
               <button onclick="adminVerifyItem('swap', '${s.id}')"
                 style="margin-left:6px;background:#2196F3;color:white;padding:4px 8px;border:none;border-radius:6px;font-size:12px;cursor:pointer;">
                 🛡️ Verify Now (Admin)
@@ -4333,40 +4332,43 @@ async function loadSwaps() {
           ? `<span class="boosted-badge">🚀 Boosted (${Math.ceil((s.boostExpiry - now) / (1000 * 60 * 60 * 24))} day${Math.ceil((s.boostExpiry - now) / (1000 * 60 * 60 * 24)) !== 1 ? 's' : ''} left)</span>`
           : "";
 
- const contactHTML = `
-  <div style="margin:4px 0;">
-    <div style="border: 2px solid #4caf50; background-color: #4caf50; padding: 8px; border-radius: 8px; display: flex; align-items: center; margin-bottom: 8px; max-width: fit-content;">
-      <a href="tel:${s.phone}" style="color:white; font-size: 16px; text-decoration: none;">${s.phone}</a>
-      <i class="fas fa-phone-alt" style="margin-left: 8px; color:white;"></i>
-    </div>
-    <div style="border: 2px solid #25D366; background-color: #25D366; padding: 8px; border-radius: 8px; display: flex; align-items: center; max-width: fit-content;">
-      <a href="https://wa.me/254${s.phone.replace(/^0/, '')}" target="_blank" style="color:red; font-size: 16px; text-decoration: none;">WhatsApp</a>
-      <i class="fab fa-whatsapp" style="margin-left: 8px; color:red;"></i>
-    </div>
-  </div>`;
-const blurredContactHTML = `
-  <div style="margin:6px 0; text-align:left;">
-    <div style="border: 2px solid #ccc; background-color: #ccc; padding: 8px; border-radius: 8px; display: flex; align-items: center; margin-bottom: 8px; max-width: fit-content;">
-      <span style="filter: blur(4px); color: green;">0700000000</span>
-      <i class="fas fa-phone-alt" style="margin-left: 8px; filter: blur(4px);"></i>
-    </div>
-    <div style="border: 2px solid #ccc; background-color: #ccc; padding: 8px; border-radius: 8px; display: flex; align-items: center; max-width: fit-content;">
-      <span style="filter: blur(4px); color: red;">WhatsApp</span>
-      <i class="fab fa-whatsapp" style="margin-left: 8px; filter: blur(4px);"></i>
-    </div>
-    <div style="margin-top:6px;color:crimson;font-size:13px; font-weight: bold;">🔒 Contacts locked. Pay Ksh 250 to unlock</div>
-    <button onclick="showPaymentModalFor('swap', 250, '${s.id}', 'Unlock VIP Swaps')"
-            style="margin-top:4px;background:crimson;color:white;border:none;padding:5px 10px;border-radius:4px;">
-      💳 Pay Now
-    </button>
-  </div>`;
+        const contactHTML = `
+          <div style="margin:4px 0;">
+            <div style="border: 2px solid #4caf50; background-color: #4caf50; padding: 8px; border-radius: 8px; display: flex; align-items: center; margin-bottom: 8px; max-width: fit-content;">
+              <a href="tel:${s.phone}" style="color:white; font-size: 16px; text-decoration: none;">${s.phone}</a>
+              <i class="fas fa-phone-alt" style="margin-left: 8px; color:white;"></i>
+            </div>
+            <div style="border: 2px solid #25D366; background-color: #25D366; padding: 8px; border-radius: 8px; display: flex; align-items: center; max-width: fit-content;">
+              <a href="https://wa.me/254${s.phone.replace(/^0/, '')}" target="_blank" style="color:red; font-size: 16px; text-decoration: none;">WhatsApp</a>
+              <i class="fab fa-whatsapp" style="margin-left: 8px; color:red;"></i>
+            </div>
+          </div>`;
 
-
+        const blurredContactHTML = `
+          <div style="margin:6px 0; text-align:left;">
+            <div style="border: 2px solid #ccc; background-color: #ccc; padding: 8px; border-radius: 8px; display: flex; align-items: center; margin-bottom: 8px; max-width: fit-content;">
+              <span style="filter: blur(4px); color: green;">0700000000</span>
+              <i class="fas fa-phone-alt" style="margin-left: 8px; filter: blur(4px);"></i>
+            </div>
+            <div style="border: 2px solid #ccc; background-color: #ccc; padding: 8px; border-radius: 8px; display: flex; align-items: center; max-width: fit-content;">
+              <span style="filter: blur(4px); color: red;">WhatsApp</span>
+              <i class="fab fa-whatsapp" style="margin-left: 8px; filter: blur(4px);"></i>
+            </div>
+            <div style="margin-top:6px;color:crimson;font-size:13px; font-weight: bold;">🔒 Contacts locked. Pay Ksh 250 to unlock</div>
+            <button onclick="showPaymentModalFor('swap', 250, '${s.id}', 'Unlock VIP Swaps')"
+                    style="margin-top:4px;background:crimson;color:white;border:none;padding:5px 10px;border-radius:4px;">
+              💳 Pay Now
+            </button>
+          </div>`;
 
         const closedContactHTML = `
           <div style="margin:6px 0; text-align:left; color:red; font-weight:bold;">
             🚫 This swap is closed
           </div>`;
+
+        // Number of people interested and following
+        const interestedCount = s.interestedUsers ? s.interestedUsers.length : 0;
+        const followingCount = s.followers ? s.followers.length : 0;
 
         const card = document.createElement("div");
         card.className = "swap-card";
@@ -4387,41 +4389,28 @@ const blurredContactHTML = `
         card.setAttribute("data-hardship", s.hardship || "-");
         card.setAttribute("data-subject", (s.subjectCombination || "-").toLowerCase());
 
-        const boostButton = (isPoster || isAdminUser) ? `
-          <div style="margin-top:10px;">
-            <button id="boostSwapBtn-${s.id}" onclick="boostSwap('${s.id}')"
-              style="background:#ff9800;color:white;border:none;border-radius:6px;padding:6px 12px;font-size:13px;cursor:pointer;">
-              🚀 Boost Swap ${isAdminUser ? "(Free)" : "(Ksh 250)"}
-            </button>
-          </div>` : "";
+        // Custom Boost Button text based on role (admin or poster)
+        const boostButtonText = isAdminUser ? "🚀 Boost Free (Admin)" : "🚀 Boost Swap";
 
-        const closedButton = (isPoster || isAdminUser) ? `
-          <div style="margin-top:10px;">
-            <button id="closeSwapBtn-${s.id}" onclick="toggleSwapStatus('${s.id}')"
-              style="background:${s.isClosed ? '#4caf50' : '#9e9e9e'};color:white;border:none;border-radius:6px;padding:6px 12px;font-size:13px;cursor:pointer;">
-              ${s.isClosed ? "♻️ Reopen Swap" : "🚫 Mark as Closed"}
-            </button>
-          </div>` : "";
-
-        const deleteButton = isAdminUser ? `
-          <button onclick="deleteSwap('${s.id}')"
-            style="background:#f44336;color:white;padding:6px 12px;font-size:13px;border:none;border-radius:6px;cursor:pointer;">
-            🗑️ Delete
-          </button>` : "";
-
-        const interestButton = (!s.isClosed || isPoster || isAdminUser) ? `
-          <button onclick="sendSwapInterest('${s.id}', '${s.teacherName}')"
-            style="background:#2196f3;color:white;padding:6px 12px;font-size:13px;border:none;border-radius:6px;cursor:pointer;">
-            💌 Show Interest
-          </button>` : "";
-
-        const followButton = (!s.isClosed || isPoster || isAdminUser) ? `
-          <button onclick="followSwap('${s.id}')"
-            style="background:#e91e63;color:white;padding:6px 12px;font-size:13px;border:none;border-radius:6px;cursor:pointer;">
-            🧑🤝🧑 Follow Swap
-          </button>` : "";
-
-        const followerCount = s.followers ? s.followers.length : 0;
+        // Action Button (for both admin, poster, and other users)
+        const actionButtonHTML = `
+          <div class="action-button-container">
+            <button onclick="toggleActionButtons('${s.id}')" class="action-button">Actions</button>
+            <div class="action-buttons" id="action-buttons-${s.id}" style="display:none;">
+              ${isPoster || isAdminUser ? `
+                <button onclick="deleteSwap('${s.id}')" style="background:#e91e63;color:white;">🗑️ Delete</button>
+                <button onclick="sendSwapInterest('${s.id}', '${s.teacherName}')" style="background:#2196f3;color:white;">💌 Show Interest</button>
+                <button onclick="followSwap('${s.id}')" style="background:#e91e63;color:white;">🧑🤝🧑 Follow Swap</button>
+                <button onclick="toggleSwapStatus('${s.id}')" style="background:#9e9e9e;color:white;">🚫 Mark as Closed</button>
+                <button onclick="boostSwap('${s.id}')" style="background:#ff9800;color:white;">${boostButtonText}</button>` : ""}
+              ${isAdminUser ? `
+                <button onclick="adminVerifyItem('swap', '${s.id}')"
+                  style="background:#4caf50;color:white;">🛡️ Verify Now (Admin)</button>` : ""}
+              ${(!isPoster && !isAdminUser) ? `
+                <button onclick="sendSwapInterest('${s.id}', '${s.teacherName}')" style="background:#2196f3;color:white;">💌 Show Interest</button>
+                <button onclick="followSwap('${s.id}')" style="background:#e91e63;color:white;">🧑🤝🧑 Follow Swap</button>` : ""}
+            </div>
+          </div>`;
 
         card.innerHTML = `
           <h3 style="margin:0; color:#1a237e;">${s.teacherName} ${showVerifiedBadge} ${verifyBtnHTML} ${closedStatusBadge}</h3>
@@ -4431,32 +4420,11 @@ const blurredContactHTML = `
           <p style="margin:4px 0;color:#6a1b9a;"><strong>Subjects:</strong> ${s.subjectCombination || '-'}</p>
           <p style="margin:4px 0;color:#3e2723;"><strong>Category:</strong> ${s.category || '-'}</p>
           <p style="margin:4px 0;color:#d81b60;"><strong>Hardship:</strong> ${s.hardship || '-'}</p>
-
           <div style="margin-top:6px;">
             ${s.isClosed && !isPoster && !isAdminUser ? closedContactHTML : (blur ? blurredContactHTML : contactHTML)}
           </div>
-
-          <div class="rating" data-id="${s.id}">
-            <span class="avg-rating" id="avgRating-${s.id}">Loading...</span><br>
-            ${[1, 2, 3, 4, 5].map(star => `
-              <i class="fas fa-star" onclick="rateService('${s.id}', ${star})"
-                 style="cursor:pointer; color:#ccc;" id="star-${s.id}-${star}"></i>
-            `).join('')}
-          </div>
-
-          <div style="margin-top:10px; display:flex; flex-wrap:wrap; gap:8px;">
-            ${deleteButton}
-            ${vipBtn}
-            ${interestButton}
-            ${followButton}
-          </div>
-
-          <p id="follower-count-${s.id}" style="font-size: 0.9em; color: #ff4081;" onclick="showFollowers('${s.id}')">
-            ${followerCount} people following
-          </p>
-
-          ${closedButton}
-          ${boostButton}
+          <p style="color:#4caf50;">💌 ${interestedCount} Interested | 🧑🤝🧑 ${followingCount} Following</p>
+          ${actionButtonHTML}
         `;
 
         container.appendChild(card);
@@ -4471,6 +4439,12 @@ const blurredContactHTML = `
     showCustomAlert("Error loading swaps: " + err.message, "error");
   }
 }
+
+function toggleActionButtons(swapId) {
+  const actionButtons = document.getElementById(`action-buttons-${swapId}`);
+  actionButtons.style.display = actionButtons.style.display === "none" ? "block" : "none";
+}
+
 
 async function deleteSwap(swapId) {
   // Show spinner when the deletion process starts
@@ -8089,7 +8063,7 @@ async function loadMarketItems() {
             </button>`;
         }
         if (isAdmin) {
-          verifyBtnHTML += `
+          verifyBtnHTML += ` 
             <button onclick="adminVerifyItem('market', '${id}')"
               style="background:#2196F3; color:white; border:none; padding:6px 12px; border-radius:6px; margin-top:6px;">
               🛡️ Verify Now (Admin)
@@ -8114,7 +8088,7 @@ async function loadMarketItems() {
       let imageHTML = '';
       if (images.length > 0) {
         images.forEach((img, idx) => {
-          imageHTML += `
+          imageHTML += ` 
             <img src="${img}" alt="Item Image ${idx + 1}" style="width:100%; height:180px; object-fit:cover; border-radius:8px; margin-bottom:8px; cursor:pointer;" onclick="openImageModal(${idx}, ${JSON.stringify(images)})">
           `;
         });
@@ -8122,72 +8096,52 @@ async function loadMarketItems() {
         imageHTML = `<div style="width:100%; height:180px; background: #f0f0f0; border-radius:8px; margin-bottom:8px; display: flex; justify-content: center; align-items: center; color: #888; cursor: pointer;" onclick="openImageModal()">No Images</div>`;
       }
 
- card.innerHTML = ` 
-  <h3 style="margin-bottom:6px; color:#2e7d32;">${d.posterName || "Unknown Seller"} ${verifiedBadge} ${boostBadge}</h3>
-  ${imageHTML}
-  <p style="color:#4caf50;">📦 <strong>Item name:</strong> ${d.name || "-"}</p>
-  <p style="color:#2196f3;">📝 <strong>Status:</strong> ${d.description || "-"}</p>
-  <p style="color:#e91e63;">🏷️ <strong>Category:</strong> ${d.category || "-"}</p>
-  <p style="color:#ff9800;">💰 <strong>Price:</strong> KES ${d.price ? parseInt(d.price).toLocaleString() : "N/A"}</p>
-  <p style="color:#9c27b0;">🧰 <strong>Condition:</strong> ${d.condition || "New"}</p>
-  <p style="color:#3f51b5;">📍 <strong>Location:</strong> ${d.county || "Unknown"}, ${d.subcounty || "Unknown"}</p>
-  <p style="color:#673ab7;">
-    📞 <strong>Contact:</strong> 
-    <a href="tel:${d.phone}" style="color:#673ab7;text-decoration:none;">${d.phone || "N/A"}</a>
-  </p>
-  ${verifyBtnHTML}
-  <!-- Add View Chat Button for Poster -->
-  <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;">
-    ${isPoster || isAdmin ? ` 
-      <!-- Poster or Admin can delete the post -->
-      <button onclick="openMarketChat('${d.firebaseUid || d.phone}', '${d.posterName || 'Seller'}')" 
-        style="background:#673ab7;color:#fff;border:none;border-radius:5px;padding:6px 12px;">
-        💬 View Chat
-      </button>
-      <button onclick="toggleSoldStatus('${id}')" style="background:#9e9e9e;color:#fff;border:none;border-radius:5px;padding:6px 12px;">
-        ${d.isSold ? "❌ Sold Out" : "✅ Mark as Sold"}
-      </button>
-      <button onclick="openAllReviewsModal('${id}')" style="background:#03a9f4;color:#fff;border:none;border-radius:6px;padding:6px 12px;">💬 View All Reviews</button>
-      ${isAdmin || (isPoster && d.posterUid === currentUserUid) ? ` <!-- Delete button only for Admin or the poster of the item -->
-        <button onclick="deleteMarketItem('${id}')" style="background:#dc3545;color:#fff;border:none;border-radius:6px;padding:6px 12px;">🗑️ Delete</button>
-      ` : ""}
-      <button onclick="boostMarketItem('${id}')" style="background:#ff9800;color:#fff;border:none;border-radius:6px;padding:6px 12px;">🚀 Boost</button>
-      ${isExpired ? `<button onclick="renewBoost('${id}')" style="background:#ff9800;color:#fff;border:none;border-radius:6px;padding:6px 12px;">🔄 Renew Boost</button>` : ""}
-      <button onclick="openEditForm('${id}')" style="background:#673ab7;color:#fff;border:none;border-radius:6px;padding:6px 12px;">✏️ Edit Item</button>
-    ` : "" }
-  </div>
-  ${(!isPoster && currentUser) ? ` 
-    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;">
-      <button onclick="showMarketInterest('${id}')" style="background:#f44336;color:#fff;border:none;border-radius:5px;padding:6px 12px;">💬 Interest <span id="marketInterestCount-${id}">0</span></button>
-      <button onclick="reportMarketItem('${id}')" style="background:#ff1744;color:#fff;border:none;border-radius:5px;padding:6px 12px;">🚩 Report</button>
-      <button 
-        onclick="openMarketChat('${d.firebaseUid || d.phone}', '${d.posterName || 'Seller'}')" 
-        style="background:#673ab7;color:#fff;border:none;border-radius:5px;padding:6px 12px;">
-        💬 Chat
-      </button>
-      <button onclick="openReviewModal('${id}')" style="background:#4CAF50;color:#fff;border:none;border-radius:5px;padding:6px 12px;">📝 Review</button>
-    </div>
-  ` : ""}
+      card.innerHTML = ` 
+        <h3 style="margin-bottom:6px; color:#2e7d32;">${d.posterName || "Unknown Seller"} ${verifiedBadge} ${boostBadge}</h3>
+        ${imageHTML}
+        <p style="color:#4caf50;">📦 <strong>Item name:</strong> ${d.name || "-"}</p>
+        <p style="color:#2196f3;">📝 <strong>Status:</strong> ${d.description || "-"}</p>
+        <p style="color:#e91e63;">🏷️ <strong>Category:</strong> ${d.category || "-"}</p>
+        <p style="color:#ff9800;">💰 <strong>Price:</strong> KES ${d.price ? parseInt(d.price).toLocaleString() : "N/A"}</p>
+        <p style="color:#9c27b0;">🧰 <strong>Condition:</strong> ${d.condition || "New"}</p>
+        <p style="color:#3f51b5;">📍 <strong>Location:</strong> ${d.county || "Unknown"}, ${d.subcounty || "Unknown"}</p>
+        <p style="color:#673ab7;">
+          📞 <strong>Contact:</strong> 
+          <a href="tel:${d.phone}" style="color:#673ab7;text-decoration:none;">${d.phone || "N/A"}</a>
+        </p>
+        ${verifyBtnHTML}
 
-  <!-- WhatsApp Button -->
-  <div style="margin-top:10px;">
-    <button 
-      onclick="window.open('https://wa.me/${d.phone}', '_blank')" 
-      style="background:#25D366;color:#fff;border:none;border-radius:5px;padding:6px 12px;">
-      📱 Contact on WhatsApp
-    </button>
-  </div>
-`;
-
-
-      // Add Boost for Free for Admin
-      if (isAdmin) {
-        card.innerHTML += `
-          <button onclick="boostMarketItem('${id}', true)" style="background:#ff9800;color:#fff;border:none;border-radius:5px;padding:6px 12px;margin-top:10px;">
-            🚀 Boost for Free (Admin)
+        <!-- Action Button (Toggle) -->
+        <div style="margin-top:10px;">
+          <button onclick="toggleAction('${id}')" style="background:#2196F3;color:#fff;border:none;border-radius:5px;padding:6px 12px;">
+            🛠️ Action
           </button>
-        `;
-      }
+          <div id="action-buttons-${id}" style="display:none; margin-top:10px; flex-direction:column; gap:8px;">
+            ${isPoster || isAdmin ? `
+              <button onclick="openMarketChat('${d.firebaseUid || d.phone}', '${d.posterName || 'Seller'}')" style="background:#673ab7;color:#fff;border:none;border-radius:5px;padding:6px 12px;">💬 View Chat</button>
+              <button onclick="toggleSoldStatus('${id}')" style="background:#9e9e9e;color:#fff;border:none;border-radius:5px;padding:6px 12px;">${d.isSold ? "❌ Sold Out" : "✅ Mark as Sold"}</button>
+              <button onclick="openAllReviewsModal('${id}')" style="background:#03a9f4;color:#fff;border:none;border-radius:6px;padding:6px 12px;">💬 View All Reviews</button>
+              <button onclick="deleteMarketItem('${id}')" style="background:#dc3545;color:#fff;border:none;border-radius:6px;padding:6px 12px;">🗑️ Delete</button>
+              <button onclick="boostMarketItem('${id}')" style="background:#ff9800;color:#fff;border:none;border-radius:6px;padding:6px 12px;">🚀 Boost</button>
+              ${isExpired ? `<button onclick="renewBoost('${id}')" style="background:#ff9800;color:#fff;border:none;border-radius:6px;padding:6px 12px;">🔄 Renew Boost</button>` : ""}
+              <button onclick="openEditForm('${id}')" style="background:#673ab7;color:#fff;border:none;border-radius:6px;padding:6px 12px;">✏️ Edit Item</button>
+            ` : ""}
+            ${(!isPoster && currentUser) ? `
+              <button onclick="showMarketInterest('${id}')" style="background:#f44336;color:#fff;border:none;border-radius:5px;padding:6px 12px;">💬 Interest</button>
+              <button onclick="reportMarketItem('${id}')" style="background:#ff1744;color:#fff;border:none;border-radius:5px;padding:6px 12px;">🚩 Report</button>
+              <button onclick="openMarketChat('${d.firebaseUid || d.phone}', '${d.posterName || 'Seller'}')" style="background:#673ab7;color:#fff;border:none;border-radius:5px;padding:6px 12px;">💬 Chat</button>
+              <button onclick="openReviewModal('${id}')" style="background:#4CAF50;color:#fff;border:none;border-radius:5px;padding:6px 12px;">📝 Review</button>
+            ` : ""}
+          </div>
+        </div>
+
+        <!-- WhatsApp Button -->
+        <div style="margin-top:10px;">
+          <button onclick="window.open('https://wa.me/${d.phone}', '_blank')" style="background:#25D366;color:#fff;border:none;border-radius:5px;padding:6px 12px;">
+            📱 Contact on WhatsApp
+          </button>
+        </div>
+      `;
 
       container.appendChild(card);
       updateAverageRating(id);
@@ -8199,6 +8153,14 @@ async function loadMarketItems() {
     console.error("❌ Error loading market items:", err);
   }
 }
+
+// Toggle Action Button Visibility
+function toggleAction(itemId) {
+  const actionButtons = document.getElementById(`action-buttons-${itemId}`);
+  const isVisible = actionButtons.style.display === 'block';
+  actionButtons.style.display = isVisible ? 'none' : 'block';
+}
+
 
 
 
