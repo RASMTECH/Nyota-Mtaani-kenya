@@ -4333,22 +4333,35 @@ async function loadSwaps() {
           ? `<span class="boosted-badge">🚀 Boosted (${Math.ceil((s.boostExpiry - now) / (1000 * 60 * 60 * 24))} day${Math.ceil((s.boostExpiry - now) / (1000 * 60 * 60 * 24)) !== 1 ? 's' : ''} left)</span>`
           : "";
 
-        const contactHTML = `
-          <div style="margin:4px 0;">
-            📞 <a href="tel:${s.phone}" style="color:green;">${s.phone}</a><br>
-            💬 <a href="https://wa.me/254${s.phone.replace(/^0/, '')}" target="_blank" style="color:#25D366;">WhatsApp</a>
-          </div>`;
+ const contactHTML = `
+  <div style="margin:4px 0;">
+    <div style="border: 2px solid #4caf50; background-color: #4caf50; padding: 8px; border-radius: 8px; display: flex; align-items: center; margin-bottom: 8px; max-width: fit-content;">
+      <a href="tel:${s.phone}" style="color:white; font-size: 16px; text-decoration: none;">${s.phone}</a>
+      <i class="fas fa-phone-alt" style="margin-left: 8px; color:white;"></i>
+    </div>
+    <div style="border: 2px solid #25D366; background-color: #25D366; padding: 8px; border-radius: 8px; display: flex; align-items: center; max-width: fit-content;">
+      <a href="https://wa.me/254${s.phone.replace(/^0/, '')}" target="_blank" style="color:red; font-size: 16px; text-decoration: none;">WhatsApp</a>
+      <i class="fab fa-whatsapp" style="margin-left: 8px; color:red;"></i>
+    </div>
+  </div>`;
+const blurredContactHTML = `
+  <div style="margin:6px 0; text-align:left;">
+    <div style="border: 2px solid #ccc; background-color: #ccc; padding: 8px; border-radius: 8px; display: flex; align-items: center; margin-bottom: 8px; max-width: fit-content;">
+      <span style="filter: blur(4px); color: green;">0700000000</span>
+      <i class="fas fa-phone-alt" style="margin-left: 8px; filter: blur(4px);"></i>
+    </div>
+    <div style="border: 2px solid #ccc; background-color: #ccc; padding: 8px; border-radius: 8px; display: flex; align-items: center; max-width: fit-content;">
+      <span style="filter: blur(4px); color: red;">WhatsApp</span>
+      <i class="fab fa-whatsapp" style="margin-left: 8px; filter: blur(4px);"></i>
+    </div>
+    <div style="margin-top:6px;color:crimson;font-size:13px; font-weight: bold;">🔒 Contacts locked. Pay Ksh 250 to unlock</div>
+    <button onclick="showPaymentModalFor('swap', 250, '${s.id}', 'Unlock VIP Swaps')"
+            style="margin-top:4px;background:crimson;color:white;border:none;padding:5px 10px;border-radius:4px;">
+      💳 Pay Now
+    </button>
+  </div>`;
 
-        const blurredContactHTML = `
-          <div style="margin:6px 0; text-align:left;">
-            <span style="color:crimson; font-size:13px; font-weight:bold;">
-              🔒 Contacts locked. Pay Ksh 250 to unlock
-            </span><br>
-            <button onclick="showPaymentModalFor('swap', 250, '${s.id}', 'Unlock VIP Swaps')"
-                    style="margin-top:4px;background:crimson;color:white;border:none;padding:5px 10px;border-radius:4px;">
-              💳 Pay Now
-            </button>
-          </div>`;
+
 
         const closedContactHTML = `
           <div style="margin:6px 0; text-align:left; color:red; font-weight:bold;">
@@ -5274,32 +5287,42 @@ else if (jobType.includes("intern")) iconClass = "fa-user-graduate", bgColor = "
 else if (jobType.includes("volunteer")) iconClass = "fa-hands-helping", bgColor = "#43a047";
     else if (jobType.includes("chef")) iconClass = "fa-utensils", bgColor = "#8d6e63";
 
-    const iconHTML = `
-      <div style="padding: 18px; background: ${bgColor};">
-        <i class="fas ${iconClass}" style="font-size: 50px; color: #fff;"></i>
-      </div>
-    `;
+   // Define iconHTML before using it
+const iconHTML = `
+  <div style="padding: 18px; background: ${bgColor}; display: inline-flex; justify-content: center; align-items: center; border-radius: 8px;">
+    <i class="fas ${iconClass}" style="font-size: 50px; color: #fff;"></i>
+  </div>
+`;
 
-    const contactSection = (isPoster || hasAccess || isAdmin)
-      ? ` 
-        <p style="color:#009688;">
-          <strong>${phoneIcon}Phone:</strong><br>
-          <a href="tel:${job.phone}" style="color:green;">📞 Call</a><br>
-          <a href="https://wa.me/254${job.phone.replace(/^0/, '')}" target="_blank" style="color:#25D366;">💬 WhatsApp</a>
-        </p>
-        <button onclick="openChatModal('${job.phone}', '${job.organization}')"
-          style="background:#673ab7; color:white; border:none; border-radius:5px; padding:6px 12px; cursor:pointer;">
-          💬 Chat
-        </button>` 
-      : ` 
-        <div class="blurred">
-          <p style="color:gray;">🔒 Contacts Locked – Pay Ksh 350 to Unlock Contact</p>
-        </div>
-        <button onclick="unlockBomJobs()"
-          style="background:crimson; color:white; padding:6px 12px; border:none; border-radius:6px;">
-          💳 Pay Ksh 350
-        </button>
-      `;
+// Correct contact section with proper icon integration
+const contactSection = (isPoster || hasAccess || isAdmin)
+  ? ` 
+    <p style="color:#009688; margin-bottom: 8px;">
+      <strong>Phone:</strong><br>
+      <!-- Phone Button with Border and Padding -->
+      <div style="border: 2px solid #4caf50; background-color: #4caf50; padding: 8px; border-radius: 8px; display: inline-flex; align-items: center; margin-right: 8px; max-width: fit-content;">
+        <a href="tel:${job.phone}" style="color:white; font-size: 16px; text-decoration: none;">📞 Call</a>
+        <i class="fas fa-phone-alt" style="margin-left: 8px; color:white;"></i>
+      </div>
+    </p>
+    <p style="color:#009688; margin-bottom: 8px;">
+      <strong> WhatsApp:</strong><br>
+      <!-- WhatsApp Button with Border and Padding -->
+      <div style="border: 2px solid #25D366; background-color: #25D366; padding: 8px; border-radius: 8px; display: inline-flex; align-items: center; max-width: fit-content;">
+        <a href="https://wa.me/254${job.phone.replace(/^0/, '')}" target="_blank" style="color:white; font-size: 16px; text-decoration: none;">WhatsApp</a>
+        <i class="fab fa-whatsapp" style="margin-left: 8px; color:white;"></i>
+      </div>
+    </p>`
+  : ` 
+    <div class="blurred">
+      <p style="color:gray;">🔒 Contacts Locked – Pay Ksh 350 to Unlock Contact</p>
+    </div>
+    <button onclick="unlockBomJobs()"
+      style="background:crimson; color:white; padding:6px 12px; border:none; border-radius:6px;">
+      💳 Pay Ksh 350
+    </button>
+  `;
+
 
     const actionButtons = `
       <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
@@ -6254,19 +6277,34 @@ async function loadSoulmates() {
       </div>
     `;
 
-    const contactHTML = `
-      <div style="margin:4px 0;">
-        📞 <a href="tel:${d.phone}" style="color:green;">${d.phone}</a><br>
-        💬 <a href="https://wa.me/254${d.phone.replace(/^0/, '')}" target="_blank" style="color:#25D366;">WhatsApp</a>
-      </div>`;
+  const contactHTML = `
+  <div style="margin:4px 0;">
+    <div style="border: 1px solid #4caf50; padding: 8px; border-radius: 8px; display: flex; align-items: center; margin-bottom: 8px;">
+      <span style="font-size: 16px; color:green;">${d.phone}</span>
+      <i class="fas fa-phone-alt" style="margin-left: 8px; color:green;"></i>
+    </div>
+    <div style="border: 1px solid #25D366; padding: 8px; border-radius: 8px; display: flex; align-items: center;">
+      <span style="font-size: 16px; color:#25D366;">WhatsApp</span>
+      <i class="fab fa-whatsapp" style="margin-left: 8px; color:#25D366;"></i>
+    </div>
+  </div>`;
 
-    const blurredContactHTML = `
-      <div style="margin:4px 0;">
-        📞 <span style="filter:blur(4px);">0700000000</span><br>
-        💬 <span style="filter:blur(4px);">WhatsApp</span>
-        <div style="margin-top:6px;color:crimson;font-size:13px;">🔒 Pay Ksh 200 to Unlock</div>
-        <button onclick="handleSoulmateAction('${id}', 'unlock')" style="margin-top:5px;background:crimson;color:white;border:none;padding:4px 10px;border-radius:4px;">💳 Pay</button>
-      </div>`;
+const blurredContactHTML = `
+  <div style="margin:4px 0;">
+    <div style="border: 1px solid #ccc; padding: 8px; border-radius: 8px; display: flex; align-items: center; margin-bottom: 8px;">
+      <span style="filter: blur(4px); font-size: 16px;">0700000000</span>
+      <i class="fas fa-phone-alt" style="margin-left: 8px; filter: blur(4px);"></i>
+    </div>
+    <div style="border: 1px solid #ccc; padding: 8px; border-radius: 8px; display: flex; align-items: center;">
+      <span style="filter: blur(4px); font-size: 16px;">WhatsApp</span>
+      <i class="fab fa-whatsapp" style="margin-left: 8px; filter: blur(4px);"></i>
+    </div>
+    <div style="margin-top:6px;color:crimson;font-size:13px;">🔒 Pay Ksh 200 to Unlock</div>
+    <button onclick="handleSoulmateAction('${id}', 'unlock')" style="margin-top:5px;background:crimson;color:white;border:none;padding:4px 10px;border-radius:4px;">
+      💳 Pay
+    </button>
+  </div>`;
+
 
     const profileContent = d.isClosed ? `
       <p style="color:#999;">Profile Locked</p>
@@ -6945,6 +6983,100 @@ async function loadServices() {
     if (occupation.includes("lawyer")) iconClass = "fa-balance-scale", bgColor = "#5c6bc0";
     else if (occupation.includes("teacher")) iconClass = "fa-chalkboard-teacher", bgColor = "#42a5f5";
     else if (occupation.includes("ict specialist")) iconClass = "fa-network-wired", bgColor = "#1565c0";
+else if (occupation.includes("nurse")) iconClass = "fa-user-nurse", bgColor = "#ec407a";
+else if (occupation.includes("chef")) iconClass = "fa-utensils", bgColor = "#ffa726";
+else if (occupation.includes("plumber")) iconClass = "fa-tools", bgColor = "#7e57c2";
+
+// --- Extended occupations ---
+else if (occupation.includes("developer")) iconClass = "fa-laptop-code", bgColor = "#42a5f5";
+else if (occupation.includes("designer")) iconClass = "fa-paint-brush", bgColor = "#9c27b0";
+else if (occupation.includes("doctor")) iconClass = "fa-user-md", bgColor = "#f44336";
+else if (occupation.includes("pilot")) iconClass = "fa-plane", bgColor = "#2196f3";
+else if (occupation.includes("mechanic")) iconClass = "fa-tools", bgColor = "#795548";
+else if (occupation.includes("electrician")) iconClass = "fa-bolt", bgColor = "#ff9800";
+else if (occupation.includes("farmer")) iconClass = "fa-tractor", bgColor = "#4caf50";
+else if (occupation.includes("engineer")) iconClass = "fa-cogs", bgColor = "#607d8b";
+else if (occupation.includes("architect")) iconClass = "fa-drafting-compass", bgColor = "#9e9d24";
+else if (occupation.includes("judge")) iconClass = "fa-gavel", bgColor = "#3e2723";
+else if (occupation.includes("police")) iconClass = "fa-shield-alt", bgColor = "#1a237e";
+else if (occupation.includes("security")) iconClass = "fa-user-shield", bgColor = "#000000";
+else if (occupation.includes("firefighter")) iconClass = "fa-fire-extinguisher", bgColor = "#d32f2f";
+else if (occupation.includes("scientist")) iconClass = "fa-flask", bgColor = "#00bcd4";
+else if (occupation.includes("pharmacist")) iconClass = "fa-pills", bgColor = "#8e24aa";
+else if (occupation.includes("dentist")) iconClass = "fa-tooth", bgColor = "#fbc02d";
+else if (occupation.includes("veterinarian")) iconClass = "fa-paw", bgColor = "#8d6e63";
+else if (occupation.includes("waiter")) iconClass = "fa-concierge-bell", bgColor = "#ff9800";
+else if (occupation.includes("receptionist")) iconClass = "fa-phone", bgColor = "#4caf50";
+else if (occupation.includes("sales")) iconClass = "fa-cash-register", bgColor = "#009688";
+else if (occupation.includes("accountant")) iconClass = "fa-calculator", bgColor = "#3f51b5";
+else if (occupation.includes("banker")) iconClass = "fa-university", bgColor = "#0d47a1";
+else if (occupation.includes("marketer")) iconClass = "fa-bullhorn", bgColor = "#ff5722";
+else if (occupation.includes("photographer")) iconClass = "fa-camera", bgColor = "#6a1b9a";
+else if (occupation.includes("videographer")) iconClass = "fa-video", bgColor = "#c2185b";
+else if (occupation.includes("model")) iconClass = "fa-user", bgColor = "#f48fb1";
+else if (occupation.includes("actor")) iconClass = "fa-theater-masks", bgColor = "#ff9800";
+else if (occupation.includes("musician")) iconClass = "fa-music", bgColor = "#5e35b1";
+else if (occupation.includes("dj")) iconClass = "fa-headphones", bgColor = "#512da8";
+else if (occupation.includes("tailor")) iconClass = "fa-cut", bgColor = "#ff7043";
+else if (occupation.includes("cleaner")) iconClass = "fa-broom", bgColor = "#66bb6a";
+else if (occupation.includes("translator")) iconClass = "fa-language", bgColor = "#0097a7";
+else if (occupation.includes("tour guide")) iconClass = "fa-map-marked-alt", bgColor = "#43a047";
+else if (occupation.includes("barista")) iconClass = "fa-coffee", bgColor = "#6d4c41";
+else if (occupation.includes("butcher")) iconClass = "fa-drumstick-bite", bgColor = "#d84315";
+else if (occupation.includes("baker")) iconClass = "fa-bread-slice", bgColor = "#f57c00";
+else if (occupation.includes("fisherman")) iconClass = "fa-fish", bgColor = "#0288d1";
+else if (occupation.includes("construction worker")) iconClass = "fa-hard-hat", bgColor = "#ffa000";
+else if (occupation.includes("miner")) iconClass = "fa-gem", bgColor = "#616161";
+else if (occupation.includes("social worker")) iconClass = "fa-hands-helping", bgColor = "#ff7043";
+else if (occupation.includes("delivery")) iconClass = "fa-shipping-fast", bgColor = "#ef6c00";
+else if (occupation.includes("call center")) iconClass = "fa-headset", bgColor = "#3949ab";
+else if (occupation.includes("it support")) iconClass = "fa-server", bgColor = "#1e88e5";
+else if (occupation.includes("seo specialist")) iconClass = "fa-search", bgColor = "#00acc1";
+else if (occupation.includes("content writer")) iconClass = "fa-pen-nib", bgColor = "#ab47bc";
+else if (occupation.includes("blogger")) iconClass = "fa-blog", bgColor = "#7b1fa2";
+else if (occupation.includes("youtuber")) iconClass = "fa-video", bgColor = "#e53935";
+else if (occupation.includes("data analyst")) iconClass = "fa-chart-line", bgColor = "#2e7d32";
+else if (occupation.includes("data scientist")) iconClass = "fa-database", bgColor = "#1565c0";
+else if (occupation.includes("ai engineer")) iconClass = "fa-robot", bgColor = "#00bcd4";
+else if (occupation.includes("cyber security")) iconClass = "fa-user-secret", bgColor = "#263238";
+else if (occupation.includes("blockchain")) iconClass = "fa-link", bgColor = "#ff6f00";
+else if (occupation.includes("crypto trader")) iconClass = "fa-coins", bgColor = "#ffb300";
+else if (occupation.includes("real estate")) iconClass = "fa-building", bgColor = "#8d6e63";
+else if (occupation.includes("insurance agent")) iconClass = "fa-file-contract", bgColor = "#455a64";
+else if (occupation.includes("loan officer")) iconClass = "fa-hand-holding-usd", bgColor = "#558b2f";
+else if (occupation.includes("event planner")) iconClass = "fa-calendar-check", bgColor = "#9c27b0";
+else if (occupation.includes("makeup artist")) iconClass = "fa-magic", bgColor = "#ec407a";
+else if (occupation.includes("hair stylist")) iconClass = "fa-cut", bgColor = "#f06292";
+else if (occupation.includes("barber")) iconClass = "fa-user", bgColor = "#8d6e63";
+else if (occupation.includes("painter")) iconClass = "fa-paint-roller", bgColor = "#5d4037";
+else if (occupation.includes("carpenter")) iconClass = "fa-hammer", bgColor = "#795548";
+else if (occupation.includes("welder")) iconClass = "fa-tools", bgColor = "#ff7043";
+else if (occupation.includes("roofer")) iconClass = "fa-home", bgColor = "#ff7043";
+else if (occupation.includes("landscaper")) iconClass = "fa-tree", bgColor = "#4caf50";
+else if (occupation.includes("truck driver")) iconClass = "fa-truck-moving", bgColor = "#4e342e";
+else if (occupation.includes("taxi driver")) iconClass = "fa-taxi", bgColor = "#fbc02d";
+else if (occupation.includes("bus driver")) iconClass = "fa-bus", bgColor = "#f57c00";
+else if (occupation.includes("train conductor")) iconClass = "fa-train", bgColor = "#3f51b5";
+else if (occupation.includes("ship captain")) iconClass = "fa-anchor", bgColor = "#0d47a1";
+else if (occupation.includes("flight attendant")) iconClass = "fa-plane-departure", bgColor = "#03a9f4";
+else if (occupation.includes("warehouse worker")) iconClass = "fa-boxes", bgColor = "#8d6e63";
+else if (occupation.includes("packer")) iconClass = "fa-box", bgColor = "#a1887f";
+else if (occupation.includes("logistics")) iconClass = "fa-shipping-fast", bgColor = "#009688";
+else if (occupation.includes("quality inspector")) iconClass = "fa-clipboard-check", bgColor = "#388e3c";
+else if (occupation.includes("project manager")) iconClass = "fa-tasks", bgColor = "#607d8b";
+else if (occupation.includes("foreman")) iconClass = "fa-hard-hat", bgColor = "#ffa000";
+else if (occupation.includes("researcher")) iconClass = "fa-microscope", bgColor = "#1e88e5";
+else if (occupation.includes("lecturer")) iconClass = "fa-user-graduate", bgColor = "#3949ab";
+else if (occupation.includes("professor")) iconClass = "fa-graduation-cap", bgColor = "#283593";
+else if (occupation.includes("coach")) iconClass = "fa-dumbbell", bgColor = "#f44336";
+else if (occupation.includes("personal trainer")) iconClass = "fa-running", bgColor = "#ff7043";
+else if (occupation.includes("lifeguard")) iconClass = "fa-life-ring", bgColor = "#0288d1";
+else if (occupation.includes("swimming instructor")) iconClass = "fa-swimmer", bgColor = "#039be5";
+else if (occupation.includes("intern")) iconClass = "fa-user-graduate", bgColor = "#8e24aa";
+else if (occupation.includes("volunteer")) iconClass = "fa-hands-helping", bgColor = "#43a047";
+else if (occupation.includes("house manager")) iconClass = "fa-home", bgColor = "#8d6e63";
+else if (occupation.includes("maid")) iconClass = "fa-broom", bgColor = "#f48fb1";
+else if (occupation.includes("ict specialist")) iconClass = "fa-network-wired", bgColor = "#1565c0";
     else if (occupation.includes("laundry")) iconClass = "fa-soap", bgColor = "#4dd0e1";
 
     const iconHTML = `
@@ -6969,34 +7101,31 @@ async function loadServices() {
     } else {
       imageHTML = `<div style="width:100%; height:180px; background: #f0f0f0; border-radius:8px; margin-bottom:8px; display: flex; justify-content: center; align-items: center; color: #888; cursor: pointer;" onclick="openImageModal()">No Images</div>`;
     }
-
-    // Display contact info based on service status and user type
 // Display contact info based on service status and user type
 const contactHTML = (d.isActive || isPoster || hasServiceAccess || isAdminUser)
   ? `
-    <div style="display: flex; flex-direction: column; gap: 10px; padding: 15px; background-color: #f1f1f1; border-radius: 8px;">
-      <p style="display: flex; align-items: center; color: #2e7d32; font-size: 16px; font-weight: bold;">
+    <div style="display: flex; flex-direction: row; gap: 10px; padding: 10px 12px; background-color: #f1f1f1; border-radius: 8px; border: 1px solid #ccc; align-items: center; width: auto; height: 50px;">
+      <p style="display: flex; align-items: center; color: #2e7d32; font-size: 16px; font-weight: bold; margin-right: 10px;">
         <span style="margin-right: 8px;">${phoneIcon}</span>
-        <strong>Phone:</strong> 
-        <a href="tel:${d.phone}" style="color: #00796b; text-decoration: none; font-weight: bold;"> Call</a>
+        <strong>Phone:</strong>
+        <!-- Phone Button with thinner border and compact padding -->
+        <div style="border: 1px solid #4caf50; background-color: #4caf50; padding: 6px 12px; border-radius: 6px; display: flex; align-items: center; height: 35px;">
+          <a href="tel:${d.phone}" style="color:white; font-size: 16px; text-decoration: none; font-weight: bold;"> Call</a>
+          <i class="fas fa-phone-alt" style="margin-left: 6px; color:white;"></i>
+        </div>
       </p>
       <p style="display: flex; align-items: center; color: #25D366; font-size: 16px; font-weight: bold;">
         <span style="margin-right: 8px;">${whatsappIcon}</span>
         <strong>WhatsApp:</strong>
-        <a href="https://wa.me/254${d.phone.replace(/^0/, '')}" target="_blank" style="color: #00796b; text-decoration: none; font-weight: bold;">Chat</a>
+        <!-- WhatsApp Button with thinner border and compact padding -->
+        <div style="border: 1px solid #25D366; background-color: #25D366; padding: 6px 12px; border-radius: 6px; display: flex; align-items: center; height: 35px;">
+          <a href="https://wa.me/254${d.phone.replace(/^0/, '')}" target="_blank" style="color:white; font-size: 16px; text-decoration: none; font-weight: bold;">Chat</a>
+          <i class="fab fa-whatsapp" style="margin-left: 6px; color:white;"></i>
+        </div>
       </p>
     </div>`
-  : `
-    <div style="padding: 15px; background-color: #f1f1f1; border-radius: 8px; text-align: center;">
-      <p style="color: gray; font-size: 16px; font-weight: bold;">🔒 Service Inactive</p>
-      <p style="color: #757575; font-size: 14px;">Service Unavailable 🌝🌝🌝🌝.</p>
-      ${isPoster ? `
-        <button onclick="showPaymentModalFor('serviceActivation', 250, '${id}', 'Activate Service')" 
-          style="background-color: crimson; color: white; padding: 10px 20px; border: none; border-radius: 25px; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease;">
-          💳 Pay Ksh 250 to Activate Service
-        </button>` : ''}
-    </div>
-  `;
+  : ``;
+
 
 
 let actionButtonsHTML = `
