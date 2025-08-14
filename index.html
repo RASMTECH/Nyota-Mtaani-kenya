@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -1962,16 +1962,11 @@ button:hover {
 <nav style="background-image: url('https://i.imgur.com/NqDfbfn.jpeg'); background-size: cover; background-position: center; padding: 20px 20px;">
 
   
-  <ul>
+<ul>
   <!-- Core Navigation -->
   <li><a class="menu-box" href="#" onclick="showPage('home')">
     <img src="https://i.imgur.com/lek58ah.jpeg" alt="Home">
     <span>Home</span></a>
-  </li>
-
-  <li><a class="menu-box" href="#" onclick="showPage('login')">
-    <img src="https://i.imgur.com/TsXskJc.jpeg" alt="Login">
-    <span>Login</span></a>
   </li>
 
   <li><a class="menu-box" href="#" onclick="showPage('register')">
@@ -1979,37 +1974,16 @@ button:hover {
     <span>Register</span></a>
   </li>
 
-  <!-- Notifications & Alerts -->
-  <li>
-    <a class="menu-box" href="#" onclick="showPage('notifications')" style="position: relative;">
-      <img src="https://i.imgur.com/PtqAWTY.png" alt="Notifications">
-      <span>Admin Notifications</span>
-      <span id="notifBadge">0</span>
-    </a>
+  <li><a class="menu-box" href="#" onclick="showPage('login')">
+    <img src="https://i.imgur.com/TsXskJc.jpeg" alt="Login">
+    <span>Login</span></a>
   </li>
 
-  <li>
-    <a class="menu-box" href="#" onclick="loadAlerts()" style="position: relative;">
-      <img src="https://i.imgur.com/IvZc6We.jpeg" alt="Alerts">
-      <span>Alerts</span>
-      <span id="alertsBadge" style="
-        display:none;
-        background:#f44336;
-        color:white;
-        font-size:12px;
-        padding:2px 6px;
-        border-radius:50%;
-        position:absolute;
-        top:0;
-        right:0;
-        font-weight:bold;
-        min-width:18px;
-        text-align:center;
-      ">0</span>
-    </a>
+  <li><a class="menu-box" href="#" onclick="showPage('usageHelp')">
+    <img src="https://i.imgur.com/tHuRu3z.jpeg" alt="How to Use">
+    <span>📘 How to Use</span></a>
   </li>
 
- 
   <!-- Main Features -->
   <li><a class="menu-box" href="#" onclick="showPage('bomJobs')">
     <img src="https://i.imgur.com/8KM6Rib.jpeg" alt="Jobs">
@@ -2041,31 +2015,58 @@ button:hover {
     <span>Resources</span></a>
   </li>
 
-<li>
-  <a class="menu-box" href="#" onclick="openSentChatsSection()" style="position:relative;">
-    <img src="https://i.imgur.com/9OvoTnl.jpeg" alt="Chats">
-    <span> Chats</span>
-    <!-- Optional: Unread badge for Sent Chats -->
-    <span id="sentChatsUnreadBadge" style="display:none; background:red; color:white; border-radius:50%; padding:2px 6px; font-size:11px; position:absolute; top:0; right:0;"></span>
-  </a>
-</li>
+<!-- Admin-Only Notifications (Visible only to admins) -->
+  <li id="adminNotifBtn" style="display:none;">
+    <a class="menu-box" href="#" onclick="showPage('notifications')" style="position: relative;">
+      <img src="https://i.imgur.com/PtqAWTY.png" alt="Notifications">
+      <span>Admin Notifications</span>
+      <span id="notifBadge">0</span>
+    </a>
+  </li>
 
+
+  <li>
+    <a class="menu-box" href="#" onclick="loadAlerts()" style="position: relative;">
+      <img src="https://i.imgur.com/IvZc6We.jpeg" alt="Alerts">
+      <span>Alerts</span>
+      <span id="alertsBadge" style="
+        display:none;
+        background:#f44336;
+        color:white;
+        font-size:12px;
+        padding:2px 6px;
+        border-radius:50%;
+        position:absolute;
+        top:0;
+        right:0;
+        font-weight:bold;
+        min-width:18px;
+        text-align:center;
+      ">0</span>
+    </a>
+  </li>
+
+  <!-- Trending & Chat -->
   <li><a class="menu-box" href="#" onclick="showPage('trendingSection'); loadTrendingItems();">
     <img src="https://i.imgur.com/SjtDlJi.jpeg" alt="Trending">
     <span>🔥 Trending</span></a>
   </li>
 
-  <!-- Help & Contact -->
-  <li><a class="menu-box" href="#" onclick="showPage('usageHelp')">
-    <img src="https://i.imgur.com/tHuRu3z.jpeg" alt="Help">
-    <span>📘 How to Use</span></a>
+  <li>
+    <a class="menu-box" href="#" onclick="openSentChatsSection()" style="position:relative;">
+      <img src="https://i.imgur.com/9OvoTnl.jpeg" alt="Chats">
+      <span>Chats</span>
+      <span id="sentChatsUnreadBadge" style="display:none; background:red; color:white; border-radius:50%; padding:2px 6px; font-size:11px; position:absolute; top:0; right:0;"></span>
+    </a>
   </li>
 
+  <!-- Help & Contact -->
   <li><a class="menu-box" href="#" onclick="showPage('contact')">
     <img src="https://i.imgur.com/SPqGvz9.jpeg" alt="Contact">
     <span>Contact Us</span></a>
   </li>
 </ul>
+
 
 </nav>
 
@@ -2195,8 +2196,7 @@ button:hover {
       
       <li><a href="#" onclick="showPage('register')"><img src="https://i.imgur.com/jKZaOkH.jpeg" style="width:24px; vertical-align:middle; margin-right:8px;"> <strong>Register</strong></a> – Create a new account by filling in your name, email, and password.</li>
       
-      <li><a href="#" onclick="showPage('notifications')"><img src="https://i.imgur.com/PBto8RH.jpeg" style="width:24px; vertical-align:middle; margin-right:8px;"> <strong>Admin Notifications</strong></a> – (Admins only) See system updates, reports, and approvals.</li>
-      
+ 
       <li><a href="#" onclick="loadAlerts()"><img src="https://i.imgur.com/IvZc6We.jpeg" style="width:24px; vertical-align:middle; margin-right:8px;"> <strong>Alerts</strong></a> – Notifications when someone shows interest in your listing, follows you, or interacts with your posts.</li>
       
       <li><a href="#" onclick="openMessagesPage()"><img src="https://i.imgur.com/XBAeDCN.jpeg" style="width:24px; vertical-align:middle; margin-right:8px;"> <strong>Messages</strong></a> – View and reply to job, market, swap, or service chats. Unread messages are highlighted.</li>
@@ -2221,7 +2221,7 @@ button:hover {
       
       <li>💳 <strong>Payments</strong> – Pay via MPESA to unlock job or service contacts, or access premium features like boosting listings.</li>
       
-      <li>🚀 <strong>Boost Listings</strong> – Make your job or item appear in the 🔥 Trending section for 7 days.</li>
+      <li>🚀 <strong>Boost Listings</strong> – Make your job, services,profile ,swap or item appear in the 🔥 Trending section for 7 days.</li>
     </ul>
     <p style="color:#888;font-style:italic;">💡 Tip: Keep your profile updated, check 🔥 Trending daily, and use chat for faster responses.</p>
   </div>
@@ -3586,42 +3586,56 @@ const marketRef = db.collection("marketItems");
     }
   }
 
-  // ✅ Monitor Auth State 
-  auth.onAuthStateChanged(async user => {
-    if (user) {
-      currentUser = user;
-      isLoggedIn = true;
-  
+ // ✅ Monitor Auth State
+auth.onAuthStateChanged(async user => {
+  if (user) {
+    currentUser = user;
+    isLoggedIn = true;
 
-      const adminEmails = [
-        "mashabiki@teacherswapskenya.com",
-        "sironga@teacherswapskenya.com",
-        "sironga1@teacherswapskenya.com",
-        "admin@teacherswapskenya.com"
-      ];
-      isAdmin = adminEmails.includes(user.email);
+    const adminEmails = [
+      "mashabiki@teacherswapskenya.com",
+      "sironga@teacherswapskenya.com",
+      "sironga1@teacherswapskenya.com",
+      "admin@teacherswapskenya.com"
+    ];
+    isAdmin = adminEmails.includes(user.email);
 
-      await loadUserPaymentStatus(); // ✅ Load payment info immediately after login
+    await loadUserPaymentStatus(); // ✅ Load payment info immediately after login
 
-      attachMarketFormSubmit();
-      loadMarketItems(); // ✅ Load marketplace (without redirect)
+    attachMarketFormSubmit();
+    loadMarketItems(); // ✅ Load marketplace (without redirect)
 
-      if (isAdmin) {
-        loadAdminNotifications();
-        updateAdminNotifBadge();
-      }
-
-    } else {
-      isLoggedIn = false;
-      currentUser = null;
-      currentUserId = null;
-      isAdmin = false;
-      hasPaid = false;
-      hasPaid100 = false;
-      hasPaidVip1000 = false;
-      showPage("home");
+    if (isAdmin) {
+      loadAdminNotifications();
+      updateAdminNotifBadge();
     }
-  });
+
+    // Toggle Admin Notifications button visibility
+    toggleAdminNotifications(); // This ensures the button is shown only for admins
+
+  } else {
+    isLoggedIn = false;
+    currentUser = null;
+    currentUserId = null;
+    isAdmin = false;
+    hasPaid = false;
+    hasPaid100 = false;
+    hasPaidVip1000 = false;
+    showPage("home");
+  }
+});
+
+// Function to toggle Admin Notifications button visibility
+function toggleAdminNotifications() {
+  const adminNotifBtn = document.getElementById('adminNotifBtn');
+  
+  if (isAdmin) {
+    adminNotifBtn.style.display = 'block'; // Show for admins
+  } else {
+    adminNotifBtn.style.display = 'none'; // Hide for non-admins
+  }
+}
+
 
 
 // ✅ Hot counties for VIP swap prioritization
