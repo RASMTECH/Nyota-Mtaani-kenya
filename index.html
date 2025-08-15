@@ -6482,18 +6482,65 @@ function openImageModal(index = 0, images = []) {
 // Function to close the image modal
 function closeImageModal() {
   const modal = document.querySelector('.image-modal');
-  if (modal) modal.remove();
+  if (modal) modal.remove(); // Remove the modal from the DOM
 }
 
-// Function to change image in modal
+// Function to change image in modal with lazy loading
 function changeImage(direction) {
   const images = document.querySelectorAll('.carousel-image');
   let currentIndex = Array.from(images).findIndex(image => image.style.display === 'block');
+  
+  // Calculate new index with wrap-around logic
   currentIndex = (currentIndex + direction + images.length) % images.length;
+
+  // Loop through images and display the one that matches the new index
   images.forEach((image, idx) => {
     image.style.display = (idx === currentIndex) ? 'block' : 'none';
+
+    // If the image is displayed, trigger lazy loading
+    if (idx === currentIndex && !image.src) {
+      image.src = image.getAttribute('data-src');  // Set the src attribute to load the image
+    }
   });
 }
+
+// Function to open image modal with multiple images (updated for lazy loading)
+function openImageModal(index = 0, images = []) {
+  const modal = document.createElement('div');
+  modal.classList.add('image-modal');
+  modal.innerHTML = `
+    <div class="modal-content">
+      <span class="close" onclick="closeImageModal()">×</span>
+      <div class="carousel">
+        ${images.length > 0 ? images.map((img, idx) => `
+          <img data-src="${img}" style="width: 100%; max-height: 80vh; object-fit: contain; display: ${index === idx ? 'block' : 'none'};" class="carousel-image lazy-load">
+        `).join('') : '<p style="text-align: center;">No Images Available</p>'}
+      </div>
+      <button class="prev" onclick="changeImage(-1)">❮ Prev</button>
+      <button class="next" onclick="changeImage(1)">❯ Next</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  // Trigger lazy loading for images in the modal
+  const imagesInModal = document.querySelectorAll('.lazy-load');
+  imagesInModal.forEach(image => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const image = entry.target;
+          image.src = image.getAttribute('data-src'); // Load image when in view
+          observer.unobserve(image); // Stop observing after loading
+        }
+      });
+    }, {
+      root: null,
+      threshold: 0.1 // Trigger when 10% of the image is visible
+    });
+    observer.observe(image);
+  });
+}
+
 
 
 
@@ -8251,7 +8298,7 @@ function openImageModal(index = 0, images = []) {
       <span class="close" onclick="closeImageModal()">×</span>
       <div class="carousel">
         ${images.length > 0 ? images.map((img, idx) => `
-          <img src="${img}" style="width: 100%; max-height: 80vh; object-fit: contain; display: ${index === idx ? 'block' : 'none'};" class="carousel-image">
+          <img data-src="${img}" style="width: 100%; max-height: 80vh; object-fit: contain; display: ${index === idx ? 'block' : 'none'};" class="carousel-image lazy-load">
         `).join('') : '<p style="text-align: center;">No Images Available</p>'}
       </div>
       <button class="prev" onclick="navigateImageModal(-1)">❮ Prev</button>
@@ -8259,6 +8306,24 @@ function openImageModal(index = 0, images = []) {
     </div>
   `;
   document.body.appendChild(modal);
+
+  // Trigger lazy loading for images in the modal
+  const imagesInModal = document.querySelectorAll('.lazy-load');
+  imagesInModal.forEach(image => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const image = entry.target;
+          image.src = image.getAttribute('data-src'); // Load image when in view
+          observer.unobserve(image); // Stop observing after loading
+        }
+      });
+    }, {
+      root: null,
+      threshold: 0.1 // Trigger when 10% of the image is visible
+    });
+    observer.observe(image);
+  });
 }
 
 // Function to close the image modal
@@ -8276,8 +8341,6 @@ function navigateImageModal(direction) {
     image.style.display = (idx === currentIndex) ? 'block' : 'none';
   });
 }
-
-
 
 // ✅ Global Chat State
 const marketChatState = {
@@ -11575,15 +11638,10 @@ container.addEventListener("scroll", function () {
     endMessage.style.display = "none";
   }
 });
+
+
+
 </script>
-
-
-
-
-
-
-
-
 
 </body>
 </html>
