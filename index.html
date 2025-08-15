@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -779,17 +780,27 @@ body {
   background: #f0f8ff;         /* Light blue background */
   border: 1px solid #ccc;
   border-radius: 10px;
-  min-height: 200px;           /* Increased min-height */
+  min-height: 170px;
   width: 100%;                 /* Fills grid column */
-  box-sizing: border-box;      /* Ensures padding is included in width */
+  box-sizing: border-box;
   box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease; /* Optional: smooth hover effect */
+  transition: transform 0.2s ease;
 }
 
-/* For mobile, reduce padding */
+.soulmate-card:hover {
+  transform: scale(1.02);      /* Optional: subtle hover zoom */
+}
+
+
 @media (max-width: 768px) {
+  /* Adjust the layout for mobile */
+  #soulmateContainer {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); /* Ensures smaller screens still look good */
+  }
+
   .soulmate-card {
-    padding: 15px; /
+    padding: 15px; /* Slightly reduced padding for mobile */
+  }
 }
 /* Style for headers */
 header h1 {
@@ -1669,7 +1680,7 @@ header a {
     color: #666;
     font-weight: bold;
     margin-top: 10px;
-  }
+    }
 .chat-msg {
   margin: 6px 0;
   padding: 8px;
@@ -1917,9 +1928,9 @@ button:hover {
 }
 
 
+
+
 </style>
-
-
 </head>
 <body>
 <header style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background-image: url('https://i.imgur.com/cm7xKDS.jpeg'); background-size: cover; background-position: center;">
