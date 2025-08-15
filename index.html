@@ -2191,12 +2191,11 @@ button:hover {
     <ul style="line-height:1.7; list-style:none; padding:0;">
       
       <li><a href="#" onclick="showPage('home')"><img src="https://i.imgur.com/lek58ah.jpeg" style="width:24px; vertical-align:middle; margin-right:8px;"> <strong>Home</strong></a> – See latest updates, featured jobs, market items, and quick links to other sections.</li>
-      
-      <li><a href="#" onclick="showPage('login')"><img src="https://i.imgur.com/TsXskJc.jpeg" style="width:24px; vertical-align:middle; margin-right:8px;"> <strong>Login</strong></a> – Enter your email and password to access your account. Use “Forgot Password” if needed.</li>
-      
+     
       <li><a href="#" onclick="showPage('register')"><img src="https://i.imgur.com/jKZaOkH.jpeg" style="width:24px; vertical-align:middle; margin-right:8px;"> <strong>Register</strong></a> – Create a new account by filling in your name, email, and password.</li>
       
-      <li><a href="#" onclick="showPage('notifications')"><img src="https://i.imgur.com/PBto8RH.jpeg" style="width:24px; vertical-align:middle; margin-right:8px;"> <strong>Admin Notifications</strong></a> – (Admins only) See system updates, reports, and approvals.</li>
+ 
+      <li><a href="#" onclick="showPage('login')"><img src="https://i.imgur.com/TsXskJc.jpeg" style="width:24px; vertical-align:middle; margin-right:8px;"> <strong>Login</strong></a> – Enter your email and password to access your account. Use “Forgot Password” if needed.</li>
       
       <li><a href="#" onclick="loadAlerts()"><img src="https://i.imgur.com/IvZc6We.jpeg" style="width:24px; vertical-align:middle; margin-right:8px;"> <strong>Alerts</strong></a> – Notifications when someone shows interest in your listing, follows you, or interacts with your posts.</li>
       
@@ -2204,7 +2203,7 @@ button:hover {
       
       <li><a href="#" onclick="showPage('bomJobs')"><img src="https://i.imgur.com/8KM6Rib.jpeg" style="width:24px; vertical-align:middle; margin-right:8px;"> <strong>My Jobs</strong></a> – Post jobs, view applicants, show interest in other jobs, follow updates, unlock contacts, close/reopen jobs, and leave ratings.</li>
       
-      <li><a href="#" onclick="showPage('swaps')"><img src="https://i.imgur.com/iqBwsWm.png" style="width:24px; vertical-align:middle; margin-right:8px;"> <strong>Swaps</strong></a> – Browse and post swap listings (trade/exchange offers). Contact owners via chat or phone.</li>
+      <li><a href="#" onclick="showPage('swaps')"><img src="https://i.imgur.com/iqBwsWm.png" style="width:24px; vertical-align:middle; margin-right:8px;"> <strong>Swaps</strong></a> – Browse and post swap listings  Contact owners via chat or phone.</li>
       
       <li><a href="#" onclick="showPage('seekingServices')"><img src="https://i.imgur.com/P1tHi7L.jpeg" style="width:24px; vertical-align:middle; margin-right:8px;"> <strong>Services</strong></a> – Browse or post services and contact providers directly once unlocked.</li>
       
@@ -4042,6 +4041,7 @@ countySubCountyPairs.forEach(pair => populateCounties(pair.county, pair.subCount
 
 
 async function showPage(pageId) {
+  // Ensure the user is logged in before accessing certain pages
   if (pageId === "swaps" && !isLoggedIn) {
     showCustomAlert("You must be logged in to view swaps.", "error");
     showPage("login");
@@ -4072,6 +4072,20 @@ async function showPage(pageId) {
     return;
   }
 
+  if (pageId === "trending" && !isLoggedIn) {
+    showCustomAlert("You must be logged in to view trending content.", "error");
+    showPage("login");
+    return;
+  }
+
+
+
+  if (pageId === "alerts" && !isLoggedIn) {
+    showCustomAlert("You must be logged in to view alerts.", "error");
+    showPage("login");
+    return;
+  }
+
   // Hide all pages
   document.querySelectorAll(".page").forEach(p => p.style.display = "none");
 
@@ -4089,18 +4103,29 @@ async function showPage(pageId) {
   if (pageId === "soulmates") loadSoulmates();
   if (pageId === "seekingServices") loadServices();
 
+  // Load the trending page if logged in
+  if (pageId === "trending" && isLoggedIn) {
+    loadTrendingItems(); // Load the trending items if the user is logged in
+  }
+
+  // Load the alerts page if logged in
+  if (pageId === "alerts" && isLoggedIn) {
+    loadAlerts(); // Load the alerts if the user is logged in
+  }
+
   // ✅ If admin is viewing notifications, load them
   if (pageId === "notifications" && isAdmin) {
     loadAdminNotifications();
     updateAdminNotifBadge();
   }
 
-if (pageId === "market") {
-  populateCounties("itemCounty", "itemSubcounty"); // ✅ exact match for element ID
-  loadMarketItems();
+  if (pageId === "market") {
+    populateCounties("itemCounty", "itemSubcounty"); // ✅ exact match for element ID
+    loadMarketItems();
+  }
 }
 
-}
+
 
 
 
@@ -8050,6 +8075,7 @@ function attachMarketFormSubmit() {
   oldForm.parentNode.replaceChild(newForm, oldForm);
   newForm.addEventListener("submit", submitMarketHandler);
 }
+
 async function loadMarketItems() {
   const container = document.getElementById("marketContainer");
   container.innerHTML = "";
@@ -8204,6 +8230,7 @@ async function loadMarketItems() {
     console.error("❌ Error loading market items:", err);
   }
 }
+
 
 // Toggle Action Button Visibility
 function toggleAction(itemId) {
@@ -8541,9 +8568,15 @@ async function openSentChatsSection() {
   await loadSentChats();
 }
 
-
 // Function to load and display sent chats
 async function loadSentChats() {
+  // Check if the user is logged in
+  if (!isLoggedIn) {
+    showCustomAlert("You must be logged in to view your sent chats.", "error");
+    showPage("login");
+    return; // Exit if the user is not logged in
+  }
+
   const userId = marketChatState.currentUserId; // Get the logged-in user's ID
   if (!userId) {
     console.warn("No user is logged in.");
@@ -8601,6 +8634,7 @@ async function loadSentChats() {
     loadingSpinner.style.display = "none";  // Hide the loading spinner once done
   }
 }
+
 
 // ✅ Add message to UI (Messenger style: username + full date-time)
 function addMessageToUI(msgData, isTemporary = false) {
@@ -8795,6 +8829,13 @@ async function loadAlerts() {
   container.style.display = "block";
   container.innerHTML = "<h3>🔔 Alerts</h3><p>Loading...</p>";
 
+  // If not logged in, show alert and redirect to login page
+  if (!isLoggedIn) {
+    showCustomAlert("You must be logged in to view alerts.", "error");
+    showPage("login");
+    return; // Exit the function if the user is not logged in
+  }
+
   // Show the spinner while loading
   spinner.style.display = "flex";
 
@@ -8873,7 +8914,7 @@ async function loadAlerts() {
     // Top buttons
     alertsHTML += `
       <div style="margin-bottom:10px; display:flex; gap:10px; flex-wrap:wrap;">
-        ${unreadAlerts.length > 0 && currentUserId ? `
+        ${unreadAlerts.length > 0 && currentUserId ? ` 
           <button onclick="confirmMarkAllAlertsAsRead(${unreadAlerts.length})"
             style="background:#4caf50;color:white;border:none;padding:6px 12px;
             border-radius:6px;cursor:pointer;">
@@ -8915,7 +8956,7 @@ async function loadAlerts() {
 
       alertsHTML += `
         <div class="alert-card" style="
-          border-left:4px solid ${isRead ? '#4caf50' : '#f44336'};
+          border-left:4px solid ${isRead ? '#4caf50' : '#f44336'}; 
           padding:8px;
           margin-bottom:10px;
           box-shadow:0 1px 4px rgba(0,0,0,0.08);
@@ -11323,6 +11364,13 @@ function deleteMarketItem(id) {
 
 async function loadTrendingItems() {
   const trendingContainer = document.getElementById("trendingContainer");
+
+  // If the user is not logged in, show an alert and exit
+  if (!isLoggedIn) {
+    showCustomAlert("You must be logged in to view trending content.", "error");
+    showPage("login"); // Redirect to login page
+    return;
+  }
 
   // Show loading spinner at the center of the screen before fetching content
   document.getElementById("loadingSpinner").style.display = "flex"; // Show the spinner
