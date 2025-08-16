@@ -2890,13 +2890,14 @@ button:hover {
 </div>
 
 
-
-<!-- Confirm Delete Modal -->
-<div id="confirmDeleteModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9999;">
-  <div style="background:white; padding:20px; border-radius:8px; text-align:center;">
-    <p>Are you sure you want to delete this  job?</p>
-    <button id="confirmDeleteBtn" style="margin: 5px;">Yes, Delete</button>
-    <button onclick="closeDeleteModal()" style="margin: 5px;">Cancel</button>
+<!-- Custom Confirmation Modal -->
+<div id="customConfirmModal" style="display:none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 999;">
+  <div style="background: white; padding: 20px; border-radius: 10px; text-align: center; width: 300px;">
+    <p id="confirmMessage" style="font-size: 16px; color: #333;"></p>
+    <div>
+      <button id="confirmYes" style="background-color: #dc3545; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Yes</button>
+      <button id="confirmNo" style="background-color: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">No</button>
+    </div>
   </div>
 </div>
 <h3>
@@ -5625,7 +5626,8 @@ else if (jobType.includes("intern")) iconClass = "fa-user-graduate", bgColor = "
 else if (jobType.includes("volunteer")) iconClass = "fa-hands-helping", bgColor = "#43a047";
     else if (jobType.includes("chef")) iconClass = "fa-utensils", bgColor = "#8d6e63";
 
-   // Define iconHTML before using it
+ 
+// Define iconHTML before using it
 const iconHTML = `
   <div style="padding: 18px; background: ${bgColor}; display: inline-flex; justify-content: center; align-items: center; border-radius: 8px;">
     <i class="fas ${iconClass}" style="font-size: 50px; color: #fff;"></i>
@@ -5637,15 +5639,13 @@ const contactSection = (isPoster || hasAccess || isAdmin)
   ? ` 
     <p style="color:#009688; margin-bottom: 8px;">
       <strong>Phone:</strong><br>
-      <!-- Phone Button with Border and Padding -->
       <div style="border: 2px solid #4caf50; background-color: #4caf50; padding: 8px; border-radius: 8px; display: inline-flex; align-items: center; margin-right: 8px; max-width: fit-content;">
         <a href="tel:${job.phone}" style="color:white; font-size: 16px; text-decoration: none;">📞 Call</a>
         <i class="fas fa-phone-alt" style="margin-left: 8px; color:white;"></i>
       </div>
     </p>
     <p style="color:#009688; margin-bottom: 8px;">
-      <strong> WhatsApp:</strong><br>
-      <!-- WhatsApp Button with Border and Padding -->
+      <strong>WhatsApp:</strong><br>
       <div style="border: 2px solid #25D366; background-color: #25D366; padding: 8px; border-radius: 8px; display: inline-flex; align-items: center; max-width: fit-content;">
         <a href="https://wa.me/254${job.phone.replace(/^0/, '')}" target="_blank" style="color:white; font-size: 16px; text-decoration: none;">WhatsApp</a>
         <i class="fab fa-whatsapp" style="margin-left: 8px; color:white;"></i>
@@ -5661,82 +5661,122 @@ const contactSection = (isPoster || hasAccess || isAdmin)
     </button>
   `;
 
+// Action Buttons Grouped Under 'More' Button
+const actionButtons = `
+  <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;" id="actionButtons-${job.id}">
+    ${(isPoster || isAdmin) ? ` 
+      <button onclick="confirmDeleteBOMJob('${job.id}')"
+        style="background:#dc3545; color:white; border:none; border-radius:5px; padding:6px 12px; cursor:pointer;">
+        🗑️ Delete
+      </button>` : ''} 
 
-    const actionButtons = `
-      <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+    ${isAdmin ? ` 
+      <button onclick="boostJobFree('${job.id}')"
+        style="background:#4caf50; color:white; border:none; border-radius:5px; padding:6px 12px; cursor:pointer;">
+        🚀 Boost (Free)
+      </button>` : ''}
 
-        ${(isPoster || isAdmin) ? ` 
-          <button onclick="confirmDeleteBOMJob('${job.id}')"
-            style="background:#dc3545; color:white; border:none; border-radius:5px; padding:6px 12px; cursor:pointer;">
-            🗑️ Delete
-          </button>` : ''} 
+    ${verifyButton}
 
-        ${isAdmin ? ` 
-          <button onclick="boostJobFree('${job.id}')"
-            style="background:#4caf50; color:white; border:none; border-radius:5px; padding:6px 12px; cursor:pointer;">
-            🚀 Boost (Free)
-          </button>` : ''}
+    ${(isPoster || isAdmin) ? `
+    <button onclick="closeJob('${job.id}')"
+      style="background:#6c757d; color:white; border:none; border-radius:5px; padding:6px 12px; cursor:pointer;">
+      ${job.isClosed ? '♻️ Reopen Job' : '🚫 Mark as Closed'}
+    </button>` : ''}
 
-        ${verifyButton}
+    <button onclick="showInterest('${job.id}')"
+      style="background:#ff9800; color:white; border:none; border-radius:5px; padding:6px 12px; cursor:pointer;">
+      💼 Show Interest
+    </button>
 
- ${(isPoster || isAdmin) ? `
-  <button onclick="closeJob('${job.id}')"
-    style="background:#6c757d; color:white; border:none; border-radius:5px; padding:6px 12px; cursor:pointer;">
-    ${job.isClosed ? '♻️ Reopen Job' : '🚫 Mark as Closed'}
-  </button>` : ''}
+    <button onclick="followJob('${job.id}')"
+      style="background:#2196f3; color:white; border:none; border-radius:5px; padding:6px 12px; cursor:pointer;">
+      👀 Follow Job
+    </button>
+  </div>
+
+  <p id="interest-count-${job.id}" style="font-size:0.8em; color: #8e24aa; margin-top:6px;">
+    ${job.interestCount || 0} people interested
+  </p>
+
+  <p id="followed-count-${job.id}" style="font-size:0.8em; color: #2196f3; margin-top:4px;">
+    0 people following
+  </p>
+`;
+
+// Toggle "More" button to show/hide actions
+const moreButton = `
+  <button onclick="toggleMoreActions('${job.id}')"
+    style="background:#00bcd4; color:white; border:none; border-radius:5px; padding:6px 12px; cursor:pointer;">
+    More...
+  </button>
+`;
+
+function toggleMoreActions(jobId) {
+  const actionContainer = document.getElementById(`actionButtons-${jobId}`);
+  const button = actionContainer.previousElementSibling;
+
+  // Check if the buttons are currently hidden or not
+  if (actionContainer.style.display === 'none' || actionContainer.style.display === '') {
+    actionContainer.style.display = 'flex';  // Show the action buttons
+    button.innerHTML = 'Less...';  // Change button text to "Less..."
+  } else {
+    actionContainer.style.display = 'none';  // Hide the action buttons
+    button.innerHTML = 'More...';  // Change button text to "More..."
+  }
+}
+
+// Final Card HTML with 'More' Button
+card.innerHTML = `
+  ${topCornerTag}
+  ${iconHTML}
+  <div style="padding: 14px; text-align:left;">
+    ${badge}
+    <h3 style="color:#2e7d32;">${job.jobType} ${boostBadge} ${job.isClosed ? '<span style="color:red;">(Closed)</span>' : ''}</h3>
+
+    <p style="color:#3f51b5;"><strong>Organization:</strong> ${job.organization}</p>
+    ${contactSection}
+    <p style="color:#e91e63;"><strong>${locationIcon}Location:</strong> ${job.county}, ${job.subCounty}</p>
+    <p style="color:#ff9800;"><strong>${salaryIcon}Salary Range:</strong> KES ${parseInt(job.salaryRange).toLocaleString()}</p>
+    <p style="color:#6a1b9a;"><strong>${dateIcon}Date Posted:</strong> ${job.datePosted}</p>
+    <p style="color:#795548;"><strong>Posted By:</strong> ${job.postedBy || "Unknown"}</p>
+
+    <div style="margin-top: 10px;">
+      ${moreButton}
+      <div id="actionButtons-${job.id}" style="display:none;">${actionButtons}</div>
+    </div>
+
+    <div class="rating" data-id="${job.id}" style="margin-top: 10px;">
+      <span class="avg-rating" id="avgRating-${job.id}">Loading...</span><br>
+      ${[1, 2, 3, 4, 5].map(star => `
+        <i class="fas fa-star" onclick="rateService('${job.id}', ${star})"
+          style="cursor:pointer; color:#ccc;" id="star-${job.id}-${star}"></i>
+      `).join('')}
+    </div>
+  </div>
+`;
+
+// Append card to container
+container.appendChild(card);
+updateFollowedCount(job.id);
+updateInterestCount(job.id);
 
 
-        <button onclick="showInterest('${job.id}')"
-          style="background:#ff9800; color:white; border:none; border-radius:5px; padding:6px 12px; cursor:pointer;">
-          💼 Show Interest
-        </button>
-
-        <button onclick="followJob('${job.id}')"
-          style="background:#2196f3; color:white; border:none; border-radius:5px; padding:6px 12px; cursor:pointer;">
-          👀 Follow Job
-        </button>
-
-      </div>
-
-      <p id="interest-count-${job.id}" style="font-size:0.8em; color: #8e24aa; margin-top:6px;">
-        ${job.interestCount || 0} people interested
-      </p>
-
-      <p id="followed-count-${job.id}" style="font-size:0.8em; color: #2196f3; margin-top:4px;">
-        0 people following
-      </p>
-    `;
-
-    card.innerHTML = `
-      ${topCornerTag}
-      ${iconHTML}
-      <div style="padding: 14px; text-align:left;">
-        ${badge}
-        <h3 style="color:#2e7d32;">${job.jobType} ${boostBadge} ${job.isClosed ? '<span style="color:red;">(Closed)</span>' : ''}</h3>
-
-        <p style="color:#3f51b5;"><strong>Organization:</strong> ${job.organization}</p>
-        ${contactSection}
-        <p style="color:#e91e63;"><strong>${locationIcon}Location:</strong> ${job.county}, ${job.subCounty}</p>
-        <p style="color:#ff9800;"><strong>${salaryIcon}Salary Range:</strong> KES ${parseInt(job.salaryRange).toLocaleString()}</p>
-        <p style="color:#6a1b9a;"><strong>${dateIcon}Date Posted:</strong> ${job.datePosted}</p>
-        <p style="color:#795548;"><strong>Posted By:</strong> ${job.postedBy || "Unknown"}</p>
-
-        <div style="margin-top: 10px;">${actionButtons}</div>
-
-        <div class="rating" data-id="${job.id}" style="margin-top: 10px;">
-          <span class="avg-rating" id="avgRating-${job.id}">Loading...</span><br>
-          ${[1, 2, 3, 4, 5].map(star => `
-            <i class="fas fa-star" onclick="rateService('${job.id}', ${star})"
-              style="cursor:pointer; color:#ccc;" id="star-${job.id}-${star}"></i>
-          `).join('')}
-        </div>
-      </div>
-    `;
-
-    container.appendChild(card);
-    updateFollowedCount(job.id);
-    updateInterestCount(job.id);
   });
+}
+
+function toggleMoreActions(jobId) {
+  const actionContainer = document.getElementById(`actionButtons-${jobId}`);
+  const button = actionContainer.previousElementSibling;
+
+  // Check if the buttons are currently hidden or not
+  if (actionContainer.style.display === 'none' || actionContainer.style.display === '') {
+    actionContainer.style.display = 'flex';  // Show the action buttons
+    button.innerHTML = 'Less...';  // Change button text to "Less..."
+  } else {
+    actionContainer.style.display = 'none';  // Hide the action buttons
+    button.innerHTML = 'More...';  // Change button text to "More..."
+  }
 }
 
 // Function to handle following a job 
@@ -6157,12 +6197,20 @@ function handleCountyChange(countyId, subCountyId) {
     });
   }
 }
-
-// ✅ Delete BOM Job and send admin notification
+// Custom Delete Confirmation Function
 async function confirmDeleteBOMJob(jobId) {
-  if (confirm("Are you sure you want to delete this job posting?")) {
-    // Show loading spinner while the deletion is processing
-    document.getElementById("loadingSpinner").style.display = "flex";
+  // Show the custom modal and set message
+  const modal = document.getElementById('customConfirmModal');
+  const message = document.getElementById('confirmMessage');
+  message.innerHTML = "Are you sure you want to delete this job posting?";
+  
+  // Show the modal
+  modal.style.display = "flex";
+
+  // Handle "Yes" button click
+  document.getElementById('confirmYes').onclick = async function() {
+    modal.style.display = "none";  // Hide modal
+    document.getElementById("loadingSpinner").style.display = "flex";  // Show loading spinner
 
     try {
       const jobRef = bomRef.doc(jobId);
@@ -6179,7 +6227,7 @@ async function confirmDeleteBOMJob(jobId) {
       await jobRef.delete();
       showCustomAlert("✅ Job deleted successfully!", "success");
 
-      // Send an admin notification
+      // Send admin notification
       const notifRef = db.collection("adminNotifications").doc();
       await notifRef.set({
         type: "Job Deletion",
@@ -6195,12 +6243,15 @@ async function confirmDeleteBOMJob(jobId) {
     } catch (err) {
       showCustomAlert("❌ Failed to delete job: " + err.message, "error");
     } finally {
-      // Hide the spinner once the operation is complete
       document.getElementById("loadingSpinner").style.display = "none";
     }
-  }
-}
+  };
 
+  // Handle "No" button click (close modal)
+  document.getElementById('confirmNo').onclick = function() {
+    modal.style.display = "none";
+  };
+}
 
   // ✅ Alert Helper
   function showCustomAlert(msg, type = "info") {
