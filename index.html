@@ -476,19 +476,6 @@
   color: #f44336;
   cursor: pointer;
 }
-.service-card {
-  scroll-snap-align: start;
-  padding: 20px;
-  background: #f0f8ff; /* Light blue background */
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  min-height: 170px;
-  width: 100%; /* ✅ Makes it fill available grid column */
-  box-sizing: border-box; /* ✅ Includes padding in width */
-  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease; /* Optional: smooth hover effect */
-}
-
 .market-card {
   padding: 20px;
   background: #ffe4b5;
@@ -976,19 +963,20 @@ h2 {
   padding: 4px; /* Padding to give space around the text */
   border-radius: 4px; /* Rounded corners */
 }
-
 .service-card {
   scroll-snap-align: start;
-  padding: 20px;
+  padding: 12px; /* Reduced padding to decrease card height */
   background: #f0f8ff; /* Light blue background */
   border: 1px solid #ccc;
   border-radius: 10px;
-  min-height: 170px;
-  width: 100%; /* ✅ Makes it fill available grid column */
-  box-sizing: border-box; /* ✅ Includes padding in width */
+  min-height: 80px; /* Reduced the minimum height */
+  width: 100%; /* Makes it fill available grid column */
+  box-sizing: border-box; /* Includes padding in width */
   box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease; /* Optional: smooth hover effect */
+  overflow: hidden; /* Ensure content doesn't overflow */
 }
+
 
 /* Service Details */
 .service-details {
@@ -1927,9 +1915,109 @@ button:hover {
   cursor: pointer;
 }
 
+/* Loader Spinner */
+.loading-message {
+  text-align: center;
+  padding: 30px;
+}
 
+.loading-icon {
+  font-size: 36px;
+  color: #ff5722;
+}
 
+.trending-label {
+  font-size: 13px;
+  background: #ff5722;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
 
+/* No Trending Items Message */
+.no-trending-items {
+  text-align: center;
+  color: #999;
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 20px;
+}
+
+/* For Trending Highlight Animations */
+.trending-highlight {
+  margin-bottom: 12px;
+  padding: 10px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+  /* Desktop - Grid layout (default) */
+  #servicesContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Grid with flexible columns */
+    gap: 20px;
+  }
+
+  /* Mobile - Stacked layout */
+  @media (max-width: 768px) {
+    #servicesContainer {
+      display: block; /* Stack the items vertically on mobile */
+      padding: 10px; /* Reduced padding for mobile */
+      overflow-y: visible; /* Allow full content visibility without scroll */
+      max-height: none; /* No height restriction on mobile */
+    }
+
+    /* Optional: Styling for individual cards */
+    .service-card {
+      padding: 15px; /* Adjust card padding on mobile */
+      margin-bottom: 10px; /* Space between cards */
+    }
+  }
+
+  #filters label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+  }
+
+  #filters select, 
+  #filters input {
+    width: 150px; /* Reduced width */
+    padding: 6px;
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+
+  #filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+  #filters select,
+  #filters input {
+    margin-right: 15px;
+  }
+
+  /* Optional: Adjust label width for better spacing */
+  #filters label {
+    width: 120px;
+    display: inline-block;
+    margin-right: 10px;
+  }
 </style>
 </head>
 <body>
@@ -2833,8 +2921,6 @@ button:hover {
   box-sizing: border-box;
 ">
 </div>
-
-
 </div>
 <div id="resources" class="page" style="display:none;">
   <h2>
@@ -2842,35 +2928,175 @@ button:hover {
     Upload Teaching Resources
   </h2>
 
-  <!-- Admin only view -->
-  <div id="adminUploadForm" style="display:none;">
-    <div class="form-container">
-      <img src="https://i.imgur.com/x9v3Czl.jpeg" alt="Left Side" class="side-image" />
+<!-- Admin only view -->
+<div id="adminUploadForm" style="display:none;">
+  <div class="form-container">
+    <img src="https://i.imgur.com/x9v3Czl.jpeg" alt="Left Side" class="side-image" />
 
-      <form id="resourceForm">
-        <label for="resourceTitle">Title:</label>
-        <input type="text" id="resourceTitle" required />
+    <form id="resourceForm">
+      <label for="resourceTitle">Title:</label>
+      <input type="text" id="resourceTitle" required />
 
-        <label for="resourcePrice">Price (Ksh):</label>
-        <input type="number" id="resourcePrice" required />
+      <label for="resourcePrice">Price (Ksh):</label>
+      <input type="number" id="resourcePrice" required />
 
-        <label for="resourceFile">Upload File:</label>
-        <input type="file" id="resourceFile" accept=".pdf,.doc,.docx,.ppt,.pptx" required />
+      <label for="resourceCategory">Category:</label>
+      <select id="resourceCategory" required>
+        <option value="">Select Category</option>
+         <option value="math">Math</option>
+  <option value="science">Science</option>
+  <option value="literature">Literature</option>
+  <option value="history">History</option>
+  <option value="geography">Geography</option>
+  <option value="biology">Biology</option>
+  <option value="chemistry">Chemistry</option>
+  <option value="physics">Physics</option>
+  <option value="english">English</option>
+  <option value="french">French</option>
+  <option value="art">Art</option>
+  <option value="music">Music</option>
+  <option value="computerScience">Computer Science</option>
+  <option value="physicalEducation">Physical Education</option>
+  <option value="religiousStudies">Religious Studies</option>
+  <option value="economics">Economics</option>
+  <option value="businessStudies">Business Studies</option>
+  <option value="agriculture">Agriculture</option>
+  
+  <!-- Newly added subjects and activities -->
+  <option value="literacyActivities">Literacy Activities</option>
+  <option value="kiswahiliLanguageActivities">Kiswahili Language Activities</option>
+  <option value="englishLanguageActivities">English Language Activities</option>
+  <option value="mathematicalActivities">Mathematical Activities</option>
+  <option value="environmentalActivities">Environmental Activities</option>
+  <option value="hygieneAndNutritionActivities">Hygiene and Nutrition Activities</option>
+  <option value="religiousEducationActivities">Religious Education Activities</option>
+  <option value="movementAndCreativeActivities">Movement and Creative Activities</option>
 
-        <button type="submit">
-          <i class="fas fa-upload"></i> Upload Resource
-        </button>
-      </form>
+  <!-- Additional subjects for higher grades -->
+  <option value="brailleLiteracy">Literacy Activities </option>
+  <option value="socialStudies">Social Studies</option>
+  <option value="integratedScience">Integrated Science</option>
+  <option value="preTechnicalStudies">Pre Technical Studies</option>
+</select>
 
-      <img src="https://i.imgur.com/ytrul2r.jpeg" alt="Right Side" class="side-image" />
-    </div>
+      <label for="resourceGrade">Grade:</label>
+      <select id="resourceGrade" required>
+        <option value="">Select Grade</option>
+       <option value="grade1">Grade 1</option>
+  <option value="grade2">Grade 2</option>
+  <option value="grade3">Grade 3</option>
+  <option value="grade4">Grade 4</option>
+  <option value="grade5">Grade 5</option>
+  <option value="grade6">Grade 6</option>
+  <option value="grade7">Grade 7</option>
+  <option value="grade8">Grade 8</option>
+  <option value="grade9">Grade 9</option>
+  <option value="grade10">Grade 10</option>
+  <option value="grade11">Grade 11</option>
+  <option value="grade12">Grade 12</option>
+</select>
+
+      <label for="resourceLevel">Level:</label>
+      <select id="resourceLevel" required>
+        <option value="">Select Level</option>
+        <option value="primary">Primary School</option>
+        <option value="juniorSecondary">Junior Secondary</option>
+        <option value="seniorSecondary">Senior Secondary</option>
+      </select>
+
+      <label for="resourceFile">Upload File:</label>
+      <input type="file" id="resourceFile" accept=".pdf,.doc,.docx,.ppt,.pptx" required />
+
+      <button type="submit">
+        <i class="fas fa-upload"></i> Upload Resource
+      </button>
+    </form>
+
+    <img src="https://i.imgur.com/ytrul2r.jpeg" alt="Right Side" class="side-image" />
+  </div>
+</div>
+
+<h3>
+  <i class="fas fa-book-open" style="color:#3f51b5; margin-right: 8px;"></i>
+  Available Resources
+</h3>
+
+
+  <!-- Filters Section -->
+  <div id="filters">
+ <label for="resourceCategory">Category:</label>
+<select id="resourceCategory" required>
+  <option value="">Select Category</option>
+  <option value="">Select Category</option>
+  <option value="math">Math</option>
+  <option value="science">Science</option>
+  <option value="literature">Literature</option>
+  <option value="history">History</option>
+  <option value="geography">Geography</option>
+  <option value="biology">Biology</option>
+  <option value="chemistry">Chemistry</option>
+  <option value="physics">Physics</option>
+  <option value="english">English</option>
+  <option value="french">French</option>
+  <option value="art">Art</option>
+  <option value="music">Music</option>
+  <option value="computerScience">Computer Science</option>
+  <option value="physicalEducation">Physical Education</option>
+  <option value="religiousStudies">Religious Studies</option>
+  <option value="economics">Economics</option>
+  <option value="businessStudies">Business Studies</option>
+  <option value="agriculture">Agriculture</option>
+  
+  <!-- Newly added subjects and activities -->
+  <option value="literacyActivities">Literacy Activities</option>
+  <option value="kiswahiliLanguageActivities">Kiswahili Language Activities</option>
+  <option value="englishLanguageActivities">English Language Activities</option>
+  <option value="mathematicalActivities">Mathematical Activities</option>
+  <option value="environmentalActivities">Environmental Activities</option>
+  <option value="hygieneAndNutritionActivities">Hygiene and Nutrition Activities</option>
+  <option value="religiousEducationActivities">Religious Education Activities</option>
+  <option value="movementAndCreativeActivities">Movement and Creative Activities</option>
+
+  <!-- Additional subjects for higher grades -->
+  <option value="brailleLiteracy">Literacy Activities or Braille Literacy Activities</option>
+  <option value="socialStudies">Social Studies</option>
+  <option value="integratedScience">Integrated Science</option>
+  <option value="preTechnicalStudies">Pre Technical Studies</option>
+</select>
+
+
+
+    <label for="searchResources">Search Resources:</label>
+    <input type="text" id="searchResources" placeholder="Search by title or keyword">
+
+   <label for="resourceGrade">Grade:</label>
+<select id="resourceGrade" required>
+  <option value="">Select Grade</option>
+  <option value="grade1">Grade 1</option>
+  <option value="grade2">Grade 2</option>
+  <option value="grade3">Grade 3</option>
+  <option value="grade4">Grade 4</option>
+  <option value="grade5">Grade 5</option>
+  <option value="grade6">Grade 6</option>
+  <option value="grade7">Grade 7</option>
+  <option value="grade8">Grade 8</option>
+  <option value="grade9">Grade 9</option>
+  <option value="grade10">Grade 10</option>
+  <option value="grade11">Grade 11</option>
+  <option value="grade12">Grade 12</option>
+</select>
+
+
+    <label for="resourceLevel">Level:</label>
+    <select id="resourceLevel">
+      <option value="">All Levels</option>
+      <option value="primary">Primary School</option>
+      <option value="juniorSecondary">Junior Secondary</option>
+      <option value="seniorSecondary">Senior Secondary</option>
+    </select>
   </div>
 
-  <h3>
-    <i class="fas fa-book-open" style="color:#3f51b5; margin-right: 8px;"></i>
-    Available Resources
-  </h3>
-
+  <!-- Resources Table -->
   <table id="resourcesTable">
     <thead>
       <tr>
@@ -2882,7 +3108,6 @@ button:hover {
     <tbody></tbody>
   </table>
 </div>
-
 <div id="soulmates" class="page" style="display:none;">
 <h3>
   <i class="fas fa-venus-mars" style="color:#e91e63; margin-right: 8px;"></i>
@@ -3283,15 +3508,18 @@ Register To Connect With  Available Soulmates
 <!-- Services Cards Container -->
 <div id="servicesContainer" style="
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 30px; /* ✅ Increased gap between cards */
-  width: 100%;
-  padding: 20px; /* ✅ Adds spacing inside the container */
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Flexible column layout */
+  gap: 20px; /* Increased gap between cards */
+  width: 100%; /* Ensure container uses full available width */
+  max-width: 1200px; /* Optionally limit maximum container width for better layout */
+  padding: 20px; /* Adds spacing inside the container */
   margin-top: 20px;
-  overflow-y: auto;
-  max-height: 600px;
-  scroll-snap-type: y mandatory;
+  overflow-y: auto; /* Vertical scrolling */
+  max-height: 600px; /* Limiting the height */
+  scroll-snap-type: y mandatory; /* Ensures smooth snapping on scroll */
   box-sizing: border-box;
+  scrollbar-width: thin; /* Firefox custom scrollbar */
+  scrollbar-color: #4caf50 #f0f8ff; /* Customize scrollbar colors for a sleek design */
 ">
   <!-- Service cards will be dynamically added here -->
   <!-- Example cards for testing -->
@@ -3889,12 +4117,17 @@ document.getElementById("resourceForm").addEventListener("submit", async e => {
   // Check if the user is logged in
   if (!isLoggedIn) return showCustomAlert("Please login to upload resources.", "error");
 
-  // Check for required fields (file, title, price)
+  // Check for required fields (file, title, price, category, grade, level)
   const file = document.getElementById("resourceFile").files[0];
   const title = document.getElementById("resourceTitle").value.trim();
   const price = document.getElementById("resourcePrice").value.trim();
+  const category = document.getElementById("resourceCategory").value;
+  const grade = document.getElementById("resourceGrade").value;
+  const level = document.getElementById("resourceLevel").value;
 
-  if (!file || !title || !price) return showCustomAlert("All fields are required.", "error");
+  if (!file || !title || !price || !category || !grade || !level) {
+    return showCustomAlert("All fields are required.", "error");
+  }
 
   // Upload the resource to Firebase Storage
   const filePath = `resources/${Date.now()}_${file.name}`;
@@ -3905,6 +4138,9 @@ document.getElementById("resourceForm").addEventListener("submit", async e => {
   await resourceRef.add({
     title,
     price,
+    category,
+    grade,
+    level,
     downloadURL,
     filePath,
     uploadedBy: currentUser.uid,
@@ -4408,7 +4644,7 @@ async function loadSwaps() {
           : "";
 
         const vipBtn = isAdminUser && isHotCounty && !s.isVIP
-          ? `<button onclick="markAsVIPSwap('${s.id}')" style="background:#6a1b9a;color:white;padding:6px 12px;font-size:13px;border:none;border-radius:6px;cursor:pointer;">🔥 Sell VIP</button>` 
+          ? `<button onclick="markAsVIPSwap('${s.id}')" style="background:#6a1b9a;color:white;padding:6px 12px;font-size:13px;border:none;border-radius:6px;cursor:pointer;">🔥 Sell VIP</button>`
           : s.isVIP ? `<span style="color:crimson;font-weight:bold;font-size:13px;">🔥 VIP</span>` : "-";
 
         const showVerifiedBadge = s.verified
@@ -4418,13 +4654,14 @@ async function loadSwaps() {
         let verifyBtnHTML = "";
         if (!s.verified) {
           if (isPoster && !isAdminUser) {
-            verifyBtnHTML = ` 
-              <button onclick="showPaymentModalFor('swapVerification', 250, '${s.id}', '${s.teacherName || ''}')"
-                style="margin-left:6px;background:#4CAF50;color:white;padding:4px 8px;border:none;border-radius:6px;font-size:12px;cursor:pointer;">
-                ✅ Get Verified – Ksh 250
-              </button>`;
+            verifyBtnHTML = `
+    <button onclick="showPaymentModalFor('swapVerification', 250, '${s.id}', '${s.teacherName || ''}')"
+        style="margin-left:6px;background:#4CAF50;color:white;padding:4px 8px;border:none;border-radius:6px;font-size:12px;cursor:pointer;">
+    ✅ Get Verified – Ksh 250
+</button>
+`;
           } else if (isAdminUser) {
-            verifyBtnHTML = ` 
+            verifyBtnHTML = `
               <button onclick="adminVerifyItem('swap', '${s.id}')"
                 style="margin-left:6px;background:#2196F3;color:white;padding:4px 8px;border:none;border-radius:6px;font-size:12px;cursor:pointer;">
                 🛡️ Verify Now (Admin)
@@ -4439,27 +4676,15 @@ async function loadSwaps() {
 
         const contactHTML = `
           <div style="margin:4px 0;">
-            <div style="border: 2px solid #4caf50; background-color: #4caf50; padding: 8px; border-radius: 8px; display: flex; align-items: center; margin-bottom: 8px; max-width: fit-content;">
-              <a href="tel:${s.phone}" style="color:white; font-size: 16px; text-decoration: none;">${s.phone}</a>
-              <i class="fas fa-phone-alt" style="margin-left: 8px; color:white;"></i>
-            </div>
-            <div style="border: 2px solid #25D366; background-color: #25D366; padding: 8px; border-radius: 8px; display: flex; align-items: center; max-width: fit-content;">
-              <a href="https://wa.me/254${s.phone.replace(/^0/, '')}" target="_blank" style="color:red; font-size: 16px; text-decoration: none;">WhatsApp</a>
-              <i class="fab fa-whatsapp" style="margin-left: 8px; color:red;"></i>
-            </div>
+            📞 <a href="tel:${s.phone}" style="color:green;">${s.phone}</a><br>
+            💬 <a href="https://wa.me/254${s.phone.replace(/^0/, '')}" target="_blank" style="color:#25D366;">WhatsApp</a>
           </div>`;
 
         const blurredContactHTML = `
           <div style="margin:6px 0; text-align:left;">
-            <div style="border: 2px solid #ccc; background-color: #ccc; padding: 8px; border-radius: 8px; display: flex; align-items: center; margin-bottom: 8px; max-width: fit-content;">
-              <span style="filter: blur(4px); color: green;">0700000000</span>
-              <i class="fas fa-phone-alt" style="margin-left: 8px; filter: blur(4px);"></i>
-            </div>
-            <div style="border: 2px solid #ccc; background-color: #ccc; padding: 8px; border-radius: 8px; display: flex; align-items: center; max-width: fit-content;">
-              <span style="filter: blur(4px); color: red;">WhatsApp</span>
-              <i class="fab fa-whatsapp" style="margin-left: 8px; filter: blur(4px);"></i>
-            </div>
-            <div style="margin-top:6px;color:crimson;font-size:13px; font-weight: bold;">🔒 Contacts locked. Pay Ksh 250 to unlock</div>
+            <span style="color:crimson; font-size:13px; font-weight:bold;">
+              🔒 Contacts locked. Pay Ksh 250 to unlock
+            </span><br>
             <button onclick="showPaymentModalFor('swap', 250, '${s.id}', 'Unlock VIP Swaps')"
                     style="margin-top:4px;background:crimson;color:white;border:none;padding:5px 10px;border-radius:4px;">
               💳 Pay Now
@@ -4471,9 +4696,11 @@ async function loadSwaps() {
             🚫 This swap is closed
           </div>`;
 
-        // Number of people interested and following
-        const interestedCount = s.interestedUsers ? s.interestedUsers.length : 0;
-        const followingCount = s.followers ? s.followers.length : 0;
+        const followerCount = s.followers ? s.followers.length : 0;
+
+        // Rating Stars
+        const rating = s.rating || 0; // Default rating if not available
+        const ratingStars = '⭐'.repeat(rating) + '☆'.repeat(5 - rating);  // Display stars
 
         const card = document.createElement("div");
         card.className = "swap-card";
@@ -4494,26 +4721,46 @@ async function loadSwaps() {
         card.setAttribute("data-hardship", s.hardship || "-");
         card.setAttribute("data-subject", (s.subjectCombination || "-").toLowerCase());
 
-        // Custom Boost Button text based on role (admin or poster)
-        const boostButtonText = isAdminUser ? "🚀 Boost Free (Admin)" : "🚀 Boost Swap";
-
-        // Action Button (for both admin, poster, and other users)
+        // Action Button Logic
         const actionButtonHTML = `
           <div class="action-button-container">
             <button onclick="toggleActionButtons('${s.id}')" class="action-button">Actions</button>
             <div class="action-buttons" id="action-buttons-${s.id}" style="display:none;">
               ${isPoster || isAdminUser ? `
-                <button onclick="deleteSwap('${s.id}')" style="background:#e91e63;color:white;">🗑️ Delete</button>
-                <button onclick="sendSwapInterest('${s.id}', '${s.teacherName}')" style="background:#2196f3;color:white;">💌 Show Interest</button>
-                <button onclick="followSwap('${s.id}')" style="background:#e91e63;color:white;">🧑🤝🧑 Follow Swap</button>
-                <button onclick="toggleSwapStatus('${s.id}')" style="background:#9e9e9e;color:white;">🚫 Mark as Closed</button>
-                <button onclick="boostSwap('${s.id}')" style="background:#ff9800;color:white;">${boostButtonText}</button>` : ""}
+                <button onclick="deleteSwap('${s.id}')"
+                  style="background:#f44336;color:white;padding:6px 12px;font-size:13px;border:none;border-radius:6px;cursor:pointer;">
+                  🗑️ Delete
+                </button>
+                <button onclick="sendSwapInterest('${s.id}', '${s.teacherName}')"
+                  style="background:#2196f3;color:white;padding:6px 12px;font-size:13px;border:none;border-radius:6px;cursor:pointer;">
+                  💌 Show Interest
+                </button>
+                <button onclick="followSwap('${s.id}')"
+                  style="background:#e91e63;color:white;padding:6px 12px;font-size:13px;border:none;border-radius:6px;cursor:pointer;">
+                  🧑🤝🧑 Follow Swap
+                </button>
+                <button onclick="toggleSwapStatus('${s.id}')"
+                  style="background:#9e9e9e;color:white;padding:6px 12px;font-size:13px;border:none;border-radius:6px;cursor:pointer;">
+                  ${s.isClosed ? "♻️ Reopen Swap" : "🚫 Mark as Closed"}
+                </button>
+                <button onclick="boostSwap('${s.id}')"
+                  style="background:#ff9800;color:white;padding:6px 12px;font-size:13px;border:none;border-radius:6px;cursor:pointer;">
+                  🚀 Boost Swap ${isAdminUser ? "(Free)" : "(Ksh 250)"}
+                </button>` : ""}
               ${isAdminUser ? `
                 <button onclick="adminVerifyItem('swap', '${s.id}')"
-                  style="background:#4caf50;color:white;">🛡️ Verify Now (Admin)</button>` : ""}
+                  style="background:#4caf50;color:white;padding:6px 12px;font-size:13px;border:none;border-radius:6px;cursor:pointer;">
+                  🛡️ Verify Now (Admin)
+                </button>` : ""}
               ${(!isPoster && !isAdminUser) ? `
-                <button onclick="sendSwapInterest('${s.id}', '${s.teacherName}')" style="background:#2196f3;color:white;">💌 Show Interest</button>
-                <button onclick="followSwap('${s.id}')" style="background:#e91e63;color:white;">🧑🤝🧑 Follow Swap</button>` : ""}
+                <button onclick="sendSwapInterest('${s.id}', '${s.teacherName}')"
+                  style="background:#2196f3;color:white;padding:6px 12px;font-size:13px;border:none;border-radius:6px;cursor:pointer;">
+                  💌 Show Interest
+                </button>
+                <button onclick="followSwap('${s.id}')"
+                  style="background:#e91e63;color:white;padding:6px 12px;font-size:13px;border:none;border-radius:6px;cursor:pointer;">
+                  🧑🤝🧑 Follow Swap
+                </button>` : ""}
             </div>
           </div>`;
 
@@ -4525,15 +4772,25 @@ async function loadSwaps() {
           <p style="margin:4px 0;color:#6a1b9a;"><strong>Subjects:</strong> ${s.subjectCombination || '-'}</p>
           <p style="margin:4px 0;color:#3e2723;"><strong>Category:</strong> ${s.category || '-'}</p>
           <p style="margin:4px 0;color:#d81b60;"><strong>Hardship:</strong> ${s.hardship || '-'}</p>
+
           <div style="margin-top:6px;">
             ${s.isClosed && !isPoster && !isAdminUser ? closedContactHTML : (blur ? blurredContactHTML : contactHTML)}
           </div>
-          <p style="color:#4caf50;">💌 ${interestedCount} Interested | 🧑🤝🧑 ${followingCount} Following</p>
+
+          <!-- Rating Section -->
+          <div style="margin-top:6px;">
+            <strong>Rating: </strong><span>${ratingStars}</span> (${rating}/5)
+          </div>
+
+          <p id="follower-count-${s.id}" style="font-size: 0.9em; color: #ff4081;" onclick="showFollowers('${s.id}')">
+            ${followerCount} people following
+          </p>
+
           ${actionButtonHTML}
         `;
 
         container.appendChild(card);
-        updateAverageRating(s.id);
+        updateAverageRating(s.id); // Ensure rating is updated
       });
 
       renderTrendingSectionFromSwapsOnly();
@@ -4544,6 +4801,8 @@ async function loadSwaps() {
     showCustomAlert("Error loading swaps: " + err.message, "error");
   }
 }
+
+
 
 function toggleActionButtons(swapId) {
   const actionButtons = document.getElementById(`action-buttons-${swapId}`);
@@ -6307,13 +6566,13 @@ async function loadSoulmates() {
  const contactHTML = `
   <div style="margin:4px 0;">
     <!-- Phone Number Section -->
-    <div style="border: 1px solid #4caf50; background-color: #4caf50; padding: 6px 12px; border-radius: 6px; display: flex; align-items: center; margin-bottom: 8px;">
+    <div style="border: 1px solid #4caf50; background-color: #4caf50; padding: 4px 8px; border-radius: 6px; display: flex; align-items: center; margin-bottom: 6px; max-width: 150px;">
       <span style="font-size: 16px; color:white;">${d.phone}</span>
-      <i class="fas fa-phone-alt" style="margin-left: 8px; color:white;"></i>
+      <i class="fas fa-phone-alt" style="margin-left: 4px; color:white;"></i>
     </div>
     
     <!-- WhatsApp Section -->
-    <div style="border: 1px solid #25D366; background-color: #25D366; padding: 6px 12px; border-radius: 6px; display: flex; align-items: center;">
+    <div style="border: 1px solid #25D366; background-color: #25D366; padding: 4px 8px; border-radius: 6px; display: flex; align-items: center; max-width: 150px;">
       <span style="font-size: 16px; color:white;">WhatsApp</span>
       <i class="fab fa-whatsapp" style="margin-left: 8px; color:white;"></i>
     </div>
@@ -6321,21 +6580,7 @@ async function loadSoulmates() {
 `;
 
 
-    const blurredContactHTML = `
-      <div style="margin:4px 0;">
-        <div style="border: 1px solid #ccc; padding: 8px; border-radius: 8px; display: flex; align-items: center; margin-bottom: 8px;">
-          <span style="filter: blur(4px); font-size: 16px;">0700000000</span>
-          <i class="fas fa-phone-alt" style="margin-left: 8px; filter: blur(4px);"></i>
-        </div>
-        <div style="border: 1px solid #ccc; padding: 8px; border-radius: 8px; display: flex; align-items: center;">
-          <span style="filter: blur(4px); font-size: 16px;">WhatsApp</span>
-          <i class="fab fa-whatsapp" style="margin-left: 8px; filter: blur(4px);"></i>
-        </div>
-        <div style="margin-top:6px;color:crimson;font-size:13px;">🔒 Pay Ksh 200 to Unlock</div>
-        <button onclick="handleSoulmateAction('${id}', 'unlock')" style="margin-top:5px;background:crimson;color:white;border:none;padding:4px 10px;border-radius:4px;">
-          💳 Pay
-        </button>
-      </div>`;
+
 
     const profileContent = d.isClosed ? `
       <p style="color:#999;">Profile Locked</p>
@@ -7198,18 +7443,18 @@ if (images.length > 0) {
 
 const contactHTML = (d.isActive || isPoster || hasServiceAccess || isAdminUser)
   ? `
-    <div style="display: flex; flex-direction: row; gap: 10px; padding: 8px 10px; background-color: #f1f1f1; border-radius: 8px; border: 1px solid #ccc; align-items: center; width: auto; height: 45px;">
+    <div style="display: flex; flex-direction: row; gap: 5px; padding: 8px 10px; background-color: #f1f1f1; border-radius: 8px; border: 1px solid #ccc; align-items: center; width: auto; height: 45px;">
       <p style="display: flex; align-items: center; color: #2e7d32; font-size: 14px; font-weight: bold; margin-right: 10px;">
-        <span style="margin-right: 8px;">${phoneIcon}</span>
-        <strong>Phone:</strong>
+        
+  
         <div style="border: 1px solid #4caf50; background-color: #4caf50; padding: 4px 10px; border-radius: 6px; display: flex; align-items: center; height: 30px;">
           <a href="tel:${d.phone}" style="color:white; font-size: 14px; text-decoration: none; font-weight: bold;"> Call</a>
           <i class="fas fa-phone-alt" style="margin-left: 6px; color:white;"></i>
         </div>
       </p>
       <p style="display: flex; align-items: center; color: #25D366; font-size: 14px; font-weight: bold;">
-        <span style="margin-right: 8px;">${whatsappIcon}</span>
-        <strong>WhatsApp:</strong>
+ 
+ 
         <div style="border: 1px solid #25D366; background-color: #25D366; padding: 4px 10px; border-radius: 6px; display: flex; align-items: center; height: 30px;">
           <a href="https://wa.me/254${d.phone.replace(/^0/, '')}" target="_blank" style="color:white; font-size: 14px; text-decoration: none; font-weight: bold;">Chat</a>
           <i class="fab fa-whatsapp" style="margin-left: 6px; color:white;"></i>
@@ -7226,12 +7471,13 @@ let actionButtonsHTML = `
     </button>
     <div id="action-buttons-${id}" style="display:none; margin-top: 8px;">
 
-      <!-- Boost Service Button (Visible to Poster or Admin) -->
-      ${isPoster || isAdminUser ? `
-        <button onclick="${isAdminUser ? `boostServiceDirectly('${id}')` : `showPaymentModalFor('serviceBoost', 250, '${id}', '${d.name}')`}"
-          style="background:orange; color:white; border:none; padding:6px 12px; border-radius:25px; font-size:14px; cursor:pointer; margin-top:8px;">
-          🔥 Boost This Service
-        </button>` : ''}
+<!-- Boost Service Button (Visible to Poster or Admin) -->
+${isPoster || isAdminUser ? `
+  <button onclick="${isAdminUser ? `boostServiceDirectly('${id}')` : `showPaymentModalFor('boost', 250, '${id}', '${d.name}')`}"
+    style="background:orange; color:white; border:none; padding:6px 12px; border-radius:25px; font-size:14px; cursor:pointer; margin-top:8px;">
+    🔥 Boost This Service
+  </button>` : ''}
+
 
       <!-- Get Verified Badge Button (Visible to Poster if not verified) -->
       ${!d.verified && isPoster && !isAdminUser ? `
@@ -9951,7 +10197,6 @@ function filterMarketItems() {
   // Using requestAnimationFrame for smooth DOM updates
   requestAnimationFrame(filterItems);
 }
-
 function showPaymentModalFor(type, amount, itemId, itemName) {
   // ✅ Decide modal title dynamically
   let titleText = "Pay to Unlock ";
@@ -9962,8 +10207,8 @@ function showPaymentModalFor(type, amount, itemId, itemName) {
   else if (type === "unlock") {
     titleText = "Pay to Unlock Contacts";  // For unlock contacts, change title
   }
-  else if (type === "verify" || type === "serviceVerification" || type === "marketVerification" || type === "soulmateVerification") {
-    titleText = "Pay for Verification";  // For verification, change title
+  else if (type === "swapVerification" || type === "serviceVerification" || type === "marketVerification" || type === "soulmateVerification") {
+    titleText = "Pay for Verification";  // For verification, change title to "Pay for Verification"
   }
 
   const modalHTML = `
@@ -9988,6 +10233,7 @@ function showPaymentModalFor(type, amount, itemId, itemName) {
   `;
   document.body.insertAdjacentHTML("beforeend", modalHTML);
 }
+
 
 
 
@@ -11435,7 +11681,6 @@ function deleteMarketItem(id) {
       });
   });
 }
-
 async function loadTrendingItems() {
   const trendingContainer = document.getElementById("trendingContainer");
 
@@ -11447,19 +11692,17 @@ async function loadTrendingItems() {
   }
 
   // Show loading spinner at the center of the screen before fetching content
-  document.getElementById("loadingSpinner").style.display = "flex"; // Show the spinner
-
-  // Show loading spinner before fetching content
+  const loadingSpinner = document.getElementById("loadingSpinner");
+  loadingSpinner.style.display = "flex"; // Show the spinner
   trendingContainer.innerHTML = `
-    <div style="width: 100%; text-align: center; padding: 30px;">
-      <i class="fas fa-spinner fa-spin" style="font-size: 36px; color: #ff5722;"></i>
-      <p style="color:#666; font-weight: bold; margin-top: 10px;">Fetching trending content...</p>
+    <div class="loading-message">
+      <i class="fas fa-spinner fa-spin loading-icon"></i>
+      <p>Fetching trending content...</p>
     </div>
   `;
 
   // Create an array of async loaders for each section
   const loaders = [];
-
   if (typeof loadSwaps === "function") loaders.push(loadSwaps());
   if (typeof loadServices === "function") loaders.push(loadServices());
   if (typeof loadSoulmates === "function") loaders.push(loadSoulmates());
@@ -11467,7 +11710,7 @@ async function loadTrendingItems() {
   if (typeof loadMarketItems === "function") loaders.push(loadMarketItems());
 
   // Wait for all sections to load
-  await Promise.allSettled(loaders);
+  await Promise.all(loaders);
 
   // After loading is complete, continue with the trending section logic
   const allSections = [
@@ -11479,14 +11722,14 @@ async function loadTrendingItems() {
     { id: "resourcesTable", tag: "tr", hasBoostedText: true, label: "Resources" }
   ];
 
-  let foundItems = [];
+  const foundItems = [];
 
   // Loop through each section to find trending items
   allSections.forEach(({ id, className, tag, hasBoostedText, label }) => {
     const container = document.getElementById(id);
     if (!container) return;
 
-    let items = className
+    const items = className
       ? Array.from(container.getElementsByClassName(className))
       : tag
       ? Array.from(container.getElementsByTagName(tag))
@@ -11500,12 +11743,12 @@ async function loadTrendingItems() {
         (hasBoostedText && text.includes("trending"))
       ) {
         const wrapper = document.createElement("div");
-        wrapper.className = "trending-highlight"; // Add animation class
+        wrapper.classList.add("trending-highlight"); // Add animation class
 
         // Add trending label
         const labelTag = document.createElement("div");
-        labelTag.innerHTML = `<span style="font-size:13px; background:#ff5722; color:white; padding:3px 8px; border-radius:4px; font-weight:bold;">🔥 Trending from ${label}</span>`;
-        labelTag.style.marginBottom = "8px";
+        labelTag.className = "trending-label";  // Styled via CSS
+        labelTag.innerHTML = `🔥 Trending from ${label}`;
 
         wrapper.appendChild(labelTag);
         wrapper.appendChild(item.cloneNode(true));
@@ -11514,20 +11757,24 @@ async function loadTrendingItems() {
     });
   });
 
-  // Sort by most recently added (newer elements are later in DOM)
+  // Sort items by the most recently added (newer elements are later in DOM)
   foundItems.reverse(); // Simple reversal to show newest first
 
-  // If no items are found, display message
+  // If no items are found, display a message
   if (foundItems.length === 0) {
-    trendingContainer.innerHTML = `<p style="text-align:center; color:#999;">No trending items found at the moment.</p>`;
+    trendingContainer.innerHTML = `<p class="no-trending-items">No trending items found at the moment.</p>`;
+    loadingSpinner.style.display = "none";  // Hide the spinner
     return;
   }
 
-  // Clear the loading spinner and insert the found trending items
-  document.getElementById("loadingSpinner").style.display = "none"; // Hide the spinner
-  trendingContainer.innerHTML = "";
+  // Clear loading spinner and insert found trending items
+  trendingContainer.innerHTML = "";  // Clear the container
   foundItems.forEach(card => trendingContainer.appendChild(card));
+
+  // Hide the loading spinner
+  loadingSpinner.style.display = "none";
 }
+
 
 function closeReviewModal() {
   document.getElementById("reviewModal").style.display = "none";
