@@ -3020,73 +3020,70 @@ button:hover {
 <h3>
   <i class="fas fa-book-open" style="color:#3f51b5; margin-right: 8px;"></i>
   Available Resources
-</h3>
-
-
-  <!-- Filters Section -->
-  <div id="filters">
- <label for="resourceCategory">Category:</label>
-<select id="resourceCategory" required>
-  <option value="">Select Category</option>
-  <option value="">Select Category</option>
-  <option value="math">Math</option>
-  <option value="science">Science</option>
-  <option value="literature">Literature</option>
-  <option value="history">History</option>
-  <option value="geography">Geography</option>
-  <option value="biology">Biology</option>
-  <option value="chemistry">Chemistry</option>
-  <option value="physics">Physics</option>
-  <option value="english">English</option>
-  <option value="french">French</option>
-  <option value="art">Art</option>
-  <option value="music">Music</option>
-  <option value="computerScience">Computer Science</option>
-  <option value="physicalEducation">Physical Education</option>
-  <option value="religiousStudies">Religious Studies</option>
-  <option value="economics">Economics</option>
-  <option value="businessStudies">Business Studies</option>
-  <option value="agriculture">Agriculture</option>
+<!-- Filters Section with Action Box -->
+<div id="filters" style="background-image: url('https://i.imgur.com/h5MhbFN.jpeg'); background-size: cover; padding: 20px; border-radius: 8px; color: white;">
+  <h3>Filter Resources</h3>
   
-  <!-- Newly added subjects and activities -->
-  <option value="literacyActivities">Literacy Activities</option>
-  <option value="kiswahiliLanguageActivities">Kiswahili Language Activities</option>
-  <option value="englishLanguageActivities">English Language Activities</option>
-  <option value="mathematicalActivities">Mathematical Activities</option>
-  <option value="environmentalActivities">Environmental Activities</option>
-  <option value="hygieneAndNutritionActivities">Hygiene and Nutrition Activities</option>
-  <option value="religiousEducationActivities">Religious Education Activities</option>
-  <option value="movementAndCreativeActivities">Movement and Creative Activities</option>
+  <div class="action-box">
+    <label for="resourceCategory">Category:</label>
+    <select id="resourceCategory" required>
+      <option value="">Select Category</option>
+      <option value="">Select Category</option>
+      <option value="math">Math</option>
+      <option value="science">Science</option>
+      <option value="literature">Literature</option>
+      <option value="history">History</option>
+      <option value="geography">Geography</option>
+      <option value="biology">Biology</option>
+      <option value="chemistry">Chemistry</option>
+      <option value="physics">Physics</option>
+      <option value="english">English</option>
+      <option value="french">French</option>
+      <option value="art">Art</option>
+      <option value="music">Music</option>
+      <option value="computerScience">Computer Science</option>
+      <option value="physicalEducation">Physical Education</option>
+      <option value="religiousStudies">Religious Studies</option>
+      <option value="economics">Economics</option>
+      <option value="businessStudies">Business Studies</option>
+      <option value="agriculture">Agriculture</option>
 
-  <!-- Additional subjects for higher grades -->
-  <option value="brailleLiteracy">Literacy Activities or Braille Literacy Activities</option>
-  <option value="socialStudies">Social Studies</option>
-  <option value="integratedScience">Integrated Science</option>
-  <option value="preTechnicalStudies">Pre Technical Studies</option>
-</select>
+      <!-- Newly added subjects and activities -->
+      <option value="literacyActivities">Literacy Activities</option>
+      <option value="kiswahiliLanguageActivities">Kiswahili Language Activities</option>
+      <option value="englishLanguageActivities">English Language Activities</option>
+      <option value="mathematicalActivities">Mathematical Activities</option>
+      <option value="environmentalActivities">Environmental Activities</option>
+      <option value="hygieneAndNutritionActivities">Hygiene and Nutrition Activities</option>
+      <option value="religiousEducationActivities">Religious Education Activities</option>
+      <option value="movementAndCreativeActivities">Movement and Creative Activities</option>
 
-
+      <!-- Additional subjects for higher grades -->
+      <option value="brailleLiteracy">Literacy Activities or Braille Literacy Activities</option>
+      <option value="socialStudies">Social Studies</option>
+      <option value="integratedScience">Integrated Science</option>
+      <option value="preTechnicalStudies">Pre Technical Studies</option>
+    </select>
 
     <label for="searchResources">Search Resources:</label>
     <input type="text" id="searchResources" placeholder="Search by title or keyword">
 
-   <label for="resourceGrade">Grade:</label>
-<select id="resourceGrade" required>
-  <option value="">Select Grade</option>
-  <option value="grade1">Grade 1</option>
-  <option value="grade2">Grade 2</option>
-  <option value="grade3">Grade 3</option>
-  <option value="grade4">Grade 4</option>
-  <option value="grade5">Grade 5</option>
-  <option value="grade6">Grade 6</option>
-  <option value="grade7">Grade 7</option>
-  <option value="grade8">Grade 8</option>
-  <option value="grade9">Grade 9</option>
-  <option value="grade10">Grade 10</option>
-  <option value="grade11">Grade 11</option>
-  <option value="grade12">Grade 12</option>
-</select>
-
+    <label for="resourceGrade">Grade:</label>
+    <select id="resourceGrade" required>
+      <option value="">Select Grade</option>
+      <option value="grade1">Grade 1</option>
+      <option value="grade2">Grade 2</option>
+      <option value="grade3">Grade 3</option>
+      <option value="grade4">Grade 4</option>
+      <option value="grade5">Grade 5</option>
+      <option value="grade6">Grade 6</option>
+      <option value="grade7">Grade 7</option>
+      <option value="grade8">Grade 8</option>
+      <option value="grade9">Grade 9</option>
+      <option value="grade10">Grade 10</option>
+      <option value="grade11">Grade 11</option>
+      <option value="grade12">Grade 12</option>
+    </select>
 
     <label for="resourceLevel">Level:</label>
     <select id="resourceLevel">
@@ -3096,7 +3093,7 @@ button:hover {
       <option value="seniorSecondary">Senior Secondary</option>
     </select>
   </div>
-
+</div>
   <!-- Resources Table -->
   <table id="resourcesTable">
     <thead>
@@ -3201,7 +3198,7 @@ Register To Connect With  Available Soulmates
     margin-bottom: 30px;
     font-family: 'Arial', sans-serif;
     ">
-  <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: center; background-image: url('https://i.imgur.com/IE2mcgt.jpeg'); background-size: cover; background-position: center; padding: 20px; border-radius: 8px;">
+  <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: center; background-image: url('https://i.imgur.com/XxT7DeA.jpeg'); background-size: cover; background-position: center; padding: 20px; border-radius: 8px;">
     
     <!-- Age Filter -->
     <label for="ageFilter" style="font-weight: 600; color: #fff; min-width: 150px;">
@@ -4655,24 +4652,27 @@ async function loadSwaps() {
         let verifyBtnHTML = "";
         if (!s.verified) {
           if (isPoster && !isAdminUser) {
-            verifyBtnHTML = `
-    <button onclick="showPaymentModalFor('swapVerification', 250, '${s.id}', '${s.teacherName || ''}')"
-        style="margin-left:6px;background:#4CAF50;color:white;padding:4px 8px;border:none;border-radius:6px;font-size:12px;cursor:pointer;">
-    ✅ Get Verified – Ksh 250
-</button>
-`;
+            verifyBtnHTML = ` 
+              <button onclick="showPaymentModalFor('swapVerification', 250, '${s.id}', '${s.teacherName || ''}')"
+                  style="margin-left:6px;background:#4CAF50;color:white;padding:4px 8px;border:none;border-radius:6px;font-size:12px;cursor:pointer;">
+              ✅ Get Verified – Ksh 250
+              </button>
+            `;
           } else if (isAdminUser) {
             verifyBtnHTML = `
               <button onclick="adminVerifyItem('swap', '${s.id}')"
                 style="margin-left:6px;background:#2196F3;color:white;padding:4px 8px;border:none;border-radius:6px;font-size:12px;cursor:pointer;">
                 🛡️ Verify Now (Admin)
-              </button>`;
+              </button>
+            `;
           }
         }
 
         const showVIPBadge = s.isVIP ? `<span class="vip-badge">🔥 VIP</span>` : "";
+
+        // Boosted Badge with Fire Icon
         const showBoostedBadge = s.isBoosted && s.boostExpiry
-          ? `<span class="boosted-badge">🚀 Boosted (${Math.ceil((s.boostExpiry - now) / (1000 * 60 * 60 * 24))} day${Math.ceil((s.boostExpiry - now) / (1000 * 60 * 60 * 24)) !== 1 ? 's' : ''} left)</span>`
+          ? `<span class="boosted-badge" style="color: red; font-weight: bold; font-size: 14px; background-color: yellow; padding: 4px; border-radius: 6px;">🔥 Boosted (${Math.ceil((s.boostExpiry - now) / (1000 * 60 * 60 * 24))} day${Math.ceil((s.boostExpiry - now) / (1000 * 60 * 60 * 24)) !== 1 ? 's' : ''} left)</span>`
           : "";
 
         const contactHTML = `
@@ -4686,7 +4686,7 @@ async function loadSwaps() {
             <span style="color:crimson; font-size:13px; font-weight:bold;">
               🔒 Contacts locked. Pay Ksh 250 to unlock
             </span><br>
-            <button onclick="showPaymentModalFor('swap', 250, '${s.id}', 'Unlock VIP Swaps')"
+            <button onclick="showPaymentModalFor('swap', 250, '${s.id}', 'Unlock Contacts ')"
                     style="margin-top:4px;background:crimson;color:white;border:none;padding:5px 10px;border-radius:4px;">
               💳 Pay Now
             </button>
@@ -4701,7 +4701,14 @@ async function loadSwaps() {
 
         // Rating Stars
         const rating = s.rating || 0; // Default rating if not available
-        const ratingStars = '⭐'.repeat(rating) + '☆'.repeat(5 - rating);  // Display stars
+        const ratingStars = [...Array(5)].map((_, index) => {
+          const isFilled = index < rating; // Check if the star should be filled
+          const starColor = isFilled ? '#FFD700' : '#ccc'; // Gold for filled, gray for empty
+          return `<i class="fas fa-star" style="color: ${starColor}; cursor: pointer;" data-id="${s.id}" data-rating="${index + 1}"></i>`;
+        }).join('');  // Display stars
+
+        // Rating Text with Red Color
+        const ratingText = `<span style="color: red; font-weight: bold;">(${rating}/5)</span>`;
 
         const card = document.createElement("div");
         card.className = "swap-card";
@@ -4780,7 +4787,7 @@ async function loadSwaps() {
 
           <!-- Rating Section -->
           <div style="margin-top:6px;">
-            <strong>Rating: </strong><span>${ratingStars}</span> (${rating}/5)
+            <strong>Rating: </strong><span id="rating-stars-${s.id}" style="font-size: 16px;">${ratingStars}</span> ${ratingText}
           </div>
 
           <p id="follower-count-${s.id}" style="font-size: 0.9em; color: #ff4081;" onclick="showFollowers('${s.id}')">
@@ -4791,7 +4798,24 @@ async function loadSwaps() {
         `;
 
         container.appendChild(card);
-        updateAverageRating(s.id); // Ensure rating is updated
+
+        // Add event listeners to the stars
+        const stars = document.querySelectorAll(`#rating-stars-${s.id} .fa-star`);
+        stars.forEach(star => {
+          star.addEventListener("click", async function() {
+            const newRating = parseInt(star.getAttribute("data-rating"));
+            // Update rating in Firestore
+            try {
+              await db.collection("teacherSwaps").doc(s.id).update({
+                rating: newRating
+              });
+              // Update the displayed rating
+              loadSwaps();
+            } catch (err) {
+              console.error("Error updating rating:", err);
+            }
+          });
+        });
       });
 
       renderTrendingSectionFromSwapsOnly();
@@ -5764,6 +5788,55 @@ updateInterestCount(job.id);
 
   });
 }
+// ✅ Update Average Rating
+async function updateAverageRating(jobId) {
+  try {
+    console.log("Fetching ratings for jobId:", jobId);
+
+    // Fetch ratings for the specific jobId from Firestore
+    const ratingRef = db.collection("ratings").where("jobId", "==", jobId);
+    const snapshot = await ratingRef.get();
+
+    // If no ratings found, handle it gracefully
+    if (snapshot.empty) {
+      console.log("No ratings found for jobId:", jobId);
+      const avgRatingElement = document.getElementById(`avgRating-${jobId}`);
+      avgRatingElement.textContent = "⭐ No ratings yet (0 Reviews)";
+      return;
+    }
+
+    let totalRating = 0;
+    let totalReviews = snapshot.size;
+
+    // Iterate through snapshot and calculate total rating
+    snapshot.forEach(doc => {
+      totalRating += doc.data().rating;
+    });
+
+    // Calculate average rating
+    const avgRating = totalReviews ? (totalRating / totalReviews).toFixed(1) : 0;
+    const avgRatingElement = document.getElementById(`avgRating-${jobId}`);
+    avgRatingElement.textContent = `⭐ ${avgRating} (${totalReviews} Reviews)`;
+
+    // Highlight stars based on average rating
+    for (let i = 1; i <= 5; i++) {
+      const starElement = document.getElementById(`star-${jobId}-${i}`);
+      if (starElement) { // Ensure the star element exists before updating
+        if (i <= avgRating) {
+          starElement.style.color = "#ff9800"; // Highlight selected stars
+        } else {
+          starElement.style.color = "#ccc"; // Reset unselected stars
+        }
+      } else {
+        console.log(`Star element with id "star-${jobId}-${i}" not found.`);
+      }
+    }
+
+  } catch (error) {
+    console.error("Error updating average rating:", error);
+    showCustomAlert("Something went wrong while fetching the average rating. Please try again.", "error");
+  }
+}
 
 function toggleMoreActions(jobId) {
   const actionContainer = document.getElementById(`actionButtons-${jobId}`);
@@ -6141,23 +6214,7 @@ async function unlockBomJobs() {
     }
   }, 3000);
 }
-// ✅ Update Average Rating
-async function updateAverageRating(jobId) {
-  const ratingRef = db.collection("ratings").where("jobId", "==", jobId);
-  const snapshot = await ratingRef.get();
 
-  let totalRating = 0;
-  let totalReviews = snapshot.size;
-
-  snapshot.forEach(doc => {
-    totalRating += doc.data().rating;
-  });
-
-  const avgRating = totalReviews ? (totalRating / totalReviews).toFixed(1) : 0;
-  const avgRatingElement = document.getElementById(`avgRating-${jobId}`);
-
-  avgRatingElement.textContent = `⭐ ${avgRating} (${totalReviews} Reviews)`;
-}
 
 
 
@@ -8341,7 +8398,7 @@ function filterServices() {
     showCustomAlert("😞 No services match your filters.", "info");
   }
 }
-// ✅ Global Submit Handler for Market Form
+// ✅ Global Submit Handler for Market Form with monetization check
 async function submitMarketHandler(e) {
   e.preventDefault();
 
@@ -8350,6 +8407,16 @@ async function submitMarketHandler(e) {
     return alert("You must be logged in.");
   }
 
+  // ✅ Check if user already posted one or more market items
+  const marketSnap = await marketRef.where("postedBy", "==", currentUser.uid).get();
+  const totalPosted = marketSnap.size;
+
+  if (totalPosted >= 1 && !isAdmin) {
+    showPaymentModalFor("market", 300, currentUser.uid, "Post Extra Market Item");
+    return;
+  }
+
+  // ✅ Collect form values
   const itemName = document.getElementById("itemName").value.trim();
   const itemCategory = document.getElementById("itemCategory").value;
   const itemDescription = document.getElementById("itemDescription").value.trim();
@@ -8359,7 +8426,6 @@ async function submitMarketHandler(e) {
   const itemPhone = document.getElementById("itemPhone").value.trim();
   const itemPhotoFile = document.getElementById("itemPhoto").files[0];
 
-  // ✅ Optional dropdown for item condition
   const itemConditionInput = document.getElementById("itemCondition");
   const itemCondition = itemConditionInput ? itemConditionInput.value : "New";
 
@@ -8379,44 +8445,30 @@ async function submitMarketHandler(e) {
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
   };
 
-  // Show spinner while uploading
-  document.getElementById("loadingSpinner").style.display = "flex";
-
   try {
-    // ✅ Upload item photo if available
+    // ✅ Upload photo if selected
     if (itemPhotoFile) {
       const photoPath = `marketPhotos/${Date.now()}_${itemPhotoFile.name}`;
       const photoSnap = await storage.ref(photoPath).put(itemPhotoFile);
       itemData.photoURL = await photoSnap.ref.getDownloadURL();
     }
 
-    // ✅ Save item to Firestore
+    // ✅ Save to Firestore
     await marketRef.add(itemData);
     showCustomAlert("✅ Item posted!", "success");
     document.getElementById("marketForm").reset();
     loadMarketItems();
 
-    // ✅ Notify Admin with poster phone
+    // ✅ Notify Admin
     await db.collection("adminNotifications").add({
       type: "Marketplace Post",
-      message: `New item posted: ${itemName} (${itemCategory})\nPrice: ${itemPrice}\n📞 Phone: ${itemPhone}\n📍 County: ${itemCounty}`,
+      message: `New item posted: ${itemName} (${itemCategory}), Price: ${itemPrice}, Phone: ${itemPhone}, County: ${itemCounty}`,
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
       read: false
     });
 
-    // ✅ Alert All Users with phone number
-    await db.collection("alerts").add({
-      title: "🆕 New Market Item",
-      message: `${posterName} just posted: ${itemName} (${itemCategory}) @ ${itemPrice}\n📞 Contact: ${itemPhone}`,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-      targetUserId: null  // visible to all
-    });
-
   } catch (err) {
     showCustomAlert("❌ Error: " + err.message, "error");
-  } finally {
-    // Hide the spinner once done
-    document.getElementById("loadingSpinner").style.display = "none";
   }
 }
 
