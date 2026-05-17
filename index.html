@@ -1005,7 +1005,11 @@ button:hover {
         <button onclick="show('fees')">💰 Fees</button>
         <button onclick="show('payroll')">💳 Payroll</button>
         <button onclick="show('supportStaff')">🧹 Support Staff</button>
-
+<button onclick="show('transport')">🚌 Transport</button>
+<button onclick="show('hostel')">🏨 Hostel</button>
+<button onclick="show('ict')">💻 ICT</button>
+<button onclick="show('inventory')">📦 Inventory</button>
+<button onclick="show('library')">📚 Library</button>
       </div>
 
   
@@ -3003,8 +3007,86 @@ background:rgba(0,0,0,0.5);justify-content:center;align-items:center;">
   </div>
 
 </div>
+<div id="transport" style="display:none; padding:20px;">
+  <h2>🚌 Transport Management</h2>
 
-<div id="app"></div>
+  <input id="busName" placeholder="Bus Name / Plate Number">
+  <input id="driverName" placeholder="Driver Name">
+  <input id="route" placeholder="Route">
+  <input id="fuelLog" placeholder="Fuel Log (Litres)">
+
+  <button onclick="addTransport()">➕ Add Transport</button>
+
+  <div id="transportList"></div>
+</div>
+
+<div id="hostel" style="display:none; padding:20px;">
+  <h2>🏨 Hostel Management</h2>
+
+  <input id="roomNumber" placeholder="Room Number">
+  <input id="capacity" placeholder="Capacity">
+
+  <select id="hostelStudent">
+    <option value="">Assign Student</option>
+  </select>
+
+  <button onclick="addHostel()">➕ Add Room</button>
+
+  <div id="hostelList"></div>
+</div>
+
+<div id="inventory" style="display:none; padding:20px;">
+  <h2>📦 Inventory Management</h2>
+
+  <input id="itemName" placeholder="Item Name">
+  <input id="itemQty" type="number" placeholder="Quantity">
+  <input id="itemLocation" placeholder="Store Location">
+
+  <button onclick="addItem()">➕ Add Item</button>
+
+  <div id="inventoryList"></div>
+</div>
+<div id="ict" style="display:none; padding:20px;">
+  <h2>💻 ICT Management</h2>
+
+  <input id="deviceName" placeholder="Device Name">
+  <input id="deviceType" placeholder="Type (Laptop, PC, Printer)">
+  <input id="serialNo" placeholder="Serial Number">
+
+  <select id="deviceStatus">
+    <option value="Working">Working</option>
+    <option value="Faulty">Faulty</option>
+    <option value="Under Repair">Under Repair</option>
+  </select>
+
+  <button onclick="addDevice()">➕ Add Device</button>
+
+  <div id="ictList"></div>
+</div>
+
+<div id="library" style="display:none; padding:20px;">
+
+  <h2>📚 Library Management</h2>
+
+  <input id="bookTitle" placeholder="Book Title">
+
+  <input id="bookAuthor" placeholder="Author">
+
+  <input id="bookCategory" placeholder="Category">
+
+  <input id="bookISBN" placeholder="ISBN Number">
+
+  <input id="bookQuantity" type="number" placeholder="Quantity">
+
+  <button onclick="addBook()">
+    ➕ Add Book
+  </button>
+
+  <br><br>
+
+  <div id="libraryList"></div>
+
+</div>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
@@ -17699,6 +17781,1637 @@ window.closeSchoolProfileForm = function () {
 window.addEventListener("load", function () {
   loadSchoolProfile();
 });
+/* =========================================================
+   🚀 TRANSPORT + HOSTEL + ICT + INVENTORY MODULES
+   ✅ Organized Tables
+   ✅ SweetAlerts
+   ✅ Existing Loader Support
+   ✅ Delete Buttons
+   ✅ Firebase Realtime Database
+========================================================= */
+
+/* =========================================================
+   OPTIONAL LOADER HELPERS
+========================================================= */
+
+function openSweetLoader(title = "Please wait...") {
+
+  Swal.fire({
+    title: title,
+    html: `
+      <div style="padding:15px;">
+        <div class="loader"></div>
+        <p style="margin-top:15px;">Processing...</p>
+      </div>
+    `,
+    allowOutsideClick: false,
+    showConfirmButton: false
+  });
+
+  Swal.showLoading();
+}
+
+function closeSweetLoader() {
+  Swal.close();
+}
+
+/* =========================================================
+   COMMON TABLE STYLE
+========================================================= */
+
+const tableStyle = `
+  width:100%;
+  border-collapse:collapse;
+  margin-top:15px;
+`;
+
+const thStyle = `
+  background:#0f172a;
+  color:white;
+  padding:12px;
+  text-align:left;
+  border:1px solid #1e293b;
+`;
+
+const tdStyle = `
+  padding:10px;
+  border:1px solid #cbd5e1;
+  background:white;
+  color:#111827;
+`;
+
+const deleteBtnStyle = `
+  background:red;
+  color:white;
+  border:none;
+  padding:7px 12px;
+  border-radius:6px;
+  cursor:pointer;
+`;
+
+/* =========================================================
+   TRANSPORT MANAGEMENT
+========================================================= */
+
+window.addTransport = async function () {
+
+  try {
+
+    const schoolId = localStorage.getItem("schoolId");
+
+    if (!schoolId) {
+      Swal.fire("Error", "No school session found", "error");
+      return;
+    }
+
+    if (
+      !busName.value ||
+      !driverName.value ||
+      !route.value
+    ) {
+      Swal.fire("Missing Fields", "Fill all transport fields", "warning");
+      return;
+    }
+
+    openSweetLoader("Saving Transport...");
+
+    const data = {
+      busName: busName.value,
+      driverName: driverName.value,
+      route: route.value,
+      fuelLog: fuelLog.value || 0,
+      createdAt: Date.now()
+    };
+
+    await push(ref(db, `transport/${schoolId}`), data);
+
+    closeSweetLoader();
+
+    Swal.fire("Success", "Transport added successfully", "success");
+
+    busName.value = "";
+    driverName.value = "";
+    route.value = "";
+    fuelLog.value = "";
+
+  } catch (error) {
+
+    console.error(error);
+
+    closeSweetLoader();
+
+    Swal.fire(
+      "Error",
+      error.message || "Failed to save transport",
+      "error"
+    );
+  }
+};
+
+window.loadTransport = function () {
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  onValue(ref(db, `transport/${schoolId}`), (snap) => {
+
+    let html = "";
+
+    if (!snap.exists()) {
+
+      html = `
+        <div style="padding:20px;color:gray;">
+          No transport records found
+        </div>
+      `;
+
+      transportList.innerHTML = html;
+      return;
+    }
+
+    html += `
+      <div style="overflow-x:auto;">
+      <table style="${tableStyle}">
+        <tr>
+          <th style="${thStyle}">#</th>
+          <th style="${thStyle}">Bus</th>
+          <th style="${thStyle}">Driver</th>
+          <th style="${thStyle}">Route</th>
+          <th style="${thStyle}">Fuel</th>
+          <th style="${thStyle}">Action</th>
+        </tr>
+    `;
+
+    let i = 1;
+
+    snap.forEach(child => {
+
+      const d = child.val();
+      const key = child.key;
+
+      html += `
+        <tr>
+          <td style="${tdStyle}">${i++}</td>
+          <td style="${tdStyle}">${d.busName}</td>
+          <td style="${tdStyle}">${d.driverName}</td>
+          <td style="${tdStyle}">${d.route}</td>
+          <td style="${tdStyle}">${d.fuelLog} L</td>
+          <td style="${tdStyle}">
+            <button onclick="deleteTransport('${key}')"
+              style="${deleteBtnStyle}">
+              Delete
+            </button>
+          </td>
+        </tr>
+      `;
+    });
+
+    html += `</table></div>`;
+
+    transportList.innerHTML = html;
+  });
+};
+
+window.deleteTransport = async function (id) {
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  const confirmDelete = await Swal.fire({
+    title: "Delete Transport?",
+    text: "This action cannot be undone",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "red"
+  });
+
+  if (!confirmDelete.isConfirmed) return;
+
+  openSweetLoader("Deleting Transport...");
+
+  await remove(ref(db, `transport/${schoolId}/${id}`));
+
+  closeSweetLoader();
+
+  Swal.fire("Deleted", "Transport removed", "success");
+};
+
+/* =========================================================
+   HOSTEL MANAGEMENT
+========================================================= */
+
+window.addHostel = async function () {
+
+  try {
+
+    const schoolId = localStorage.getItem("schoolId");
+
+    if (!roomNumber.value || !capacity.value) {
+
+      Swal.fire(
+        "Missing Fields",
+        "Fill all hostel fields",
+        "warning"
+      );
+
+      return;
+    }
+
+    openSweetLoader("Saving Hostel Room...");
+
+    const data = {
+      roomNumber: roomNumber.value,
+      capacity: capacity.value,
+      student: hostelStudent.value || "Not Assigned",
+      createdAt: Date.now()
+    };
+
+    await push(ref(db, `hostel/${schoolId}`), data);
+
+    closeSweetLoader();
+
+    Swal.fire("Success", "Hostel room added", "success");
+
+    roomNumber.value = "";
+    capacity.value = "";
+
+  } catch (error) {
+
+    console.error(error);
+
+    closeSweetLoader();
+
+    Swal.fire("Error", error.message, "error");
+  }
+};
+
+window.loadHostel = function () {
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  onValue(ref(db, `hostel/${schoolId}`), (snap) => {
+
+    let html = "";
+
+    if (!snap.exists()) {
+
+      html = `
+        <div style="padding:20px;color:gray;">
+          No hostel rooms found
+        </div>
+      `;
+
+      hostelList.innerHTML = html;
+      return;
+    }
+
+    html += `
+      <div style="overflow-x:auto;">
+      <table style="${tableStyle}">
+        <tr>
+          <th style="${thStyle}">#</th>
+          <th style="${thStyle}">Room</th>
+          <th style="${thStyle}">Capacity</th>
+          <th style="${thStyle}">Student</th>
+          <th style="${thStyle}">Action</th>
+        </tr>
+    `;
+
+    let i = 1;
+
+    snap.forEach(child => {
+
+      const d = child.val();
+      const key = child.key;
+
+      html += `
+        <tr>
+          <td style="${tdStyle}">${i++}</td>
+          <td style="${tdStyle}">${d.roomNumber}</td>
+          <td style="${tdStyle}">${d.capacity}</td>
+          <td style="${tdStyle}">${d.student}</td>
+          <td style="${tdStyle}">
+            <button onclick="deleteHostel('${key}')"
+              style="${deleteBtnStyle}">
+              Delete
+            </button>
+          </td>
+        </tr>
+      `;
+    });
+
+    html += `</table></div>`;
+
+    hostelList.innerHTML = html;
+  });
+};
+
+window.deleteHostel = async function (id) {
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  const confirmDelete = await Swal.fire({
+    title: "Delete Hostel Room?",
+    icon: "warning",
+    showCancelButton: true
+  });
+
+  if (!confirmDelete.isConfirmed) return;
+
+  openSweetLoader("Deleting Room...");
+
+  await remove(ref(db, `hostel/${schoolId}/${id}`));
+
+  closeSweetLoader();
+
+  Swal.fire("Deleted", "Hostel room removed", "success");
+};
+
+/* =========================================================
+   ICT MANAGEMENT
+========================================================= */
+
+window.addDevice = async function () {
+
+  try {
+
+    const schoolId = localStorage.getItem("schoolId");
+
+    if (
+      !deviceName.value ||
+      !deviceType.value ||
+      !serialNo.value
+    ) {
+
+      Swal.fire(
+        "Missing Fields",
+        "Fill all ICT fields",
+        "warning"
+      );
+
+      return;
+    }
+
+    openSweetLoader("Adding Device...");
+
+    const data = {
+      deviceName: deviceName.value,
+      deviceType: deviceType.value,
+      serialNo: serialNo.value,
+      status: deviceStatus.value,
+      createdAt: Date.now()
+    };
+
+    await push(ref(db, `ict/${schoolId}`), data);
+
+    closeSweetLoader();
+
+    Swal.fire("Success", "Device added successfully", "success");
+
+    deviceName.value = "";
+    deviceType.value = "";
+    serialNo.value = "";
+
+  } catch (error) {
+
+    console.error(error);
+
+    closeSweetLoader();
+
+    Swal.fire("Error", error.message, "error");
+  }
+};
+
+window.loadICT = function () {
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  onValue(ref(db, `ict/${schoolId}`), (snap) => {
+
+    let html = "";
+
+    if (!snap.exists()) {
+
+      html = `
+        <div style="padding:20px;color:gray;">
+          No devices found
+        </div>
+      `;
+
+      ictList.innerHTML = html;
+      return;
+    }
+
+    html += `
+      <div style="overflow-x:auto;">
+      <table style="${tableStyle}">
+        <tr>
+          <th style="${thStyle}">#</th>
+          <th style="${thStyle}">Device</th>
+          <th style="${thStyle}">Type</th>
+          <th style="${thStyle}">Serial</th>
+          <th style="${thStyle}">Status</th>
+          <th style="${thStyle}">Action</th>
+        </tr>
+    `;
+
+    let i = 1;
+
+    snap.forEach(child => {
+
+      const d = child.val();
+      const key = child.key;
+
+      html += `
+        <tr>
+          <td style="${tdStyle}">${i++}</td>
+          <td style="${tdStyle}">${d.deviceName}</td>
+          <td style="${tdStyle}">${d.deviceType}</td>
+          <td style="${tdStyle}">${d.serialNo}</td>
+          <td style="${tdStyle}">${d.status}</td>
+          <td style="${tdStyle}">
+            <button onclick="deleteICT('${key}')"
+              style="${deleteBtnStyle}">
+              Delete
+            </button>
+          </td>
+        </tr>
+      `;
+    });
+
+    html += `</table></div>`;
+
+    ictList.innerHTML = html;
+  });
+};
+
+window.deleteICT = async function (id) {
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  const confirmDelete = await Swal.fire({
+    title: "Delete Device?",
+    icon: "warning",
+    showCancelButton: true
+  });
+
+  if (!confirmDelete.isConfirmed) return;
+
+  openSweetLoader("Deleting Device...");
+
+  await remove(ref(db, `ict/${schoolId}/${id}`));
+
+  closeSweetLoader();
+
+  Swal.fire("Deleted", "Device removed", "success");
+};
+
+/* =========================================================
+   INVENTORY MANAGEMENT
+========================================================= */
+
+window.loadInventory = function () {
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  onValue(ref(db, `inventory/${schoolId}`), (snap) => {
+
+    let html = "";
+
+    if (!snap.exists()) {
+
+      html = `
+        <div style="padding:20px;color:gray;">
+          No inventory found
+        </div>
+      `;
+
+      inventoryList.innerHTML = html;
+      return;
+    }
+
+    html += `
+      <div style="overflow-x:auto;">
+      <table style="${tableStyle}">
+        <tr>
+          <th style="${thStyle}">#</th>
+          <th style="${thStyle}">Item</th>
+          <th style="${thStyle}">Quantity</th>
+          <th style="${thStyle}">Location</th>
+          <th style="${thStyle}">Action</th>
+        </tr>
+    `;
+
+    let i = 1;
+
+    snap.forEach(child => {
+
+      const d = child.val();
+      const key = child.key;
+
+      html += `
+        <tr>
+          <td style="${tdStyle}">${i++}</td>
+          <td style="${tdStyle}">${d.itemName}</td>
+          <td style="${tdStyle}">${d.quantity}</td>
+          <td style="${tdStyle}">${d.location}</td>
+          <td style="${tdStyle}">
+            <button onclick="deleteInventory('${key}')"
+              style="${deleteBtnStyle}">
+              Delete
+            </button>
+          </td>
+        </tr>
+      `;
+    });
+
+    html += `</table></div>`;
+
+    inventoryList.innerHTML = html;
+  });
+};
+
+window.deleteInventory = async function (id) {
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  const confirmDelete = await Swal.fire({
+    title: "Delete Inventory Item?",
+    icon: "warning",
+    showCancelButton: true
+  });
+
+  if (!confirmDelete.isConfirmed) return;
+
+  openSweetLoader("Deleting Item...");
+
+  await remove(ref(db, `inventory/${schoolId}/${id}`));
+
+  closeSweetLoader();
+
+  Swal.fire("Deleted", "Inventory item removed", "success");
+};
+
+/* =========================================================
+   AUTO LOAD MODULES
+========================================================= */
+
+window.addEventListener("load", () => {
+
+  loadTransport();
+  loadHostel();
+  loadICT();
+  loadInventory();
+
+});
+
+/* =========================================================
+   AUTO LOAD MODULES
+========================================================= */
+
+window.addEventListener("load", () => {
+
+  loadTransport();
+  loadHostel();
+  loadICT();
+  loadInventory();
+
+});
+
+/* =========================================================
+   🚀 ICT + INVENTORY BORROWING SYSTEM
+   ✅ Borrow Items
+   ✅ Return Items
+   ✅ Staff Tracking
+   ✅ SweetAlerts
+   ✅ Status Badges
+   ✅ Firebase Realtime Database
+========================================================= */
+
+/* =========================================================
+   BORROW ICT DEVICE
+========================================================= */
+
+window.borrowICT = async function(id) {
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  const { value: formValues } = await Swal.fire({
+    title: "Borrow ICT Device",
+    html: `
+
+      <input id="swalBorrower"
+        class="swal2-input"
+        placeholder="Staff Name">
+
+      <select id="swalRole" class="swal2-input">
+        <option value="">Select Role</option>
+        <option>Teacher</option>
+        <option>Support Staff</option>
+        <option>Administrator</option>
+      </select>
+
+      <input type="date"
+        id="swalReturnDate"
+        class="swal2-input">
+
+    `,
+    focusConfirm: false,
+    showCancelButton: true,
+
+    preConfirm: () => {
+
+      return {
+        borrowedBy: document.getElementById("swalBorrower").value,
+        role: document.getElementById("swalRole").value,
+        returnDate: document.getElementById("swalReturnDate").value
+      };
+    }
+  });
+
+  if (!formValues) return;
+
+  if (
+    !formValues.borrowedBy ||
+    !formValues.role ||
+    !formValues.returnDate
+  ) {
+
+    Swal.fire(
+      "Missing Fields",
+      "Fill all borrowing details",
+      "warning"
+    );
+
+    return;
+  }
+
+  openSweetLoader("Processing Borrow Request...");
+
+  try {
+
+    await update(ref(db, `ict/${schoolId}/${id}`), {
+
+      status: "Borrowed",
+      borrowedBy: formValues.borrowedBy,
+      borrowerRole: formValues.role,
+      borrowDate: new Date().toLocaleDateString(),
+      returnDate: formValues.returnDate
+
+    });
+
+    closeSweetLoader();
+
+    Swal.fire(
+      "Success",
+      "Device borrowed successfully",
+      "success"
+    );
+
+  } catch (error) {
+
+    console.error(error);
+
+    closeSweetLoader();
+
+    Swal.fire(
+      "Error",
+      error.message,
+      "error"
+    );
+  }
+};
+
+/* =========================================================
+   RETURN ICT DEVICE
+========================================================= */
+
+window.returnICT = async function(id) {
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  const confirmReturn = await Swal.fire({
+    title: "Return Device?",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonText: "Return Device"
+  });
+
+  if (!confirmReturn.isConfirmed) return;
+
+  openSweetLoader("Returning Device...");
+
+  try {
+
+    await update(ref(db, `ict/${schoolId}/${id}`), {
+
+      status: "Available",
+      borrowedBy: "",
+      borrowerRole: "",
+      borrowDate: "",
+      returnDate: ""
+
+    });
+
+    closeSweetLoader();
+
+    Swal.fire(
+      "Returned",
+      "Device returned successfully",
+      "success"
+    );
+
+  } catch (error) {
+
+    console.error(error);
+
+    closeSweetLoader();
+
+    Swal.fire(
+      "Error",
+      error.message,
+      "error"
+    );
+  }
+};
+
+/* =========================================================
+   LOAD ICT TABLE WITH BORROWING
+========================================================= */
+
+window.loadICT = function () {
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  onValue(ref(db, `ict/${schoolId}`), (snap) => {
+
+    let html = "";
+
+    if (!snap.exists()) {
+
+      ictList.innerHTML = `
+        <div style="padding:20px;color:gray;">
+          No ICT devices found
+        </div>
+      `;
+
+      return;
+    }
+
+    html += `
+    <div style="overflow-x:auto;">
+
+    <table style="
+      width:100%;
+      border-collapse:collapse;
+      margin-top:15px;
+    ">
+
+      <tr>
+
+        <th style="${thStyle}">#</th>
+        <th style="${thStyle}">Device</th>
+        <th style="${thStyle}">Type</th>
+        <th style="${thStyle}">Serial</th>
+        <th style="${thStyle}">Status</th>
+        <th style="${thStyle}">Borrower</th>
+        <th style="${thStyle}">Return Date</th>
+        <th style="${thStyle}">Action</th>
+
+      </tr>
+    `;
+
+    let i = 1;
+
+    snap.forEach(child => {
+
+      const d = child.val();
+      const key = child.key;
+
+      const statusBadge =
+        d.status === "Borrowed"
+        ? `
+          <span style="
+            background:#dc2626;
+            color:white;
+            padding:5px 10px;
+            border-radius:20px;
+            font-size:12px;
+          ">
+            Borrowed
+          </span>
+        `
+        : `
+          <span style="
+            background:#16a34a;
+            color:white;
+            padding:5px 10px;
+            border-radius:20px;
+            font-size:12px;
+          ">
+            Available
+          </span>
+        `;
+
+      const actionBtn =
+        d.status === "Borrowed"
+        ? `
+          <button onclick="returnICT('${key}')"
+            style="
+              background:#2563eb;
+              color:white;
+              border:none;
+              padding:8px 12px;
+              border-radius:6px;
+              cursor:pointer;
+            ">
+            Return
+          </button>
+        `
+        : `
+          <button onclick="borrowICT('${key}')"
+            style="
+              background:#16a34a;
+              color:white;
+              border:none;
+              padding:8px 12px;
+              border-radius:6px;
+              cursor:pointer;
+            ">
+            Borrow
+          </button>
+        `;
+
+      html += `
+
+      <tr>
+
+        <td style="${tdStyle}">${i++}</td>
+
+        <td style="${tdStyle}">
+          ${d.deviceName}
+        </td>
+
+        <td style="${tdStyle}">
+          ${d.deviceType}
+        </td>
+
+        <td style="${tdStyle}">
+          ${d.serialNo}
+        </td>
+
+        <td style="${tdStyle}">
+          ${statusBadge}
+        </td>
+
+        <td style="${tdStyle}">
+          ${d.borrowedBy || "-"}
+        </td>
+
+        <td style="${tdStyle}">
+          ${d.returnDate || "-"}
+        </td>
+
+        <td style="${tdStyle}">
+          ${actionBtn}
+        </td>
+
+      </tr>
+      `;
+    });
+
+    html += `</table></div>`;
+
+    ictList.innerHTML = html;
+  });
+};
+
+/* =========================================================
+   INVENTORY BORROWING
+========================================================= */
+
+window.borrowInventory = async function(id) {
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  const { value: formValues } = await Swal.fire({
+
+    title: "Borrow Inventory Item",
+
+    html: `
+
+      <input id="borrowerName"
+        class="swal2-input"
+        placeholder="Staff Name">
+
+      <input id="department"
+        class="swal2-input"
+        placeholder="Department">
+
+      <input type="date"
+        id="returnDate"
+        class="swal2-input">
+
+    `,
+
+    showCancelButton: true,
+
+    preConfirm: () => {
+
+      return {
+        borrower: borrowerName.value,
+        department: department.value,
+        returnDate: returnDate.value
+      };
+    }
+  });
+
+  if (!formValues) return;
+
+  openSweetLoader("Borrowing Item...");
+
+  try {
+
+    await update(ref(db, `inventory/${schoolId}/${id}`), {
+
+      status: "Borrowed",
+      borrowedBy: formValues.borrower,
+      department: formValues.department,
+      returnDate: formValues.returnDate,
+      borrowDate: new Date().toLocaleDateString()
+
+    });
+
+    closeSweetLoader();
+
+    Swal.fire(
+      "Success",
+      "Item borrowed successfully",
+      "success"
+    );
+
+  } catch (error) {
+
+    console.error(error);
+
+    closeSweetLoader();
+
+    Swal.fire(
+      "Error",
+      error.message,
+      "error"
+    );
+  }
+};
+
+/* =========================================================
+   RETURN INVENTORY ITEM
+========================================================= */
+
+window.returnInventory = async function(id) {
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  const confirmReturn = await Swal.fire({
+    title: "Return Item?",
+    icon: "question",
+    showCancelButton: true
+  });
+
+  if (!confirmReturn.isConfirmed) return;
+
+  openSweetLoader("Returning Item...");
+
+  try {
+
+    await update(ref(db, `inventory/${schoolId}/${id}`), {
+
+      status: "Available",
+      borrowedBy: "",
+      department: "",
+      returnDate: "",
+      borrowDate: ""
+
+    });
+
+    closeSweetLoader();
+
+    Swal.fire(
+      "Returned",
+      "Inventory item returned",
+      "success"
+    );
+
+  } catch (error) {
+
+    console.error(error);
+
+    closeSweetLoader();
+
+    Swal.fire(
+      "Error",
+      error.message,
+      "error"
+    );
+  }
+};
+
+/* =========================================================
+   📚 LIBRARY MANAGEMENT SYSTEM
+   ✅ Multiple Borrowers Supported
+   ✅ Borrow History
+   ✅ Returns Tracking
+   ✅ Copies Auto Update
+========================================================= */
+
+/* =========================================================
+   ADD BOOK
+========================================================= */
+
+window.addBook = async function () {
+
+  try {
+
+    const schoolId = localStorage.getItem("schoolId");
+
+    if (
+      !bookTitle.value ||
+      !bookAuthor.value ||
+      !bookCategory.value ||
+      !bookQuantity.value
+    ) {
+
+      Swal.fire(
+        "Missing Fields",
+        "Fill all library fields",
+        "warning"
+      );
+
+      return;
+    }
+
+    openSweetLoader("Saving Book...");
+
+    const data = {
+
+      title: bookTitle.value,
+      author: bookAuthor.value,
+      category: bookCategory.value,
+      isbn: bookISBN.value || "",
+
+      quantity: Number(bookQuantity.value),
+
+      available: Number(bookQuantity.value),
+
+      createdAt: Date.now()
+
+    };
+
+    await push(ref(db, `library/${schoolId}`), data);
+
+    closeSweetLoader();
+
+    Swal.fire(
+      "Success",
+      "Book added successfully",
+      "success"
+    );
+
+    bookTitle.value = "";
+    bookAuthor.value = "";
+    bookCategory.value = "";
+    bookISBN.value = "";
+    bookQuantity.value = "";
+
+  } catch (error) {
+
+    console.error(error);
+
+    closeSweetLoader();
+
+    Swal.fire(
+      "Error",
+      error.message,
+      "error"
+    );
+  }
+};
+
+/* =========================================================
+   LOAD LIBRARY
+========================================================= */
+
+window.loadLibrary = function () {
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  onValue(ref(db, `library/${schoolId}`), (snap) => {
+
+    let html = "";
+
+    if (!snap.exists()) {
+
+      libraryList.innerHTML = `
+        <div style="padding:20px;color:gray;">
+          No books found
+        </div>
+      `;
+
+      return;
+    }
+
+    html += `
+
+    <div style="overflow-x:auto;">
+
+    <table style="
+      width:100%;
+      border-collapse:collapse;
+      margin-top:15px;
+      background:white;
+    ">
+
+      <tr style="background:#0f172a;color:white;">
+
+        <th style="${thStyle}">#</th>
+        <th style="${thStyle}">Title</th>
+        <th style="${thStyle}">Author</th>
+        <th style="${thStyle}">Category</th>
+        <th style="${thStyle}">ISBN</th>
+        <th style="${thStyle}">Copies</th>
+        <th style="${thStyle}">Status</th>
+        <th style="${thStyle}">Actions</th>
+
+      </tr>
+    `;
+
+    let i = 1;
+
+    snap.forEach(child => {
+
+      const d = child.val();
+      const key = child.key;
+
+      const statusBadge =
+        d.available > 0
+        ? `
+          <span style="
+            background:#16a34a;
+            color:white;
+            padding:5px 10px;
+            border-radius:20px;
+            font-size:12px;
+          ">
+            Available
+          </span>
+        `
+        : `
+          <span style="
+            background:#dc2626;
+            color:white;
+            padding:5px 10px;
+            border-radius:20px;
+            font-size:12px;
+          ">
+            Out Of Stock
+          </span>
+        `;
+
+      html += `
+
+      <tr>
+
+        <td style="${tdStyle}">
+          ${i++}
+        </td>
+
+        <td style="${tdStyle}">
+          ${d.title}
+        </td>
+
+        <td style="${tdStyle}">
+          ${d.author}
+        </td>
+
+        <td style="${tdStyle}">
+          ${d.category}
+        </td>
+
+        <td style="${tdStyle}">
+          ${d.isbn || "-"}
+        </td>
+
+        <td style="${tdStyle}">
+          ${d.available}/${d.quantity}
+        </td>
+
+        <td style="${tdStyle}">
+          ${statusBadge}
+        </td>
+
+        <td style="${tdStyle}">
+
+          <button
+            onclick="borrowBook('${key}')"
+            style="
+              background:#16a34a;
+              color:white;
+              border:none;
+              padding:8px 12px;
+              border-radius:6px;
+              cursor:pointer;
+              margin-bottom:5px;
+            ">
+            Borrow
+          </button>
+
+          <br>
+
+          <button
+            onclick="viewBorrowings('${key}')"
+            style="
+              background:#2563eb;
+              color:white;
+              border:none;
+              padding:8px 12px;
+              border-radius:6px;
+              cursor:pointer;
+            ">
+            View Borrowers
+          </button>
+
+        </td>
+
+      </tr>
+      `;
+    });
+
+    html += `</table></div>`;
+
+    libraryList.innerHTML = html;
+  });
+};
+
+/* =========================================================
+   BORROW BOOK
+========================================================= */
+
+window.borrowBook = async function(bookId) {
+
+  try {
+
+    const schoolId = localStorage.getItem("schoolId");
+
+    const { value: formValues } = await Swal.fire({
+
+      title: "Borrow Book",
+
+      html: `
+
+        <input id="borrowerName"
+          class="swal2-input"
+          placeholder="Student / Staff Name">
+
+        <input id="borrowerAdm"
+          class="swal2-input"
+          placeholder="Admission No / Staff ID">
+
+        <select id="borrowerType"
+          class="swal2-input">
+
+          <option value="Student">Student</option>
+          <option value="Teacher">Teacher</option>
+          <option value="Support Staff">Support Staff</option>
+
+        </select>
+
+        <input type="date"
+          id="dueDate"
+          class="swal2-input">
+
+      `,
+
+      showCancelButton: true,
+
+      preConfirm: () => {
+
+        return {
+
+          borrowerName:
+            document.getElementById("borrowerName").value,
+
+          borrowerAdm:
+            document.getElementById("borrowerAdm").value,
+
+          borrowerType:
+            document.getElementById("borrowerType").value,
+
+          dueDate:
+            document.getElementById("dueDate").value
+
+        };
+      }
+    });
+
+    if (!formValues) return;
+
+    openSweetLoader("Borrowing Book...");
+
+    const bookRef =
+      ref(db, `library/${schoolId}/${bookId}`);
+
+    const snap = await get(bookRef);
+
+    if (!snap.exists()) {
+
+      closeSweetLoader();
+
+      Swal.fire(
+        "Error",
+        "Book not found",
+        "error"
+      );
+
+      return;
+    }
+
+    const book = snap.val();
+
+    if (Number(book.available) <= 0) {
+
+      closeSweetLoader();
+
+      Swal.fire(
+        "Unavailable",
+        "No copies remaining",
+        "warning"
+      );
+
+      return;
+    }
+
+    /* SAVE BORROW RECORD */
+
+    await push(
+      ref(db, `libraryBorrowings/${schoolId}`),
+      {
+
+        bookId,
+        bookTitle: book.title,
+
+        borrowerName:
+          formValues.borrowerName,
+
+        borrowerAdm:
+          formValues.borrowerAdm,
+
+        borrowerType:
+          formValues.borrowerType,
+
+        borrowDate:
+          new Date().toLocaleDateString(),
+
+        dueDate:
+          formValues.dueDate,
+
+        returned: false,
+
+        createdAt: Date.now()
+
+      }
+    );
+
+    /* UPDATE COPIES */
+
+    await update(bookRef, {
+
+      available:
+        Number(book.available) - 1
+
+    });
+
+    closeSweetLoader();
+
+    Swal.fire(
+      "Success",
+      "Book borrowed successfully",
+      "success"
+    );
+
+  } catch(error) {
+
+    console.error(error);
+
+    closeSweetLoader();
+
+    Swal.fire(
+      "Error",
+      error.message,
+      "error"
+    );
+  }
+};
+
+/* =========================================================
+   VIEW BORROWINGS
+========================================================= */
+
+window.viewBorrowings = function(bookId) {
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  onValue(
+    ref(db, `libraryBorrowings/${schoolId}`),
+    (snap) => {
+
+      let html = "";
+
+      if (!snap.exists()) {
+
+        Swal.fire(
+          "No Records",
+          "No borrowing history found",
+          "info"
+        );
+
+        return;
+      }
+
+      html += `
+      <div style="max-height:400px;overflow:auto;">
+      `;
+
+      snap.forEach(child => {
+
+        const d = child.val();
+        const key = child.key;
+
+        if (d.bookId !== bookId) return;
+
+        html += `
+
+        <div style="
+          background:#f1f5f9;
+          padding:12px;
+          margin-bottom:10px;
+          border-radius:10px;
+          text-align:left;
+        ">
+
+          <b>${d.borrowerName}</b><br>
+
+          👤 ${d.borrowerType}<br>
+          🆔 ${d.borrowerAdm}<br>
+          📅 Borrowed: ${d.borrowDate}<br>
+          ⏰ Due: ${d.dueDate}<br>
+
+          <br>
+
+          ${
+            d.returned
+            ? `
+              <span style="
+                background:#16a34a;
+                color:white;
+                padding:5px 10px;
+                border-radius:20px;
+              ">
+                Returned
+              </span>
+            `
+            : `
+              <button
+                onclick="returnBorrowedBook(
+                  '${key}',
+                  '${bookId}'
+                )"
+                style="
+                  background:#2563eb;
+                  color:white;
+                  border:none;
+                  padding:8px 12px;
+                  border-radius:6px;
+                  cursor:pointer;
+                ">
+                Return Book
+              </button>
+            `
+          }
+
+        </div>
+        `;
+      });
+
+      html += `</div>`;
+
+      Swal.fire({
+
+        title: "Borrowing Records",
+
+        html,
+
+        width: 700
+
+      });
+
+    },
+    { onlyOnce:true }
+  );
+};
+
+/* =========================================================
+   RETURN BOOK
+========================================================= */
+window.returnBorrowedBook =
+async function(borrowId, bookId) {
+
+  try {
+
+    const schoolId = localStorage.getItem("schoolId");
+
+    openSweetLoader("Returning Book...");
+
+    /* UPDATE BORROW RECORD */
+
+    await update(
+
+      ref(
+        db,
+        `libraryBorrowings/${schoolId}/${borrowId}`
+      ),
+
+      {
+
+        returned: true,
+
+        actualReturnDate:
+          new Date().toLocaleDateString()
+
+      }
+
+    );
+
+    /* GET BOOK */
+
+    const bookRef =
+      ref(db, `library/${schoolId}/${bookId}`);
+
+    const snap = await get(bookRef);
+
+    if (!snap.exists()) {
+
+      closeSweetLoader();
+
+      Swal.fire(
+        "Error",
+        "Book not found",
+        "error"
+      );
+
+      return;
+    }
+
+    const book = snap.val();
+
+    /* INCREASE COPIES */
+
+    await update(bookRef, {
+
+      available:
+        Number(book.available) + 1
+
+    });
+
+    closeSweetLoader();
+
+    Swal.fire(
+      "Returned",
+      "Book returned successfully",
+      "success"
+    );
+
+  } catch(error) {
+
+    console.error(error);
+
+    closeSweetLoader();
+
+    Swal.fire(
+      "Error",
+      error.message,
+      "error"
+    );
+  }
+};
+
+/* =========================================================
+   AUTO LOAD LIBRARY
+========================================================= */
+
+window.addEventListener("load", () => {
+
+  loadLibrary();
+
+});
+
 </script>
 
 
