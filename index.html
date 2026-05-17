@@ -3036,7 +3036,6 @@ function schoolRef(path) {
   return ref(db, `schools/${schoolId}/${path}`);
 }
 
-
 function show(id) {
 
   // 🚨 GUARD: prevent null/undefined errors
@@ -3045,61 +3044,69 @@ function show(id) {
     return;
   }
 
-  const sections = document.querySelectorAll(".main > div");
+  const sections = document.querySelectorAll(".app-section");
 
-  // hide all sections
+  // ==============================
+  // 🔥 HIDE ALL SECTIONS
+  // ==============================
   sections.forEach(sec => {
     sec.style.display = "none";
   });
 
+  // ==============================
+  // 🔥 SHOW TARGET SECTION
+  // ==============================
   const target = document.getElementById(id);
 
-  if (target) {
-    target.style.display = "block";
-  } else {
+  if (!target) {
     console.warn("Section not found:", id);
-    return; // 🚨 stop here if section doesn't exist
+    return;
   }
+
+  target.style.display = "block";
 
   // ==============================
   // 🔥 MARKS SECTION INITIAL LOAD
   // ==============================
- // ==============================
-// 🔥 MARKS SECTION INITIAL LOAD
-// ==============================
-if (id === "recordMarksSection") {
-
-  setTimeout(() => {
-    loadGradesFromStudents();
+  if (id === "recordMarksSection") {
 
     setTimeout(() => {
-      loadLearnersFromStudents();
+      loadGradesFromStudents();
+
+      setTimeout(() => {
+        loadLearnersFromStudents();
+      }, 300);
+
     }, 300);
+  }
 
-  }, 300);
-}
-
-// ==============================
-// 💰 FEES SECTION INITIAL LOAD
-// ==============================
-if (id === "fees") {
-
-  setTimeout(() => {
-    loadFeeGrades();
+  // ==============================
+  // 💰 FEES SECTION INITIAL LOAD
+  // ==============================
+  if (id === "fees") {
 
     setTimeout(() => {
-      loadFeeLearners();
-    }, 300);
+      loadFeeGrades();
 
-  }, 300);
-}
+      setTimeout(() => {
+        loadFeeLearners();
+      }, 300);
+
+    }, 300);
+  }
 
   // ==============================
   // 📊 REPORT GENERATION TRIGGER
   // ==============================
   runSectionLogic(id);
 }
+function getSchoolId() {
 
+  return sessionStorage.getItem(
+    "schoolId"
+  );
+
+}
 async function logout() {
   const result = await Swal.fire({
     title: "Logout?",
@@ -3132,7 +3139,17 @@ async function logout() {
     document.getElementById("app").style.display = "none";
     document.getElementById("authSection").style.display = "block";
 
-    schoolId = null;
+    sessionStorage.removeItem(
+  "schoolId"
+);
+
+sessionStorage.removeItem(
+  "userUid"
+);
+
+sessionStorage.removeItem(
+  "schoolEmail"
+);
 
     Swal.fire({
       title: "Logged out!",
@@ -3237,7 +3254,10 @@ window.register = async () => {
 schoolId =
   "school_" + uid;
 
-window.schoolId = schoolId;
+sessionStorage.setItem(
+  "schoolId",
+  schoolId
+);
 
 console.log(
   "Creating school:",
@@ -3602,7 +3622,7 @@ async function checkSubscriptionAccess() {
   try {
 
     const snap = await get(
-      ref(db, `schools/${schoolId}`)
+      ref(db, `schools/${getSchoolId()}`)
     );
 
     if (!snap.exists()) {
@@ -3660,7 +3680,7 @@ async function checkSubscriptionAccess() {
     // 🔥 EXPIRED
     // =====================================
     await update(
-      ref(db, `schools/${schoolId}`),
+      ref(db, `schools/${getSchoolId()}`),
       {
         subscriptionStatus: "expired"
       }
@@ -3688,12 +3708,27 @@ async function checkSubscriptionAccess() {
 }
 
 /* ======================================================
+   GLOBAL ACCESS CONTROL
+====================================================== */
+
+let ACCESS_GRANTED = true;
+
+
+/* ======================================================
    LOCK SYSTEM
 ====================================================== */
 
 function lockEntireSystem(title, message) {
 
-  document.getElementById("app").style.display = "none";
+  // 🔒 REVOKE ACCESS IMMEDIATELY
+  ACCESS_GRANTED = false;
+
+  // 🔒 HIDE ENTIRE APP
+  const app = document.getElementById("app");
+
+  if (app) {
+    app.style.display = "none";
+  }
 
   Swal.fire({
 
@@ -3837,7 +3872,16 @@ window.activateSubscription = async function () {
 
   const selectedPackage =
     document.getElementById("packageSelect").value;
+if (!selectedPackage) {
 
+  Swal.fire(
+    "Error",
+    "Select subscription package",
+    "error"
+  );
+
+  return;
+}
   if (!phone) {
 
     Swal.fire(
@@ -3880,11 +3924,11 @@ window.activateSubscription = async function () {
 
     });
 
-    Swal.fire({
-      icon: "success",
-      title: "STK Push Sent",
-      text: "Enter your M-Pesa PIN"
-    });
+  Swal.fire({
+  icon: "info",
+  title: "Waiting For Payment",
+  text: "Complete M-Pesa payment on your phone."
+});
 
   } catch (err) {
 
@@ -3898,6 +3942,23 @@ window.activateSubscription = async function () {
   }
 };
 
+async function secureAccessCheck() {
+
+  const allowed =
+    await checkSubscriptionAccess();
+
+  if (!allowed) {
+
+    lockEntireSystem(
+      "Access Denied",
+      "Subscription required"
+    );
+
+    return false;
+  }
+
+  return true;
+}
 
 /* ======================================================
    🔥 LIVE SUBSCRIPTION WATCHER (FINAL FIX)
@@ -3913,11 +3974,13 @@ function startSubscriptionWatcher() {
 
     try {
 
-      if (!schoolId) return;
+      const schoolId = getSchoolId();
+
+if (!schoolId) return;
 
       const snap =
         await get(
-          ref(db, `schools/${schoolId}`)
+          ref(db, `schools/${getSchoolId()}`)
         );
 
       if (!snap.exists()) return;
@@ -3957,7 +4020,7 @@ function startSubscriptionWatcher() {
         clearInterval(trialTimer);
 
         await update(
-          ref(db, `schools/${schoolId}`),
+          ref(db, `schools/${getSchoolId()}`),
           {
             subscriptionStatus:
               "expired"
@@ -3987,7 +4050,7 @@ function startSubscriptionWatcher() {
         clearInterval(trialTimer);
 
         await update(
-          ref(db, `schools/${schoolId}`),
+          ref(db, `schools/${getSchoolId()}`),
           {
             subscriptionStatus:
               "expired"
@@ -4029,8 +4092,9 @@ function startSubscriptionUI() {
       // =====================================
       // WAIT FOR SCHOOL ID
       // =====================================
+const schoolId = getSchoolId();
 
-      if (!schoolId) return;
+if (!schoolId) return;
 
       const planEl =
         document.getElementById(
@@ -4047,7 +4111,7 @@ function startSubscriptionUI() {
 
       const snap =
         await get(
-          ref(db, `schools/${schoolId}`)
+          ref(db, `schools/${getSchoolId()}`)
         );
 
       if (!snap.exists()) {
@@ -4183,247 +4247,153 @@ function startSubscriptionUI() {
 
   }, 1000);
 }
-/* ================= LOGIN (MULTI SCHOOL SAFE VERSION) ================= */
 window.login = async () => {
 
-  const btns =
-    document.querySelectorAll(
-      '#authSection button'
-    );
+  const btns = document.querySelectorAll('#authSection button');
+  btns.forEach(b => b.disabled = true);
 
-  btns.forEach(
-    b => b.disabled = true
-  );
+  if (!email.value.trim() || !password.value.trim()) {
 
-  // =====================================
-  // VALIDATION
-  // =====================================
-
-  if (
-    !email.value.trim() ||
-    !password.value.trim()
-  ) {
-
-    btns.forEach(
-      b => b.disabled = false
-    );
+    btns.forEach(b => b.disabled = false);
 
     return Swal.fire({
-
       icon: "warning",
-
       title: "Missing Fields",
-
       text: "Enter email and password"
-
     });
   }
 
-  // =====================================
-  // SWEETALERT LOADER
-  // =====================================
-
   Swal.fire({
-
     title: 'Signing you in...',
-
     allowOutsideClick: false,
-
     allowEscapeKey: false,
-
-    didOpen: () =>
-      Swal.showLoading()
-
+    didOpen: () => Swal.showLoading()
   });
 
   try {
 
-    // =====================================
-    // LOGIN
-    // =====================================
+    // ============================
+    // AUTH LOGIN
+    // ============================
+    const userCred = await signInWithEmailAndPassword(
+      auth,
+      email.value.trim(),
+      password.value.trim()
+    );
 
-    const userCred =
-      await signInWithEmailAndPassword(
+    const uid = userCred.user.uid;
 
-        auth,
+    // 🔥 FORCE TOKEN REFRESH (important for permissions)
+    await auth.currentUser.getIdToken(true);
 
-        email.value.trim(),
-
-        password.value.trim()
-
-      );
-
-    // =====================================
+    // ============================
     // GET USER PROFILE
-    // =====================================
-
-    const userSnap =
-      await get(
-
-        ref(
-          db,
-          `users/${userCred.user.uid}`
-        )
-
-      );
+    // ============================
+    const userSnap = await get(ref(db, `users/${uid}`));
 
     if (!userSnap.exists()) {
-
-      throw new Error(
-        "User profile not found"
-      );
+      throw new Error("User profile not found");
     }
 
-    const userData =
-      userSnap.val();
+    const userData = userSnap.val();
 
-    // =====================================
-    // GET SCHOOL ID
-    // =====================================
+    console.log("USER DATA:", userData);
 
+    // ============================
+    // GET SCHOOL ID (ROBUST FIX)
+    // ============================
     const schoolId =
-
       userData.schoolId ||
+      sessionStorage.getItem("schoolId") ||
+      localStorage.getItem("schoolId");
 
-      userCred.user.uid;
+    if (!schoolId) {
+      throw new Error("School ID missing in user profile");
+    }
 
-    // =====================================
-    // STORE SCHOOL ID
-    // =====================================
+    // ============================
+    // STORE SAFELY
+    // ============================
+    window.schoolId = schoolId;
 
-    window.schoolId =
-      schoolId;
+    localStorage.setItem("schoolId", schoolId);
+    sessionStorage.setItem("schoolId", schoolId);
+    localStorage.setItem("userUid", uid);
+    localStorage.setItem("schoolEmail", email.value.trim());
 
-    localStorage.setItem(
-      "schoolId",
-      schoolId
-    );
+    // ============================
+    // VERIFY SCHOOL EXISTS (SAFE CHECK)
+    // ============================
+    let schoolSnap;
 
-    // =====================================
-    // OPTIONAL USER DATA
-    // =====================================
-
-    localStorage.setItem(
-      "userUid",
-      userCred.user.uid
-    );
-
-    localStorage.setItem(
-      "schoolEmail",
-      email.value.trim()
-    );
-
-    // =====================================
-    // VERIFY SCHOOL EXISTS
-    // =====================================
-
-    const schoolSnap =
-      await get(
-
-        ref(
-          db,
-          `schools/${schoolId}`
-        )
-
-      );
+    try {
+      schoolSnap = await get(ref(db, `schools/${schoolId}`));
+    } catch (err) {
+      console.error("School fetch error:", err);
+      throw new Error("Unable to access school data (permission issue)");
+    }
 
     if (!schoolSnap.exists()) {
-
-      throw new Error(
-        "School account not found"
-      );
+      throw new Error("School account not found");
     }
 
-    // =====================================
-    // CHECK SUBSCRIPTION ACCESS
-    // =====================================
+    // ============================
+    // CHECK SUBSCRIPTION (SAFE WRAP)
+    // ============================
+    let accessAllowed = true;
 
-    const accessAllowed =
-      await checkSubscriptionAccess();
+    try {
+      accessAllowed = await checkSubscriptionAccess();
+    } catch (err) {
+      console.error("Subscription error:", err);
+      accessAllowed = false;
+
+      Swal.fire({
+        icon: "warning",
+        title: "Subscription Check Failed",
+        text: "Continuing with limited access"
+      });
+    }
 
     if (!accessAllowed) {
-
-      btns.forEach(
-        b => b.disabled = false
-      );
-
+      btns.forEach(b => b.disabled = false);
       return;
     }
 
-    // =====================================
-    // SUCCESS MESSAGE
-    // =====================================
-
+    // ============================
+    // SUCCESS
+    // ============================
     Swal.fire({
-
       icon: 'success',
-
       title: 'Login Successful',
-
       text: 'Welcome back!',
-
       timer: 1200,
-
       showConfirmButton: false
-
     });
 
-    // =====================================
+    // ============================
     // OPEN APP
-    // =====================================
-
-    document.getElementById(
-      "authSection"
-    ).style.display = "none";
-
-    document.getElementById(
-      "app"
-    ).style.display = "block";
-
-    // =====================================
-    // START WATCHERS
-    // =====================================
+    // ============================
+    document.getElementById("authSection").style.display = "none";
+    document.getElementById("app").style.display = "block";
 
     startSubscriptionWatcher();
-
     startSubscriptionUI();
-
-    // =====================================
-    // LOAD SYSTEM DATA
-    // =====================================
-
     loadAll();
 
   } catch (error) {
 
-    console.error(error);
-
-    // =====================================
-    // LOGIN FAILED
-    // =====================================
+    console.error("LOGIN ERROR:", error);
 
     Swal.fire({
-
       icon: 'error',
-
       title: 'Login Failed',
-
-      text:
-        error.message ||
-        'Invalid email or password',
-
-      confirmButtonColor: '#d33'
-
+      text: error.message || 'Invalid login'
     });
 
   } finally {
-
-    btns.forEach(
-      b => b.disabled = false
-    );
-
+    btns.forEach(b => b.disabled = false);
   }
-
 };
 /* ================= MODULES ================= */
 
@@ -4459,13 +4429,6 @@ async function generateAdmissionNumber() {
     const nextNumber = String(count + 1).padStart(3, '0');
     return `${year}/${nextNumber}`;
 }
-window.addEventListener("load", async () => {
-  const schoolId = localStorage.getItem("schoolId");
-
-  if (schoolId) {
-    await enforceSubscription();
-  }
-});
 
 window.addStudent = async () => {
 
@@ -17579,6 +17542,7 @@ window.viewSupportMonthlyAttendance = async function () {
 };
 
 
+
 // =====================================
 // 🏫 SAAS SCHOOL PROFILE SYSTEM (FIREBASE)
 // =====================================
@@ -17616,7 +17580,9 @@ window.loadSchoolProfile = async function () {
 };
 window.saveSchoolProfile = async function () {
 
-  const schoolId = localStorage.getItem("schoolId");
+  const schoolId =
+    window.schoolId ||
+    localStorage.getItem("schoolId");
 
   if (!schoolId) {
     Swal.fire("Error", "No school session found. Please login again.", "error");
@@ -17624,11 +17590,13 @@ window.saveSchoolProfile = async function () {
   }
 
   const schoolData = {
-    name: document.getElementById("profileSchoolName").value,
-    motto: document.getElementById("schoolMotto").value,
-    address: document.getElementById("schoolAddress").value,
-    logo: document.getElementById("schoolLogo").value || "",
+
+    name: document.getElementById("profileSchoolName").value.trim(),
+    motto: document.getElementById("schoolMotto").value.trim(),
+    address: document.getElementById("schoolAddress").value.trim(),
+    logo: document.getElementById("schoolLogo").value.trim() || "",
     updatedAt: Date.now()
+
   };
 
   if (!schoolData.name) {
@@ -17637,18 +17605,31 @@ window.saveSchoolProfile = async function () {
   }
 
   try {
-    await set(ref(db, `schools/${schoolId}`), schoolData);
 
-    window.currentSchool = schoolData;
+    // ✅ IMPORTANT FIX: use UPDATE instead of SET
+    await update(
+      ref(db, `schools/${schoolId}`),
+      schoolData
+    );
 
-    Swal.fire("Success", "School profile saved successfully", "success");
+    window.currentSchool = {
+      ...window.currentSchool,
+      ...schoolData
+    };
 
-    // close modal after save
+    Swal.fire({
+      icon: "success",
+      title: "School profile updated"
+    });
+
     document.getElementById("schoolProfileModal").style.display = "none";
 
   } catch (err) {
+
     console.error(err);
-    Swal.fire("Error", "Failed to save school profile", "error");
+
+    Swal.fire("Error", err.message || "Failed to save school profile", "error");
+
   }
 };
 
