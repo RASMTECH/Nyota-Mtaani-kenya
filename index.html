@@ -3038,24 +3038,24 @@ function schoolRef(path) {
 
 function show(id) {
 
-  // 🚨 GUARD: prevent null/undefined errors
-  if (!id || typeof id !== "string") {
+  // ===============================
+  // 🚨 STRICT GUARD (prevents crash)
+  // ===============================
+  if (typeof id !== "string" || !id.trim()) {
     console.warn("show() received invalid id:", id);
+    console.trace("Call stack for invalid show()");
     return;
   }
 
-  const sections = document.querySelectorAll(".app-section");
+  const sections = document.querySelectorAll(".main > div");
 
-  // ==============================
-  // 🔥 HIDE ALL SECTIONS
-  // ==============================
+  // ===============================
+  // hide all sections
+  // ===============================
   sections.forEach(sec => {
     sec.style.display = "none";
   });
 
-  // ==============================
-  // 🔥 SHOW TARGET SECTION
-  // ==============================
   const target = document.getElementById(id);
 
   if (!target) {
@@ -3071,10 +3071,14 @@ function show(id) {
   if (id === "recordMarksSection") {
 
     setTimeout(() => {
-      loadGradesFromStudents();
+      if (typeof loadGradesFromStudents === "function") {
+        loadGradesFromStudents();
+      }
 
       setTimeout(() => {
-        loadLearnersFromStudents();
+        if (typeof loadLearnersFromStudents === "function") {
+          loadLearnersFromStudents();
+        }
       }, 300);
 
     }, 300);
@@ -3086,19 +3090,25 @@ function show(id) {
   if (id === "fees") {
 
     setTimeout(() => {
-      loadFeeGrades();
+      if (typeof loadFeeGrades === "function") {
+        loadFeeGrades();
+      }
 
       setTimeout(() => {
-        loadFeeLearners();
+        if (typeof loadFeeLearners === "function") {
+          loadFeeLearners();
+        }
       }, 300);
 
     }, 300);
   }
 
   // ==============================
-  // 📊 REPORT GENERATION TRIGGER
+  // 📊 SECTION LOGIC TRIGGER
   // ==============================
-  runSectionLogic(id);
+  if (typeof runSectionLogic === "function") {
+    runSectionLogic(id);
+  }
 }
 function getSchoolId() {
 
