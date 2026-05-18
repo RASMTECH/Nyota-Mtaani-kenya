@@ -3036,16 +3036,93 @@ background:rgba(0,0,0,0.5);justify-content:center;align-items:center;">
 </div>
 
 <div id="inventory" style="display:none; padding:20px;">
-  <h2>📦 Inventory Management</h2>
 
-  <input id="itemName" placeholder="Item Name">
-  <input id="itemQty" type="number" placeholder="Quantity">
-  <input id="itemLocation" placeholder="Store Location">
+  <h2 style="
+    margin-bottom:20px;
+    color:#0f172a;
+    font-size:24px;
+    font-weight:700;
+  ">
+    📦 Inventory Management
+  </h2>
 
-  <button onclick="addItem()">➕ Add Item</button>
+  <!-- INVENTORY FORM -->
+  <div style="
+    background:white;
+    padding:20px;
+    border-radius:14px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.08);
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:15px;
+    margin-bottom:25px;
+  ">
 
-  <div id="inventoryList"></div>
+    <input
+      id="itemName"
+      placeholder="Item Name"
+      style="
+        padding:12px;
+        border:1px solid #cbd5e1;
+        border-radius:10px;
+        outline:none;
+      "
+    >
+
+    <input
+      id="quantity"
+      type="number"
+      placeholder="Quantity"
+      style="
+        padding:12px;
+        border:1px solid #cbd5e1;
+        border-radius:10px;
+        outline:none;
+      "
+    >
+
+    <input
+      id="location"
+      placeholder="Store Location"
+      style="
+        padding:12px;
+        border:1px solid #cbd5e1;
+        border-radius:10px;
+        outline:none;
+      "
+    >
+
+    <button
+      onclick="addInventory()"
+      style="
+        background:#2563eb;
+        color:white;
+        border:none;
+        border-radius:10px;
+        padding:12px;
+        cursor:pointer;
+        font-weight:600;
+      "
+    >
+      ➕ Add Item
+    </button>
+
+  </div>
+
+  <!-- INVENTORY TABLE -->
+  <div
+    id="inventoryList"
+    style="
+      background:white;
+      border-radius:14px;
+      padding:15px;
+      box-shadow:0 4px 15px rgba(0,0,0,0.08);
+      overflow-x:auto;
+    "
+  ></div>
+
 </div>
+
 <div id="ict" style="display:none; padding:20px;">
   <h2>💻 ICT Management</h2>
 
@@ -18179,7 +18256,91 @@ window.addDevice = async function () {
     Swal.fire("Error", error.message, "error");
   }
 };
+/* =========================================================
+   ADD INVENTORY ITEM
+========================================================= */
 
+window.addInventory = async function () {
+
+  try {
+
+    const schoolId = localStorage.getItem("schoolId");
+
+    if (!schoolId) {
+
+      Swal.fire(
+        "Error",
+        "No school session found",
+        "error"
+      );
+
+      return;
+    }
+
+    // INPUTS
+    const item =
+      document.getElementById("itemName")?.value.trim();
+
+    const qty =
+      document.getElementById("quantity")?.value.trim();
+
+    const location =
+      document.getElementById("location")?.value.trim();
+
+    // VALIDATION
+    if (!item || !qty || !location) {
+
+      Swal.fire(
+        "Missing Fields",
+        "Fill all inventory fields",
+        "warning"
+      );
+
+      return;
+    }
+
+    openSweetLoader("Saving Inventory Item...");
+
+    // DATA
+    const data = {
+      itemName: item,
+      quantity: qty,
+      location: location,
+      createdAt: Date.now()
+    };
+
+    // SAVE TO FIREBASE
+    await push(
+      ref(db, `inventory/${schoolId}`),
+      data
+    );
+
+    closeSweetLoader();
+
+    Swal.fire(
+      "Success",
+      "Inventory item added successfully",
+      "success"
+    );
+
+    // CLEAR INPUTS
+    document.getElementById("itemName").value = "";
+    document.getElementById("quantity").value = "";
+    document.getElementById("location").value = "";
+
+  } catch (error) {
+
+    console.error(error);
+
+    closeSweetLoader();
+
+    Swal.fire(
+      "Error",
+      error.message || "Failed to save inventory item",
+      "error"
+    );
+  }
+};
 window.loadICT = function () {
 
   const schoolId = localStorage.getItem("schoolId");
@@ -18265,12 +18426,12 @@ window.deleteICT = async function (id) {
 };
 
 /* =========================================================
-   INVENTORY MANAGEMENT
+   LOAD INVENTORY WITH BORROWING SYSTEM
 ========================================================= */
 
 window.loadInventory = function () {
 
-  const schoolId = localStorage.getItem("schoolId");
+const schoolId = localStorage.getItem("schoolId");
 
   onValue(ref(db, `inventory/${schoolId}`), (snap) => {
 
@@ -18278,26 +18439,40 @@ window.loadInventory = function () {
 
     if (!snap.exists()) {
 
-      html = `
-        <div style="padding:20px;color:gray;">
-          No inventory found
+      inventoryList.innerHTML = `
+        <div style="
+          padding:20px;
+          color:gray;
+        ">
+          No inventory items found
         </div>
       `;
 
-      inventoryList.innerHTML = html;
       return;
     }
 
     html += `
-      <div style="overflow-x:auto;">
-      <table style="${tableStyle}">
-        <tr>
-          <th style="${thStyle}">#</th>
-          <th style="${thStyle}">Item</th>
-          <th style="${thStyle}">Quantity</th>
-          <th style="${thStyle}">Location</th>
-          <th style="${thStyle}">Action</th>
-        </tr>
+    <div style="overflow-x:auto;">
+
+    <table style="
+      width:100%;
+      border-collapse:collapse;
+      margin-top:15px;
+      background:white;
+    ">
+
+      <tr>
+
+        <th style="${thStyle}">#</th>
+        <th style="${thStyle}">Item</th>
+        <th style="${thStyle}">Quantity</th>
+        <th style="${thStyle}">Location</th>
+        <th style="${thStyle}">Status</th>
+        <th style="${thStyle}">Borrower</th>
+        <th style="${thStyle}">Return Date</th>
+        <th style="${thStyle}">Actions</th>
+
+      </tr>
     `;
 
     let i = 1;
@@ -18307,19 +18482,119 @@ window.loadInventory = function () {
       const d = child.val();
       const key = child.key;
 
+      // STATUS BADGE
+      const statusBadge =
+        d.status === "Borrowed"
+        ? `
+          <span style="
+            background:#dc2626;
+            color:white;
+            padding:5px 10px;
+            border-radius:20px;
+            font-size:12px;
+          ">
+            Borrowed
+          </span>
+        `
+        : `
+          <span style="
+            background:#16a34a;
+            color:white;
+            padding:5px 10px;
+            border-radius:20px;
+            font-size:12px;
+          ">
+            Available
+          </span>
+        `;
+
+      // ACTION BUTTONS
+      const actionButtons =
+        d.status === "Borrowed"
+        ? `
+
+          <button
+            onclick="returnInventory('${key}')"
+            style="
+              background:#2563eb;
+              color:white;
+              border:none;
+              padding:8px 12px;
+              border-radius:6px;
+              cursor:pointer;
+              margin-right:5px;
+            ">
+            Return
+          </button>
+
+          <button
+            onclick="deleteInventory('${key}')"
+            style="${deleteBtnStyle}">
+            Delete
+          </button>
+
+        `
+        : `
+
+          <button
+            onclick="borrowInventory('${key}')"
+            style="
+              background:#16a34a;
+              color:white;
+              border:none;
+              padding:8px 12px;
+              border-radius:6px;
+              cursor:pointer;
+              margin-right:5px;
+            ">
+            Borrow
+          </button>
+
+          <button
+            onclick="deleteInventory('${key}')"
+            style="${deleteBtnStyle}">
+            Delete
+          </button>
+
+        `;
+
       html += `
-        <tr>
-          <td style="${tdStyle}">${i++}</td>
-          <td style="${tdStyle}">${d.itemName}</td>
-          <td style="${tdStyle}">${d.quantity}</td>
-          <td style="${tdStyle}">${d.location}</td>
-          <td style="${tdStyle}">
-            <button onclick="deleteInventory('${key}')"
-              style="${deleteBtnStyle}">
-              Delete
-            </button>
-          </td>
-        </tr>
+
+      <tr>
+
+        <td style="${tdStyle}">
+          ${i++}
+        </td>
+
+        <td style="${tdStyle}">
+          ${d.itemName}
+        </td>
+
+        <td style="${tdStyle}">
+          ${d.quantity}
+        </td>
+
+        <td style="${tdStyle}">
+          ${d.location}
+        </td>
+
+        <td style="${tdStyle}">
+          ${statusBadge}
+        </td>
+
+        <td style="${tdStyle}">
+          ${d.borrowedBy || "-"}
+        </td>
+
+        <td style="${tdStyle}">
+          ${d.returnDate || "-"}
+        </td>
+
+        <td style="${tdStyle}">
+          ${actionButtons}
+        </td>
+
+      </tr>
       `;
     });
 
@@ -18328,7 +18603,6 @@ window.loadInventory = function () {
     inventoryList.innerHTML = html;
   });
 };
-
 window.deleteInventory = async function (id) {
 
   const schoolId = localStorage.getItem("schoolId");
