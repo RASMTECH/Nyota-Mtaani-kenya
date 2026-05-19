@@ -8567,9 +8567,7 @@ async function loadMarksUnifiedClean() {
   // =========================
   // 🔹 CHECK LOGIN
   // =========================
-
   if (!auth.currentUser) {
-
     return Swal.fire(
       "Not Logged In",
       "Please login first",
@@ -8578,29 +8576,31 @@ async function loadMarksUnifiedClean() {
   }
 
   // =========================
-  // 🔹 CHECK SCHOOL ID
+  // 🔹 CHECK SCHOOL ID (NEW SAFE FORMAT)
   // =========================
+  const schoolId =
+    window.schoolId ||
+    localStorage.getItem("schoolId") ||
+    sessionStorage.getItem("schoolId");
 
-  if (!window.schoolId) {
-
+  if (!schoolId) {
     return Swal.fire(
       "School Error",
-      "School ID missing",
+      "School ID missing (login again)",
       "error"
     );
   }
 
+  // assign globally (IMPORTANT FIX)
+  window.schoolId = schoolId;
+
   // =========================
   // 🔹 EXAM PERIOD
   // =========================
-
   const examPeriodEl =
-    document.getElementById(
-      "resultsExamPeriod"
-    );
+    document.getElementById("resultsExamPeriod");
 
   if (!examPeriodEl) {
-
     return Swal.fire(
       "Exam period dropdown not found",
       "",
@@ -8608,11 +8608,9 @@ async function loadMarksUnifiedClean() {
     );
   }
 
-  const examPeriod =
-    examPeriodEl.value.trim();
+  const examPeriod = examPeriodEl.value.trim();
 
   if (!examPeriod) {
-
     return Swal.fire(
       "Select Exam Period",
       "",
@@ -8623,40 +8621,27 @@ async function loadMarksUnifiedClean() {
   // =========================
   // 🔹 GRADE FILTER
   // =========================
-
   const gradeFilterEl =
-    document.getElementById(
-      "resultsGradeFilter"
-    );
+    document.getElementById("resultsGradeFilter");
 
   const selectedGrade =
     gradeFilterEl
-      ? gradeFilterEl.value
-          .trim()
-          .toUpperCase()
+      ? gradeFilterEl.value.trim().toUpperCase()
       : "ALL GRADES";
 
   // =========================
-  // 🔥 START LOADER
+  // 🔥 LOADER
   // =========================
-
   showLoader();
 
-  updateProgress(
-    10,
-    "Initializing marks system..."
-  );
+  updateProgress(10, "Initializing marks system...");
 
-  await new Promise(
-    r => setTimeout(r, 300)
-  );
+  await new Promise(r => setTimeout(r, 300));
 
   // =========================
   // 🔹 SUBJECTS
   // =========================
-
   const subjects = [
-
     "eng",
     "math",
     "preTech",
@@ -8666,55 +8651,32 @@ async function loadMarksUnifiedClean() {
     "agriculture",
     "cre",
     "creativeArt"
-
   ];
 
   // =========================
-  // 🔹 FETCH SCHOOL STUDENTS
+  // 🔹 FETCH STUDENTS (SAFE PATH)
   // =========================
-
-  updateProgress(
-    25,
-    "Fetching student data from database..."
-  );
-
-  await new Promise(
-    r => setTimeout(r, 300)
-  );
+  updateProgress(25, "Fetching student data...");
 
   let snapshot;
 
   try {
-
-    // ✅ ONLY THIS SCHOOL
     snapshot = await get(
-      ref(
-        db,
-        `schools/${window.schoolId}/students`
-      )
+      ref(db, `schools/${schoolId}/students`)
     );
 
   } catch (err) {
-
     console.error(err);
-
     hideLoader();
 
     return Swal.fire({
       icon: "error",
       title: "Database Error",
-      text:
-        err.message ||
-        "Permission denied"
+      text: err.message || "Permission denied"
     });
   }
 
-  // =========================
-  // 🔹 NO DATA
-  // =========================
-
   if (!snapshot.exists()) {
-
     hideLoader();
 
     return Swal.fire(
@@ -8725,270 +8687,114 @@ async function loadMarksUnifiedClean() {
   }
 
   // =========================
-  // 🔹 PROCESS LEARNERS
+  // 🔹 PROCESS DATA
   // =========================
-
-  updateProgress(
-    45,
-    "Processing learner records..."
-  );
-
-  await new Promise(
-    r => setTimeout(r, 300)
-  );
+  updateProgress(45, "Processing learners...");
 
   const learners = [];
-
-  const gradeSet =
-    new Set();
+  const gradeSet = new Set();
 
   snapshot.forEach(child => {
 
-    const data =
-      child.val();
+    const data = child.val();
 
-    // ✅ MARKS
-    const marks =
-      data.marks?.[examPeriod];
-
+    const marks = data.marks?.[examPeriod];
     if (!marks) return;
 
-    // ✅ NAME
     const name =
       marks.name ||
       data.name ||
       "Unknown";
 
-    // ✅ GRADE
     const grade =
-      (
-        marks.grade ||
-        data.grade ||
-        ""
-      )
-      .toString()
-      .trim()
-      .toUpperCase();
+      (marks.grade || data.grade || "")
+        .toString()
+        .trim()
+        .toUpperCase();
 
-    // ✅ STORE GRADE
-    if (
-      grade &&
-      grade !== "-"
-    ) {
+    if (grade) gradeSet.add(grade);
 
-      gradeSet.add(grade);
-    }
+    const total = subjects.reduce(
+      (sum, s) => sum + Number(marks[s] || 0),
+      0
+    );
 
-    // =========================
-    // 🔹 TOTALS
-    // =========================
-
-    const total =
-      subjects.reduce(
-
-        (sum, s) =>
-
-          sum +
-          Number(
-            marks[s] || 0
-          ),
-
-        0
-      );
-
-    const average =
-      total / subjects.length;
-
-    // =========================
-    // 🔹 PUSH LEARNER
-    // =========================
+    const average = total / subjects.length;
 
     learners.push({
-
-      id:
-        child.key,
-
-      schoolId:
-        window.schoolId,
-
+      id: child.key,
+      schoolId,
       name,
-
       grade,
-
       marks,
-
       total,
-
       average,
-
       examPeriod
     });
-
   });
 
   // =========================
-  // 🔹 SORT PERFORMANCE
+  // 🔹 SORT
   // =========================
+  updateProgress(70, "Sorting data...");
 
-  updateProgress(
-    70,
-    "Sorting performance data..."
-  );
+  learners.sort((a, b) => b.total - a.total);
 
-  await new Promise(
-    r => setTimeout(r, 300)
-  );
-
-  learners.sort(
-
-    (a, b) =>
-
-      b.total - a.total
-
-  );
+  allLoadedLearners = learners;
 
   // =========================
-  // 🔹 STORE RAW DATA
+  // 🔹 FILTER CONTEXT
   // =========================
-
-  allLoadedLearners =
-    learners;
-
-  // =========================
-  // 🔹 UPDATE REPORT CONTEXT
-  // =========================
-
   if (!window.reportContext) {
-
     window.reportContext = {};
   }
 
-  window.reportContext.examPeriod =
-    examPeriod;
+  window.reportContext.examPeriod = examPeriod;
 
   window.reportContext.grade =
-
-    selectedGrade &&
-    selectedGrade !== "ALL GRADES"
-
+    selectedGrade && selectedGrade !== "ALL GRADES"
       ? selectedGrade
-
       : null;
 
-  // =========================
-  // 🔹 FILTER LEARNERS
-  // =========================
+  let filteredLearners = learners;
 
-  let filteredLearners =
-    learners;
-
-  // ✅ GRADE FILTER
-  if (
-    selectedGrade &&
-    selectedGrade !==
-      "ALL GRADES"
-  ) {
-
-    filteredLearners =
-      learners.filter(
-
-        l =>
-
-          l.grade ===
-          selectedGrade
-
-      );
+  if (selectedGrade && selectedGrade !== "ALL GRADES") {
+    filteredLearners = learners.filter(
+      l => l.grade === selectedGrade
+    );
   }
 
-  // =========================
-  // 🔹 STORE FILTERED
-  // =========================
-
-  window.currentFilteredLearners =
-    filteredLearners;
+  window.currentFilteredLearners = filteredLearners;
 
   // =========================
-  // 🔹 RENDER TABLES
+  // 🔹 RENDER
   // =========================
+  updateProgress(85, "Rendering tables...");
 
-  updateProgress(
-    85,
-    "Rendering tables..."
-  );
-
-  await new Promise(
-    r => setTimeout(r, 300)
-  );
-
-  renderMarksTable(
-    filteredLearners
-  );
-
-  renderTotals(
-    filteredLearners
-  );
-
-  renderAverages(
-    filteredLearners
-  );
-
-  // =========================
-  // 🔹 POPULATE GRADES
-  // =========================
+  renderMarksTable(filteredLearners);
+  renderTotals(filteredLearners);
+  renderAverages(filteredLearners);
 
   requestAnimationFrame(() => {
-
-    populateGradeSelectors(
-      gradeSet
-    );
-
+    populateGradeSelectors(gradeSet);
   });
 
   // =========================
-  // 🔹 FINALIZING
+  // 🔹 SUCCESS
   // =========================
-
-  updateProgress(
-    95,
-    "Finalizing dashboard..."
-  );
-
-  await new Promise(
-    r => setTimeout(r, 300)
-  );
-
-  // =========================
-  // 🔹 SUCCESS TOAST
-  // =========================
+  updateProgress(100, "Complete ✅");
 
   Swal.fire({
-
     toast: true,
-
     position: "top-end",
-
     icon: "success",
-
-    title:
-      `${filteredLearners.length} learners loaded`,
-
+    title: `${filteredLearners.length} learners loaded`,
     showConfirmButton: false,
-
     timer: 2000
   });
 
-  updateProgress(
-    100,
-    "Complete ✅"
-  );
-
-  await new Promise(
-    r => setTimeout(r, 300)
-  );
-
   hideLoader();
-}
-// =======================
+}// =======================
 // LEVEL SYSTEM
 // =======================
 function getLevel(score) {
