@@ -938,13 +938,20 @@ button:hover {
 
     <hr style="margin:15px 0;">
 
-    <!-- ================= INFO PANEL ================= -->
-    <div style="font-size:13px; color:gray; text-align:center;">
+<!-- ================= INFO PANEL ================= -->
+<div style="
+  font-size:13px;
+  color:#16a34a;
+  text-align:center;
+  font-weight:700;
+  line-height:1.8;
+">
 
-      ✔ 2 Minute Free Trial<br>
-      ✔ Secure M-Pesa Payments<br>
-      ✔ Auto Subscription Activation<br>
-      ✔ Full School ERP System Access
+  ✔ 2 Minute Free Trial<br>
+  ✔ Secure M-Pesa Payments<br>
+  ✔ Auto Subscription Activation<br>
+  ✔ Full School ERP System Access
+
 
     </div>
 
@@ -1623,7 +1630,6 @@ style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc;"></te
   ">
     ➕ Add Student
   </button>
-
       <hr>
 
       <!-- ================= ACTION BUTTONS ================= -->
@@ -3007,35 +3013,200 @@ background:rgba(0,0,0,0.5);justify-content:center;align-items:center;">
   </div>
 
 </div>
-<div id="transport" style="display:none; padding:20px;">
-  <h2>🚌 Transport Management</h2>
+<!-- ================= TRANSPORT MODULE ================= -->
+<div id="transport" style="display:none;padding:20px;">
 
-  <input id="busName" placeholder="Bus Name / Plate Number">
-  <input id="driverName" placeholder="Driver Name">
-  <input id="route" placeholder="Route">
-  <input id="fuelLog" placeholder="Fuel Log (Litres)">
+  <h2 style="
+    margin-bottom:20px;
+    color:#0f172a;
+    font-size:24px;
+    font-weight:700;
+  ">
+    🚌 Transport Management
+  </h2>
 
-  <button onclick="addTransport()">➕ Add Transport</button>
+  <!-- FORM -->
+  <div style="
+    background:white;
+    padding:20px;
+    border-radius:14px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.08);
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:15px;
+    margin-bottom:25px;
+  ">
 
-  <div id="transportList"></div>
+    <input
+      id="busName"
+      placeholder="Bus Name / Plate Number"
+      style="
+        padding:12px;
+        border:1px solid #cbd5e1;
+        border-radius:10px;
+        outline:none;
+      "
+    >
+
+    <input
+      id="driverName"
+      placeholder="Driver Name"
+      style="
+        padding:12px;
+        border:1px solid #cbd5e1;
+        border-radius:10px;
+        outline:none;
+      "
+    >
+
+    <input
+      id="route"
+      placeholder="Route"
+      style="
+        padding:12px;
+        border:1px solid #cbd5e1;
+        border-radius:10px;
+        outline:none;
+      "
+    >
+
+    <input
+      id="fuelLog"
+      placeholder="Fuel Log (Litres)"
+      style="
+        padding:12px;
+        border:1px solid #cbd5e1;
+        border-radius:10px;
+        outline:none;
+      "
+    >
+
+    <button
+      onclick="addTransport()"
+      style="
+        background:#2563eb;
+        color:white;
+        border:none;
+        border-radius:10px;
+        padding:12px;
+        cursor:pointer;
+        font-weight:600;
+      "
+    >
+      ➕ Add Transport
+    </button>
+
+  </div>
+
+  <!-- LIST -->
+  <div
+    id="transportList"
+    style="
+      background:white;
+      border-radius:14px;
+      padding:15px;
+      box-shadow:0 4px 15px rgba(0,0,0,0.08);
+      overflow-x:auto;
+    "
+  ></div>
+
 </div>
 
-<div id="hostel" style="display:none; padding:20px;">
-  <h2>🏨 Hostel Management</h2>
 
-  <input id="roomNumber" placeholder="Room Number">
-  <input id="capacity" placeholder="Capacity">
+<!-- ================= HOSTEL MODULE ================= -->
+<div id="hostel" style="display:none;padding:20px;">
 
-  <select id="hostelStudent">
-    <option value="">Assign Student</option>
-  </select>
+  <h2 style="
+    margin-bottom:20px;
+    color:#0f172a;
+    font-size:24px;
+    font-weight:700;
+  ">
+    🏨 Hostel Management
+  </h2>
 
-  <button onclick="addHostel()">➕ Add Room</button>
+  <!-- FORM -->
+  <div style="
+    background:white;
+    padding:20px;
+    border-radius:14px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.08);
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:15px;
+    margin-bottom:25px;
+  ">
 
-  <div id="hostelList"></div>
+    <input
+      id="roomNumber"
+      placeholder="Room Number"
+      style="
+        padding:12px;
+        border:1px solid #cbd5e1;
+        border-radius:10px;
+        outline:none;
+      "
+    >
+
+    <input
+      id="capacity"
+      type="number"
+      placeholder="Capacity"
+      style="
+        padding:12px;
+        border:1px solid #cbd5e1;
+        border-radius:10px;
+        outline:none;
+      "
+    >
+
+    <select
+      id="hostelStudent"
+      style="
+        padding:12px;
+        border:1px solid #cbd5e1;
+        border-radius:10px;
+        outline:none;
+        background:white;
+      "
+    >
+      <option value="">Assign Student</option>
+    </select>
+
+    <button
+      onclick="addHostel()"
+      style="
+        background:#2563eb;
+        color:white;
+        border:none;
+        border-radius:10px;
+        padding:12px;
+        cursor:pointer;
+        font-weight:600;
+      "
+    >
+      ➕ Add Room
+    </button>
+
+  </div>
+
+  <!-- LIST -->
+  <div
+    id="hostelList"
+    style="
+      background:white;
+      border-radius:14px;
+      padding:15px;
+      box-shadow:0 4px 15px rgba(0,0,0,0.08);
+      overflow-x:auto;
+    "
+  ></div>
+
 </div>
 
-<div id="inventory" style="display:none; padding:20px;">
+
+<!-- ================= INVENTORY MODULE ================= -->
+<div id="inventory" style="display:none;padding:20px;">
 
   <h2 style="
     margin-bottom:20px;
@@ -3046,7 +3217,7 @@ background:rgba(0,0,0,0.5);justify-content:center;align-items:center;">
     📦 Inventory Management
   </h2>
 
-  <!-- INVENTORY FORM -->
+  <!-- FORM -->
   <div style="
     background:white;
     padding:20px;
@@ -3109,7 +3280,7 @@ background:rgba(0,0,0,0.5);justify-content:center;align-items:center;">
 
   </div>
 
-  <!-- INVENTORY TABLE -->
+  <!-- LIST -->
   <div
     id="inventoryList"
     style="
@@ -3123,45 +3294,173 @@ background:rgba(0,0,0,0.5);justify-content:center;align-items:center;">
 
 </div>
 
-<div id="ict" style="display:none; padding:20px;">
-  <h2>💻 ICT Management</h2>
 
-  <input id="deviceName" placeholder="Device Name">
-  <input id="deviceType" placeholder="Type (Laptop, PC, Printer)">
-  <input id="serialNo" placeholder="Serial Number">
+<!-- ================= ICT MODULE ================= -->
+<div id="ict" style="display:none;padding:20px;">
 
-  <select id="deviceStatus">
-    <option value="Working">Working</option>
-    <option value="Faulty">Faulty</option>
-    <option value="Under Repair">Under Repair</option>
-  </select>
+  <h2 style="
+    margin-bottom:20px;
+    color:#0f172a;
+    font-size:24px;
+    font-weight:700;
+  ">
+    💻 ICT Management
+  </h2>
 
-  <button onclick="addDevice()">➕ Add Device</button>
+  <!-- FORM -->
+  <div style="
+    background:white;
+    padding:20px;
+    border-radius:14px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.08);
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:15px;
+    margin-bottom:25px;
+  ">
 
-  <div id="ictList"></div>
+    <input
+      id="deviceName"
+      placeholder="Device Name"
+      style="
+        padding:12px;
+        border:1px solid #cbd5e1;
+        border-radius:10px;
+        outline:none;
+      "
+    >
+
+    <input
+      id="deviceType"
+      placeholder="Type (Laptop, PC, Printer)"
+      style="
+        padding:12px;
+        border:1px solid #cbd5e1;
+        border-radius:10px;
+        outline:none;
+      "
+    >
+
+    <input
+      id="serialNo"
+      placeholder="Serial Number"
+      style="
+        padding:12px;
+        border:1px solid #cbd5e1;
+        border-radius:10px;
+        outline:none;
+      "
+    >
+
+    <select
+      id="deviceStatus"
+      style="
+        padding:12px;
+        border:1px solid #cbd5e1;
+        border-radius:10px;
+        outline:none;
+        background:white;
+      "
+    >
+      <option value="Working">Working</option>
+      <option value="Faulty">Faulty</option>
+      <option value="Under Repair">Under Repair</option>
+    </select>
+
+    <button
+      onclick="addDevice()"
+      style="
+        background:#2563eb;
+        color:white;
+        border:none;
+        border-radius:10px;
+        padding:12px;
+        cursor:pointer;
+        font-weight:600;
+      "
+    >
+      ➕ Add Device
+    </button>
+
+  </div>
+
+  <!-- LIST -->
+  <div
+    id="ictList"
+    style="
+      background:white;
+      border-radius:14px;
+      padding:15px;
+      box-shadow:0 4px 15px rgba(0,0,0,0.08);
+      overflow-x:auto;
+    "
+  ></div>
+
 </div>
 
 <div id="library" style="display:none; padding:20px;">
 
-  <h2>📚 Library Management</h2>
+  <h2 style="
+    margin-bottom:20px;
+    color:#0f172a;
+    font-size:24px;
+    font-weight:700;
+  ">
+    📚 Library Management
+  </h2>
 
-  <input id="bookTitle" placeholder="Book Title">
+  <!-- LIBRARY FORM -->
+  <div style="
+    background:white;
+    padding:20px;
+    border-radius:14px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.08);
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:15px;
+    margin-bottom:25px;
+  ">
 
-  <input id="bookAuthor" placeholder="Author">
+    <input id="bookTitle" placeholder="Book Title"
+      style="padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:none;">
 
-  <input id="bookCategory" placeholder="Category">
+    <input id="bookAuthor" placeholder="Author"
+      style="padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:none;">
 
-  <input id="bookISBN" placeholder="ISBN Number">
+    <input id="bookCategory" placeholder="Category"
+      style="padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:none;">
 
-  <input id="bookQuantity" type="number" placeholder="Quantity">
+    <input id="bookISBN" placeholder="ISBN Number"
+      style="padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:none;">
 
-  <button onclick="addBook()">
-    ➕ Add Book
-  </button>
+    <input id="bookQuantity" type="number" placeholder="Quantity"
+      style="padding:12px;border:1px solid #cbd5e1;border-radius:10px;outline:none;">
 
-  <br><br>
+    <button onclick="addBook()"
+      style="
+        background:#2563eb;
+        color:white;
+        border:none;
+        border-radius:10px;
+        padding:12px;
+        cursor:pointer;
+        font-weight:600;
+      ">
+      ➕ Add Book
+    </button>
 
-  <div id="libraryList"></div>
+  </div>
+
+  <!-- LIBRARY LIST -->
+  <div id="libraryList"
+    style="
+      background:white;
+      border-radius:14px;
+      padding:15px;
+      box-shadow:0 4px 15px rgba(0,0,0,0.08);
+      overflow-x:auto;
+    ">
+  </div>
 
 </div>
 <script type="module">
@@ -3476,7 +3775,7 @@ console.log(
 
       trialEndsAt:
         Date.now() +
-        (15 * 60 * 1000),
+        (5 * 60 * 1000),
 
       // =================================
       // SUBSCRIPTION DATES
@@ -3882,17 +4181,16 @@ async function checkSubscriptionAccess() {
 
 let ACCESS_GRANTED = true;
 
-
 /* ======================================================
    LOCK SYSTEM
 ====================================================== */
 
 function lockEntireSystem(title, message) {
 
-  // 🔒 REVOKE ACCESS IMMEDIATELY
+  // 🔒 REVOKE ACCESS
   ACCESS_GRANTED = false;
 
-  // 🔒 HIDE ENTIRE APP
+  // 🔒 HIDE APP
   const app = document.getElementById("app");
 
   if (app) {
@@ -3903,49 +4201,72 @@ function lockEntireSystem(title, message) {
 
     title,
 
+    width: 650,
+
     html: `
 
       <div style="text-align:center;">
 
-        <h3 style="margin-bottom:10px;">
+        <h3 style="
+          margin-bottom:15px;
+          color:#374151;
+        ">
           ${message}
         </h3>
 
         <div style="
           background:#f3f4f6;
-          padding:15px;
-          border-radius:10px;
+          padding:18px;
+          border-radius:14px;
           margin-top:15px;
         ">
 
-          <h2 style="margin:0;color:#16a34a;">
-            PAY VIA M-PESA
+          <h2 style="
+            margin:0;
+            color:#16a34a;
+            font-size:26px;
+          ">
+            💳 PAY VIA M-PESA
           </h2>
 
+          <p style="
+            color:#6b7280;
+            margin-top:8px;
+            font-size:13px;
+          ">
+            Select a package below to continue using RASM 360
+          </p>
+
+          <!-- ================= PACKAGE BOX ================= -->
+
           <div style="
-            margin-top:15px;
+            margin-top:18px;
             background:white;
-            padding:15px;
-            border-radius:10px;
+            padding:18px;
+            border-radius:14px;
             text-align:left;
+            box-shadow:0 3px 10px rgba(0,0,0,0.08);
           ">
 
             <h3 style="
               margin-top:0;
               text-align:center;
               color:#111827;
+              margin-bottom:15px;
             ">
-              Choose Subscription Package
+              📦 Choose Subscription Package
             </h3>
 
             <select
               id="packageSelect"
               style="
                 width:100%;
-                padding:12px;
-                border-radius:8px;
-                border:1px solid #ccc;
+                padding:14px;
+                border-radius:10px;
+                border:1px solid #d1d5db;
                 margin-top:10px;
+                font-size:15px;
+                outline:none;
               "
             >
 
@@ -3953,25 +4274,92 @@ function lockEntireSystem(title, message) {
                 -- Select Package --
               </option>
 
+              <option value="hourly">
+                ⚡ Quick Access — KES 300 (1 Hour)
+              </option>
+
+              <option value="daily">
+                🟡 Daily Package — KES 500 (24 Hours)
+              </option>
+
+              <option value="weekly">
+                🔵 Weekly Package — KES 1,200 (7 Days)
+              </option>
+
               <option value="starter">
-                Starter Package - KES 3,000 (30 Days)
+                🟢 Starter — KES 3,000 (30 Days)
               </option>
 
               <option value="standard">
-                Standard Package - KES 5,000 (90 Days)
+                🔷 Standard — KES 5,000 (90 Days)
               </option>
 
               <option value="premium">
-                Premium Package - KES 15,000 (365 Days)
+                🟣 Premium — KES 15,000 (365 Days)
               </option>
 
             </select>
 
-            <div style="
+            <!-- ================= PACKAGE INFO ================= -->
+
+            <div id="packageInfo" style="
               margin-top:15px;
-              padding:12px;
-              background:#f3f4f6;
-              border-radius:8px;
+              background:#eff6ff;
+              border:1px solid #bfdbfe;
+              padding:14px;
+              border-radius:10px;
+              color:#1e3a8a;
+              font-size:13px;
+              line-height:1.8;
+            ">
+
+              🚀 Select a package to view benefits
+
+            </div>
+
+            <!-- ================= FEATURES ================= -->
+
+            <div style="
+              margin-top:18px;
+              background:#ecfdf5;
+              border:1px solid #bbf7d0;
+              padding:14px;
+              border-radius:10px;
+            ">
+
+              <h4 style="
+                margin-top:0;
+                color:#15803d;
+              ">
+                ✔ Platform Benefits
+              </h4>
+
+              <div style="
+                font-size:13px;
+                color:#16a34a;
+                font-weight:700;
+                line-height:1.8;
+              ">
+
+                ✔ 2 Minute Free Trial<br>
+                ✔ Secure M-Pesa Payments<br>
+                ✔ Auto Subscription Activation<br>
+                ✔ Full School ERP System Access<br>
+                ✔ CBC Report Generation<br>
+                ✔ Finance & Fees Tracking
+
+              </div>
+
+            </div>
+
+            <!-- ================= PAYMENT INFO ================= -->
+
+            <div style="
+              margin-top:18px;
+              padding:14px;
+              background:#f9fafb;
+              border-radius:10px;
+              border:1px solid #e5e7eb;
             ">
 
               <p>
@@ -3986,34 +4374,42 @@ function lockEntireSystem(title, message) {
 
             </div>
 
+            <!-- ================= PHONE INPUT ================= -->
+
             <input
               id="phoneInput"
               placeholder="2547XXXXXXXX"
               style="
                 width:100%;
-                padding:12px;
-                border-radius:8px;
-                border:1px solid #ccc;
-                margin-top:15px;
+                padding:14px;
+                border-radius:10px;
+                border:1px solid #d1d5db;
+                margin-top:18px;
                 box-sizing:border-box;
+                font-size:15px;
+                outline:none;
               "
             >
+
+            <!-- ================= BUTTON ================= -->
 
             <button
               onclick="activateSubscription()"
               style="
                 width:100%;
-                margin-top:15px;
-                padding:14px;
+                margin-top:18px;
+                padding:15px;
                 border:none;
-                border-radius:8px;
-                background:#16a34a;
+                border-radius:10px;
+                background:linear-gradient(135deg,#16a34a,#15803d);
                 color:white;
                 font-size:16px;
+                font-weight:bold;
                 cursor:pointer;
+                box-shadow:0 4px 12px rgba(22,163,74,0.3);
               "
             >
-              Pay & Activate
+              🚀 Pay & Activate
             </button>
 
           </div>
@@ -4025,11 +4421,88 @@ function lockEntireSystem(title, message) {
 
     allowOutsideClick: false,
     allowEscapeKey: false,
-    showConfirmButton: false
+    showConfirmButton: false,
+
+    didOpen: () => {
+
+      const select =
+        document.getElementById("packageSelect");
+
+      const info =
+        document.getElementById("packageInfo");
+
+      select.addEventListener("change", () => {
+
+        const val = select.value;
+
+        if (val === "hourly") {
+
+          info.innerHTML = `
+            ⚡ <b>Quick Access</b><br>
+            ✔ 1 Hour Access<br>
+            ✔ Perfect for emergency usage<br>
+            ✔ Fees + Results + Printing
+          `;
+        }
+
+        if (val === "daily") {
+
+          info.innerHTML = `
+            🟡 <b>Daily Package</b><br>
+            ✔ 24 Hour Access<br>
+            ✔ Students Management<br>
+            ✔ Fees + Attendance
+          `;
+        }
+
+        if (val === "weekly") {
+
+          info.innerHTML = `
+            🔵 <b>Weekly Package</b><br>
+            ✔ 7 Days Access<br>
+            ✔ Exams + Reports<br>
+            ✔ Teachers + Fees
+          `;
+        }
+
+        if (val === "starter") {
+
+          info.innerHTML = `
+            🟢 <b>Starter Package</b><br>
+            ✔ 30 Days Access<br>
+            ✔ Finance Module<br>
+            ✔ Students & Teachers
+          `;
+        }
+
+        if (val === "standard") {
+
+          info.innerHTML = `
+            🔷 <b>Standard Package</b><br>
+            ✔ 90 Days Access<br>
+            ✔ Inventory + Hostel<br>
+            ✔ Full Exams System
+          `;
+        }
+
+        if (val === "premium") {
+
+          info.innerHTML = `
+            🟣 <b>Premium Package</b><br>
+            ✔ 365 Days Access<br>
+            ✔ ALL Modules Included<br>
+            ✔ Priority Support
+          `;
+        }
+
+      });
+
+    }
 
   });
 
 }
+
 /* ======================================================
    M-PESA SUBSCRIPTION ACTIVATION
 ====================================================== */
@@ -4041,37 +4514,141 @@ window.activateSubscription = async function () {
 
   const selectedPackage =
     document.getElementById("packageSelect").value;
-if (!selectedPackage) {
 
-  Swal.fire(
-    "Error",
-    "Select subscription package",
-    "error"
-  );
+  // =====================================
+  // VALIDATE PACKAGE
+  // =====================================
 
-  return;
-}
-  if (!phone) {
+  if (!selectedPackage) {
 
-    Swal.fire(
-      "Error",
-      "Enter phone number",
-      "error"
-    );
+    Swal.fire({
+
+      icon: "warning",
+
+      title: "Package Required",
+
+      text: "Please select a subscription package.",
+
+      confirmButtonColor: "#f59e0b"
+
+    });
 
     return;
   }
 
-  let amount = 0;
+  // =====================================
+  // VALIDATE PHONE
+  // =====================================
 
-  if (selectedPackage === "starter") amount = 2000;
-  if (selectedPackage === "standard") amount = 5000;
-  if (selectedPackage === "premium") amount = 15000;
+  if (!phone) {
+
+    Swal.fire({
+
+      icon: "warning",
+
+      title: "Phone Required",
+
+      text: "Enter M-Pesa phone number.",
+
+      confirmButtonColor: "#f59e0b"
+
+    });
+
+    return;
+  }
+
+  // =====================================
+  // PACKAGE PRICING
+  // =====================================
+
+  let amount = 0;
+  let duration = 0;
+
+  if (selectedPackage === "hourly") {
+
+    amount = 300;
+    duration = 1 * 60 * 60 * 1000;
+
+  }
+
+  if (selectedPackage === "daily") {
+
+    amount = 500;
+    duration = 24 * 60 * 60 * 1000;
+
+  }
+
+  if (selectedPackage === "weekly") {
+
+    amount = 1200;
+    duration = 7 * 24 * 60 * 60 * 1000;
+
+  }
+
+  if (selectedPackage === "starter") {
+
+    amount = 3000;
+    duration = 30 * 24 * 60 * 60 * 1000;
+
+  }
+
+  if (selectedPackage === "standard") {
+
+    amount = 5000;
+    duration = 90 * 24 * 60 * 60 * 1000;
+
+  }
+
+  if (selectedPackage === "premium") {
+
+    amount = 15000;
+    duration = 365 * 24 * 60 * 60 * 1000;
+
+  }
+
+  // =====================================
+  // PROCESS PAYMENT
+  // =====================================
 
   Swal.fire({
-    title: "Sending STK Push...",
+
+    title: "Processing Payment",
+
+    html: `
+
+      <div style="padding:10px;">
+
+        <div style="
+          width:60px;
+          height:60px;
+          border:5px solid #e5e7eb;
+          border-top:5px solid #16a34a;
+          border-radius:50%;
+          margin:20px auto;
+          animation: spin 1s linear infinite;
+        "></div>
+
+        <p style="
+          margin-top:15px;
+          color:#6b7280;
+        ">
+          Sending M-Pesa STK Push...
+        </p>
+
+      </div>
+
+      <style>
+        @keyframes spin{
+          0%{transform:rotate(0deg);}
+          100%{transform:rotate(360deg);}
+        }
+      </style>
+
+    `,
+
     allowOutsideClick: false,
-    didOpen: () => Swal.showLoading()
+    showConfirmButton: false
+
   });
 
   try {
@@ -4085,29 +4662,96 @@ if (!selectedPackage) {
       },
 
       body: JSON.stringify({
+
         phone,
         amount,
+        duration,
         schoolId,
         packageName: selectedPackage
+
       })
 
     });
 
-  Swal.fire({
-  icon: "info",
-  title: "Waiting For Payment",
-  text: "Complete M-Pesa payment on your phone."
-});
+    Swal.fire({
+
+      icon: "info",
+
+      title: "📲 Complete Payment",
+
+      html: `
+
+        <div style="text-align:center;">
+
+          <p style="
+            color:#374151;
+            margin-bottom:15px;
+          ">
+            An M-Pesa prompt has been sent to:
+          </p>
+
+          <h2 style="
+            color:#16a34a;
+            margin:0;
+          ">
+            ${phone}
+          </h2>
+
+          <div style="
+            margin-top:18px;
+            background:#eff6ff;
+            padding:15px;
+            border-radius:10px;
+            color:#1d4ed8;
+          ">
+            Waiting for payment confirmation...
+          </div>
+
+        </div>
+
+      `,
+
+      confirmButtonColor: "#16a34a"
+
+    });
 
   } catch (err) {
 
     console.error(err);
 
     Swal.fire({
+
       icon: "error",
+
       title: "Payment Failed",
-      text: err.message
+
+      html: `
+
+        <div style="text-align:center;">
+
+          <p style="color:#dc2626;">
+            Failed to start M-Pesa payment.
+          </p>
+
+          <div style="
+            margin-top:15px;
+            background:#fef2f2;
+            padding:12px;
+            border-radius:10px;
+            color:#991b1b;
+            font-size:13px;
+          ">
+            ${err.message}
+          </div>
+
+        </div>
+
+      `,
+
+      confirmButtonColor: "#dc2626"
+
     });
+
   }
 };
 
@@ -5782,7 +6426,7 @@ Object.entries(data).forEach(([feeId, fee]) => {
 
     <div class="dropdown-menu">
 
-      <button onclick='openEditFeeModal("${feeId}")'>
+      <button onclick='openEditFeeModal("${selectedYear}", "${feeId}")'>
         ✏️ Edit
       </button>
 
@@ -5790,16 +6434,15 @@ Object.entries(data).forEach(([feeId, fee]) => {
         🧾 Receipt
       </button>
 
-      <button onclick="sendSingleSMS('${fee.studentId}')">
+    <button onclick="sendSingleSMS('${selectedYear}', '${fee.studentId}')">
         📩 SMS
       </button>
 
-      <button onclick='openRefundModal("${feeId}")'>
+ <button onclick='openRefundModal("${selectedYear}", "${feeId}")'>
         💸 Refund
       </button>
 
-      <button onclick="deleteLearnerFee('${feeId}', '${fee.studentName}')">
-        🗑 Delete
+     <button onclick="deleteLearnerFee('${selectedYear}', '${feeId}', '${fee.studentName}')">   🗑 Delete
       </button>
 
     </div>
@@ -5830,24 +6473,58 @@ Object.entries(data).forEach(([feeId, fee]) => {
 
   console.log("✅ Fees loaded (clean structured buttons version)");
 };
-window.sendSingleSMS = async (studentId) => {
+window.sendSingleSMS = async (year, studentId) => {
 
-  const snap = await get(schoolRef(`fees/${studentId}`));
-  const fee = snap.val();
+  try {
 
-  if (!fee) return Swal.fire("Error", "No fee record found", "error");
+    const snap = await get(
+      schoolRef(`fees/${year}/${studentId}`)
+    );
 
-  const phone = fee.parentPhone;
-  if (!phone) return Swal.fire("Error", "No phone number", "error");
+    const fee = snap.val();
 
-  const message =
-    `Dear Parent, ${fee.studentName} owes KES ${fee.balance}. Please clear school fees.`;
+    if (!fee) {
 
-  await sendSMS(phone, message);
+      return Swal.fire(
+        "Error",
+        "Fee record not found",
+        "error"
+      );
+    }
 
-  Swal.fire("Sent", "SMS sent successfully", "success");
+    const phone = fee.parentPhone;
+
+    if (!phone) {
+
+      return Swal.fire(
+        "Error",
+        "No phone number",
+        "error"
+      );
+    }
+
+    const message =
+      `Dear Parent, ${fee.studentName} owes KES ${fee.balance}. Kindly clear school fees.`;
+
+    await sendSMS(phone, message);
+
+    Swal.fire(
+      "Sent",
+      "SMS sent successfully",
+      "success"
+    );
+
+  } catch (err) {
+
+    console.error(err);
+
+    Swal.fire(
+      "Error",
+      "Failed to send SMS",
+      "error"
+    );
+  }
 };
-
 let feeChartInstance, gradeChartInstance, typeChartInstance;
 
 window.loadDashboardCharts = async () => {
@@ -6306,33 +6983,44 @@ window.openFeeHistory = function (fee) {
 window.closeFeeHistory = function () {
   document.getElementById("feeHistoryModal").style.display = "none";
 };
-window.deleteLearnerFee = async (feeId, studentName) => {
+window.deleteLearnerFee = async (year, feeId, studentName) => {
 
   try {
 
-    const confirm = await Swal.fire({
+    const confirmDelete = await Swal.fire({
       title: "Delete Fee Record?",
       text: `Remove all fee records for ${studentName}?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#dc2626",
-      cancelButtonColor: "#6b7280",
-      confirmButtonText: "Yes, Delete"
+      confirmButtonText: "Yes Delete"
     });
 
-    if (!confirm.isConfirmed) return;
+    if (!confirmDelete.isConfirmed) return;
 
-    // 🔥 DELETE FROM FIREBASE
-    await remove(schoolRef(`fees/${feeId}`));
+    // ================= DELETE =================
+    await remove(
+      schoolRef(`fees/${year}/${feeId}`)
+    );
 
-    // 🔥 RELOAD DATA
-    await loadFees();
-    await loadFinanceSummary();
-    await loadSchoolDashboard();
+    // ================= REMOVE ROW IMMEDIATELY =================
+    const rows = document.querySelectorAll("#feesTable tbody tr");
+
+    rows.forEach(row => {
+
+      if (row.innerHTML.includes(studentName)) {
+        row.remove();
+      }
+
+    });
+
+    // ================= RELOAD =================
+    loadFees();
+    loadFinanceSummary();
 
     Swal.fire(
       "Deleted",
-      `${studentName}'s fee record removed successfully.`,
+      `${studentName} removed successfully`,
       "success"
     );
 
@@ -6342,7 +7030,7 @@ window.deleteLearnerFee = async (feeId, studentName) => {
 
     Swal.fire(
       "Error",
-      "Failed to delete fee record",
+      err.message || "Delete failed",
       "error"
     );
   }
@@ -6462,25 +7150,38 @@ window.loadFeeFormYears = function () {
 document.addEventListener("DOMContentLoaded", () => {
   loadFees();
 });
-window.openEditFeeModal = async (feeId) => {
+window.openEditFeeModal = async (year, feeId) => {
 
   try {
 
     // ================= FETCH RECORD =================
-    const snap = await get(schoolRef(`fees/${feeId}`));
+    const snap = await get(
+      schoolRef(`fees/${year}/${feeId}`)
+    );
 
     if (!snap.exists()) {
-      return Swal.fire("Error", "Fee record not found", "error");
+
+      return Swal.fire(
+        "Error",
+        "Fee record not found",
+        "error"
+      );
     }
 
     const fee = snap.val();
+
     const feesObj = fee.fees || {};
 
     // ================= FEE TYPES =================
     const feeTypes = Object.keys(feesObj);
 
     if (!feeTypes.length) {
-      return Swal.fire("Error", "No fee categories found", "error");
+
+      return Swal.fire(
+        "Error",
+        "No fee categories found",
+        "error"
+      );
     }
 
     // ================= BUILD OPTIONS =================
@@ -6493,9 +7194,10 @@ window.openEditFeeModal = async (feeId) => {
       if (Array.isArray(feesObj[type])) {
 
         total = feesObj[type].reduce((sum, p) => {
-          return sum + Number(p.amount || 0);
-        }, 0);
 
+          return sum + Number(p.amount || 0);
+
+        }, 0);
       }
 
       optionsHtml += `
@@ -6514,18 +7216,55 @@ window.openEditFeeModal = async (feeId) => {
 
         <div style="text-align:left;">
 
-          <label style="font-weight:bold;">
+          <div style="
+            background:#f3f4f6;
+            padding:12px;
+            border-radius:10px;
+            margin-bottom:15px;
+            font-size:14px;
+          ">
+
+            <b>👨 Learner:</b>
+            ${fee.studentName || "-"}
+
+            <br><br>
+
+            <b>🏫 Grade:</b>
+            ${fee.grade || "-"}
+
+            <br><br>
+
+            <b>💰 Current Total Paid:</b>
+            KES ${(fee.totalPaid || 0).toLocaleString()}
+
+          </div>
+
+          <label style="
+            font-weight:bold;
+            display:block;
+            margin-bottom:5px;
+          ">
             Select Fee Category
           </label>
 
-          <select id="editFeeType"
-            class="swal2-input">
+          <select
+            id="editFeeType"
+            class="swal2-input"
+            style="
+              width:100%;
+              margin-bottom:15px;
+            "
+          >
 
             ${optionsHtml}
 
           </select>
 
-          <label style="font-weight:bold;">
+          <label style="
+            font-weight:bold;
+            display:block;
+            margin-bottom:5px;
+          ">
             New Amount
           </label>
 
@@ -6534,13 +7273,21 @@ window.openEditFeeModal = async (feeId) => {
             id="editFeeAmount"
             class="swal2-input"
             placeholder="Enter new amount"
+            style="width:100%;"
           >
 
         </div>
       `,
 
       confirmButtonText: "💾 Save Changes",
+
+      cancelButtonText: "Cancel",
+
       showCancelButton: true,
+
+      confirmButtonColor: "#16a34a",
+
+      cancelButtonColor: "#6b7280",
 
       preConfirm: () => {
 
@@ -6548,7 +7295,9 @@ window.openEditFeeModal = async (feeId) => {
           document.getElementById("editFeeType").value;
 
         const amount =
-          Number(document.getElementById("editFeeAmount").value);
+          Number(
+            document.getElementById("editFeeAmount").value
+          );
 
         if (!type || isNaN(amount) || amount < 0) {
 
@@ -6571,16 +7320,18 @@ window.openEditFeeModal = async (feeId) => {
 
     const { type, amount } = result.value;
 
-    // ================= REPLACE CATEGORY TOTAL =================
+    // ================= UPDATE CATEGORY =================
     feesObj[type] = [
       {
         amount,
         timestamp: Date.now(),
-        edited: true
+        edited: true,
+        editedBy:
+          localStorage.getItem("username") || "Admin"
       }
     ];
 
-    // ================= RECALCULATE TOTALS =================
+    // ================= RECALCULATE =================
     let totalPaid = 0;
 
     Object.values(feesObj).forEach(list => {
@@ -6603,7 +7354,9 @@ window.openEditFeeModal = async (feeId) => {
 
     // ================= SAVE =================
     await update(
-      schoolRef(`fees/${feeId}`),
+
+      schoolRef(`fees/${year}/${feeId}`),
+
       {
         fees: feesObj,
         totalPaid,
@@ -6613,35 +7366,50 @@ window.openEditFeeModal = async (feeId) => {
     );
 
     // ================= SUCCESS =================
-    Swal.fire(
-      "Updated",
-      "Fee updated successfully",
-      "success"
-    );
+    Swal.fire({
+
+      icon: "success",
+
+      title: "Fee Updated",
+
+      text: "Learner fee updated successfully",
+
+      timer: 1800,
+
+      showConfirmButton: false
+    });
 
     // ================= RELOAD =================
-    loadFees();
-    loadFinanceSummary();
+    await loadFees();
+
+    await loadFinanceSummary();
+
+    if (typeof loadDashboardCharts === "function") {
+      await loadDashboardCharts();
+    }
 
   } catch (err) {
 
-    console.error(err);
+    console.error("Edit fee error:", err);
 
     Swal.fire(
       "Error",
-      "Failed to edit fee",
+      err.message || "Failed to edit fee",
       "error"
     );
   }
 };
-window.openRefundModal = async (feeId) => {
+window.openRefundModal = async (year, feeId) => {
 
   try {
 
     // ================= FETCH RECORD =================
-    const snap = await get(schoolRef(`fees/${feeId}`));
+    const snap = await get(
+      schoolRef(`fees/${year}/${feeId}`)
+    );
 
     if (!snap.exists()) {
+
       return Swal.fire(
         "Error",
         "Fee record not found",
@@ -6663,9 +7431,10 @@ window.openRefundModal = async (feeId) => {
       if (Array.isArray(feesObj[type])) {
 
         total = feesObj[type].reduce((sum, item) => {
-          return sum + Number(item.amount || 0);
-        }, 0);
 
+          return sum + Number(item.amount || 0);
+
+        }, 0);
       }
 
       optionsHtml += `
@@ -6684,18 +7453,61 @@ window.openRefundModal = async (feeId) => {
 
         <div style="text-align:left;">
 
-          <label style="font-weight:bold;">
+          <div style="
+            background:#fef2f2;
+            border:1px solid #fecaca;
+            padding:12px;
+            border-radius:10px;
+            margin-bottom:15px;
+            font-size:14px;
+          ">
+
+            <b>👨 Learner:</b>
+            ${fee.studentName || "-"}
+
+            <br><br>
+
+            <b>🏫 Grade:</b>
+            ${fee.grade || "-"}
+
+            <br><br>
+
+            <b>💰 Current Paid:</b>
+            KES ${(fee.totalPaid || 0).toLocaleString()}
+
+            <br><br>
+
+            <b>⚠ Balance:</b>
+            KES ${(fee.balance || 0).toLocaleString()}
+
+          </div>
+
+          <label style="
+            font-weight:bold;
+            display:block;
+            margin-bottom:5px;
+          ">
             Select Fee Category
           </label>
 
-          <select id="refundType"
-            class="swal2-input">
+          <select
+            id="refundType"
+            class="swal2-input"
+            style="
+              width:100%;
+              margin-bottom:15px;
+            "
+          >
 
             ${optionsHtml}
 
           </select>
 
-          <label style="font-weight:bold;">
+          <label style="
+            font-weight:bold;
+            display:block;
+            margin-bottom:5px;
+          ">
             Refund Amount
           </label>
 
@@ -6704,9 +7516,14 @@ window.openRefundModal = async (feeId) => {
             id="refundAmount"
             class="swal2-input"
             placeholder="Enter refund amount"
+            style="width:100%;"
           >
 
-          <label style="font-weight:bold;">
+          <label style="
+            font-weight:bold;
+            display:block;
+            margin-bottom:5px;
+          ">
             Reason
           </label>
 
@@ -6715,13 +7532,21 @@ window.openRefundModal = async (feeId) => {
             id="refundReason"
             class="swal2-input"
             placeholder="Reason for refund"
+            style="width:100%;"
           >
 
         </div>
       `,
 
       confirmButtonText: "💸 Process Refund",
+
+      cancelButtonText: "Cancel",
+
       showCancelButton: true,
+
+      confirmButtonColor: "#dc2626",
+
+      cancelButtonColor: "#6b7280",
 
       preConfirm: () => {
 
@@ -6729,7 +7554,9 @@ window.openRefundModal = async (feeId) => {
           document.getElementById("refundType").value;
 
         const amount =
-          Number(document.getElementById("refundAmount").value);
+          Number(
+            document.getElementById("refundAmount").value
+          );
 
         const reason =
           document.getElementById("refundReason").value;
@@ -6751,6 +7578,7 @@ window.openRefundModal = async (feeId) => {
       }
     });
 
+    // ================= CANCEL =================
     if (!result.isConfirmed) return;
 
     const {
@@ -6765,11 +7593,13 @@ window.openRefundModal = async (feeId) => {
     if (Array.isArray(feesObj[type])) {
 
       currentTotal = feesObj[type].reduce((sum, item) => {
+
         return sum + Number(item.amount || 0);
+
       }, 0);
     }
 
-    // ================= VALIDATE REFUND =================
+    // ================= VALIDATE =================
     if (amount > currentTotal) {
 
       return Swal.fire(
@@ -6782,17 +7612,19 @@ window.openRefundModal = async (feeId) => {
     // ================= RECORD REFUND =================
     feesObj[type].push({
 
-      amount: -Math.abs(amount), // negative transaction
+      amount: -Math.abs(amount),
 
       timestamp: Date.now(),
 
       refund: true,
 
-      reason: reason || "Refund"
+      reason: reason || "Refund",
 
+      refundedBy:
+        localStorage.getItem("username") || "Admin"
     });
 
-    // ================= RECALCULATE TOTALS =================
+    // ================= RECALCULATE =================
     let totalPaid = 0;
 
     Object.values(feesObj).forEach(list => {
@@ -6815,7 +7647,9 @@ window.openRefundModal = async (feeId) => {
 
     // ================= SAVE =================
     await update(
-      schoolRef(`fees/${feeId}`),
+
+      schoolRef(`fees/${year}/${feeId}`),
+
       {
         fees: feesObj,
         totalPaid,
@@ -6825,23 +7659,35 @@ window.openRefundModal = async (feeId) => {
     );
 
     // ================= SUCCESS =================
-    Swal.fire(
-      "Refunded",
-      "Refund processed successfully",
-      "success"
-    );
+    Swal.fire({
+
+      icon: "success",
+
+      title: "Refund Processed",
+
+      text: "Learner refund completed successfully",
+
+      timer: 1800,
+
+      showConfirmButton: false
+    });
 
     // ================= RELOAD =================
-    loadFees();
-    loadFinanceSummary();
+    await loadFees();
+
+    await loadFinanceSummary();
+
+    if (typeof loadDashboardCharts === "function") {
+      await loadDashboardCharts();
+    }
 
   } catch (err) {
 
-    console.error(err);
+    console.error("Refund error:", err);
 
     Swal.fire(
       "Error",
-      "Refund failed",
+      err.message || "Refund failed",
       "error"
     );
   }
