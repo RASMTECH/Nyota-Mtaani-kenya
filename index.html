@@ -897,6 +897,32 @@ button:hover {
 .submenu button:hover{
   background:#2563eb;
 }
+.school-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  padding: 10px 14px;
+  border-radius: 10px;
+  margin: 10px 0;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+/* shimmer effect while loading */
+.school-title.loading {
+  background: linear-gradient(90deg, #1e293b, #334155, #1e293b);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  color: transparent;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
 </style>
 </head>
 
@@ -962,7 +988,7 @@ button:hover {
 <!-- APP -->
 <!-- ================= MAIN APP ================= -->
 <div id="app" style="display:none;">
-<h2 id="schoolNameDisplay">Loading school...</h2>
+
   <!-- ================= SIDEBAR ================= -->
   <div class="sidebar">
 
@@ -997,7 +1023,9 @@ button:hover {
       <!-- ================= END SUBSCRIPTION STATUS ================= -->
 
     </div>
-<h2 id="schoolNameDisplay">Loading school...</h2>
+<h2 id="schoolNameDisplay" class="school-title">
+  Loading school...
+</h2>
     <!-- SCROLLABLE MENU -->
     <div class="sidebar-scroll">
 
@@ -3643,35 +3671,15 @@ window.logout = logout;
 /* ================= REGISTER (UPGRADED + SAAS READY) ================= */
 window.register = async () => {
 
-  const btn =
-    document.getElementById(
-      "registerBtn"
-    );
+  const btn = document.getElementById("registerBtn");
 
   if (btn.disabled) return;
 
-  // =====================================
-  // FORM VALUES
-  // =====================================
+  const school = schoolName.value.trim();
+  const userEmail = email.value.trim();
+  const userPassword = password.value.trim();
 
-  const school =
-    schoolName.value.trim();
-
-  const userEmail =
-    email.value.trim();
-
-  const userPassword =
-    password.value.trim();
-
-  // =====================================
-  // VALIDATION
-  // =====================================
-
-  if (
-    !school ||
-    !userEmail ||
-    !userPassword
-  ) {
+  if (!school || !userEmail || !userPassword) {
 
     Swal.fire({
       icon: "warning",
@@ -3682,404 +3690,126 @@ window.register = async () => {
     return;
   }
 
-  // =====================================
-  // LOADING UI
-  // =====================================
-
   btn.disabled = true;
 
   btn.innerHTML = `
     Creating
     <div class="loader-dots">
-      <span></span>
-      <span></span>
-      <span></span>
+      <span></span><span></span><span></span>
     </div>
   `;
 
   try {
 
-    // =====================================
-    // CREATE AUTH ACCOUNT
-    // =====================================
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      userEmail,
+      userPassword
+    );
 
-    const userCredential =
-      await createUserWithEmailAndPassword(
-        auth,
-        userEmail,
-        userPassword
-      );
+    const uid = userCredential.user.uid;
 
-    const uid =
-      userCredential.user.uid;
+    schoolId = "school_" + uid;
 
-
-
- // =====================================
-// SAFE SCHOOL ID
-// =====================================
-
-schoolId =
-  "school_" + uid;
-
-sessionStorage.setItem(
-  "schoolId",
-  schoolId
-);
-
-console.log(
-  "Creating school:",
-  schoolId
-);
-
-    // =====================================
-    // FULL SCHOOL OBJECT
-    // =====================================
+    sessionStorage.setItem("schoolId", schoolId);
 
     const schoolData = {
-
-      // BASIC INFO
-      schoolId: schoolId,
-
-      uid: uid,
-
+      schoolId,
+      uid,
       ownerUid: uid,
-
       name: school,
-
       email: userEmail,
-
       createdAt: Date.now(),
-
-      // =================================
-      // SUBSCRIPTION
-      // =================================
-
-      subscriptionStatus:
-        "trial",
-
-      plan:
-        "Free Trial",
-
-      package:
-        "trial",
-
+      subscriptionStatus: "trial",
+      plan: "Free Trial",
+      package: "trial",
       amountPaid: 0,
-
-      // =================================
-      // TRIAL
-      // =================================
-
-      trialStartedAt:
-        Date.now(),
-
-      trialEndsAt:
-        Date.now() +
-        (5 * 60 * 1000),
-
-      // =================================
-      // SUBSCRIPTION DATES
-      // =================================
-
+      trialStartedAt: Date.now(),
+      trialEndsAt: Date.now() + (5 * 60 * 1000),
       subscriptionStartedAt: 0,
-
       subscriptionEndsAt: 0,
-
-      // =================================
-      // SYSTEM CONTROL
-      // =================================
-
       locked: false,
-
       active: true,
-
       deleted: false,
-
-      // =================================
-      // PAYMENT INFO
-      // =================================
-
       mpesaCode: "",
-
       phone: "",
-
       paidAt: 0,
-
-      // =================================
-      // ADMIN TRACKING
-      // =================================
-
-      registeredBy:
-        userEmail,
-
-      lastUpdated:
-        Date.now()
-
+      registeredBy: userEmail,
+      lastUpdated: Date.now()
     };
 
-    // =====================================
-    // SAVE SCHOOL
-    // =====================================
+    await set(ref(db, "schools/" + schoolId), schoolData);
 
-    await set(
-      ref(
-        db,
-        "schools/" + schoolId
-      ),
-      schoolData
-    );
-
-    console.log(
-      "School saved successfully:",
-      schoolData
-    );
-
-    // =====================================
-    // VERIFY SAVE
-    // =====================================
-
-    const verifySnap =
-      await get(
-        ref(
-          db,
-          "schools/" + schoolId
-        )
-      );
-
-    console.log(
-      "Verification:",
-      verifySnap.val()
-    );
-
-    // =====================================
-    // CREATE USER PROFILE
-    // =====================================
-
-    await set(
-      ref(db, `users/${uid}`),
-      {
-
-        uid: uid,
-
-        role: "admin",
-
-        schoolId: schoolId,
-
-        schoolName: school,
-
-        email: userEmail,
-
-        createdAt: Date.now(),
-
-        active: true
-
-      }
-    );
-
-    console.log(
-      "User profile created"
-    );
-
-    // =====================================
-    // SUCCESS ALERT
-    // =====================================
-
-    await Swal.fire({
-
-      icon: "success",
-
-      title:
-        "🎉 School Created Successfully!",
-
-      html: `
-
-        <div style="text-align:center;">
-
-          <h2 style="
-            margin-bottom:10px;
-            color:#16a34a;
-          ">
-            ${school}
-          </h2>
-
-          <p>
-            Your school system
-            is now ready 🚀
-          </p>
-
-          <div style="
-            background:#f3f4f6;
-            padding:15px;
-            border-radius:10px;
-            margin-top:15px;
-            text-align:left;
-          ">
-
-            <p>
-              <b>Trial:</b>
-              2 Minutes
-            </p>
-
-            <p>
-              <b>Status:</b>
-              Trial Active
-            </p>
-
-            <p>
-              <b>School ID:</b>
-              ${schoolId}
-            </p>
-
-          </div>
-
-        </div>
-      `,
-
-      confirmButtonText:
-        "Continue"
-
+    await set(ref(db, `users/${uid}`), {
+      uid,
+      role: "admin",
+      schoolId,
+      schoolName: school,
+      email: userEmail,
+      createdAt: Date.now(),
+      active: true
     });
 
-    // =====================================
-    // OPTIONAL AUTO LOGIN UI
-    // =====================================
+    await Swal.fire({
+      icon: "success",
+      title: "🎉 School Created Successfully!",
+      html: `
+        <div style="text-align:center;">
+          <h2 style="margin-bottom:10px;color:#16a34a;">
+            ${school}
+          </h2>
+          <p>Your school system is now ready 🚀</p>
+        </div>
+      `,
+      confirmButtonText: "Continue"
+    });
 
-    document.getElementById(
-      "authSection"
-    ).style.display = "none";
+    // ============================
+    // OPEN APP
+    // ============================
+    document.getElementById("authSection").style.display = "none";
+    document.getElementById("app").style.display = "block";
 
-    document.getElementById(
-      "app"
-    ).style.display = "block";
+    // 🔥 FIX: UPDATE SCHOOL NAME IN UI (NEW ADDITION)
+    const schoolEl = document.getElementById("schoolNameDisplay");
 
-    // =====================================
-    // START SUBSCRIPTION SYSTEM
-    // =====================================
-
-    if (
-      typeof startSubscriptionWatcher
-      === "function"
-    ) {
-
-      startSubscriptionWatcher();
+    function updateUI() {
+      if (schoolEl) schoolEl.textContent = school;
     }
 
-    if (
-      typeof startSubscriptionUI
-      === "function"
-    ) {
+    updateUI();
+    setTimeout(updateUI, 300);
+    setTimeout(updateUI, 1000);
 
-      startSubscriptionUI();
-    }
-
-    // =====================================
-    // LOAD SYSTEM
-    // =====================================
-
-    if (
-      typeof loadAll === "function"
-    ) {
-
-      loadAll();
-    }
+    // ============================
+    // START SYSTEMS
+    // ============================
+    if (typeof startSubscriptionWatcher === "function") startSubscriptionWatcher();
+    if (typeof startSubscriptionUI === "function") startSubscriptionUI();
+    if (typeof loadAll === "function") loadAll();
 
   } catch (error) {
 
-    console.error(
-      "REGISTER ERROR:",
-      error
-    );
-
-    // =====================================
-    // FRIENDLY ERRORS
-    // =====================================
-
-    let msg =
-      error.message;
-
-    if (
-      error.code ===
-      "auth/email-already-in-use"
-    ) {
-
-      msg =
-        "This email is already registered.";
-    }
-
-    if (
-      error.code ===
-      "auth/weak-password"
-    ) {
-
-      msg =
-        "Password should be at least 6 characters.";
-    }
-
-    if (
-      error.code ===
-      "auth/invalid-email"
-    ) {
-
-      msg =
-        "Enter a valid email address.";
-    }
-
-    // =====================================
-    // ERROR ALERT
-    // =====================================
+    console.error("REGISTER ERROR:", error);
 
     Swal.fire({
-
       icon: "error",
-
-      title:
-        "Registration Failed",
-
-      text: msg
-
+      title: "Registration Failed",
+      text: error.message
     });
 
   } finally {
 
-    // =====================================
-    // RESET BUTTON
-    // =====================================
-
     btn.disabled = false;
 
     btn.innerHTML = `
-      <span style="
-        display:inline-flex;
-        align-items:center;
-        gap:8px;
-      ">
-        🏫 Create School
-      </span>
+      🏫 Create School
     `;
 
     btn.style.background =
       "linear-gradient(135deg, #FF9800, #F57C00)";
-
-    btn.style.color =
-      "white";
-
-    btn.style.border =
-      "none";
-
-    btn.style.padding =
-      "12px 18px";
-
-    btn.style.borderRadius =
-      "8px";
-
-    btn.style.cursor =
-      "pointer";
-
-    btn.style.boxShadow =
-      "0 4px 10px rgba(0,0,0,0.2)";
   }
 };
-
 
 /* ======================================================
    SUBSCRIPTION SYSTEM
@@ -5109,10 +4839,8 @@ window.login = async () => {
 
     const userData = userSnap.val();
 
-    console.log("USER DATA:", userData);
-
     // ============================
-    // GET SCHOOL ID (ROBUST FIX)
+    // GET SCHOOL ID
     // ============================
     const schoolId =
       userData.schoolId ||
@@ -5123,64 +4851,56 @@ window.login = async () => {
       throw new Error("School ID missing in user profile");
     }
 
-    // ============================
-    // STORE SESSION
-    // ============================
     window.schoolId = schoolId;
 
     localStorage.setItem("schoolId", schoolId);
     sessionStorage.setItem("schoolId", schoolId);
-    localStorage.setItem("userUid", uid);
-    localStorage.setItem("schoolEmail", email.value.trim());
 
     // ============================
-    // VERIFY SCHOOL EXISTS
+    // GET SCHOOL DATA
     // ============================
-    let schoolSnap;
-
-    try {
-      schoolSnap = await get(ref(db, `schools/${schoolId}`));
-    } catch (err) {
-      console.error("School fetch error:", err);
-      throw new Error("Unable to access school data (permission issue)");
-    }
+    const schoolSnap = await get(ref(db, `schools/${schoolId}`));
 
     if (!schoolSnap.exists()) {
       throw new Error("School account not found");
     }
 
-    // ============================
-    // 🏫 SCHOOL NAME (FIXED + SAFE)
-    // ============================
     const schoolData = schoolSnap.val();
 
+    // ============================
+    // FINAL SCHOOL NAME FIX
+    // ============================
     const schoolName =
-      userData.schoolName ||
       schoolData.name ||
       schoolData.schoolName ||
-      localStorage.getItem("schoolName") ||
+      userData.schoolName ||
       "My School";
 
     window.schoolName = schoolName;
 
     localStorage.setItem("schoolName", schoolName);
+    sessionStorage.setItem("schoolName", schoolName);
+
+    console.log("🏫 SCHOOL NAME LOADED:", schoolName);
 
     // ============================
-    // CHECK SUBSCRIPTION
+    // SUBSCRIPTION CHECK
     // ============================
     let accessAllowed = true;
 
     try {
       accessAllowed = await checkSubscriptionAccess();
     } catch (err) {
-      console.error("Subscription error:", err);
-      accessAllowed = false;
+
+      console.error(err);
 
       Swal.fire({
         icon: "warning",
         title: "Subscription Check Failed",
         text: "Continuing with limited access"
       });
+
+      accessAllowed = false;
     }
 
     if (!accessAllowed) {
@@ -5206,22 +4926,40 @@ window.login = async () => {
     document.getElementById("app").style.display = "block";
 
     // ============================
-    // 🏫 SAFE DASHBOARD DISPLAY (FIX LOADING ISSUE)
+    // 🔥 SAFE UI UPDATE (NO TIMING BUGS)
     // ============================
-    setTimeout(() => {
+    function updateSchoolUI() {
 
-      const schoolNameEl =
-        document.getElementById("schoolNameDisplay");
+      const el = document.getElementById("schoolNameDisplay");
 
-      if (schoolNameEl) {
-        schoolNameEl.textContent = schoolName;
+      if (el) {
+        el.textContent = schoolName;
+        console.log("🏫 UI UPDATED:", schoolName);
       }
+    }
 
-    }, 100);
+    // update immediately
+    updateSchoolUI();
 
-    startSubscriptionWatcher();
-    startSubscriptionUI();
-    loadAll();
+    // backup updates (prevents race conditions)
+    requestAnimationFrame(updateSchoolUI);
+    setTimeout(updateSchoolUI, 300);
+    setTimeout(updateSchoolUI, 1000);
+
+    // ============================
+    // START SYSTEMS
+    // ============================
+    if (typeof startSubscriptionWatcher === "function") {
+      startSubscriptionWatcher();
+    }
+
+    if (typeof startSubscriptionUI === "function") {
+      startSubscriptionUI();
+    }
+
+    if (typeof loadAll === "function") {
+      loadAll();
+    }
 
   } catch (error) {
 
@@ -5235,6 +4973,19 @@ window.login = async () => {
 
   } finally {
     btns.forEach(b => b.disabled = false);
+  }
+};
+
+window.syncSchoolNameUI = () => {
+
+  const name =
+    localStorage.getItem("schoolName");
+
+  const el =
+    document.getElementById("schoolNameDisplay");
+
+  if (el && name) {
+    el.textContent = name;
   }
 };
 
@@ -8378,21 +8129,15 @@ document.getElementById("saveMarksButton")?.addEventListener("click", async () =
     document.getElementById("gradeSelect").value;
 
   // =========================
-  // 🔹 VALIDATION
+  // 🔹 BASIC VALIDATION
   // =========================
-  if (
-    !learnerKey ||
-    !examPeriod ||
-    !grade
-  ) {
+  if (!learnerKey || !examPeriod || !grade) {
 
-    Swal.fire(
+    return Swal.fire(
       "Missing Data",
       "Select learner, grade and exam period",
       "error"
     );
-
-    return;
   }
 
   // =========================
@@ -8407,17 +8152,70 @@ document.getElementById("saveMarksButton")?.addEventListener("click", async () =
       .trim();
 
   // =========================
+  // 🔥 SUBJECT VALIDATION (0 - 100 ONLY)
+  // =========================
+  const subjects = [
+    { name: "English", el: eng },
+    { name: "Math", el: math },
+    { name: "Pre Tech", el: preTech },
+    { name: "Kiswahili", el: kiswahili },
+    { name: "Science", el: science },
+    { name: "Social Studies", el: social },
+    { name: "Agriculture", el: agriculture },
+    { name: "CRE", el: cre },
+    { name: "Creative Arts", el: creativeArt }
+  ];
+
+  for (let s of subjects) {
+
+    const val = s.el.value.trim();
+    const num = Number(val);
+
+    // reset style
+    s.el.style.border = "";
+
+    // empty check
+    if (val === "" || isNaN(num)) {
+
+      s.el.style.border = "2px solid red";
+
+      return Swal.fire(
+        "Invalid Input",
+        `${s.name} must be a number`,
+        "error"
+      );
+    }
+
+    // range check
+    if (num < 0 || num > 100) {
+
+      s.el.style.border = "2px solid red";
+
+      return Swal.fire(
+        "Invalid Score",
+        `${s.name} must be between 0 and 100`,
+        "error"
+      );
+    }
+
+    // decimal check
+    if (!Number.isInteger(num)) {
+
+      s.el.style.border = "2px solid red";
+
+      return Swal.fire(
+        "Invalid Score",
+        `${s.name} must be a whole number (no decimals)`,
+        "error"
+      );
+    }
+  }
+
+  // =========================
   // 🔹 SAVE CURRENT SELECTION
   // =========================
-  localStorage.setItem(
-    "selectedExamPeriod",
-    examPeriod
-  );
-
-  localStorage.setItem(
-    "selectedGrade",
-    grade
-  );
+  localStorage.setItem("selectedExamPeriod", examPeriod);
+  localStorage.setItem("selectedGrade", grade);
 
   // =========================
   // 🔹 MARKS OBJECT
@@ -8425,98 +8223,59 @@ document.getElementById("saveMarksButton")?.addEventListener("click", async () =
   const marksData = {
 
     schoolId,
-
     name: learnerName,
-
     grade: grade,
 
-    eng:
-      Number(eng.value) || 0,
+    eng: Number(eng.value),
+    math: Number(math.value),
+    preTech: Number(preTech.value),
+    kiswahili: Number(kiswahili.value),
+    science: Number(science.value),
+    social: Number(social.value),
+    agriculture: Number(agriculture.value),
+    cre: Number(cre.value),
+    creativeArt: Number(creativeArt.value),
 
-    math:
-      Number(math.value) || 0,
-
-    preTech:
-      Number(preTech.value) || 0,
-
-    kiswahili:
-      Number(kiswahili.value) || 0,
-
-    science:
-      Number(science.value) || 0,
-
-    social:
-      Number(social.value) || 0,
-
-    agriculture:
-      Number(agriculture.value) || 0,
-
-    cre:
-      Number(cre.value) || 0,
-
-    creativeArt:
-      Number(creativeArt.value) || 0,
-
-    createdAt:
-      Date.now()
+    createdAt: Date.now()
 
   };
 
   try {
 
     // =========================
-    // 🔥 SAVE INSIDE SCHOOL
+    // 🔥 SAVE TO FIREBASE
     // =========================
     await set(
-
       ref(
         db,
         `schools/${schoolId}/students/${learnerKey}/marks/${examPeriod}`
       ),
-
       marksData
-
     );
 
     // =========================
     // 🔹 SUCCESS
     // =========================
     Swal.fire({
-
       toast: true,
-
       position: "top-end",
-
       icon: "success",
-
-      title: "Marks saved",
-
+      title: "Marks saved successfully",
       showConfirmButton: false,
-
       timer: 1500
-
     });
 
     // =========================
     // 🔹 RESET FORM
     // =========================
-    document
-      .getElementById("marksForm")
-      .reset();
+    document.getElementById("marksForm").reset();
+
+    // restore filters
+    document.getElementById("gradeSelect").value = grade;
+    document.getElementById("examPeriod").value = examPeriod;
 
     // =========================
-    // 🔹 RESTORE FILTERS
-    // =========================
-    document
-      .getElementById("gradeSelect")
-      .value = grade;
-
-    document
-      .getElementById("examPeriod")
-      .value = examPeriod;
-
-    // =========================
-    // 🔹 RELOAD LEARNERS
+    // 🔹 RELOAD STUDENTS
     // =========================
     loadLearnersFromStudents();
 
