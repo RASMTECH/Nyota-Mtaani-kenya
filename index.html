@@ -962,7 +962,7 @@ button:hover {
 <!-- APP -->
 <!-- ================= MAIN APP ================= -->
 <div id="app" style="display:none;">
-
+<h2 id="schoolNameDisplay">Loading school...</h2>
   <!-- ================= SIDEBAR ================= -->
   <div class="sidebar">
 
@@ -997,7 +997,7 @@ button:hover {
       <!-- ================= END SUBSCRIPTION STATUS ================= -->
 
     </div>
-
+<h2 id="schoolNameDisplay">Loading school...</h2>
     <!-- SCROLLABLE MENU -->
     <div class="sidebar-scroll">
 
@@ -5096,7 +5096,6 @@ window.login = async () => {
 
     const uid = userCred.user.uid;
 
-    // 🔥 FORCE TOKEN REFRESH (important for permissions)
     await auth.currentUser.getIdToken(true);
 
     // ============================
@@ -5125,7 +5124,7 @@ window.login = async () => {
     }
 
     // ============================
-    // STORE SAFELY
+    // STORE SESSION
     // ============================
     window.schoolId = schoolId;
 
@@ -5135,7 +5134,7 @@ window.login = async () => {
     localStorage.setItem("schoolEmail", email.value.trim());
 
     // ============================
-    // VERIFY SCHOOL EXISTS (SAFE CHECK)
+    // VERIFY SCHOOL EXISTS
     // ============================
     let schoolSnap;
 
@@ -5151,7 +5150,23 @@ window.login = async () => {
     }
 
     // ============================
-    // CHECK SUBSCRIPTION (SAFE WRAP)
+    // 🏫 SCHOOL NAME (FIXED + SAFE)
+    // ============================
+    const schoolData = schoolSnap.val();
+
+    const schoolName =
+      userData.schoolName ||
+      schoolData.name ||
+      schoolData.schoolName ||
+      localStorage.getItem("schoolName") ||
+      "My School";
+
+    window.schoolName = schoolName;
+
+    localStorage.setItem("schoolName", schoolName);
+
+    // ============================
+    // CHECK SUBSCRIPTION
     // ============================
     let accessAllowed = true;
 
@@ -5179,7 +5194,7 @@ window.login = async () => {
     Swal.fire({
       icon: 'success',
       title: 'Login Successful',
-      text: 'Welcome back!',
+      text: `Welcome back to ${schoolName}`,
       timer: 1200,
       showConfirmButton: false
     });
@@ -5189,6 +5204,20 @@ window.login = async () => {
     // ============================
     document.getElementById("authSection").style.display = "none";
     document.getElementById("app").style.display = "block";
+
+    // ============================
+    // 🏫 SAFE DASHBOARD DISPLAY (FIX LOADING ISSUE)
+    // ============================
+    setTimeout(() => {
+
+      const schoolNameEl =
+        document.getElementById("schoolNameDisplay");
+
+      if (schoolNameEl) {
+        schoolNameEl.textContent = schoolName;
+      }
+
+    }, 100);
 
     startSubscriptionWatcher();
     startSubscriptionUI();
@@ -5208,7 +5237,6 @@ window.login = async () => {
     btns.forEach(b => b.disabled = false);
   }
 };
-/* ================= MODULES ================= */
 
 // 🔹 Auto age by grade
 function getRandomAgeByGrade(grade) {
