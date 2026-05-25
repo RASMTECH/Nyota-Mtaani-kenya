@@ -1199,7 +1199,81 @@ button:hover {
           <option value="defaultersContent">
             ⚠️ Defaulters List
           </option>
+<!-- ================= STUDENT REPORTS ================= -->
+<option value="generatedOutput">
+  👨‍👩‍👧 Parent List
+</option>
 
+<option value="generatedOutput">
+  🏫 Class List
+</option>
+
+<option value="filteredLearnersContent">
+  👨‍🎓 Student List
+</option>
+
+<option value="genderGroupedContent">
+  ⚧ Gender Grouped List
+</option>
+
+<!-- ================= LIBRARY ================= -->
+<option value="libraryContent">
+  📚 Library Records
+</option>
+
+<option value="libraryIssuedBooksContent">
+  📖 Issued Books Report
+</option>
+
+<option value="libraryDefaultersContent">
+  ⚠️ Library Defaulters
+</option>
+
+<!-- ================= INVENTORY ================= -->
+<option value="inventoryContent">
+  📦 Inventory Records
+</option>
+
+<option value="inventoryStockContent">
+  🧾 Inventory Stock Report
+</option>
+
+<option value="inventoryIssuedContent">
+  📤 Issued Inventory Report
+</option>
+
+<!-- ================= TRANSPORT ================= -->
+<option value="transportContent">
+  🚌 Transport Report
+</option>
+
+<!-- ================= HOSTEL ================= -->
+<option value="hostelContent">
+  🏨 Hostel Report
+</option>
+
+<!-- ================= ICT ================= -->
+<option value="ictContent">
+  💻 ICT Assets Report
+</option>
+
+<!-- ================= PAYROLL ================= -->
+<option value="payrollContent">
+  💳 Payroll Report
+</option>
+
+<!-- ================= ATTENDANCE ================= -->
+<option value="attendanceReportOutput">
+  📅 Attendance Report
+</option>
+
+<option value="teacherAttendanceOutput">
+  👨‍🏫 Teacher Attendance Report
+</option>
+
+<option value="supportAttendanceOutput">
+  🧹 Support Staff Attendance
+</option>
         </select>
 
         <button onclick="printSelectedReport()" class="dark-btn">
@@ -3491,6 +3565,25 @@ background:rgba(0,0,0,0.5);justify-content:center;align-items:center;">
   </div>
 
 </div>
+<!-- ================= EXTRA PRINT CONTENTS ================= -->
+
+<div id="libraryContent" style="display:none;"></div>
+<div id="libraryIssuedBooksContent" style="display:none;"></div>
+<div id="libraryDefaultersContent" style="display:none;"></div>
+
+<div id="inventoryContent" style="display:none;"></div>
+<div id="inventoryStockContent" style="display:none;"></div>
+<div id="inventoryIssuedContent" style="display:none;"></div>
+
+<div id="transportContent" style="display:none;"></div>
+<div id="hostelContent" style="display:none;"></div>
+<div id="ictContent" style="display:none;"></div>
+<div id="payrollContent" style="display:none;"></div>
+
+<div id="filteredLearnersContent" style="display:none;"></div>
+<div id="genderGroupedContent" style="display:none;"></div>
+
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
@@ -3603,214 +3696,574 @@ function getSchoolId() {
   );
 
 }
-async function logout() {
+/* ================= LOGOUT (UPGRADED + SECURE + SMOOTH UX) ================= */
+
+window.logout = async function () {
+
+  // 🚫 Prevent double logout clicks
+  if (window.__loggingOut) return;
+
   const result = await Swal.fire({
     title: "Logout?",
-    text: "You will be signed out of the system.",
+    html: `
+      <div style="font-size:14px;color:#64748b;">
+        You will be securely signed out of the system.
+      </div>
+    `,
     icon: "warning",
     showCancelButton: true,
+    reverseButtons: true,
+    focusCancel: true,
+
+    confirmButtonText: `
+      <i class="fas fa-sign-out-alt"></i>
+      Yes, Logout
+    `,
+
+    cancelButtonText: `
+      <i class="fas fa-times"></i>
+      Cancel
+    `,
+
     confirmButtonColor: "#ef4444",
-    cancelButtonColor: "#6b7280",
-    confirmButtonText: "Yes, Logout"
+    cancelButtonColor: "#64748b",
+
+    background: "#ffffff",
+    color: "#0f172a",
+
+    customClass: {
+      popup: "rounded-2xl shadow-2xl",
+      confirmButton: "swal-btn",
+      cancelButton: "swal-btn"
+    }
   });
 
   if (!result.isConfirmed) return;
 
   try {
-    // 🔄 Show loading/progress
-    Swal.fire({
+
+    window.__loggingOut = true;
+
+    // 🔄 Loading state
+    await Swal.fire({
       title: "Signing you out...",
-      text: "Please wait",
+      html: `
+        <div style="margin-top:10px;font-size:14px;color:#64748b;">
+          Please wait while we end your session securely.
+        </div>
+      `,
       allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+
       didOpen: () => {
         Swal.showLoading();
       }
     });
 
+    // 🔥 Firebase Logout
     await signOut(auth);
 
-    // small delay for smooth UX
-    await new Promise(resolve => setTimeout(resolve, 800));
-
-    document.getElementById("app").style.display = "none";
-    document.getElementById("authSection").style.display = "block";
-
-    sessionStorage.removeItem(
-  "schoolId"
-);
-
-sessionStorage.removeItem(
-  "userUid"
-);
-
-sessionStorage.removeItem(
-  "schoolEmail"
-);
-
-    Swal.fire({
-      title: "Logged out!",
-      text: "You have been signed out successfully.",
-      icon: "success",
-      timer: 1500,
-      showConfirmButton: false
+    // 🧹 Clear storage safely
+    [
+      "schoolId",
+      "userUid",
+      "schoolEmail",
+      "schoolName",
+      "subscriptionStatus",
+      "selectedGrade",
+      "selectedExam",
+      "lastPage"
+    ].forEach(key => {
+      sessionStorage.removeItem(key);
+      localStorage.removeItem(key);
     });
+
+    // 🧹 Optional full cleanup
+    sessionStorage.clear();
+
+    // 👀 Hide app
+    const app = document.getElementById("app");
+    const authSection = document.getElementById("authSection");
+
+    if (app) {
+      app.style.opacity = "0";
+      app.style.pointerEvents = "none";
+
+      setTimeout(() => {
+        app.style.display = "none";
+      }, 300);
+    }
+
+    if (authSection) {
+      authSection.style.display = "block";
+      authSection.style.opacity = "0";
+
+      setTimeout(() => {
+        authSection.style.transition = "0.3s ease";
+        authSection.style.opacity = "1";
+      }, 50);
+    }
+
+    // ✅ Success message
+    await Swal.fire({
+      icon: "success",
+      title: "Logged Out",
+      text: "You have been signed out successfully.",
+      timer: 1800,
+      showConfirmButton: false,
+      background: "#ffffff",
+      color: "#0f172a"
+    });
+
+    // 🔄 Optional redirect
+    // window.location.href = "login.html";
 
   } catch (error) {
-    console.error(error);
+
+    console.error("Logout Error:", error);
 
     Swal.fire({
+      icon: "error",
       title: "Logout Failed",
-      text: "Something went wrong. Try again.",
-      icon: "error"
+      text: error.message || "Something went wrong. Please try again.",
+      confirmButtonColor: "#ef4444",
+      background: "#ffffff",
+      color: "#0f172a"
     });
+
+  } finally {
+
+    window.__loggingOut = false;
+
   }
-}
-/* 🔥 MAKE BUTTONS WORK (CRITICAL FIX) */
+};
+
+
+/* ================= GLOBAL BUTTON FIX ================= */
+
 window.show = show;
 window.logout = logout;
-/* ================= REGISTER (UPGRADED + SAAS READY) ================= */
+
+
+/* ================= REGISTER (ULTRA UPGRADED + SAAS READY + SECURE) ================= */
+
 window.register = async () => {
 
   const btn = document.getElementById("registerBtn");
 
-  if (btn.disabled) return;
+  // 🚫 Prevent double click / spam
+  if (!btn || btn.disabled || window.__registering) return;
 
-  const school = schoolName.value.trim();
-  const userEmail = email.value.trim();
-  const userPassword = password.value.trim();
+  // =========================
+  // INPUTS
+  // =========================
+  const school =
+    document.getElementById("schoolName")?.value.trim();
 
+  const userEmail =
+    document.getElementById("email")?.value.trim();
+
+  const userPassword =
+    document.getElementById("password")?.value.trim();
+
+  // =========================
+  // VALIDATION
+  // =========================
   if (!school || !userEmail || !userPassword) {
 
-    Swal.fire({
+    return Swal.fire({
       icon: "warning",
       title: "Missing Fields",
-      text: "Fill all required fields"
+      text: "Please fill all required fields.",
+      confirmButtonColor: "#f59e0b"
     });
-
-    return;
   }
 
-  btn.disabled = true;
+  // 🔐 Password strength
+  if (userPassword.length < 6) {
 
-  btn.innerHTML = `
-    Creating
-    <div class="loader-dots">
-      <span></span><span></span><span></span>
-    </div>
-  `;
+    return Swal.fire({
+      icon: "warning",
+      title: "Weak Password",
+      text: "Password must be at least 6 characters.",
+      confirmButtonColor: "#f59e0b"
+    });
+  }
+
+  // 📧 Email validation
+  const emailRegex =
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!emailRegex.test(userEmail)) {
+
+    return Swal.fire({
+      icon: "warning",
+      title: "Invalid Email",
+      text: "Enter a valid email address.",
+      confirmButtonColor: "#f59e0b"
+    });
+  }
 
   try {
 
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      userEmail,
-      userPassword
-    );
+    window.__registering = true;
+
+    // =========================
+    // BUTTON LOADING
+    // =========================
+    btn.disabled = true;
+
+    btn.innerHTML = `
+      <div style="
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        gap:10px;
+      ">
+        <div class="spinner"></div>
+        <span>Creating School...</span>
+      </div>
+    `;
+
+    // =========================
+    // CREATE ACCOUNT
+    // =========================
+    const userCredential =
+      await createUserWithEmailAndPassword(
+        auth,
+        userEmail,
+        userPassword
+      );
 
     const uid = userCredential.user.uid;
 
-    schoolId = "school_" + uid;
+    // =========================
+    // SCHOOL ID
+    // =========================
+    const schoolId =
+      "school_" + uid;
 
-    sessionStorage.setItem("schoolId", schoolId);
+    // =========================
+    // SESSION STORAGE
+    // =========================
+    sessionStorage.setItem(
+      "schoolId",
+      schoolId
+    );
 
+    sessionStorage.setItem(
+      "userUid",
+      uid
+    );
+
+    sessionStorage.setItem(
+      "schoolEmail",
+      userEmail
+    );
+
+    sessionStorage.setItem(
+      "schoolName",
+      school
+    );
+
+    // =========================
+    // TIMESTAMPS
+    // =========================
+    const now = Date.now();
+
+    // =========================
+    // SCHOOL DATA
+    // =========================
     const schoolData = {
+
       schoolId,
       uid,
       ownerUid: uid,
+
       name: school,
       email: userEmail,
-      createdAt: Date.now(),
+
+      createdAt: now,
+      lastUpdated: now,
+
       subscriptionStatus: "trial",
       plan: "Free Trial",
       package: "trial",
+
       amountPaid: 0,
-      trialStartedAt: Date.now(),
-      trialEndsAt: Date.now() + (5 * 60 * 1000),
+
+      trialStartedAt: now,
+
+      // ⏳ 5 DAY TRIAL
+      trialEndsAt:
+        now + (5 * 24 * 60 * 60 * 1000),
+
       subscriptionStartedAt: 0,
       subscriptionEndsAt: 0,
+
       locked: false,
       active: true,
       deleted: false,
+
       mpesaCode: "",
       phone: "",
+
       paidAt: 0,
+
       registeredBy: userEmail,
-      lastUpdated: Date.now()
+
+      learnersCount: 0,
+      teachersCount: 0,
+      examsCount: 0
     };
 
-    await set(ref(db, "schools/" + schoolId), schoolData);
+    // =========================
+    // USER DATA
+    // =========================
+    const userData = {
 
-    await set(ref(db, `users/${uid}`), {
       uid,
       role: "admin",
+
       schoolId,
       schoolName: school,
-      email: userEmail,
-      createdAt: Date.now(),
-      active: true
-    });
 
+      email: userEmail,
+
+      createdAt: now,
+
+      active: true,
+      deleted: false,
+
+      lastLogin: now
+    };
+
+    // =========================
+    // SAVE TO FIREBASE
+    // =========================
+    await Promise.all([
+
+      set(
+        ref(db, "schools/" + schoolId),
+        schoolData
+      ),
+
+      set(
+        ref(db, "users/" + uid),
+        userData
+      )
+
+    ]);
+
+    // =========================
+    // SUCCESS MESSAGE
+    // =========================
     await Swal.fire({
       icon: "success",
       title: "🎉 School Created Successfully!",
       html: `
         <div style="text-align:center;">
-          <h2 style="margin-bottom:10px;color:#16a34a;">
+
+          <div style="
+            font-size:18px;
+            font-weight:700;
+            color:#16a34a;
+            margin-bottom:10px;
+          ">
             ${school}
-          </h2>
-          <p>Your school system is now ready 🚀</p>
+          </div>
+
+          <div style="
+            color:#64748b;
+            font-size:14px;
+          ">
+            Your school management system
+            is now ready 🚀
+          </div>
+
         </div>
       `,
-      confirmButtonText: "Continue"
+      confirmButtonText: "Continue",
+      confirmButtonColor: "#16a34a",
+      allowOutsideClick: false
     });
 
-    // ============================
+    // =========================
     // OPEN APP
-    // ============================
-    document.getElementById("authSection").style.display = "none";
-    document.getElementById("app").style.display = "block";
+    // =========================
+    const authSection =
+      document.getElementById("authSection");
 
-    // 🔥 FIX: UPDATE SCHOOL NAME IN UI (NEW ADDITION)
-    const schoolEl = document.getElementById("schoolNameDisplay");
+    const app =
+      document.getElementById("app");
 
-    function updateUI() {
-      if (schoolEl) schoolEl.textContent = school;
+    if (authSection) {
+      authSection.style.display = "none";
     }
 
+    if (app) {
+      app.style.display = "block";
+      app.style.opacity = "0";
+
+      setTimeout(() => {
+        app.style.transition = "0.4s ease";
+        app.style.opacity = "1";
+      }, 50);
+    }
+
+    // =========================
+    // UPDATE SCHOOL NAME UI
+    // =========================
+    const schoolEl =
+      document.getElementById(
+        "schoolNameDisplay"
+      );
+
+    const updateUI = () => {
+
+      if (schoolEl) {
+        schoolEl.textContent = school;
+      }
+
+    };
+
     updateUI();
+
     setTimeout(updateUI, 300);
     setTimeout(updateUI, 1000);
 
-    // ============================
+    // =========================
     // START SYSTEMS
-    // ============================
-    if (typeof startSubscriptionWatcher === "function") startSubscriptionWatcher();
-    if (typeof startSubscriptionUI === "function") startSubscriptionUI();
-    if (typeof loadAll === "function") loadAll();
+    // =========================
+    if (
+      typeof startSubscriptionWatcher ===
+      "function"
+    ) {
+      startSubscriptionWatcher();
+    }
+
+    if (
+      typeof startSubscriptionUI ===
+      "function"
+    ) {
+      startSubscriptionUI();
+    }
+
+    if (
+      typeof loadAll === "function"
+    ) {
+      loadAll();
+    }
+
+    // =========================
+    // OPTIONAL WELCOME SOUND
+    // =========================
+    /*
+    new Audio("success.mp3").play();
+    */
 
   } catch (error) {
 
-    console.error("REGISTER ERROR:", error);
+    console.error(
+      "REGISTER ERROR:",
+      error
+    );
+
+    // =========================
+    // FRIENDLY ERRORS
+    // =========================
+    let message =
+      "Something went wrong.";
+
+    switch (error.code) {
+
+      case "auth/email-already-in-use":
+        message =
+          "This email is already registered.";
+        break;
+
+      case "auth/invalid-email":
+        message =
+          "Invalid email address.";
+        break;
+
+      case "auth/weak-password":
+        message =
+          "Password is too weak.";
+        break;
+
+      case "auth/network-request-failed":
+        message =
+          "Network error. Check internet connection.";
+        break;
+
+      default:
+        message =
+          error.message || message;
+    }
 
     Swal.fire({
       icon: "error",
       title: "Registration Failed",
-      text: error.message
+      text: message,
+      confirmButtonColor: "#ef4444"
     });
 
   } finally {
 
-    btn.disabled = false;
+    // =========================
+    // RESET BUTTON
+    // =========================
+    window.__registering = false;
 
-    btn.innerHTML = `
-      🏫 Create School
-    `;
+    if (btn) {
 
-    btn.style.background =
-      "linear-gradient(135deg, #FF9800, #F57C00)";
+      btn.disabled = false;
+
+      btn.innerHTML = `
+        🏫 Create School
+      `;
+
+      btn.style.background =
+        "linear-gradient(135deg, #FF9800, #F57C00)";
+    }
   }
 };
 
+
+/* ================= SPINNER STYLE ================= */
+
+if (
+  !document.getElementById("spinnerStyle")
+) {
+
+  const style =
+    document.createElement("style");
+
+  style.id = "spinnerStyle";
+
+  style.innerHTML = `
+
+    .spinner{
+      width:18px;
+      height:18px;
+      border:3px solid rgba(255,255,255,0.3);
+      border-top:3px solid #fff;
+      border-radius:50%;
+      animation:spin .7s linear infinite;
+    }
+
+    @keyframes spin{
+      to{
+        transform:rotate(360deg);
+      }
+    }
+
+  `;
+
+  document.head.appendChild(style);
+}
 /* ======================================================
    SUBSCRIPTION SYSTEM
 ====================================================== */
@@ -4790,192 +5243,816 @@ if (!schoolId) return;
 
   }, 1000);
 }
+/* ================= LOGIN (FINAL PRODUCTION VERSION) ================= */
+
 window.login = async () => {
 
-  const btns = document.querySelectorAll('#authSection button');
-  btns.forEach(b => b.disabled = true);
+  // 🚫 Prevent multiple login attempts
+  if (window.__loggingIn) return;
 
-  if (!email.value.trim() || !password.value.trim()) {
+  const btns =
+    document.querySelectorAll(
+      '#authSection button'
+    );
 
-    btns.forEach(b => b.disabled = false);
+  const loginBtn =
+    document.getElementById(
+      "loginBtn"
+    );
+
+  const emailInput =
+    document.getElementById(
+      "email"
+    );
+
+  const passwordInput =
+    document.getElementById(
+      "password"
+    );
+
+  const userEmail =
+    emailInput?.value.trim();
+
+  const userPassword =
+    passwordInput?.value.trim();
+
+  // =========================
+  // VALIDATION
+  // =========================
+  if (!userEmail || !userPassword) {
 
     return Swal.fire({
       icon: "warning",
       title: "Missing Fields",
-      text: "Enter email and password"
+      text:
+        "Please enter email and password.",
+      confirmButtonColor:
+        "#f59e0b",
+      background: "#ffffff",
+      color: "#0f172a"
     });
   }
 
-  Swal.fire({
-    title: 'Signing you in...',
-    allowOutsideClick: false,
-    allowEscapeKey: false,
-    didOpen: () => Swal.showLoading()
-  });
+  // =========================
+  // EMAIL VALIDATION
+  // =========================
+  const emailRegex =
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!emailRegex.test(userEmail)) {
+
+    return Swal.fire({
+      icon: "warning",
+      title: "Invalid Email",
+      text:
+        "Please enter a valid email address.",
+      confirmButtonColor:
+        "#f59e0b",
+      background: "#ffffff",
+      color: "#0f172a"
+    });
+  }
 
   try {
 
-    // ============================
-    // AUTH LOGIN
-    // ============================
-    const userCred = await signInWithEmailAndPassword(
-      auth,
-      email.value.trim(),
-      password.value.trim()
-    );
+    window.__loggingIn = true;
 
-    const uid = userCred.user.uid;
+    // =========================
+    // DISABLE BUTTONS
+    // =========================
+    btns.forEach(btn => {
 
-    await auth.currentUser.getIdToken(true);
+      btn.disabled = true;
 
-    // ============================
+    });
+
+    // =========================
+    // LOGIN BUTTON LOADING
+    // =========================
+    if (loginBtn) {
+
+      loginBtn.innerHTML = `
+        <div style="
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          gap:10px;
+        ">
+          <div class="spinner"></div>
+          <span>Signing In...</span>
+        </div>
+      `;
+    }
+
+    // =========================
+    // LOADING ALERT
+    // =========================
+    Swal.fire({
+      title: "Signing you in...",
+      html: `
+        <div style="
+          color:#64748b;
+          font-size:14px;
+          margin-top:10px;
+        ">
+          Verifying your account securely
+        </div>
+      `,
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+
+      background: "#ffffff",
+      color: "#0f172a",
+
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+    // =========================
+    // SAFE LOGIN WITH TIMEOUT
+    // =========================
+    const userCred =
+      await Promise.race([
+
+        signInWithEmailAndPassword(
+          auth,
+          userEmail,
+          userPassword
+        ),
+
+        new Promise((_, reject) =>
+
+          setTimeout(() =>
+
+            reject(
+              new Error(
+                "Login timeout"
+              )
+            ),
+
+          15000)
+        )
+
+      ]);
+
+    const uid =
+      userCred.user.uid;
+
+    // =========================
+    // SAFE TOKEN REFRESH
+    // =========================
+    try {
+
+      await Promise.race([
+
+        auth.currentUser
+          .getIdToken(true),
+
+        new Promise((_, reject) =>
+
+          setTimeout(() =>
+
+            reject(
+              new Error(
+                "Token refresh timeout"
+              )
+            ),
+
+          10000)
+        )
+
+      ]);
+
+    } catch (e) {
+
+      console.warn(
+        "Token refresh skipped"
+      );
+    }
+
+    // =========================
     // GET USER PROFILE
-    // ============================
-    const userSnap = await get(ref(db, `users/${uid}`));
+    // =========================
+    const userSnap =
+      await Promise.race([
+
+        get(
+          ref(db, `users/${uid}`)
+        ),
+
+        new Promise((_, reject) =>
+
+          setTimeout(() =>
+
+            reject(
+              new Error(
+                "User profile timeout"
+              )
+            ),
+
+          10000)
+        )
+
+      ]);
 
     if (!userSnap.exists()) {
-      throw new Error("User profile not found");
+
+      throw new Error(
+        "User profile not found."
+      );
     }
 
-    const userData = userSnap.val();
+    const userData =
+      userSnap.val();
 
-    // ============================
-    // GET SCHOOL ID
-    // ============================
+    // =========================
+    // SCHOOL ID
+    // =========================
     const schoolId =
+
       userData.schoolId ||
-      sessionStorage.getItem("schoolId") ||
-      localStorage.getItem("schoolId");
+
+      sessionStorage.getItem(
+        "schoolId"
+      ) ||
+
+      localStorage.getItem(
+        "schoolId"
+      );
 
     if (!schoolId) {
-      throw new Error("School ID missing in user profile");
+
+      throw new Error(
+        "School ID missing."
+      );
     }
 
-    window.schoolId = schoolId;
+    // =========================
+    // GLOBAL ACCESS
+    // =========================
+    window.schoolId =
+      schoolId;
 
-    localStorage.setItem("schoolId", schoolId);
-    sessionStorage.setItem("schoolId", schoolId);
+    // =========================
+    // STORAGE
+    // =========================
+    localStorage.setItem(
+      "schoolId",
+      schoolId
+    );
 
-    // ============================
+    sessionStorage.setItem(
+      "schoolId",
+      schoolId
+    );
+
+    sessionStorage.setItem(
+      "userUid",
+      uid
+    );
+
+    sessionStorage.setItem(
+      "schoolEmail",
+      userEmail
+    );
+
+    // =========================
     // GET SCHOOL DATA
-    // ============================
-    const schoolSnap = await get(ref(db, `schools/${schoolId}`));
+    // =========================
+    const schoolSnap =
+      await Promise.race([
+
+        get(
+          ref(
+            db,
+            `schools/${schoolId}`
+          )
+        ),
+
+        new Promise((_, reject) =>
+
+          setTimeout(() =>
+
+            reject(
+              new Error(
+                "School data timeout"
+              )
+            ),
+
+          10000)
+        )
+
+      ]);
 
     if (!schoolSnap.exists()) {
-      throw new Error("School account not found");
+
+      throw new Error(
+        "School account not found."
+      );
     }
 
-    const schoolData = schoolSnap.val();
+    const schoolData =
+      schoolSnap.val();
 
-    // ============================
-    // FINAL SCHOOL NAME FIX
-    // ============================
+    // =========================
+    // ACCOUNT SECURITY CHECKS
+    // =========================
+    if (
+      schoolData.deleted
+    ) {
+
+      throw new Error(
+        "This school account was deleted."
+      );
+    }
+
+    if (
+      schoolData.locked
+    ) {
+
+      throw new Error(
+        "This school account is locked."
+      );
+    }
+
+    if (
+      schoolData.active === false
+    ) {
+
+      throw new Error(
+        "This school account is inactive."
+      );
+    }
+
+    // =========================
+    // SCHOOL NAME
+    // =========================
     const schoolName =
+
       schoolData.name ||
+
       schoolData.schoolName ||
+
       userData.schoolName ||
+
       "My School";
 
-    window.schoolName = schoolName;
+    window.schoolName =
+      schoolName;
 
-    localStorage.setItem("schoolName", schoolName);
-    sessionStorage.setItem("schoolName", schoolName);
+    // =========================
+    // SAVE SCHOOL INFO
+    // =========================
+    localStorage.setItem(
+      "schoolName",
+      schoolName
+    );
 
-    console.log("🏫 SCHOOL NAME LOADED:", schoolName);
+    sessionStorage.setItem(
+      "schoolName",
+      schoolName
+    );
 
-    // ============================
+    console.log(
+      "🏫 SCHOOL LOADED:",
+      schoolName
+    );
+
+    // =========================
+    // UPDATE LAST LOGIN
+    // =========================
+    try {
+
+      await update(
+        ref(db, `users/${uid}`),
+        {
+          lastLogin:
+            Date.now()
+        }
+      );
+
+    } catch (e) {
+
+      console.warn(
+        "Could not update last login"
+      );
+    }
+
+    // =========================
     // SUBSCRIPTION CHECK
-    // ============================
+    // =========================
     let accessAllowed = true;
 
     try {
-      accessAllowed = await checkSubscriptionAccess();
+
+      accessAllowed =
+        await Promise.race([
+
+          checkSubscriptionAccess(),
+
+          new Promise((_, reject) =>
+
+            setTimeout(() =>
+
+              reject(
+                new Error(
+                  "Subscription timeout"
+                )
+              ),
+
+            10000)
+          )
+
+        ]);
+
     } catch (err) {
 
       console.error(err);
 
       Swal.fire({
         icon: "warning",
-        title: "Subscription Check Failed",
-        text: "Continuing with limited access"
+        title:
+          "Subscription Warning",
+        text:
+          "Subscription verification failed. Limited access may apply.",
+        confirmButtonColor:
+          "#f59e0b"
       });
 
       accessAllowed = false;
     }
 
     if (!accessAllowed) {
-      btns.forEach(b => b.disabled = false);
+
+      btns.forEach(btn => {
+        btn.disabled = false;
+      });
+
+      Swal.close();
+
       return;
     }
 
-    // ============================
-    // SUCCESS
-    // ============================
-    Swal.fire({
-      icon: 'success',
-      title: 'Login Successful',
-      text: `Welcome back to ${schoolName}`,
-      timer: 1200,
-      showConfirmButton: false
+    // =========================
+    // CLOSE LOADING ALERT
+    // =========================
+    Swal.close();
+
+    // =========================
+    // SUCCESS ALERT
+    // =========================
+    await Swal.fire({
+      icon: "success",
+      title: "Login Successful",
+      text:
+        `Welcome back to ${schoolName}`,
+      timer: 1500,
+      showConfirmButton: false,
+
+      background: "#ffffff",
+      color: "#0f172a"
     });
 
-    // ============================
+    // =========================
     // OPEN APP
-    // ============================
-    document.getElementById("authSection").style.display = "none";
-    document.getElementById("app").style.display = "block";
+    // =========================
+    const authSection =
+      document.getElementById(
+        "authSection"
+      );
 
-    // ============================
-    // 🔥 SAFE UI UPDATE (NO TIMING BUGS)
-    // ============================
-    function updateSchoolUI() {
+    const app =
+      document.getElementById(
+        "app"
+      );
 
-      const el = document.getElementById("schoolNameDisplay");
+    if (authSection) {
 
-      if (el) {
-        el.textContent = schoolName;
-        console.log("🏫 UI UPDATED:", schoolName);
-      }
+      authSection.style.display =
+        "none";
     }
 
-    // update immediately
+    if (app) {
+
+      app.style.display =
+        "block";
+
+      app.style.opacity = "0";
+
+      setTimeout(() => {
+
+        app.style.transition =
+          "0.4s ease";
+
+        app.style.opacity = "1";
+
+      }, 50);
+    }
+
+    // =========================
+    // SAFE SCHOOL UI UPDATE
+    // =========================
+    const updateSchoolUI =
+      () => {
+
+        const el =
+          document.getElementById(
+            "schoolNameDisplay"
+          );
+
+        if (el) {
+
+          el.textContent =
+            schoolName;
+
+          console.log(
+            "🏫 UI UPDATED:",
+            schoolName
+          );
+        }
+      };
+
     updateSchoolUI();
 
-    // backup updates (prevents race conditions)
-    requestAnimationFrame(updateSchoolUI);
-    setTimeout(updateSchoolUI, 300);
-    setTimeout(updateSchoolUI, 1000);
+    requestAnimationFrame(
+      updateSchoolUI
+    );
 
-    // ============================
+    setTimeout(
+      updateSchoolUI,
+      300
+    );
+
+    setTimeout(
+      updateSchoolUI,
+      1000
+    );
+
+    // =========================
     // START SYSTEMS
-    // ============================
-    if (typeof startSubscriptionWatcher === "function") {
+    // =========================
+    if (
+      typeof
+      startSubscriptionWatcher
+      === "function"
+    ) {
+
       startSubscriptionWatcher();
     }
 
-    if (typeof startSubscriptionUI === "function") {
+    if (
+      typeof
+      startSubscriptionUI
+      === "function"
+    ) {
+
       startSubscriptionUI();
     }
 
-    if (typeof loadAll === "function") {
+    if (
+      typeof loadAll
+      === "function"
+    ) {
+
       loadAll();
     }
 
   } catch (error) {
 
-    console.error("LOGIN ERROR:", error);
+    console.error(
+      "LOGIN ERROR:",
+      error
+    );
+
+    // 🔥 Close loading popup
+    Swal.close();
+
+    // =========================
+    // FRIENDLY ERRORS
+    // =========================
+    let title =
+      "Login Failed";
+
+    let message =
+      "Unable to sign in.";
+
+    let icon =
+      "error";
+
+    switch (error.code) {
+
+      // 🔐 Invalid credentials
+      case "auth/invalid-login-credentials":
+      case "auth/wrong-password":
+      case "auth/user-not-found":
+
+        title =
+          "Invalid Login";
+
+        message =
+          "Incorrect email or password.";
+        break;
+
+      // 📧 Invalid email
+      case "auth/invalid-email":
+
+        title =
+          "Invalid Email";
+
+        message =
+          "Please enter a valid email address.";
+
+        icon =
+          "warning";
+        break;
+
+      // 🌐 Network
+      case "auth/network-request-failed":
+
+        title =
+          "Connection Error";
+
+        message =
+          "Check your internet connection and try again.";
+
+        icon =
+          "warning";
+        break;
+
+      // 🚫 Too many attempts
+      case "auth/too-many-requests":
+
+        title =
+          "Too Many Attempts";
+
+        message =
+          "Too many login attempts. Try again later.";
+
+        icon =
+          "warning";
+        break;
+
+      // ⛔ Disabled
+      case "auth/user-disabled":
+
+        title =
+          "Account Disabled";
+
+        message =
+          "This account has been disabled.";
+        break;
+
+      // ⏳ Timeout
+      default:
+
+        if (
+          error.message?.includes(
+            "timeout"
+          )
+        ) {
+
+          title =
+            "Request Timeout";
+
+          message =
+            "The server took too long to respond. Please try again.";
+
+          icon =
+            "warning";
+
+        } else {
+
+          title =
+            "Login Failed";
+
+          message =
+            error.message ||
+            "Something went wrong while signing in.";
+        }
+    }
 
     Swal.fire({
-      icon: 'error',
-      title: 'Login Failed',
-      text: error.message || 'Invalid login'
+      icon,
+      title,
+      text: message,
+
+      confirmButtonColor:
+        "#ef4444",
+
+      background: "#ffffff",
+      color: "#0f172a",
+
+      customClass: {
+        popup:
+          "rounded-2xl shadow-xl"
+      }
     });
 
   } finally {
-    btns.forEach(b => b.disabled = false);
+
+    // =========================
+    // RESET STATE
+    // =========================
+    window.__loggingIn = false;
+
+    btns.forEach(btn => {
+
+      btn.disabled = false;
+
+    });
+
+    // =========================
+    // RESTORE BUTTON
+    // =========================
+    if (loginBtn) {
+
+      loginBtn.innerHTML =
+        "🔐 Login";
+    }
   }
 };
 
+
+/* ================= SPINNER STYLE ================= */
+
+if (
+  !document.getElementById(
+    "spinnerStyle"
+  )
+) {
+
+  const style =
+    document.createElement(
+      "style"
+    );
+
+  style.id =
+    "spinnerStyle";
+
+  style.innerHTML = `
+
+    .spinner{
+      width:18px;
+      height:18px;
+      border:3px solid rgba(255,255,255,0.3);
+      border-top:3px solid #fff;
+      border-radius:50%;
+      animation:spin .7s linear infinite;
+    }
+
+    @keyframes spin{
+      to{
+        transform:rotate(360deg);
+      }
+    }
+
+  `;
+
+  document.head.appendChild(
+    style
+  );
+}
+/* ================= SPINNER STYLE ================= */
+
+if (
+  !document.getElementById(
+    "spinnerStyle"
+  )
+) {
+
+  const style =
+    document.createElement(
+      "style"
+    );
+
+  style.id =
+    "spinnerStyle";
+
+  style.innerHTML = `
+
+    .spinner{
+      width:18px;
+      height:18px;
+      border:3px solid rgba(255,255,255,0.3);
+      border-top:3px solid #fff;
+      border-radius:50%;
+      animation:spin .7s linear infinite;
+    }
+
+    @keyframes spin{
+      to{
+        transform:rotate(360deg);
+      }
+    }
+
+  `;
+
+  document.head.appendChild(
+    style
+  );
+}
 window.syncSchoolNameUI = () => {
 
   const name =
@@ -4989,266 +6066,1023 @@ window.syncSchoolNameUI = () => {
   }
 };
 
-// 🔹 Auto age by grade
+/* =========================================================
+   🔥 SMART AGE + ULTRA FAST ADMISSION GENERATOR
+   ========================================================= */
+
+
+/* =========================================================
+   🔹 AUTO AGE BY GRADE (UPGRADED)
+   ========================================================= */
+
 function getRandomAgeByGrade(grade) {
-    switch (grade) {
-        case '7': case '7A': case '7B': case '7C':
-            return Math.floor(Math.random() * 2) + 12;
-        case '8': case '8A': case '8B': case '8C':
-            return Math.floor(Math.random() * 2) + 13;
-        case '9': case '9A': case '9B': case '9C':
-            return Math.floor(Math.random() * 2) + 14;
-        default:
-            return '';
+
+    if (!grade) return "";
+
+    // 🔥 Clean grade
+    const cleanGrade =
+        String(grade)
+        .toUpperCase()
+        .trim();
+
+    // 🔥 Extract numeric grade
+    const gradeNumber =
+        parseInt(cleanGrade);
+
+    // 🔥 Grade → age ranges
+    const ageRanges = {
+
+        1: [6, 7],
+        2: [7, 8],
+        3: [8, 9],
+        4: [9, 10],
+        5: [10, 11],
+        6: [11, 12],
+        7: [12, 13],
+        8: [13, 14],
+        9: [14, 15]
+
+    };
+
+    // 🔥 Unknown grade
+    if (!ageRanges[gradeNumber]) {
+        return "";
     }
+
+    const [min, max] =
+        ageRanges[gradeNumber];
+
+    // 🔥 Random realistic age
+    return Math.floor(
+        Math.random() *
+        (max - min + 1)
+    ) + min;
 }
 
-// 🔹 Admission number generator
+
+
+/* =========================================================
+   🔹 ULTRA FAST ADMISSION NUMBER GENERATOR
+   ========================================================= */
+
 async function generateAdmissionNumber() {
-    const year = new Date().getFullYear();
-    const snapshot = await get(schoolRef("students"));
 
-    let count = 0;
-    if (snapshot.exists()) {
-        snapshot.forEach(child => {
-            const data = child.val();
-            if (data.admissionNo && data.admissionNo.startsWith(year)) {
-                count++;
-            }
-        });
+    try {
+
+        const year =
+            new Date().getFullYear();
+
+        // =================================================
+        // 🔥 COUNTER PATH
+        // Faster than scanning all students
+        // =================================================
+        const counterRef =
+            schoolRef(
+                `system/admissionCounter/${year}`
+            );
+
+        // =================================================
+        // 🔥 GET CURRENT COUNTER
+        // =================================================
+        const counterSnap =
+            await Promise.race([
+
+                get(counterRef),
+
+                new Promise((_, reject) =>
+
+                    setTimeout(() =>
+
+                        reject(
+                            new Error(
+                                "Counter timeout"
+                            )
+                        ),
+
+                    10000)
+                )
+
+            ]);
+
+        let currentNumber = 0;
+
+        if (counterSnap.exists()) {
+
+            currentNumber =
+                Number(
+                    counterSnap.val()
+                ) || 0;
+        }
+
+        // =================================================
+        // 🔥 NEXT NUMBER
+        // =================================================
+        const nextNumber =
+            currentNumber + 1;
+
+        // =================================================
+        // 🔥 SAVE UPDATED COUNTER
+        // =================================================
+        await set(
+            counterRef,
+            nextNumber
+        );
+
+        // =================================================
+        // 🔥 FORMAT ADM NO
+        // =================================================
+        const formattedNumber =
+            String(nextNumber)
+            .padStart(4, '0');
+
+        return `${year}/${formattedNumber}`;
+
+    } catch (error) {
+
+        console.error(
+            "Admission Generator Error:",
+            error
+        );
+
+        // =================================================
+        // 🔥 SAFE FALLBACK
+        // =================================================
+        const fallback =
+            Date.now()
+            .toString()
+            .slice(-4);
+
+        return `${new Date().getFullYear()}/${fallback}`;
     }
-
-    const nextNumber = String(count + 1).padStart(3, '0');
-    return `${year}/${nextNumber}`;
 }
+/* =========================================================
+   🚀 ULTRA ADVANCED STUDENT REGISTRATION SYSTEM
+   FAST • SAFE • BULK OPTIMIZED • PRODUCTION READY
+========================================================= */
 
 window.addStudent = async () => {
 
-    const nameInput = document.getElementById('studentName').value.trim();
-    const adm = document.getElementById('adm').value.trim();
-    const grade = document.getElementById('grade').value.trim();
-    const gender = document.getElementById('gender')?.value || "";
-    let age = document.getElementById('age').value;
-    const parentName = document.getElementById('parentName').value.trim();
-    const parentPhone = document.getElementById('parentPhone').value.trim();
-    const birthCert = document.getElementById('birthCert').value.trim();
-    let admissionNo = document.getElementById('admissionNo').value.trim();
-    const photoFile = document.getElementById('photo').files[0];
+    // 🚫 Prevent double submission
+    if (window.__addingStudents) return;
 
-    if (!nameInput || !grade) {
-        return Swal.fire({
-            icon: 'warning',
-            title: 'Missing Fields',
-            text: 'Name and Grade are required'
-        });
-    }
+    try {
 
-    const year = new Date().getFullYear();
+        window.__addingStudents = true;
 
-    let photoURL = "";
-    if (photoFile) {
-        photoURL = URL.createObjectURL(photoFile);
-    }
+        // =====================================================
+        // 🔹 GET FORM VALUES
+        // =====================================================
 
-    let namesArray = nameInput
-        .split(/\r?\n|\t/)
-        .map(n => n.trim())
-        .filter(n => n);
+        const studentNameField =
+            document.getElementById(
+                'studentName'
+            );
 
-    namesArray = [...new Set(namesArray.map(n => n.toLowerCase()))]
-    .map(n => n.split(' ')
-        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-        .join(' ')
-    );
+        const gradeField =
+            document.getElementById(
+                'grade'
+            );
 
-    const isBulk = namesArray.length > 1;
+        const ageField =
+            document.getElementById(
+                'age'
+            );
 
-    // ================= BULK =================
-    if (isBulk) {
+        const photoInput =
+            document.getElementById(
+                'photo'
+            );
 
-        let successCount = 0;
-        const total = namesArray.length;
+        const nameInput =
+            studentNameField?.value.trim();
 
-        Swal.fire({
-            title: 'Registering Students...',
-            html: `Processing: <b>0</b> / ${total}`,
-            allowOutsideClick: false,
-            showConfirmButton: false,
-            didOpen: () => Swal.showLoading()
-        });
+        const adm =
+            document.getElementById('adm')
+            ?.value.trim();
 
-        for (let i = 0; i < total; i++) {
+        const grade =
+            gradeField?.value.trim();
 
-            const name = namesArray[i];
+        const gender =
+            document.getElementById('gender')
+            ?.value || "Not Set";
+
+        let age =
+            ageField?.value;
+
+        const parentName =
+            document.getElementById(
+                'parentName'
+            )?.value.trim() || "";
+
+        const parentPhone =
+            document.getElementById(
+                'parentPhone'
+            )?.value.trim() || "";
+
+        const birthCert =
+            document.getElementById(
+                'birthCert'
+            )?.value.trim() || "";
+
+        let admissionNo =
+            document.getElementById(
+                'admissionNo'
+            )?.value.trim();
+
+        const photoFile =
+            photoInput?.files?.[0];
+
+        // =====================================================
+        // 🔹 VALIDATION
+        // =====================================================
+
+        if (!nameInput || !grade) {
+
+            return Swal.fire({
+
+                icon: 'warning',
+
+                title: 'Missing Fields',
+
+                text:
+                    'Student name and grade are required.',
+
+                confirmButtonColor:
+                    '#f59e0b'
+            });
+        }
+
+        // =====================================================
+        // 🔹 CLEAN & FORMAT NAMES
+        // =====================================================
+
+        let namesArray =
+
+            nameInput
+
+            .split(/\r?\n|\t|,/)
+
+            .map(name =>
+
+                name
+                .trim()
+                .replace(/\s+/g, ' ')
+            )
+
+            .filter(Boolean);
+
+        // 🔥 Remove duplicates
+        namesArray = [
+
+            ...new Set(
+
+                namesArray.map(n =>
+
+                    n.toLowerCase()
+                )
+            )
+
+        ].map(name =>
+
+            name
+
+            .split(' ')
+
+            .map(word =>
+
+                word.charAt(0)
+                .toUpperCase() +
+
+                word.slice(1)
+            )
+
+            .join(' ')
+        );
+
+        const total =
+            namesArray.length;
+
+        const isBulk =
+            total > 1;
+
+        // =====================================================
+        // 🔹 LIMIT PROTECTION
+        // =====================================================
+
+        if (total > 1000) {
+
+            return Swal.fire({
+
+                icon: "warning",
+
+                title: "Too Many Learners",
+
+                text:
+                    "Maximum bulk upload is 1000 learners at once."
+            });
+        }
+
+        // =====================================================
+        // 🔹 PHOTO PREVIEW URL
+        // =====================================================
+
+        let photoURL = "";
+
+        if (photoFile) {
 
             try {
-                const finalAdmission = await generateAdmissionNumber();
-                const finalAge = age || getRandomAgeByGrade(grade);
 
-                const studentData = {
-                    name,
-                    gender: gender || "Not Set",
-                    adm: adm || finalAdmission,
-                    grade,
-                    age: finalAge,
-                    admissionNo: finalAdmission,
-                    admissionYear: year,
-                    parentName: parentName || "",
-                    parentPhone: parentPhone || "",
-                    birthCert: birthCert || "",
-                    photo: photoURL || ""
-                };
+                photoURL =
+                    URL.createObjectURL(
+                        photoFile
+                    );
 
-                await push(schoolRef("students"), studentData);
+            } catch(err) {
 
-                successCount++;
-
-                Swal.update({
-                    html: `Processing: <b>${successCount}</b> / ${total}`
-                });
-
-                await new Promise(r => setTimeout(r, 50));
-
-            } catch (err) {
-                console.error("Error adding student:", name, err);
+                console.warn(
+                    "Photo preview failed"
+                );
             }
         }
 
-        setTimeout(() => {
-            loadGradeFilterOptions();
-            applyStudentFilters();
-        }, 200);
+        // =====================================================
+        // 🔹 YEAR
+        // =====================================================
 
-        Swal.fire({
-            icon: 'success',
-            title: 'Bulk Registration Complete 🎉',
-            html: `<b>${successCount}</b> students added successfully<br>Total attempted: ${total}`,
-            confirmButtonColor: '#28a745'
-        });
+        const year =
+            new Date()
+            .getFullYear();
 
-        // ✅ ONLY CLEAR NAME FIELD
-        document.getElementById('studentName').value = "";
+        // =====================================================
+        // =====================================================
+        // 🔥 SINGLE STUDENT ENGINE
+        // =====================================================
+        // =====================================================
 
-        return;
-    }
+        if (!isBulk) {
 
-    // ================= SINGLE =================
+            Swal.fire({
 
-    Swal.fire({
-        title: 'Saving student...',
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading()
-    });
+                title:
+                    'Saving Student...',
 
-    try {
+                html:
+                    `
+                    <div style="
+                        color:#64748b;
+                        margin-top:10px;
+                    ">
+                        Please wait
+                    </div>
+                    `,
 
-        if (!age) age = getRandomAgeByGrade(grade);
-        if (!admissionNo) admissionNo = await generateAdmissionNumber();
+                allowOutsideClick:
+                    false,
 
-        const studentData = {
-            name: nameInput,
-            gender: gender || "Not Set",
-            adm: adm || admissionNo,
-            grade,
-            age,
-            admissionNo,
-            admissionYear: year,
-            parentName: parentName || "",
-            parentPhone: parentPhone || "",
-            birthCert: birthCert || "",
-            photo: photoURL || ""
-        };
+                showConfirmButton:
+                    false,
 
-        await push(schoolRef("students"), studentData);
+                didOpen: () => {
 
-        setTimeout(() => {
-            loadGradeFilterOptions();
-            applyStudentFilters();
-        }, 100);
+                    Swal.showLoading();
+                }
+            });
 
-        Swal.fire({
-            icon: 'success',
-            title: 'Success',
-            text: 'Student added successfully ✔',
-            timer: 1200,
-            showConfirmButton: false
-        });
+            try {
 
-        // ✅ ONLY CLEAR NAME FIELD
-        document.getElementById('studentName').value = "";
+                // 🔥 Auto age
+                if (!age) {
 
-    } catch (err) {
+                    age =
+                        getRandomAgeByGrade(
+                            grade
+                        );
+                }
 
-        Swal.fire({
-            icon: 'error',
-            title: 'Failed',
-            text: err.message || 'Could not add student'
-        });
-    }
-};
-document.getElementById('studentName').addEventListener('input', () => {
+                // 🔥 Generate admission
+                if (!admissionNo) {
 
-    const names = document.getElementById('studentName').value
-        .split(/\r?\n|\t/)
-        .map(n => n.trim())
-        .filter(n => n);
+                    admissionNo =
+                        await generateAdmissionNumber();
+                }
 
-    document.getElementById('nameCounter').innerText =
-        `${names.length} names detected`;
-});
-window.pasteFromClipboard = async function () {
-    try {
+                // =================================================
+                // 🔥 BUILD STUDENT OBJECT
+                // =================================================
 
-        const text = await navigator.clipboard.readText();
+                const studentData = {
 
-        if (!text) {
-            return Swal.fire("Empty Clipboard", "Nothing to paste", "warning");
+                    name:
+                        namesArray[0],
+
+                    gender,
+
+                    adm:
+                        adm ||
+                        admissionNo,
+
+                    admissionNo,
+
+                    grade,
+
+                    age,
+
+                    admissionYear:
+                        year,
+
+                    parentName,
+
+                    parentPhone,
+
+                    birthCert,
+
+                    photo:
+                        photoURL,
+
+                    active:
+                        true,
+
+                    deleted:
+                        false,
+
+                    createdAt:
+                        Date.now(),
+
+                    updatedAt:
+                        Date.now()
+                };
+
+                // =================================================
+                // 🔥 SAVE STUDENT
+                // =================================================
+
+                await Promise.race([
+
+                    push(
+                        schoolRef("students"),
+                        studentData
+                    ),
+
+                    new Promise((_, reject) =>
+
+                        setTimeout(() =>
+
+                            reject(
+                                new Error(
+                                    "Save timeout"
+                                )
+                            ),
+
+                        15000)
+                    )
+
+                ]);
+
+                // =================================================
+                // 🔥 FAST UI REFRESH
+                // =================================================
+
+                requestAnimationFrame(
+                    async () => {
+
+                    try {
+
+                        await loadStudents?.();
+
+                        loadGradeFilterOptions?.();
+
+                        applyStudentFilters?.();
+
+                    } catch(refreshErr) {
+
+                        console.error(
+                            refreshErr
+                        );
+                    }
+
+                });
+
+                // =================================================
+                // 🔥 SUCCESS
+                // =================================================
+
+                Swal.fire({
+
+                    icon: 'success',
+
+                    title: 'Success',
+
+                    text:
+                        'Student added successfully.',
+
+                    timer: 1400,
+
+                    showConfirmButton:
+                        false
+                });
+
+                // =================================================
+                // 🔥 CLEAR FORM
+                // =================================================
+
+                studentNameField.value = "";
+
+                if (ageField) {
+                    ageField.value = "";
+                }
+
+                if (photoInput) {
+                    photoInput.value = "";
+                }
+
+                return;
+
+            } catch(err) {
+
+                console.error(err);
+
+                Swal.fire({
+
+                    icon: 'error',
+
+                    title: 'Save Failed',
+
+                    text:
+                        err.message ||
+                        'Could not save student.'
+                });
+
+                return;
+            }
         }
 
-        const field = document.getElementById('studentName');
+        // =====================================================
+        // =====================================================
+        // ⚡ ULTRA BULK REGISTRATION ENGINE
+        // =====================================================
+        // =====================================================
+
+        Swal.fire({
+
+            title:
+                `Registering ${total} Learners`,
+
+            html:
+                `
+                <div style="
+                    font-size:16px;
+                    margin-top:10px;
+                ">
+                    Preparing lightning upload ⚡
+                </div>
+                `,
+
+            allowOutsideClick:
+                false,
+
+            allowEscapeKey:
+                false,
+
+            showConfirmButton:
+                false,
+
+            didOpen: () => {
+
+                Swal.showLoading();
+            }
+        });
+
+        // =====================================================
+        // 🔥 BUILD BULK DATA
+        // =====================================================
+
+        const studentsRef =
+            schoolRef("students");
+
+        const updates = {};
+
+        const timestamp =
+            Date.now();
+
+        for (
+            let i = 0;
+            i < total;
+            i++
+        ) {
+
+            const studentName =
+                namesArray[i];
+
+            const studentRef =
+                push(studentsRef);
+
+            // 🔥 Faster unique ADM
+            const generatedAdm =
+
+                adm ||
+
+                `${year}${String(
+                    timestamp + i
+                ).slice(-6)}`;
+
+            const generatedAge =
+
+                age ||
+
+                getRandomAgeByGrade(
+                    grade
+                );
+
+            updates[
+                studentRef.key
+            ] = {
+
+                name:
+                    studentName,
+
+                gender,
+
+                adm:
+                    generatedAdm,
+
+                admissionNo:
+                    generatedAdm,
+
+                grade,
+
+                age:
+                    generatedAge,
+
+                admissionYear:
+                    year,
+
+                parentName,
+
+                parentPhone,
+
+                birthCert,
+
+                photo:
+                    photoURL,
+
+                active:
+                    true,
+
+                deleted:
+                    false,
+
+                createdAt:
+                    Date.now(),
+
+                updatedAt:
+                    Date.now()
+            };
+        }
+
+        // =====================================================
+        // 🔥 UPDATE PROGRESS
+        // =====================================================
+
+        Swal.update({
+
+            html:
+                `
+                <div style="
+                    font-size:16px;
+                    margin-top:10px;
+                ">
+                    Uploading ${total}
+                    learners at lightning speed ⚡
+                </div>
+                `
+        });
+
+        // =====================================================
+        // 🔥 SINGLE FIREBASE WRITE
+        // =====================================================
+
+        await Promise.race([
+
+            update(
+                studentsRef,
+                updates
+            ),
+
+            new Promise((_, reject) =>
+
+                setTimeout(() =>
+
+                    reject(
+                        new Error(
+                            "Bulk upload timeout"
+                        )
+                    ),
+
+                30000)
+            )
+
+        ]);
+
+        // =====================================================
+        // 🔥 FAST REFRESH
+        // =====================================================
+
+        requestAnimationFrame(
+            async () => {
+
+            try {
+
+                await loadStudents?.();
+
+                loadGradeFilterOptions?.();
+
+                applyStudentFilters?.();
+
+            } catch(refreshError) {
+
+                console.error(
+                    "Refresh Error:",
+                    refreshError
+                );
+            }
+
+        });
+
+        // =====================================================
+        // 🔥 SUCCESS
+        // =====================================================
+
+        Swal.fire({
+
+            icon: 'success',
+
+            title:
+                'Bulk Registration Complete 🎉',
+
+            html:
+                `
+                <div style="
+                    font-size:18px;
+                    line-height:1.7;
+                ">
+
+                    <b>${total}</b>
+
+                    learners registered successfully.
+
+                </div>
+                `,
+
+            confirmButtonColor:
+                '#22c55e'
+        });
+
+        // =====================================================
+        // 🔥 CLEAR FIELD
+        // =====================================================
+
+        studentNameField.value = "";
+
+        if (ageField) {
+            ageField.value = "";
+        }
+
+        if (photoInput) {
+            photoInput.value = "";
+        }
+
+    } catch(error) {
+
+        console.error(error);
+
+        Swal.fire({
+
+            icon: 'error',
+
+            title:
+                'Registration Failed',
+
+            text:
+                error.message ||
+                'Something went wrong.'
+        });
+
+    } finally {
+
+        // 🔥 Unlock engine
+        window.__addingStudents = false;
+    }
+};
+
+
+
+/* =========================================================
+   🔥 LIVE NAME COUNTER
+========================================================= */
+
+document
+.getElementById('studentName')
+?.addEventListener('input', () => {
+
+    const names =
+
+        document
+        .getElementById('studentName')
+        .value
+
+        .split(/\r?\n|\t|,/)
+
+        .map(n => n.trim())
+
+        .filter(Boolean);
+
+    const counter =
+        document.getElementById(
+            'nameCounter'
+        );
+
+    if (counter) {
+
+        counter.innerText =
+            `${names.length} names detected`;
+    }
+});
+
+
+
+/* =========================================================
+   🔥 PASTE FROM CLIPBOARD
+========================================================= */
+
+window.pasteFromClipboard =
+async function () {
+
+    try {
+
+        const text =
+            await navigator
+            .clipboard
+            .readText();
+
+        if (!text) {
+
+            return Swal.fire({
+
+                icon: "warning",
+
+                title:
+                    "Empty Clipboard",
+
+                text:
+                    "Nothing to paste."
+            });
+        }
+
+        const field =
+            document.getElementById(
+                'studentName'
+            );
+
+        if (!field) return;
 
         field.value = text;
 
-        // trigger counter update
-        field.dispatchEvent(new Event('input'));
+        // 🔥 Trigger counter
+        field.dispatchEvent(
+            new Event('input')
+        );
+
+        Swal.fire({
+
+            icon: "success",
+
+            title:
+                "Pasted Successfully",
+
+            timer: 1000,
+
+            showConfirmButton:
+                false
+        });
 
     } catch (err) {
+
         console.error(err);
 
         Swal.fire({
+
             icon: "error",
-            title: "Clipboard blocked",
-            text: "Browser denied clipboard access. Try Ctrl + V instead."
+
+            title:
+                "Clipboard Blocked",
+
+            text:
+                "Browser denied clipboard access. Use Ctrl + V instead."
         });
     }
 };
-window.previewStudents = function () {
 
-    const field = document.getElementById('studentName');
+
+
+/* =========================================================
+   🔥 STUDENT PREVIEW
+========================================================= */
+
+window.previewStudents =
+function () {
+
+    const field =
+        document.getElementById(
+            'studentName'
+        );
 
     if (!field) {
-        return Swal.fire("Error", "Student input not found", "error");
+
+        return Swal.fire({
+
+            icon: "error",
+
+            title: "Error",
+
+            text:
+                "Student input field not found."
+        });
     }
 
-    const names = field.value
-        .split(/\r?\n|\t/)
+    const names =
+
+        field.value
+
+        .split(/\r?\n|\t|,/)
+
         .map(n => n.trim())
-        .filter(n => n);
+
+        .filter(Boolean);
 
     if (names.length === 0) {
-        return Swal.fire("No Data", "No names to preview", "info");
+
+        return Swal.fire({
+
+            icon: "info",
+
+            title: "No Data",
+
+            text:
+                "No names available for preview."
+        });
     }
 
-    const listHTML = names.map((n, i) =>
-        `<li>${i + 1}. ${n}</li>`
-    ).join("");
+    const listHTML =
+
+        names
+
+        .map((name, index) =>
+
+            `
+            <li style="
+                padding:6px 0;
+                border-bottom:1px solid #eee;
+            ">
+                ${index + 1}. ${name}
+            </li>
+            `
+        )
+
+        .join("");
 
     Swal.fire({
-        title: `Preview (${names.length} students)`,
-        html: `<ul style="text-align:left; max-height:300px; overflow:auto;">${listHTML}</ul>`,
-        width: 450
+
+        title:
+            `Preview (${names.length} Learners)`,
+
+        html:
+            `
+            <div style="
+                max-height:350px;
+                overflow:auto;
+                text-align:left;
+                padding-right:10px;
+            ">
+                <ul style="
+                    list-style:none;
+                    padding:0;
+                    margin:0;
+                ">
+                    ${listHTML}
+                </ul>
+            </div>
+            `,
+
+        width: 500,
+
+        confirmButtonColor:
+            "#2563eb"
     });
 };
+
+
+
 window.addTeacher = async () => {
 
   const teacherData = {
@@ -15050,241 +16884,6 @@ function validateBeforePrint() {
 
   return true;
 }
-window.printSelectedReport = function () {
-
-  const selectedId = document.getElementById("reportSelector").value;
-
-  if (!selectedId) {
-    Swal.fire("Select Report", "Choose a report first", "warning");
-    return;
-  }
-
-  const el = document.getElementById(selectedId);
-
-  if (!el || el.innerHTML.trim() === "") {
-    Swal.fire("Not Ready", "This report has not been generated yet.", "info");
-    return;
-  }
-
-  // ==========================
-  // 🏫 SCHOOL PROFILE (FIREBASE GLOBAL)
-  // ==========================
-  const school = window.currentSchool || {
-    name: "School Name",
-    motto: "",
-    address: "",
-    logo: ""
-  };
-
-  // ==========================
-  // 🔥 PRINT LOADER
-  // ==========================
-  const loader = document.createElement("div");
-  loader.id = "printLoader";
-  loader.innerHTML = `
-    <div style="
-      position:fixed;
-      top:0;left:0;
-      width:100%;height:100%;
-      background:rgba(0,0,0,0.6);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      z-index:99999;
-      color:white;
-      font-family:Arial;
-      flex-direction:column;
-      gap:10px;
-    ">
-      <div style="
-        width:40px;
-        height:40px;
-        border:4px solid #fff;
-        border-top:4px solid transparent;
-        border-radius:50%;
-        animation:spin 1s linear infinite;
-      "></div>
-      <div>Preparing Print...</div>
-    </div>
-
-    <style>
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-    </style>
-  `;
-
-  document.body.appendChild(loader);
-
-  const printWindow = window.open('', '', 'width=900,height=700');
-
-  // ==========================
-  // 🧠 REPORT TITLES
-  // ==========================
-  const reportTitles = {
-    examResultsContent: "Examination Results",
-    subjectChampionsContent: "Subject Champions",
-    reportOutput: "Merit List / Analysis",
-    subjectPerformanceContent: "Subject Performance",
-    genderPerformanceContent: "Gender Performance",
-    levelSummaryContent: "Subject Level Summary",
-    groupByPathwaysContent: "Learners by Pathways",
-    combineMarksByGradeContent: "Combined Grade Marks",
-    assessmentReportsContent: "Assessment Reports",
-    subjectRankingReportContent: "Learner Progress Tracking",
-    blankMeritContent: "Blank Merit List",
-    printAssessmentContent: "Assessment Report",
-    marksStatusContent: "Marks Entry Status",
-    filteredLearnersContent: "Filtered Learners",
-    genderGroupedContent: "Gender Classification",
-    feesTable: "Fee Summary Report",
-    teacherList: "Teachers List",
-    supportStaffList: "Support Staff List"
-  };
-
-  const printTitle = reportTitles[selectedId] || "School Report";
-
-  // ==========================
-  // 🏫 HEADER BUILDER (SIMPLE & CLEAN)
-  // ==========================
-  const headerHTML = `
-    <div style="text-align:center; margin-bottom:15px;">
-      
-      ${school.logo ? `<img src="${school.logo}" style="height:60px;">` : ""}
-
-      <h2 style="margin:5px 0;">${school.name}</h2>
-      <div style="font-size:13px;">${school.motto || ""}</div>
-      <div style="font-size:12px;">${school.address || ""}</div>
-
-      <hr style="margin:10px 0;">
-
-      <h3>${printTitle}</h3>
-    </div>
-  `;
-
-  // ==========================
-  // 🧠 SMART DETECTION
-  // ==========================
-  let contentHTML = "";
-  const isTableBody = el.tagName.toLowerCase() === "tbody";
-  const isFeeTable = selectedId === "feesTable";
-
-  // ==========================
-  // 🧼 TABLE REPORTS
-  // ==========================
-  if (isTableBody || isFeeTable) {
-
-    const table = isTableBody ? el.closest("table") : el;
-
-    if (!table) {
-      loader.remove();
-      Swal.fire("Error", "Table not found for this report", "error");
-      return;
-    }
-
-    const cleanTable = table.cloneNode(true);
-
-    cleanTable.querySelectorAll(
-      "button, select, input, textarea, .dropdown, .dropdown-menu, .action-toggle"
-    ).forEach(e => e.remove());
-
-    cleanTable.querySelectorAll("h1, h2, h3, h4").forEach(h => {
-      if (h.textContent.length < 40) h.remove();
-    });
-
-    contentHTML = `
-      <html>
-      <head>
-        <title>${printTitle}</title>
-        <style>
-          body { font-family: Arial; padding: 20px; }
-
-          table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-          }
-
-          th, td {
-            border: 1px solid #000;
-            padding: 6px;
-            text-align: center;
-          }
-
-          th {
-            background: #f2f2f2;
-          }
-
-          tr:nth-child(even) {
-            background: #fafafa;
-          }
-        </style>
-      </head>
-      <body>
-        ${headerHTML}
-        ${cleanTable.outerHTML}
-      </body>
-      </html>
-    `;
-  }
-
-  // ==========================
-  // 🧼 NORMAL REPORTS
-  // ==========================
-  else {
-
-    const cleanEl = el.cloneNode(true);
-
-    cleanEl.querySelectorAll(
-      "button, select, input, textarea, .dropdown, .dropdown-menu, .action-toggle"
-    ).forEach(e => e.remove());
-
-    cleanEl.querySelectorAll("h1, h2, h3, h4").forEach(h => {
-      if (h.textContent.length < 40) h.remove();
-    });
-
-    contentHTML = `
-      <html>
-      <head>
-        <title>${printTitle}</title>
-        <style>
-          body { font-family: Arial; padding: 20px; }
-
-          table {
-            width: 100%;
-            border-collapse: collapse;
-          }
-
-          th, td {
-            border: 1px solid #000;
-            padding: 5px;
-            text-align: center;
-          }
-
-          h2 {
-            text-align:center;
-            margin-bottom:20px;
-          }
-        </style>
-      </head>
-      <body>
-        ${headerHTML}
-        ${cleanEl.innerHTML}
-      </body>
-      </html>
-    `;
-  }
-
-  printWindow.document.write(contentHTML);
-  printWindow.document.close();
-
-  printWindow.onload = function () {
-    loader.remove();
-    printWindow.focus();
-    printWindow.print();
-  };
-};
 function safeValue(id) {
   return document.getElementById(id)?.value?.trim();
 }
@@ -18149,8 +19748,6 @@ window.viewSupportMonthlyAttendance = async function () {
   }
 };
 
-
-
 // =====================================
 // 🏫 SAAS SCHOOL PROFILE SYSTEM (FIREBASE)
 // =====================================
@@ -18175,17 +19772,45 @@ window.loadSchoolProfile = async function () {
     const snap = await get(ref(db, `schools/${schoolId}`));
 
     if (snap.exists()) {
+
       window.currentSchool = snap.val();
-      console.log("🏫 School loaded:", window.currentSchool.name);
+
+      console.log(
+        "🏫 School loaded:",
+        window.currentSchool.name
+      );
+
+      // =========================
+      // AUTO UPDATE SCHOOL NAME
+      // =========================
+      const schoolNameDisplay =
+        document.getElementById("schoolNameDisplay");
+
+      if (schoolNameDisplay) {
+        schoolNameDisplay.innerText =
+          window.currentSchool.name || "RASM 360";
+      }
+
     } else {
+
       console.warn("School not found in database");
       window.currentSchool = null;
+
     }
 
   } catch (err) {
-    console.error("Error loading school profile:", err);
+
+    console.error(
+      "Error loading school profile:",
+      err
+    );
+
   }
 };
+
+// =====================================
+// 💾 SAVE SCHOOL PROFILE
+// =====================================
 window.saveSchoolProfile = async function () {
 
   const schoolId =
@@ -18193,110 +19818,833 @@ window.saveSchoolProfile = async function () {
     localStorage.getItem("schoolId");
 
   if (!schoolId) {
-    Swal.fire("Error", "No school session found. Please login again.", "error");
+
+    Swal.fire(
+      "Error",
+      "No school session found. Please login again.",
+      "error"
+    );
+
     return;
   }
 
   const schoolData = {
 
-    name: document.getElementById("profileSchoolName").value.trim(),
-    motto: document.getElementById("schoolMotto").value.trim(),
-    address: document.getElementById("schoolAddress").value.trim(),
-    logo: document.getElementById("schoolLogo").value.trim() || "",
+    name:
+      document
+      .getElementById("profileSchoolName")
+      .value
+      .trim(),
+
+    motto:
+      document
+      .getElementById("schoolMotto")
+      .value
+      .trim(),
+
+    address:
+      document
+      .getElementById("schoolAddress")
+      .value
+      .trim(),
+
+    logo:
+      document
+      .getElementById("schoolLogo")
+      .value
+      .trim() || "",
+
     updatedAt: Date.now()
 
   };
 
   if (!schoolData.name) {
-    Swal.fire("Error", "School name is required", "error");
+
+    Swal.fire(
+      "Error",
+      "School name is required",
+      "error"
+    );
+
     return;
   }
 
   try {
 
-    // ✅ IMPORTANT FIX: use UPDATE instead of SET
+    // =====================================
+    // UPDATE FIREBASE
+    // =====================================
     await update(
       ref(db, `schools/${schoolId}`),
       schoolData
     );
 
+    // =====================================
+    // UPDATE GLOBAL OBJECT
+    // =====================================
     window.currentSchool = {
       ...window.currentSchool,
       ...schoolData
     };
+
+    // =====================================
+    // UPDATE SCHOOL NAME ON UI
+    // =====================================
+    const schoolNameDisplay =
+      document.getElementById("schoolNameDisplay");
+
+    if (schoolNameDisplay) {
+
+      schoolNameDisplay.innerText =
+        schoolData.name;
+
+    }
 
     Swal.fire({
       icon: "success",
       title: "School profile updated"
     });
 
-    document.getElementById("schoolProfileModal").style.display = "none";
+    // =====================================
+    // CLOSE MODAL
+    // =====================================
+    document.getElementById(
+      "schoolProfileModal"
+    ).style.display = "none";
 
   } catch (err) {
 
     console.error(err);
 
-    Swal.fire("Error", err.message || "Failed to save school profile", "error");
+    Swal.fire(
+      "Error",
+      err.message || "Failed to save school profile",
+      "error"
+    );
 
   }
 };
-
-
-
 
 // =====================================
 // 🏫 CREATE SCHOOL PROFILE (ADMIN ONLY)
 // =====================================
 window.createSchoolProfile = async function () {
 
-  const schoolId = "school_" + Date.now();
+  const schoolId =
+    "school_" + Date.now();
 
   const schoolData = {
-    name: document.getElementById("profileSchoolName").value,
-    motto: document.getElementById("schoolMotto").value,
-    address: document.getElementById("schoolAddress").value,
-    logo: document.getElementById("schoolLogo").value || "",
+
+    name:
+      document
+      .getElementById("profileSchoolName")
+      .value
+      .trim(),
+
+    motto:
+      document
+      .getElementById("schoolMotto")
+      .value
+      .trim(),
+
+    address:
+      document
+      .getElementById("schoolAddress")
+      .value
+      .trim(),
+
+    logo:
+      document
+      .getElementById("schoolLogo")
+      .value
+      .trim() || "",
+
     createdAt: Date.now()
+
   };
 
-  await set(ref(db, `schools/${schoolId}`), schoolData);
+  await set(
+    ref(db, `schools/${schoolId}`),
+    schoolData
+  );
 
-  Swal.fire("Success", "School created successfully", "success");
+  Swal.fire(
+    "Success",
+    "School created successfully",
+    "success"
+  );
+
 };
+
+// =====================================
+// 🪟 OPEN SCHOOL PROFILE FORM
+// =====================================
 window.openSchoolProfileForm = async function () {
-  const modal = document.getElementById("schoolProfileModal");
+
+  const modal =
+    document.getElementById(
+      "schoolProfileModal"
+    );
 
   if (!modal) {
+
     console.error("Modal not found");
     return;
+
   }
 
-  modal.style.display = modal.style.display === "none" ? "block" : "none";
+  modal.style.display =
+    modal.style.display === "none"
+      ? "block"
+      : "none";
 
-  const schoolId = localStorage.getItem("schoolId");
+  const schoolId =
+    localStorage.getItem("schoolId");
 
   if (!schoolId) return;
 
-  const snap = await get(ref(db, `schools/${schoolId}`));
+  try {
 
-  if (snap.exists()) {
-    const data = snap.val();
+    const snap = await get(
+      ref(db, `schools/${schoolId}`)
+    );
 
-    document.getElementById("profileSchoolName").value = data.name || "";
-    document.getElementById("schoolMotto").value = data.motto || "";
-    document.getElementById("schoolAddress").value = data.address || "";
-    document.getElementById("schoolLogo").value = data.logo || "";
+    if (snap.exists()) {
+
+      const data = snap.val();
+
+      document.getElementById(
+        "profileSchoolName"
+      ).value = data.name || "";
+
+      document.getElementById(
+        "schoolMotto"
+      ).value = data.motto || "";
+
+      document.getElementById(
+        "schoolAddress"
+      ).value = data.address || "";
+
+      document.getElementById(
+        "schoolLogo"
+      ).value = data.logo || "";
+
+    }
+
+  } catch (err) {
+
+    console.error(
+      "Error opening profile:",
+      err
+    );
+
   }
+
 };
+
+// =====================================
+// ❌ CLOSE SCHOOL PROFILE FORM
+// =====================================
 window.closeSchoolProfileForm = function () {
-  document.getElementById("schoolProfileModal").style.display = "none";
+
+  const modal =
+    document.getElementById(
+      "schoolProfileModal"
+    );
+
+  if (modal) {
+    modal.style.display = "none";
+  }
+
+};
+
+// =====================================
+// 🖨️ GET SCHOOL PRINT HEADER
+// =====================================
+window.getSchoolPrintHeader = function (
+  title = "SCHOOL REPORT"
+) {
+
+  const school =
+    window.currentSchool || {};
+
+  return `
+
+    <div style="
+      width:100%;
+      text-align:center;
+      border-bottom:3px solid #000;
+      padding-bottom:15px;
+      margin-bottom:20px;
+    ">
+
+      ${
+        school.logo
+          ? `
+        <img
+          src="${school.logo}"
+          style="
+            width:90px;
+            height:90px;
+            object-fit:cover;
+            border-radius:50%;
+            margin-bottom:10px;
+          "
+        >
+      `
+          : ""
+      }
+
+      <h1 style="
+        margin:0;
+        font-size:30px;
+        font-weight:800;
+      ">
+        ${school.name || "RASM 360 SCHOOL"}
+      </h1>
+
+      <div style="
+        font-size:15px;
+        margin-top:6px;
+        font-style:italic;
+      ">
+        ${school.motto || ""}
+      </div>
+
+      <div style="
+        font-size:14px;
+        margin-top:4px;
+      ">
+        ${school.address || ""}
+      </div>
+
+      <h2 style="
+        margin-top:18px;
+        font-size:22px;
+      ">
+        ${title}
+      </h2>
+
+    </div>
+
+  `;
+};
+
+// =====================================
+// 🖨️ PRINT SELECTED REPORT
+// =====================================
+window.printSelectedReport = function () {
+
+  const selectedId =
+    document.getElementById("reportSelector").value;
+
+  if (!selectedId) {
+
+    Swal.fire(
+      "Select Report",
+      "Choose a report first",
+      "warning"
+    );
+
+    return;
+  }
+
+  const el = document.getElementById(selectedId);
+
+  if (!el || el.innerHTML.trim() === "") {
+
+    Swal.fire(
+      "Not Ready",
+      "This report has not been generated yet.",
+      "info"
+    );
+
+    return;
+  }
+
+  // ==========================
+  // 🏫 SCHOOL PROFILE
+  // ==========================
+  const school = window.currentSchool || {
+
+    name: "School Name",
+    motto: "",
+    address: "",
+    logo: ""
+
+  };
+
+  // ==========================
+  // 🔥 PRINT LOADER
+  // ==========================
+  const loader = document.createElement("div");
+
+  loader.id = "printLoader";
+
+  loader.innerHTML = `
+
+    <div style="
+      position:fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      background:rgba(0,0,0,0.6);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:99999;
+      color:white;
+      font-family:Arial;
+      flex-direction:column;
+      gap:10px;
+    ">
+
+      <div style="
+        width:40px;
+        height:40px;
+        border:4px solid #fff;
+        border-top:4px solid transparent;
+        border-radius:50%;
+        animation:spin 1s linear infinite;
+      "></div>
+
+      <div>Preparing Print...</div>
+
+    </div>
+
+    <style>
+
+      @keyframes spin {
+
+        0% {
+          transform: rotate(0deg);
+        }
+
+        100% {
+          transform: rotate(360deg);
+        }
+
+      }
+
+    </style>
+  `;
+
+  document.body.appendChild(loader);
+
+  // ==========================
+  // 🧠 REPORT TITLES
+  // ==========================
+  const reportTitles = {
+
+    examResultsContent:
+      "Examination Results",
+
+    subjectChampionsContent:
+      "Subject Champions",
+
+    reportOutput:
+      "Merit List / Analysis",
+
+    subjectPerformanceContent:
+      "Subject Performance",
+
+    genderPerformanceContent:
+      "Gender Performance",
+
+    levelSummaryContent:
+      "Subject Level Summary",
+
+    groupByPathwaysContent:
+      "Learners by Pathways",
+
+    combineMarksByGradeContent:
+      "Combined Grade Marks",
+
+    assessmentReportsContent:
+      "Assessment Reports",
+
+    subjectRankingReportContent:
+      "Learner Progress Tracking",
+
+    blankMeritContent:
+      "Blank Merit List",
+
+    printAssessmentContent:
+      "Assessment Report",
+
+    marksStatusContent:
+      "Marks Entry Status",
+
+    filteredLearnersContent:
+      "Student List",
+
+    genderGroupedContent:
+      "Gender Classification",
+
+    feesTable:
+      "Fee Summary Report",
+
+    teacherList:
+      "Teachers List",
+
+    supportStaffList:
+      "Support Staff List",
+
+    // =====================================
+    // ✅ NEW REPORTS ADDED
+    // =====================================
+
+    generatedOutput:
+      "Parent List",
+
+    libraryContent:
+      "Library Records",
+
+    libraryIssuedBooksContent:
+      "Issued Books Report",
+
+    libraryDefaultersContent:
+      "Library Defaulters",
+
+    inventoryContent:
+      "Inventory Records",
+
+    inventoryStockContent:
+      "Inventory Stock Report",
+
+    inventoryIssuedContent:
+      "Issued Inventory Report",
+
+    transportContent:
+      "Transport Report",
+
+    hostelContent:
+      "Hostel Report",
+
+    ictContent:
+      "ICT Assets Report",
+
+    payrollContent:
+      "Payroll Report",
+
+    attendanceReportOutput:
+      "Attendance Report",
+
+    teacherAttendanceOutput:
+      "Teacher Attendance Report",
+
+    supportAttendanceOutput:
+      "Support Staff Attendance"
+
+  };
+
+  const printTitle =
+    reportTitles[selectedId] ||
+    "School Report";
+
+  // ==========================
+  // 🏫 BEAUTIFUL HEADER
+  // ==========================
+  const headerHTML = `
+
+    <div style="
+      text-align:center;
+      margin-bottom:20px;
+      border-bottom:3px solid #000;
+      padding-bottom:15px;
+    ">
+
+      ${
+        school.logo
+          ? `
+        <img
+          src="${school.logo}"
+          style="
+            height:80px;
+            width:80px;
+            object-fit:cover;
+            border-radius:50%;
+            margin-bottom:10px;
+          "
+        >
+      `
+          : ""
+      }
+
+      <h1 style="
+        margin:5px 0;
+        font-size:28px;
+        font-weight:800;
+      ">
+        ${school.name || "RASM 360 SCHOOL"}
+      </h1>
+
+      <div style="
+        font-size:14px;
+        font-style:italic;
+        margin-top:4px;
+      ">
+        ${school.motto || ""}
+      </div>
+
+      <div style="
+        font-size:13px;
+        margin-top:4px;
+      ">
+        ${school.address || ""}
+      </div>
+
+      <h2 style="
+        margin-top:18px;
+        font-size:22px;
+      ">
+        ${printTitle}
+      </h2>
+
+    </div>
+  `;
+
+  // ==========================
+  // 🧠 DETECT TABLE
+  // ==========================
+  let contentHTML = "";
+
+  const isTableBody =
+    el.tagName.toLowerCase() === "tbody";
+
+  const isFeeTable =
+    selectedId === "feesTable";
+
+  const printWindow =
+    window.open(
+      "",
+      "",
+      "width=1100,height=800"
+    );
+
+  // ==========================
+  // 🧼 TABLE REPORTS
+  // ==========================
+  if (isTableBody || isFeeTable) {
+
+    const table =
+      isTableBody
+        ? el.closest("table")
+        : el;
+
+    if (!table) {
+
+      loader.remove();
+
+      Swal.fire(
+        "Error",
+        "Table not found for this report",
+        "error"
+      );
+
+      return;
+    }
+
+    const cleanTable =
+      table.cloneNode(true);
+
+    cleanTable.querySelectorAll(
+      `
+      button,
+      select,
+      input,
+      textarea,
+      .dropdown,
+      .dropdown-menu,
+      .action-toggle,
+      .print-hide,
+      .no-print
+      `
+    ).forEach(e => e.remove());
+
+    contentHTML = `
+
+      <html>
+
+      <head>
+
+        <title>${printTitle}</title>
+
+        <style>
+
+          body{
+            font-family:Arial;
+            padding:20px;
+            color:#000;
+          }
+
+          table{
+            width:100%;
+            border-collapse:collapse;
+            font-size:13px;
+            margin-top:10px;
+          }
+
+          th, td{
+            border:1px solid #000;
+            padding:7px;
+            text-align:center;
+          }
+
+          th{
+            background:#111827;
+            color:white;
+          }
+
+          tr:nth-child(even){
+            background:#f9f9f9;
+          }
+
+          h1,h2,h3{
+            margin:4px 0;
+          }
+
+          @media print {
+
+            body{
+              -webkit-print-color-adjust:exact;
+            }
+
+          }
+
+        </style>
+
+      </head>
+
+      <body>
+
+        ${headerHTML}
+
+        ${cleanTable.outerHTML}
+
+      </body>
+
+      </html>
+    `;
+  }
+
+  // ==========================
+  // 🧼 NORMAL REPORTS
+  // ==========================
+  else {
+
+    const cleanEl =
+      el.cloneNode(true);
+
+    cleanEl.querySelectorAll(
+      `
+      button,
+      select,
+      input,
+      textarea,
+      .dropdown,
+      .dropdown-menu,
+      .action-toggle,
+      .print-hide,
+      .no-print
+      `
+    ).forEach(e => e.remove());
+
+    contentHTML = `
+
+      <html>
+
+      <head>
+
+        <title>${printTitle}</title>
+
+        <style>
+
+          body{
+            font-family:Arial;
+            padding:20px;
+            color:#000;
+          }
+
+          table{
+            width:100%;
+            border-collapse:collapse;
+            margin-top:10px;
+          }
+
+          th, td{
+            border:1px solid #000;
+            padding:6px;
+            text-align:center;
+          }
+
+          th{
+            background:#111827;
+            color:white;
+          }
+
+          h1,h2,h3{
+            margin:5px 0;
+          }
+
+          @media print {
+
+            body{
+              -webkit-print-color-adjust:exact;
+            }
+
+          }
+
+        </style>
+
+      </head>
+
+      <body>
+
+        ${headerHTML}
+
+        ${cleanEl.innerHTML}
+
+      </body>
+
+      </html>
+    `;
+  }
+
+  // ==========================
+  // 🚀 PRINT
+  // ==========================
+  printWindow.document.write(contentHTML);
+
+  printWindow.document.close();
+
+  printWindow.onload = function () {
+
+    loader.remove();
+
+    printWindow.focus();
+
+    setTimeout(() => {
+
+      printWindow.print();
+
+    }, 500);
+
+  };
+
 };
 // =====================================
 // 🚀 AUTO INIT ON PAGE LOAD
 // =====================================
-window.addEventListener("load", function () {
-  loadSchoolProfile();
+window.addEventListener("load", async function () {
+
+  await loadSchoolProfile();
+
 });
+
+
+
 /* =========================================================
    🚀 TRANSPORT + HOSTEL + ICT + INVENTORY MODULES
    ✅ Organized Tables
@@ -20115,18 +22463,423 @@ async function(borrowId, bookId) {
   }
 };
 
+
+/* =========================================================
+🚀 RASM 360 PERFORMANCE ENGINE
+ANTI FREEZE SYSTEM
+========================================================= */
+
+(() => {
+
+  console.log("🚀 Performance Engine Activated");
+
+  /* =====================================================
+     SAFE ERROR HANDLER
+  ===================================================== */
+  window.addEventListener("error", (e) => {
+    console.error("❌ JS Error:", e.message);
+  });
+
+  window.addEventListener("unhandledrejection", (e) => {
+    console.error("❌ Promise Error:", e.reason);
+  });
+
+  /* =====================================================
+     SAFE SELECTOR
+  ===================================================== */
+  window.$id = (id) =>
+    document.getElementById(id);
+
+  /* =====================================================
+     DEBOUNCE
+  ===================================================== */
+  function debounce(fn, delay = 300) {
+
+    let timer;
+
+    return (...args) => {
+
+      clearTimeout(timer);
+
+      timer =
+        setTimeout(() => fn(...args), delay);
+    };
+  }
+
+  /* =====================================================
+     THROTTLE
+  ===================================================== */
+  function throttle(fn, limit = 200) {
+
+    let waiting = false;
+
+    return (...args) => {
+
+      if (!waiting) {
+
+        fn(...args);
+
+        waiting = true;
+
+        setTimeout(() => {
+
+          waiting = false;
+
+        }, limit);
+      }
+    };
+  }
+
+  /* =====================================================
+     PREVENT UI BLOCKING
+  ===================================================== */
+  window.runSmoothly = (callback) => {
+
+    if ("requestIdleCallback" in window) {
+
+      requestIdleCallback(callback);
+
+    } else {
+
+      setTimeout(callback, 0);
+    }
+  };
+
+  /* =====================================================
+     SAFE STORAGE
+  ===================================================== */
+  window.safeStorageSet = (key, value) => {
+
+    try {
+
+      localStorage.setItem(
+        key,
+        JSON.stringify(value)
+      );
+
+    } catch(err) {
+
+      console.error("Storage Error:", err);
+    }
+  };
+
+  window.safeStorageGet =
+  (key, fallback = []) => {
+
+    try {
+
+      return JSON.parse(
+        localStorage.getItem(key)
+      ) || fallback;
+
+    } catch {
+
+      return fallback;
+    }
+  };
+
+  /* =====================================================
+     CHUNKED TABLE RENDER
+  ===================================================== */
+  window.renderChunked =
+  async function(
+    data,
+    container,
+    renderFn,
+    chunk = 25
+  ) {
+
+    container.innerHTML = "";
+
+    for (
+      let i = 0;
+      i < data.length;
+      i += chunk
+    ) {
+
+      const slice =
+        data.slice(i, i + chunk);
+
+      const fragment =
+        document.createDocumentFragment();
+
+      slice.forEach(item => {
+
+        fragment.appendChild(
+          renderFn(item)
+        );
+
+      });
+
+      container.appendChild(fragment);
+
+      await new Promise(resolve =>
+        requestAnimationFrame(resolve)
+      );
+    }
+  };
+
+  /* =====================================================
+     BUTTON DOUBLE CLICK PROTECTION
+  ===================================================== */
+  document.addEventListener("click", (e) => {
+
+    const btn =
+      e.target.closest("button");
+
+    if (!btn) return;
+
+    if (btn.dataset.busy === "true") {
+
+      e.preventDefault();
+
+      return;
+    }
+
+    btn.dataset.busy = "true";
+
+    btn.style.pointerEvents = "none";
+    btn.style.opacity = "0.7";
+
+    setTimeout(() => {
+
+      btn.dataset.busy = "false";
+
+      btn.style.pointerEvents = "auto";
+      btn.style.opacity = "1";
+
+    }, 1200);
+
+  });
+
+  /* =====================================================
+     INPUT OPTIMIZATION
+  ===================================================== */
+  document
+    .querySelectorAll("input, textarea")
+    .forEach(input => {
+
+      input.addEventListener(
+        "input",
+
+        debounce(() => {
+
+        }, 250)
+
+      );
+
+    });
+
+  /* =====================================================
+     SAFE INNERHTML
+  ===================================================== */
+  window.safeHTML =
+  (element, html) => {
+
+    requestAnimationFrame(() => {
+
+      element.innerHTML = html;
+
+    });
+
+  };
+
+  /* =====================================================
+     LARGE DATA PROCESSOR
+  ===================================================== */
+  window.processLargeData =
+  async function(
+    array,
+    callback,
+    batch = 50
+  ) {
+
+    for (
+      let i = 0;
+      i < array.length;
+      i += batch
+    ) {
+
+      const slice =
+        array.slice(i, i + batch);
+
+      slice.forEach(callback);
+
+      await new Promise(resolve =>
+        requestAnimationFrame(resolve)
+      );
+    }
+  };
+
+  /* =====================================================
+     CHART OPTIMIZATION
+  ===================================================== */
+  if (window.Chart) {
+
+    Chart.defaults.animation = false;
+
+    Chart.defaults.responsive = true;
+
+    Chart.defaults.maintainAspectRatio = false;
+  }
+
+  /* =====================================================
+     AUTO MEMORY CLEANUP
+  ===================================================== */
+  setInterval(() => {
+
+    console.log("🧹 Cleaning memory");
+
+    if (window.gc) {
+
+      gc();
+    }
+
+  }, 60000);
+
+  /* =====================================================
+     FREEZE DETECTOR
+  ===================================================== */
+  let last = performance.now();
+
+  setInterval(() => {
+
+    const now = performance.now();
+
+    if (now - last > 2000) {
+
+      console.warn(
+        "⚠️ UI Freeze Detected"
+      );
+    }
+
+    last = now;
+
+  }, 1000);
+
+  /* =====================================================
+     TABLE OPTIMIZATION
+  ===================================================== */
+  document.querySelectorAll("table")
+    .forEach(table => {
+
+      table.style.willChange =
+        "transform";
+
+    });
+
+  /* =====================================================
+     NETWORK SAFE FETCH
+  ===================================================== */
+  window.safeFetch =
+  async function(url, options = {}) {
+
+    try {
+
+      const controller =
+        new AbortController();
+
+      const timeout =
+        setTimeout(() => {
+
+          controller.abort();
+
+        }, 15000);
+
+      const response = await fetch(
+        url,
+        {
+          ...options,
+          signal: controller.signal
+        }
+      );
+
+      clearTimeout(timeout);
+
+      return response;
+
+    } catch(error) {
+
+      console.error(
+        "Fetch Error:",
+        error
+      );
+
+      return null;
+    }
+  };
+
+  /* =====================================================
+     SCROLL PERFORMANCE
+  ===================================================== */
+  let ticking = false;
+
+  window.addEventListener(
+    "scroll",
+
+    throttle(() => {
+
+      if (!ticking) {
+
+        requestAnimationFrame(() => {
+
+          ticking = false;
+
+        });
+
+        ticking = true;
+      }
+
+    }, 100)
+  );
+
+  /* =====================================================
+     RAM MONITOR
+  ===================================================== */
+  setInterval(() => {
+
+    if (performance.memory) {
+
+      const used =
+        Math.round(
+          performance.memory.usedJSHeapSize
+          / 1048576
+        );
+
+      console.log(
+        "🧠 RAM Usage:",
+        used + "MB"
+      );
+
+      if (used > 400) {
+
+        console.warn(
+          "⚠️ High RAM Usage"
+        );
+      }
+    }
+
+  }, 10000);
+
+})();
+
 /* =========================================================
    AUTO LOAD LIBRARY
 ========================================================= */
 
 window.addEventListener("load", () => {
 
-  loadLibrary();
+  runSmoothly(() => {
+
+    loadLibrary();
+
+  });
 
 });
 
-</script>
 
+
+</script>
 
 </body>
 </html>
