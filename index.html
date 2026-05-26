@@ -13170,28 +13170,101 @@ async function generateLevelSummary(selectedGrade, selectedExamPeriod) {
   showLevelPopup?.(topPerformers);
 }
 
+// ======================================================
+// 🚀 GLOBAL PAGINATION STATE
+// ======================================================
+window.__studentPagination = {
+  page: 0,
+  limit: 50, // learners per scroll
+  loading: false,
+  finished: false
+};
+
+window.allStudents = [];
+
+
+// ======================================================
+// 🚀 MAIN RENDER FUNCTION
+// ======================================================
 function renderStudents(list) {
 
+  // store globally
+  window.allStudents = Array.isArray(list)
+    ? list
+    : [];
+
+  // reset pagination
+  window.__studentPagination.page = 0;
+  window.__studentPagination.loading = false;
+  window.__studentPagination.finished = false;
+
+  // clear table
   const tbody = document.getElementById("learnersList");
+
+  if (!tbody) return;
+
   tbody.innerHTML = "";
 
-  if (!list.length) {
+  // empty state
+  if (!window.allStudents.length) {
+
     tbody.innerHTML = `
       <tr>
-        <td colspan="12" style="text-align:center;padding:10px;">
+        <td colspan="12"
+            style="text-align:center;padding:10px;">
           No matching students found
         </td>
       </tr>
     `;
+
     return;
   }
 
-  let c = 0;
+  // first batch only
+  renderNextStudentsBatch();
+}
 
-  list.forEach(data => {
-    c++;
 
-    tbody.innerHTML += `
+// ======================================================
+// 🚀 LOAD NEXT BATCH
+// ======================================================
+function renderNextStudentsBatch() {
+
+  const state = window.__studentPagination;
+
+  if (state.loading || state.finished) return;
+
+  state.loading = true;
+
+  const tbody = document.getElementById("learnersList");
+
+  if (!tbody) {
+    state.loading = false;
+    return;
+  }
+
+  // pagination indexes
+  const start = state.page * state.limit;
+  const end = start + state.limit;
+
+  // get batch
+  const batch = window.allStudents.slice(start, end);
+
+  // finished
+  if (!batch.length) {
+    state.finished = true;
+    state.loading = false;
+    return;
+  }
+
+  // build rows
+  let html = "";
+
+  batch.forEach((data, index) => {
+
+    const rowNo = start + index + 1;
+
+    html += `
       <tr>
 
         <td style="width:1%; padding:2px; white-space:nowrap;">
@@ -13201,11 +13274,18 @@ function renderStudents(list) {
                  style="margin:0;">
         </td>
 
-        <td>${c}</td>
+        <td>${rowNo}</td>
 
         <td>
           <img src="${data.photo || 'https://via.placeholder.com/40'}"
-               style="width:40px;height:40px;border-radius:50%;">
+               loading="lazy"
+               onerror="this.src='https://via.placeholder.com/40'"
+               style="
+                 width:40px;
+                 height:40px;
+                 border-radius:50%;
+                 object-fit:cover;
+               ">
         </td>
 
         <td>${data.name || "N/A"}</td>
@@ -13218,14 +13298,43 @@ function renderStudents(list) {
         <td>${data.admissionNo || data.adm || "-"}</td>
 
         <td>
-          <button onclick="editPhoto('${data.id}')">Edit</button>
+          <button onclick="editPhoto('${data.id}')">
+            Edit
+          </button>
         </td>
 
       </tr>
     `;
   });
+
+  // append instead of replacing
+  tbody.insertAdjacentHTML("beforeend", html);
+
+  // next page
+  state.page++;
+
+  state.loading = false;
 }
-async function generateSubjectPerformance(selectedGrade, selectedExamPeriod) {
+
+
+// ======================================================
+// 🚀 AUTO LOAD MORE ON SCROLL
+// ======================================================
+window.addEventListener("scroll", () => {
+
+  const state = window.__studentPagination;
+
+  if (state.loading || state.finished) return;
+
+  // detect near bottom
+  const nearBottom =
+    (window.innerHeight + window.scrollY) >=
+    (document.body.offsetHeight - 300);
+
+  if (nearBottom) {
+    renderNextStudentsBatch();
+  }
+});async function generateSubjectPerformance(selectedGrade, selectedExamPeriod) {
 
   // ===============================
   // 🔥 FORCE READ FROM UI
