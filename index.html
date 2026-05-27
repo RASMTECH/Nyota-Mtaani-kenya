@@ -19,7 +19,7 @@ body{
   margin:0;
   font-family:Arial,sans-serif;
   background:#f4f6f9;
-  overflow-x:hidden;
+  overflow-x:auto;
 }
 
 ul{
@@ -577,87 +577,95 @@ button.primary{
 
   display:block;
 }
-
 /* =========================================================
-   MARKS TABLE
+   MARKS TABLE (THICK BLACK GRID VERSION)
 ========================================================= */
 
-.marks-table{
+/* TABLE WRAPPER (keep for scrolling) */
+.table-wrapper{
   width:100%;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
 
+/* TABLE */
+.marks-table{
   border-collapse:collapse;
-
   margin-top:15px;
-
   font-size:0.9rem;
-
   background:white;
 
-  table-layout:fixed;
+  width:max-content;
+  min-width:100%;
+
+  /* STRONG OUTER BORDER */
+  border:2px solid #000;
 }
 
+/* CELLS (THICK BLACK GRID LINES) */
 .marks-table th,
 .marks-table td{
-  border:1px solid #000;
+  border:2px solid #000;   /* 🔥 thicker black grid */
 
   padding:6px;
-
   text-align:center;
 
-  overflow:hidden;
-
-  text-overflow:ellipsis;
-
   white-space:nowrap;
+  overflow:visible;
+  text-overflow:clip;
 }
 
+/* HEADER */
 .marks-table th{
   background:#111827;
   color:white;
   font-weight:bold;
+
+  border:2px solid #000; /* ensure header grid also thick */
 }
 
+/* ROW STRIPES (optional but cleaner with bold grid) */
 .marks-table tr:nth-child(even){
   background:#f9f9f9;
 }
 
+/* HOVER EFFECT */
 .marks-table tr:hover{
   background:#f1f5f9;
 }
 
+/* CHECKBOX COLUMN FIX */
 .marks-table th:first-child,
 .marks-table td:first-child{
-  width:35px;
+  width:40px;
+  min-width:40px;
+  max-width:40px;
 
-  min-width:35px;
-
-  max-width:35px;
-
-  padding:4px;
+  border:2px solid #000;
 }
 
-.marks-table th:nth-child(2),
-.marks-table td:nth-child(2){
-  width:50px;
-}
-
-.marks-table td:nth-child(3){
-  text-align:left;
-
-  padding-left:10px;
-
-  font-weight:500;
-}
-
+/* CHECKBOX */
 .marks-table input[type="checkbox"]{
   width:16px;
   height:16px;
-
   cursor:pointer;
-
   accent-color:#2563eb;
+  display:block;
+  margin:auto;
 }
 
+/* NAME COLUMN */
+.marks-table td:nth-child(3){
+  text-align:left;
+  padding-left:10px;
+  font-weight:500;
+  min-width:140px;
+}
+.table-wrapper{
+  width:100%;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
 /* =========================================================
    ACTION BUTTONS
 ========================================================= */
