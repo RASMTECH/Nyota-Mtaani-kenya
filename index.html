@@ -1140,7 +1140,7 @@ table,
    MOBILE
 ========================================================= */
 
-@media(max-width:768px){
+@media(max-width:400px){
 
   .main{
     margin-left:0;
@@ -1148,7 +1148,7 @@ table,
   }
 
   .sidebar{
-    width:100%;
+    width:50%;
     height:auto;
     position:relative;
   }
@@ -1163,7 +1163,7 @@ table,
   }
 
   .auth-card{
-    width:95%;
+    width:50%;
   }
 }
 .submenu.open{
@@ -1806,59 +1806,497 @@ table,
     height:30px;
     cursor:pointer;
   }
+/* =========================================
+   FLOATING SCHOOLS COUNTER
+========================================= */
+
+#floatingSchoolsCounter{
+
+  position:fixed;
+
+  top:20px;
+  right:20px;
+
+  display:flex;
+  align-items:center;
+  gap:14px;
+
+  background:rgba(255,255,255,0.95);
+
+  padding:14px 18px;
+
+  border-radius:18px;
+
+  box-shadow:
+    0 10px 35px rgba(0,0,0,0.15);
+
+  border:1px solid rgba(255,255,255,0.3);
+
+  backdrop-filter:blur(12px);
+
+  z-index:99999;
+
+  min-width:230px;
+
+  animation:
+    floatUp .5s ease,
+    floatPulse 3s ease-in-out infinite;
+
+  transition:.3s ease;
+}
+
+#floatingSchoolsCounter:hover{
+
+  transform:translateY(-3px);
+
+  box-shadow:
+    0 15px 45px rgba(0,0,0,0.18);
+}
+
+/* =========================================
+   ICON
+========================================= */
+
+.schools-counter-icon{
+
+  width:52px;
+  height:52px;
+
+  border-radius:16px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  background:
+    linear-gradient(
+      135deg,
+      #10b981,
+      #059669
+    );
+
+  font-size:24px;
+
+  color:white;
+
+  flex-shrink:0;
+
+  box-shadow:
+    0 8px 20px rgba(16,185,129,0.35);
+}
+
+/* =========================================
+   TEXT
+========================================= */
+
+.schools-counter-title{
+
+  font-size:13px;
+  font-weight:600;
+
+  color:#64748b;
+
+  margin-bottom:5px;
+
+  letter-spacing:.3px;
+}
+
+.schools-counter-number{
+
+  font-size:28px;
+  font-weight:800;
+
+  color:#0f172a;
+
+  line-height:1;
+}
+
+/* =========================================
+   FLOAT IN
+========================================= */
+
+@keyframes floatUp{
+
+  from{
+
+    opacity:0;
+
+    transform:
+      translateY(-20px)
+      scale(.95);
+  }
+
+  to{
+
+    opacity:1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+/* =========================================
+   SOFT PULSE
+========================================= */
+
+@keyframes floatPulse{
+
+  0%{
+    transform:translateY(0);
+  }
+
+  50%{
+    transform:translateY(-2px);
+  }
+
+  100%{
+    transform:translateY(0);
+  }
+}
+
+/* =========================================
+   MOBILE VIEW
+========================================= */
+
+@media(max-width:600px){
+
+  #floatingSchoolsCounter{
+
+    top:10px;
+    right:10px;
+    left:10px;
+
+    min-width:auto;
+
+    padding:12px 14px;
+  }
+
+  .schools-counter-number{
+
+    font-size:24px;
+  }
+
+  .schools-counter-icon{
+
+    width:46px;
+    height:46px;
+
+    font-size:22px;
+  }
+}
+
+
+.dashboard-wrapper{
+
+  padding:20px;
+}
+
+/* ================= HEADER ================= */
+
+.dashboard-header{
+
+  width:fit-content;
+
+  margin:0 auto 30px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #0f172a,
+      #1e293b
+    );
+
+  color:white;
+
+  padding:14px 24px;
+
+  border-radius:14px;
+
+  font-size:22px;
+  font-weight:700;
+
+  letter-spacing:.5px;
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.15);
+}
+
+/* ================= GRID ================= */
+
+.dashboard-grid{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(240px, 1fr));
+
+  gap:22px;
+}
+
+/* ================= CARD ================= */
+
+.dashboard-card{
+
+  position:relative;
+
+  overflow:hidden;
+
+  display:flex;
+  align-items:center;
+  gap:16px;
+
+  padding:22px;
+
+  border-radius:20px;
+
+  color:white;
+
+  min-height:120px;
+
+  transition:.3s ease;
+
+  box-shadow:
+    0 12px 30px rgba(0,0,0,0.12);
+}
+
+.dashboard-card:hover{
+
+  transform:
+    translateY(-5px);
+
+  box-shadow:
+    0 18px 40px rgba(0,0,0,0.18);
+}
+
+/* ================= ICON ================= */
+
+.card-icon{
+
+  width:60px;
+  height:60px;
+
+  border-radius:18px;
+
+  background:
+    rgba(255,255,255,0.15);
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:28px;
+
+  flex-shrink:0;
+
+  backdrop-filter:blur(8px);
+}
+
+/* ================= CONTENT ================= */
+
+.card-content{
+
+  flex:1;
+}
+
+.card-content h3{
+
+  margin:0 0 8px;
+
+  font-size:15px;
+  font-weight:600;
+
+  opacity:.9;
+}
+
+.card-content p{
+
+  margin:0;
+
+  font-size:30px;
+  font-weight:800;
+
+  line-height:1.1;
+}
+
+/* ================= CARD COLORS ================= */
+
+.dark-card{
+
+  background:
+    linear-gradient(
+      135deg,
+      #0f172a,
+      #1e293b
+    );
+}
+
+.blue-card{
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #1d4ed8
+    );
+}
+
+.green-card{
+
+  background:
+    linear-gradient(
+      135deg,
+      #10b981,
+      #059669
+    );
+}
+
+.purple-card{
+
+  background:
+    linear-gradient(
+      135deg,
+      #8b5cf6,
+      #7c3aed
+    );
+}
+
+.pink-card{
+
+  background:
+    linear-gradient(
+      135deg,
+      #ec4899,
+      #db2777
+    );
+}
+
+.orange-card{
+
+  background:
+    linear-gradient(
+      135deg,
+      #f59e0b,
+      #d97706
+    );
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:600px){
+
+  .dashboard-wrapper{
+
+    padding:14px;
+  }
+
+  .dashboard-header{
+
+    width:100%;
+
+    text-align:center;
+
+    font-size:20px;
+  }
+
+  .dashboard-card{
+
+    padding:18px;
+  }
+
+  .card-content p{
+
+    font-size:26px;
+  }
+
+  .card-icon{
+
+    width:52px;
+    height:52px;
+
+    font-size:24px;
+  }
+}
 
 </style>
 
   <div class="main">
 
- <!-- ================= DASHBOARD WRAPPER ================= -->
-<div id="dashboard" style="padding:20px;">
+<!-- ================= DASHBOARD WRAPPER ================= -->
+<div id="dashboard" class="dashboard-wrapper">
 
   <!-- ================= HEADER ================= -->
-  <h2 style="
-    text-align:center;
-    background:#111827;
-    color:white;
-    padding:10px 16px;
-    border-radius:8px;
-    width:fit-content;
-    margin:0 auto 25px;
-  ">
+  <div class="dashboard-header">
     📊 School Dashboard
-  </h2>
+  </div>
 
-  <!-- ================= TOP STATS CARDS ================= -->
-  <div style="
-    display:grid;
-    grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));
-    gap:20px;
-    margin-bottom:30px;
-  ">
+  <!-- ================= DASHBOARD CARDS ================= -->
+  <div class="dashboard-grid">
 
-    <div class="dash-card" style="background:#1e293b; color:white; padding:15px; border-radius:12px;">
-      <h3>🕒 Current Day & Time</h3>
-      <p id="currentDateTime">Loading...</p>
+    <!-- DATE & TIME -->
+    <div class="dashboard-card dark-card">
+      <div class="card-icon">🕒</div>
+
+      <div class="card-content">
+        <h3>Current Day & Time</h3>
+        <p id="currentDateTime">Loading...</p>
+      </div>
     </div>
 
-    <div class="dash-card" style="background:#2563eb; color:white; padding:15px; border-radius:12px;">
-      <h3>🏫 Total Classes</h3>
-      <p id="totalClasses">0</p>
+    <!-- TOTAL CLASSES -->
+    <div class="dashboard-card blue-card">
+      <div class="card-icon">🏫</div>
+
+      <div class="card-content">
+        <h3>Total Classes</h3>
+        <p id="totalClasses">0</p>
+      </div>
     </div>
 
-    <div class="dash-card" style="background:#10b981; color:white; padding:15px; border-radius:12px;">
-      <h3>📚 Total Subjects</h3>
-      <p id="totalSubjects">9</p>
+    <!-- TOTAL SUBJECTS -->
+    <div class="dashboard-card green-card">
+      <div class="card-icon">📚</div>
+
+      <div class="card-content">
+        <h3>Total Subjects</h3>
+        <p id="totalSubjects">9</p>
+      </div>
     </div>
-<div class="card">
-  <h3>👩‍🏫 Total Teachers</h3>
-  <h1 id="totalTeachers">0</h1>
-</div>
-    <div class="dash-card" style="background:#f59e0b; color:white; padding:15px; border-radius:12px;">
-      <h3>👨‍🎓 Total Students</h3>
-      <p id="totalStudents">0</p>
+
+    <!-- TOTAL TEACHERS -->
+    <div class="dashboard-card purple-card">
+      <div class="card-icon">👩‍🏫</div>
+
+      <div class="card-content">
+        <h3>Total Teachers</h3>
+        <p id="totalTeachers">0</p>
+      </div>
+    </div>
+
+    <!-- TOTAL STAFF -->
+    <div class="dashboard-card pink-card">
+      <div class="card-icon">👥</div>
+
+      <div class="card-content">
+        <h3>Total Staff</h3>
+        <p id="totalSupportStaff">0</p>
+      </div>
+    </div>
+
+    <!-- TOTAL STUDENTS -->
+    <div class="dashboard-card orange-card">
+      <div class="card-icon">👨‍🎓</div>
+
+      <div class="card-content">
+        <h3>Total Students</h3>
+        <p id="totalStudents">0</p>
+      </div>
     </div>
 
   </div>
+
+
+
 
   <!-- ================= STUDENTS PER GRADE ================= -->
   <div style="
@@ -1991,16 +2429,6 @@ style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc;"></te
 
       <!-- ================= ACTION BUTTONS ================= -->
 <div style="display:flex; gap:10px; flex-wrap:wrap; margin:15px 0;">
-
-  <button onclick="printFilteredLearners()"
-    style="background:#2563eb; color:white; border:none; padding:10px 14px; border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:6px;">
-    🖨️ Print Filtered
-  </button>
-
-  <button onclick="printGroupedByGender()"
-    style="background:#0ea5e9; color:white; border:none; padding:10px 14px; border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:6px;">
-    👥 Print by Gender
-  </button>
 
   <button onclick="promoteSelected()"
     style="background:#10b981; color:white; border:none; padding:10px 14px; border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:6px;">
@@ -2407,38 +2835,99 @@ style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc;"></te
   </div>
 
 </div>
-<div class="dashboard-grid">
 
-  <div class="card">
-    <h3>💰 Fees Overview</h3>
-    <canvas id="feeChart"></canvas>
+
+
+
+
+<!-- ================= TOP ACTIONS + FILTERS ================= -->
+
+<div style="
+  display:flex;
+  gap:15px;
+  flex-wrap:wrap;
+  margin-top:15px;
+  margin-bottom:25px;
+">
+
+  <!-- Left Side -->
+  <div>
+    <button onclick="showDefaulters()"
+      style="
+        background:#dc2626;
+        color:white;
+        padding:8px 12px;
+        border:none;
+        border-radius:6px;
+        cursor:pointer;
+        font-weight:600;
+      ">
+      🚨 Defaulters
+    </button>
   </div>
 
-  <div class="card">
-    <h3>🏫 Fees by Grade</h3>
-    <canvas id="gradeChart"></canvas>
-  </div>
+  <!-- Right Side Filters -->
+  <div style="
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    align-items:end;
+  ">
 
-  <div class="card">
-    <h3>📊 Fee Type Breakdown</h3>
-    <canvas id="typeChart"></canvas>
+    <!-- Academic Year Filter -->
+    <div style="display:flex; flex-direction:column;">
+      <label for="filterFeeYear"
+        style="
+          font-size:13px;
+          font-weight:600;
+          margin-bottom:4px;
+          color:#333;
+        ">
+        Academic Year
+      </label>
+
+      <select id="filterFeeYear"
+        onchange="loadFees();loadFinanceSummary();"
+        style="
+          padding:8px;
+          border:1px solid #ccc;
+          border-radius:6px;
+          min-width:140px;
+        ">
+        <option value="">Select Year</option>
+      </select>
+    </div>
+
+    <!-- Grade Filter -->
+    <div style="display:flex; flex-direction:column;">
+      <label for="filterFeeGrade"
+        style="
+          font-size:13px;
+          font-weight:600;
+          margin-bottom:4px;
+          color:#333;
+        ">
+        Grade
+      </label>
+
+      <select id="filterFeeGrade"
+        onchange="loadFees();loadFinanceSummary();"
+        style="
+          padding:8px;
+          border:1px solid #ccc;
+          border-radius:6px;
+          min-width:140px;
+        ">
+        <option value="">All Grades</option>
+      </select>
+    </div>
+
   </div>
 
 </div>
 
-<button onclick="showDefaulters()"
-  style="background:#dc2626;color:white;padding:8px 12px;border-radius:6px;">
-  🚨 Defaulters
-</button>
+<hr>
 
-<button onclick="printFeesTable()">🖨 Print Fees</button>
-<select id="filterFeeYear" onchange="loadFees();loadFinanceSummary();">
-</select>
-
-<select id="filterFeeGrade" onchange="loadFees();loadFinanceSummary();">
-  <option value="">All Grades</option>
-</select>
-  <hr>
 <!-- ================= FEES TABLE ================= -->
 <table border="1" width="100%" id="feesTable">
 
@@ -2449,8 +2938,8 @@ style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc;"></te
   <tbody></tbody>
 
 </table>
- 
-  </div>
+
+</div>
 
 
 
@@ -3837,6 +4326,28 @@ background:rgba(0,0,0,0.5);justify-content:center;align-items:center;">
 
 <div id="filteredLearnersContent" style="display:none;"></div>
 <div id="genderGroupedContent" style="display:none;"></div>
+<!-- =========================================
+     FLOATING ACTIVE SCHOOLS COUNTER
+========================================= -->
+<div id="floatingSchoolsCounter">
+
+  <div class="schools-counter-icon">
+    🏫
+  </div>
+
+  <div class="schools-counter-content">
+
+    <div class="schools-counter-title">
+      Schools Connected
+    </div>
+
+    <div class="schools-counter-number">
+      <span id="schoolsCounter">127</span>+
+    </div>
+
+  </div>
+
+</div>
 
 
 <script type="module">
@@ -3944,6 +4455,8 @@ function show(id) {
     runSectionLogic(id);
   }
 }
+
+
 function getSchoolId() {
 
   return sessionStorage.getItem(
@@ -3951,11 +4464,16 @@ function getSchoolId() {
   );
 
 }
-/* ================= LOGOUT (UPGRADED + SECURE + SMOOTH UX) ================= */
+/* =========================================================
+   🚀 ULTRA SAFE LOGOUT SYSTEM
+   NO FREEZE • FAST • SECURE • PRODUCTION READY
+========================================================= */
+
+window.__loggingOut = false;
 
 window.logout = async function () {
 
-  // 🚫 Prevent double logout clicks
+  // 🚫 Prevent double clicks
   if (window.__loggingOut) return;
 
   const result = await Swal.fire({
@@ -3984,13 +4502,7 @@ window.logout = async function () {
     cancelButtonColor: "#64748b",
 
     background: "#ffffff",
-    color: "#0f172a",
-
-    customClass: {
-      popup: "rounded-2xl shadow-2xl",
-      confirmButton: "swal-btn",
-      cancelButton: "swal-btn"
-    }
+    color: "#0f172a"
   });
 
   if (!result.isConfirmed) return;
@@ -3999,12 +4511,18 @@ window.logout = async function () {
 
     window.__loggingOut = true;
 
-    // 🔄 Loading state
-    await Swal.fire({
+    // =====================================================
+    // 🔥 SHOW LOADING (DO NOT AWAIT THIS)
+    // =====================================================
+    Swal.fire({
       title: "Signing you out...",
       html: `
-        <div style="margin-top:10px;font-size:14px;color:#64748b;">
-          Please wait while we end your session securely.
+        <div style="
+          margin-top:10px;
+          font-size:14px;
+          color:#64748b;
+        ">
+          Please wait while we end your session securely...
         </div>
       `,
       allowOutsideClick: false,
@@ -4016,11 +4534,15 @@ window.logout = async function () {
       }
     });
 
-    // 🔥 Firebase Logout
+    // =====================================================
+    // 🔥 FIREBASE SIGNOUT
+    // =====================================================
     await signOut(auth);
 
-    // 🧹 Clear storage safely
-    [
+    // =====================================================
+    // 🧹 CLEAR STORAGE
+    // =====================================================
+    const keys = [
       "schoolId",
       "userUid",
       "schoolEmail",
@@ -4028,63 +4550,73 @@ window.logout = async function () {
       "subscriptionStatus",
       "selectedGrade",
       "selectedExam",
+      "selectedExamPeriod",
       "lastPage"
-    ].forEach(key => {
-      sessionStorage.removeItem(key);
+    ];
+
+    keys.forEach(key => {
       localStorage.removeItem(key);
+      sessionStorage.removeItem(key);
     });
 
-    // 🧹 Optional full cleanup
     sessionStorage.clear();
 
-    // 👀 Hide app
+    // =====================================================
+    // 🧹 CLEAR GLOBALS
+    // =====================================================
+    window.schoolId = null;
+    window.currentUser = null;
+    window.allStudents = [];
+    window.allLoadedLearners = [];
+    window.currentFilteredLearners = [];
+
+    // =====================================================
+    // 🔥 CLOSE LOADING POPUP
+    // =====================================================
+    Swal.close();
+
+    // =====================================================
+    // 👀 SWITCH UI
+    // =====================================================
     const app = document.getElementById("app");
     const authSection = document.getElementById("authSection");
 
     if (app) {
-      app.style.opacity = "0";
-      app.style.pointerEvents = "none";
-
-      setTimeout(() => {
-        app.style.display = "none";
-      }, 300);
+      app.style.display = "none";
     }
 
     if (authSection) {
       authSection.style.display = "block";
-      authSection.style.opacity = "0";
-
-      setTimeout(() => {
-        authSection.style.transition = "0.3s ease";
-        authSection.style.opacity = "1";
-      }, 50);
+      authSection.style.opacity = "1";
     }
 
-    // ✅ Success message
+    // =====================================================
+    // ✅ SUCCESS
+    // =====================================================
     await Swal.fire({
       icon: "success",
       title: "Logged Out",
       text: "You have been signed out successfully.",
-      timer: 1800,
-      showConfirmButton: false,
-      background: "#ffffff",
-      color: "#0f172a"
+      timer: 1500,
+      showConfirmButton: false
     });
 
-    // 🔄 Optional redirect
-    // window.location.href = "login.html";
+    // =====================================================
+    // 🔥 OPTIONAL HARD REFRESH
+    // =====================================================
+    location.reload();
 
   } catch (error) {
 
-    console.error("Logout Error:", error);
+    console.error("LOGOUT ERROR:", error);
+
+    Swal.close();
 
     Swal.fire({
       icon: "error",
       title: "Logout Failed",
-      text: error.message || "Something went wrong. Please try again.",
-      confirmButtonColor: "#ef4444",
-      background: "#ffffff",
-      color: "#0f172a"
+      text: error.message || "Something went wrong.",
+      confirmButtonColor: "#ef4444"
     });
 
   } finally {
@@ -5599,31 +6131,42 @@ window.login = async () => {
       `;
     }
 
-    // =========================
-    // LOADING ALERT
-    // =========================
-    Swal.fire({
-      title: "Signing you in...",
-      html: `
-        <div style="
-          color:#64748b;
-          font-size:14px;
-          margin-top:10px;
-        ">
-          Verifying your account securely
-        </div>
-      `,
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-      showConfirmButton: false,
+ // =========================
+// MODERN DOT LOADER
+// =========================
+let loginOverlay =
+document.getElementById("modernLoginLoader");
 
-      background: "#ffffff",
-      color: "#0f172a",
+if (!loginOverlay) {
 
-      didOpen: () => {
-        Swal.showLoading();
-      }
-    });
+  loginOverlay = document.createElement("div");
+
+  loginOverlay.id = "modernLoginLoader";
+
+  loginOverlay.innerHTML = `
+
+    <div class="modern-loader-box">
+
+      <div class="modern-dots">
+
+        <span></span>
+        <span></span>
+        <span></span>
+
+      </div>
+
+      <div class="modern-loader-text">
+        Signing you in securely...
+      </div>
+
+    </div>
+  `;
+
+  document.body.appendChild(loginOverlay);
+}
+
+// ✅ SHOW
+loginOverlay.style.display = "flex";
 
     // =========================
     // SAFE LOGIN WITH TIMEOUT
@@ -5945,7 +6488,12 @@ window.login = async () => {
         btn.disabled = false;
       });
 
-      Swal.close();
+      const loader =
+document.getElementById("modernLoginLoader");
+
+if (loader) {
+  loader.style.display = "none";
+}
 
       return;
     }
@@ -5958,26 +6506,31 @@ window.login = async () => {
     // =========================
     // SUCCESS ALERT
     // =========================
-    await Swal.fire({
-      icon: "success",
-      title: "Login Successful",
-      text:
-        `Welcome back to ${schoolName}`,
-      timer: 1500,
-      showConfirmButton: false,
+  await Swal.fire({
+  icon: "success",
+  title: "Login Successful",
+  text: `Welcome back to ${schoolName}`,
+  timer: 1500,
+  showConfirmButton: false,
+  background: "#ffffff",
+  color: "#0f172a"
+});
 
-      background: "#ffffff",
-      color: "#0f172a"
-    });
+// 👇 INSERT HERE
 
-    // =========================
-    // OPEN APP
-    // =========================
-    const authSection =
-      document.getElementById(
-        "authSection"
-      );
+// =========================
+// HIDE LOGIN LOADER
+// =========================
+const loader = document.getElementById("modernLoginLoader");
 
+if (loader) {
+  loader.style.display = "none";
+}
+
+// =========================
+// OPEN APP
+// =========================
+const authSection = document.getElementById("authSection");
     const app =
       document.getElementById(
         "app"
@@ -6204,29 +6757,34 @@ window.login = async () => {
           "rounded-2xl shadow-xl"
       }
     });
+} finally {
 
-  } finally {
+  // =========================
+  // FORCE HIDE LOADER
+  // =========================
+  const loader =
+    document.getElementById("modernLoginLoader");
 
-    // =========================
-    // RESET STATE
-    // =========================
-    window.__loggingIn = false;
-
-    btns.forEach(btn => {
-
-      btn.disabled = false;
-
-    });
-
-    // =========================
-    // RESTORE BUTTON
-    // =========================
-    if (loginBtn) {
-
-      loginBtn.innerHTML =
-        "🔐 Login";
-    }
+  if (loader) {
+    loader.style.display = "none";
   }
+
+  // =========================
+  // RESET STATE
+  // =========================
+  window.__loggingIn = false;
+
+  btns.forEach(btn => {
+    btn.disabled = false;
+  });
+
+  // =========================
+  // RESTORE BUTTON
+  // =========================
+  if (loginBtn) {
+    loginBtn.innerHTML = "🔐 Login";
+  }
+}
 };
 
 
@@ -6269,6 +6827,127 @@ if (
     style
   );
 }
+/* =========================================================
+   🚀 MODERN LOGIN DOT LOADER
+========================================================= */
+
+if (!document.getElementById("modernDotLoaderStyle")) {
+
+  const style = document.createElement("style");
+
+  style.id = "modernDotLoaderStyle";
+
+  style.innerHTML = `
+
+  #modernLoginLoader{
+
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,0.45);
+
+    backdrop-filter:blur(6px);
+
+    display:none;
+    align-items:center;
+    justify-content:center;
+
+    z-index:999999;
+  }
+
+  .modern-loader-box{
+
+    background:white;
+    padding:30px 40px;
+
+    border-radius:24px;
+
+    box-shadow:
+      0 20px 60px rgba(0,0,0,0.25);
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:18px;
+
+    min-width:260px;
+
+    animation:loaderPop .25s ease;
+  }
+
+  .modern-loader-text{
+
+    font-size:15px;
+    font-weight:600;
+    color:#0f172a;
+
+    text-align:center;
+  }
+
+  .modern-dots{
+
+    display:flex;
+    gap:10px;
+  }
+
+  .modern-dots span{
+
+    width:14px;
+    height:14px;
+
+    border-radius:50%;
+
+    animation:bounce 0.6s infinite alternate;
+  }
+
+  .modern-dots span:nth-child(1){
+
+    background:#3b82f6;
+    animation-delay:0s;
+  }
+
+  .modern-dots span:nth-child(2){
+
+    background:#10b981;
+    animation-delay:0.2s;
+  }
+
+  .modern-dots span:nth-child(3){
+
+    background:#f59e0b;
+    animation-delay:0.4s;
+  }
+
+  @keyframes bounce{
+
+    from{
+      transform:translateY(0);
+      opacity:.6;
+    }
+
+    to{
+      transform:translateY(-12px);
+      opacity:1;
+    }
+  }
+
+  @keyframes loaderPop{
+
+    from{
+      transform:scale(.9);
+      opacity:0;
+    }
+
+    to{
+      transform:scale(1);
+      opacity:1;
+    }
+  }
+
+  `;
+
+  document.head.appendChild(style);
+}
+
 /* ================= SPINNER STYLE ================= */
 
 if (
@@ -6472,698 +7151,316 @@ async function generateAdmissionNumber() {
 }
 /* =========================================================
    🚀 ULTRA ADVANCED STUDENT REGISTRATION SYSTEM
-   FAST • SAFE • BULK OPTIMIZED • PRODUCTION READY
+   FAST • SAFE • BULK OPTIMIZED • ENTERPRISE READY
 ========================================================= */
 
 window.addStudent = async () => {
 
-    // 🚫 Prevent double submission
     if (window.__addingStudents) return;
+    window.__addingStudents = true;
 
     try {
-
-        window.__addingStudents = true;
 
         // =====================================================
         // 🔹 GET FORM VALUES
         // =====================================================
 
-        const studentNameField =
-            document.getElementById(
-                'studentName'
-            );
+        const studentNameField = document.getElementById('studentName');
+        const gradeField = document.getElementById('grade');
+        const ageField = document.getElementById('age');
+        const photoInput = document.getElementById('photo');
 
-        const gradeField =
-            document.getElementById(
-                'grade'
-            );
+        const nameInput = studentNameField?.value.trim();
+        const adm = document.getElementById('adm')?.value.trim();
+        const grade = gradeField?.value.trim();
+        const gender = document.getElementById('gender')?.value || "Not Set";
 
-        const ageField =
-            document.getElementById(
-                'age'
-            );
+        let age = ageField?.value;
 
-        const photoInput =
-            document.getElementById(
-                'photo'
-            );
+        const parentName = document.getElementById('parentName')?.value.trim() || "";
+        const parentPhone = document.getElementById('parentPhone')?.value.trim() || "";
+        const birthCert = document.getElementById('birthCert')?.value.trim() || "";
 
-        const nameInput =
-            studentNameField?.value.trim();
-
-        const adm =
-            document.getElementById('adm')
-            ?.value.trim();
-
-        const grade =
-            gradeField?.value.trim();
-
-        const gender =
-            document.getElementById('gender')
-            ?.value || "Not Set";
-
-        let age =
-            ageField?.value;
-
-        const parentName =
-            document.getElementById(
-                'parentName'
-            )?.value.trim() || "";
-
-        const parentPhone =
-            document.getElementById(
-                'parentPhone'
-            )?.value.trim() || "";
-
-        const birthCert =
-            document.getElementById(
-                'birthCert'
-            )?.value.trim() || "";
-
-        let admissionNo =
-            document.getElementById(
-                'admissionNo'
-            )?.value.trim();
-
-        const photoFile =
-            photoInput?.files?.[0];
+        let admissionNo = document.getElementById('admissionNo')?.value.trim();
+        const photoFile = photoInput?.files?.[0];
 
         // =====================================================
         // 🔹 VALIDATION
         // =====================================================
 
         if (!nameInput || !grade) {
-
             return Swal.fire({
-
                 icon: 'warning',
-
                 title: 'Missing Fields',
-
-                text:
-                    'Student name and grade are required.',
-
-                confirmButtonColor:
-                    '#f59e0b'
+                text: 'Student name and grade are required.',
+                confirmButtonColor: '#f59e0b'
             });
         }
 
         // =====================================================
-        // 🔹 CLEAN & FORMAT NAMES
+        // 🔹 CLEAN NAMES
         // =====================================================
 
-        let namesArray =
-
-            nameInput
-
+        let namesArray = nameInput
             .split(/\r?\n|\t|,/)
-
-            .map(name =>
-
-                name
-                .trim()
-                .replace(/\s+/g, ' ')
-            )
-
+            .map(n => n.trim().replace(/\s+/g, ' '))
             .filter(Boolean);
 
-        // 🔥 Remove duplicates
-        namesArray = [
+        namesArray = [...new Set(namesArray.map(n => n.toLowerCase()))]
+            .map(name =>
+                name.split(' ')
+                    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+                    .join(' ')
+            );
 
-            ...new Set(
-
-                namesArray.map(n =>
-
-                    n.toLowerCase()
-                )
-            )
-
-        ].map(name =>
-
-            name
-
-            .split(' ')
-
-            .map(word =>
-
-                word.charAt(0)
-                .toUpperCase() +
-
-                word.slice(1)
-            )
-
-            .join(' ')
-        );
-
-        const total =
-            namesArray.length;
-
-        const isBulk =
-            total > 1;
-
-        // =====================================================
-        // 🔹 LIMIT PROTECTION
-        // =====================================================
+        const total = namesArray.length;
 
         if (total > 1000) {
-
             return Swal.fire({
-
                 icon: "warning",
-
                 title: "Too Many Learners",
-
-                text:
-                    "Maximum bulk upload is 1000 learners at once."
+                text: "Maximum bulk upload is 1000 learners."
             });
         }
 
+        const isBulk = total > 1;
+
         // =====================================================
-        // 🔹 PHOTO PREVIEW URL
+        // 🔹 PHOTO
         // =====================================================
 
         let photoURL = "";
 
         if (photoFile) {
-
             try {
-
-                photoURL =
-                    URL.createObjectURL(
-                        photoFile
-                    );
-
-            } catch(err) {
-
-                console.warn(
-                    "Photo preview failed"
-                );
-            }
+                photoURL = URL.createObjectURL(photoFile);
+            } catch (e) {}
         }
 
-        // =====================================================
-        // 🔹 YEAR
-        // =====================================================
-
-        const year =
-            new Date()
-            .getFullYear();
+        const year = new Date().getFullYear();
 
         // =====================================================
-        // =====================================================
-        // 🔥 SINGLE STUDENT ENGINE
-        // =====================================================
+        // 🔥 SINGLE MODE
         // =====================================================
 
         if (!isBulk) {
 
             Swal.fire({
-
-                title:
-                    'Saving Student...',
-
-                html:
-                    `
-                    <div style="
-                        color:#64748b;
-                        margin-top:10px;
-                    ">
-                        Please wait
-                    </div>
-                    `,
-
-                allowOutsideClick:
-                    false,
-
-                showConfirmButton:
-                    false,
-
-                didOpen: () => {
-
-                    Swal.showLoading();
-                }
+                title: 'Saving Student...',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
             });
 
             try {
 
-                // 🔥 Auto age
-                if (!age) {
-
-                    age =
-                        getRandomAgeByGrade(
-                            grade
-                        );
-                }
-
-                // 🔥 Generate admission
-                if (!admissionNo) {
-
-                    admissionNo =
-                        await generateAdmissionNumber();
-                }
-
-                // =================================================
-                // 🔥 BUILD STUDENT OBJECT
-                // =================================================
+                if (!age) age = getRandomAgeByGrade(grade);
+                if (!admissionNo) admissionNo = await generateAdmissionNumber();
 
                 const studentData = {
-
-                    name:
-                        namesArray[0],
-
+                    name: namesArray[0],
                     gender,
-
-                    adm:
-                        adm ||
-                        admissionNo,
-
+                    adm: adm || admissionNo,
                     admissionNo,
-
                     grade,
-
                     age,
-
-                    admissionYear:
-                        year,
-
+                    admissionYear: year,
                     parentName,
-
                     parentPhone,
-
                     birthCert,
-
-                    photo:
-                        photoURL,
-
-                    active:
-                        true,
-
-                    deleted:
-                        false,
-
-                    createdAt:
-                        Date.now(),
-
-                    updatedAt:
-                        Date.now()
+                    photo: photoURL,
+                    active: true,
+                    deleted: false,
+                    createdAt: Date.now(),
+                    updatedAt: Date.now()
                 };
 
-                // =================================================
-                // 🔥 SAVE STUDENT
-                // =================================================
-
-                await Promise.race([
-
-                    push(
-                        schoolRef("students"),
-                        studentData
-                    ),
-
-                    new Promise((_, reject) =>
-
-                        setTimeout(() =>
-
-                            reject(
-                                new Error(
-                                    "Save timeout"
-                                )
-                            ),
-
-                        15000)
-                    )
-
-                ]);
-
-                // =================================================
-                // 🔥 FAST UI REFRESH
-                // =================================================
-
-                requestAnimationFrame(
-                    async () => {
-
-                    try {
-
-                        await loadStudents?.();
-
-                        loadGradeFilterOptions?.();
-
-                        applyStudentFilters?.();
-
-                    } catch(refreshErr) {
-
-                        console.error(
-                            refreshErr
-                        );
-                    }
-
-                });
-
-                // =================================================
-                // 🔥 SUCCESS
-                // =================================================
+                await push(schoolRef("students"), studentData);
 
                 Swal.fire({
-
                     icon: 'success',
-
                     title: 'Success',
-
-                    text:
-                        'Student added successfully.',
-
-                    timer: 1400,
-
-                    showConfirmButton:
-                        false
+                    timer: 1200,
+                    showConfirmButton: false
                 });
-
-                // =================================================
-                // 🔥 CLEAR FORM
-                // =================================================
 
                 studentNameField.value = "";
-
-                if (ageField) {
-                    ageField.value = "";
-                }
-
-                if (photoInput) {
-                    photoInput.value = "";
-                }
+                if (ageField) ageField.value = "";
+                if (photoInput) photoInput.value = "";
 
                 return;
 
-            } catch(err) {
-
-                console.error(err);
-
+            } catch (err) {
                 Swal.fire({
-
                     icon: 'error',
-
                     title: 'Save Failed',
-
-                    text:
-                        err.message ||
-                        'Could not save student.'
+                    text: err.message
                 });
-
                 return;
             }
         }
 
         // =====================================================
+        // ⚡ ENTERPRISE BULK ENGINE (FAST + PARALLEL + SAFE)
         // =====================================================
-        // ⚡ ULTRA BULK REGISTRATION ENGINE
-        // =====================================================
-        // =====================================================
+
+        const progressBox = document.createElement("div");
+        progressBox.style = `
+            position:fixed;
+            bottom:20px;
+            right:20px;
+            background:#0f172a;
+            color:#fff;
+            padding:12px 16px;
+            border-radius:10px;
+            z-index:99999;
+            font-size:13px;
+            box-shadow:0 10px 20px rgba(0,0,0,0.3);
+        `;
+        document.body.appendChild(progressBox);
 
         Swal.fire({
-
-            title:
-                `Registering ${total} Learners`,
-
-            html:
-                `
-                <div style="
-                    font-size:16px;
-                    margin-top:10px;
-                ">
-                    Preparing lightning upload ⚡
-                </div>
-                `,
-
-            allowOutsideClick:
-                false,
-
-            allowEscapeKey:
-                false,
-
-            showConfirmButton:
-                false,
-
-            didOpen: () => {
-
-                Swal.showLoading();
-            }
+            title: `Registering ${total} Learners`,
+            html: "Starting upload ⚡",
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
         });
 
-        // =====================================================
-        // 🔥 BUILD BULK DATA
-        // =====================================================
+        const studentsRef = schoolRef("students");
 
-        const studentsRef =
-            schoolRef("students");
+        const batchSize = 25;
+        const concurrency = 4;
+        const maxRetries = 2;
 
-        const updates = {};
+        let processed = 0;
+        let failed = 0;
 
-        const timestamp =
-            Date.now();
+        const batches = [];
 
-        for (
-            let i = 0;
-            i < total;
-            i++
-        ) {
-
-            const studentName =
-                namesArray[i];
-
-            const studentRef =
-                push(studentsRef);
-
-            // 🔥 Faster unique ADM
-            const generatedAdm =
-
-                adm ||
-
-                `${year}${String(
-                    timestamp + i
-                ).slice(-6)}`;
-
-            const generatedAge =
-
-                age ||
-
-                getRandomAgeByGrade(
-                    grade
-                );
-
-            updates[
-                studentRef.key
-            ] = {
-
-                name:
-                    studentName,
-
-                gender,
-
-                adm:
-                    generatedAdm,
-
-                admissionNo:
-                    generatedAdm,
-
-                grade,
-
-                age:
-                    generatedAge,
-
-                admissionYear:
-                    year,
-
-                parentName,
-
-                parentPhone,
-
-                birthCert,
-
-                photo:
-                    photoURL,
-
-                active:
-                    true,
-
-                deleted:
-                    false,
-
-                createdAt:
-                    Date.now(),
-
-                updatedAt:
-                    Date.now()
-            };
+        for (let i = 0; i < total; i += batchSize) {
+            batches.push(namesArray.slice(i, i + batchSize));
         }
 
-        // =====================================================
-        // 🔥 UPDATE PROGRESS
-        // =====================================================
+        const buildStudent = (name) => {
 
-        Swal.update({
+            const admNo = adm || `${year}${Date.now()}${Math.floor(Math.random() * 1000)}`;
 
-            html:
-                `
-                <div style="
-                    font-size:16px;
-                    margin-top:10px;
-                ">
-                    Uploading ${total}
-                    learners at lightning speed ⚡
-                </div>
-                `
-        });
+            return {
+                name,
+                gender,
+                adm: admNo,
+                admissionNo: admNo,
+                grade,
+                age: age || getRandomAgeByGrade(grade),
+                admissionYear: year,
+                parentName,
+                parentPhone,
+                birthCert,
+                photo: photoURL,
+                active: true,
+                deleted: false,
+                createdAt: Date.now(),
+                updatedAt: Date.now()
+            };
+        };
 
-        // =====================================================
-        // 🔥 SINGLE FIREBASE WRITE
-        // =====================================================
-
-        await Promise.race([
-
-            update(
-                studentsRef,
-                updates
-            ),
-
-            new Promise((_, reject) =>
-
-                setTimeout(() =>
-
-                    reject(
-                        new Error(
-                            "Bulk upload timeout"
-                        )
-                    ),
-
-                30000)
-            )
-
-        ]);
-
-        // =====================================================
-        // 🔥 FAST REFRESH
-        // =====================================================
-
-        requestAnimationFrame(
-            async () => {
-
+        const safeWrite = async (updates, attempt = 0) => {
             try {
-
-                await loadStudents?.();
-
-                loadGradeFilterOptions?.();
-
-                applyStudentFilters?.();
-
-            } catch(refreshError) {
-
-                console.error(
-                    "Refresh Error:",
-                    refreshError
-                );
+                await update(studentsRef, updates);
+            } catch (err) {
+                if (attempt < maxRetries) {
+                    return safeWrite(updates, attempt + 1);
+                }
+                failed += Object.keys(updates).length;
             }
+        };
 
+        const queue = [...batches];
+
+        const worker = async () => {
+
+            while (queue.length) {
+
+                const batch = queue.shift();
+                if (!batch) break;
+
+                const updates = {};
+
+                for (const name of batch) {
+
+                    const key = push(studentsRef).key;
+                    updates[key] = buildStudent(name);
+                    processed++;
+                }
+
+                await safeWrite(updates);
+
+                progressBox.innerHTML = `
+                    <b>Uploading...</b><br>
+                    ${processed}/${total} learners<br>
+                    ${failed ? `Failed: ${failed}` : ""}
+                `;
+            }
+        };
+
+        const workers = Array(concurrency).fill(0).map(worker);
+
+        await Promise.all(workers);
+
+        // =====================================================
+        // 🔥 FINAL REFRESH
+        // =====================================================
+
+        requestAnimationFrame(async () => {
+            await loadStudents?.();
+            loadGradeFilterOptions?.();
+            applyStudentFilters?.();
         });
-
-        // =====================================================
-        // 🔥 SUCCESS
-        // =====================================================
 
         Swal.fire({
-
             icon: 'success',
-
-            title:
-                'Bulk Registration Complete 🎉',
-
-            html:
-                `
-                <div style="
-                    font-size:18px;
-                    line-height:1.7;
-                ">
-
-                    <b>${total}</b>
-
-                    learners registered successfully.
-
-                </div>
-                `,
-
-            confirmButtonColor:
-                '#22c55e'
+            title: 'Bulk Registration Complete 🎉',
+            html: `<b>${processed}</b> learners added`
         });
 
-        // =====================================================
-        // 🔥 CLEAR FIELD
-        // =====================================================
+        progressBox.remove();
 
         studentNameField.value = "";
+        if (ageField) ageField.value = "";
+        if (photoInput) photoInput.value = "";
 
-        if (ageField) {
-            ageField.value = "";
-        }
-
-        if (photoInput) {
-            photoInput.value = "";
-        }
-
-    } catch(error) {
+    } catch (error) {
 
         console.error(error);
 
         Swal.fire({
-
             icon: 'error',
-
-            title:
-                'Registration Failed',
-
-            text:
-                error.message ||
-                'Something went wrong.'
+            title: 'Registration Failed',
+            text: error.message || 'Something went wrong.'
         });
 
     } finally {
-
-        // 🔥 Unlock engine
         window.__addingStudents = false;
     }
 };
-
-
 
 /* =========================================================
    🔥 LIVE NAME COUNTER
 ========================================================= */
 
-document
-.getElementById('studentName')
+document.getElementById('studentName')
 ?.addEventListener('input', () => {
 
-    const names =
-
-        document
-        .getElementById('studentName')
-        .value
-
-        .split(/\r?\n|\t|,/)
-
+    const names = document.getElementById('studentName')
+        .value.split(/\r?\n|\t|,/)
         .map(n => n.trim())
-
         .filter(Boolean);
 
-    const counter =
-        document.getElementById(
-            'nameCounter'
-        );
+    const counter = document.getElementById('nameCounter');
 
     if (counter) {
-
-        counter.innerText =
-            `${names.length} names detected`;
+        counter.innerText = `${names.length} names detected`;
     }
 });
-
 
 
 /* =========================================================
@@ -8191,7 +8488,7 @@ const snapshot = await get(
   // ===============================
   thead.innerHTML = `
     <tr>
-      <th>#</th>
+      <th>No</th>
       <th>Learner</th>
       <th>Grade</th>
 
@@ -8393,113 +8690,7 @@ window.sendSingleSMS = async (year, studentId) => {
     );
   }
 };
-let feeChartInstance, gradeChartInstance, typeChartInstance;
 
-window.loadDashboardCharts = async () => {
-
-  const selectedYear =
-  document.getElementById("filterFeeYear")?.value
-  || "2026";
-
-const snap = await get(
-  schoolRef(`fees/${selectedYear}`)
-);
-  const data = snap.val() || {};
-
-  let totalPaid = 0;
-  let totalExpected = 0;
-  let totalBalance = 0;
-
-  const gradeMap = {};
-  const typeMap = {};
-
-  Object.values(data).forEach(fee => {
-
-    const paid = Number(fee.totalPaid || 0);
-    const expected = Number(fee.expectedTotal || 0);
-    const balance = Number(fee.balance || 0);
-
-    totalPaid += paid;
-    totalExpected += expected;
-    totalBalance += balance;
-
-    // ================= GRADE =================
-    const grade = fee.grade || "Unknown";
-    gradeMap[grade] = (gradeMap[grade] || 0) + paid;
-
-    // ================= FEE TYPES =================
-    const feesObj = fee.fees || {};
-
-    Object.entries(feesObj).forEach(([type, value]) => {
-
-      if (Array.isArray(value)) {
-        value.forEach(v => {
-          typeMap[type] = (typeMap[type] || 0) + Number(v.amount || 0);
-        });
-      } else {
-        typeMap[type] = (typeMap[type] || 0) + Number(value || 0);
-      }
-    });
-
-  });
-
-  // ================= MAIN FEES CHART =================
-  const feeCtx = document.getElementById("feeChart");
-  if (feeCtx) {
-    if (feeChartInstance) feeChartInstance.destroy();
-
-    feeChartInstance = new Chart(feeCtx, {
-      type: "bar",
-      data: {
-        labels: ["Paid", "Expected", "Balance"],
-        datasets: [{
-          label: "Fees Overview",
-          data: [totalPaid, totalExpected, totalBalance],
-          backgroundColor: ["#16a34a", "#2563eb", "#dc2626"]
-        }]
-      }
-    });
-  }
-
-  // ================= GRADE CHART =================
-  const gradeCtx = document.getElementById("feeGradeChart");
-
-  if (gradeCtx) {
-    if (gradeChartInstance) gradeChartInstance.destroy();
-
-    gradeChartInstance = new Chart(gradeCtx, {
-      type: "pie",
-      data: {
-        labels: Object.keys(gradeMap),
-        datasets: [{
-          data: Object.values(gradeMap),
-          backgroundColor: ["#2563eb", "#16a34a", "#f59e0b", "#dc2626", "#8b5cf6"]
-        }]
-      }
-    });
-  }
-
-  // ================= TYPE CHART =================
-  const typeCtx = document.getElementById("typeChart");
-
-  if (typeCtx) {
-    if (typeChartInstance) typeChartInstance.destroy();
-
-    typeChartInstance = new Chart(typeCtx, {
-      type: "bar",
-      data: {
-        labels: Object.keys(typeMap),
-        datasets: [{
-          label: "Fee Types",
-          data: Object.values(typeMap),
-          backgroundColor: "#0ea5e9"
-        }]
-      }
-    });
-  }
-
-  console.log("📊 Dashboard charts loaded");
-};
 
 window.showDefaulters = async () => {
 
@@ -17037,15 +17228,29 @@ function updateDashboardFromStudents() {
     document.getElementById("totalClasses").innerText = 0;
     document.getElementById("totalSubjects").innerText = 0;
 
-    const gradeStats = document.getElementById("gradeStats");
-    if (gradeStats) gradeStats.innerHTML = "<p>No data</p>";
+    const gradeStats =
+      document.getElementById("gradeStats");
+
+    if (gradeStats) {
+      gradeStats.innerHTML = `
+        <div style="
+          color:#cbd5e1;
+          padding:20px;
+          text-align:center;
+          background:#1e293b;
+          border-radius:12px;
+        ">
+          No student data available
+        </div>
+      `;
+    }
 
     return;
   }
 
   // ================= TOTAL STUDENTS =================
   document.getElementById("totalStudents").innerText =
-    allStudents.length;
+    allStudents.length.toLocaleString();
 
   // ================= TOTAL CLASSES =================
   const uniqueGrades = [
@@ -17059,55 +17264,191 @@ function updateDashboardFromStudents() {
   document.getElementById("totalClasses").innerText =
     uniqueGrades.length;
 
-  // ================= TOTAL SUBJECTS (FIXED MANUAL CURRICULUM) =================
- const SCHOOL_SUBJECTS = [
-  "English",
-  "Kiswahili",
-  "Mathematics",
-  "Integrated Science",
-  "Social Studies",
-  "Pre-Technical Studies",
-  "Creative Arts & Sports",
-  "Religious Education",
-  "Agriculture & Nutrition"
-];
+  // ================= SUBJECTS =================
+  const SCHOOL_SUBJECTS = [
+    "English",
+    "Kiswahili",
+    "Mathematics",
+    "Integrated Science",
+    "Social Studies",
+    "Pre-Technical Studies",
+    "Creative Arts & Sports",
+    "Religious Education",
+    "Agriculture & Nutrition"
+  ];
 
   document.getElementById("totalSubjects").innerText =
     SCHOOL_SUBJECTS.length;
 
-  // ================= GROUP DATA =================
+  // ================= DATA MAPS =================
   const gradeMap = {};
-  const genderMap = { Male: 0, Female: 0 };
+  const genderMap = {
+    Male: 0,
+    Female: 0
+  };
 
   allStudents.forEach(s => {
 
     // ================= GRADE =================
-    const grade = (s.grade || s.class || "Unknown").trim();
-    gradeMap[grade] = (gradeMap[grade] || 0) + 1;
+    const grade =
+      (s.grade || s.class || "Unknown")
+        .trim();
+
+    gradeMap[grade] =
+      (gradeMap[grade] || 0) + 1;
 
     // ================= GENDER =================
-    const g = (s.gender || "").toLowerCase();
+    const g =
+      (s.gender || "")
+        .toLowerCase()
+        .trim();
 
-    if (g === "male") genderMap.Male++;
-    else if (g === "female") genderMap.Female++;
+    if (g === "male") {
+      genderMap.Male++;
+    }
+    else if (g === "female") {
+      genderMap.Female++;
+    }
   });
 
+  // ================= GRADE COLORS (AUTO) =================
+  const dynamicColors = [
+    "#2563eb",
+    "#16a34a",
+    "#dc2626",
+    "#7c3aed",
+    "#ea580c",
+    "#0891b2",
+    "#ca8a04",
+    "#db2777",
+    "#0f766e",
+    "#9333ea",
+    "#be123c",
+    "#0284c7",
+    "#65a30d",
+    "#f59e0b",
+    "#4f46e5"
+  ];
+
   // ================= UI: GRADE STATS =================
-  const gradeStats = document.getElementById("gradeStats");
+  const gradeStats =
+    document.getElementById("gradeStats");
+
   if (gradeStats) {
 
     gradeStats.innerHTML = "";
 
-    Object.entries(gradeMap).forEach(([grade, count]) => {
+    // ================= SORT GRADES =================
+    const sortedGrades =
+      Object.entries(gradeMap)
+        .sort((a, b) => {
 
-      const div = document.createElement("div");
+          const extractNum = str => {
+            const match =
+              str.match(/\d+/);
 
-      div.style.background = "#1e293b";
-      div.style.padding = "10px";
-      div.style.borderRadius = "8px";
+            return match
+              ? Number(match[0])
+              : 0;
+          };
+
+          return (
+            extractNum(a[0]) -
+            extractNum(b[0])
+          );
+        });
+
+    const totalStudents =
+      allStudents.length;
+
+    sortedGrades.forEach(([grade, count], index) => {
+
+      const color =
+        dynamicColors[
+          index % dynamicColors.length
+        ];
+
+      const percent =
+        ((count / totalStudents) * 100)
+          .toFixed(1);
+
+      const div =
+        document.createElement("div");
+
+      div.style.background = color;
+      div.style.padding = "16px";
+      div.style.borderRadius = "16px";
       div.style.color = "white";
+      div.style.position = "relative";
+      div.style.overflow = "hidden";
+      div.style.transition = "0.3s";
+      div.style.cursor = "pointer";
+      div.style.boxShadow =
+        "0 4px 14px rgba(0,0,0,0.25)";
 
-      div.innerHTML = `<strong>${grade}</strong><br>${count} students`;
+      // ================= HOVER EFFECT =================
+      div.onmouseenter = () => {
+
+        div.style.transform =
+          "translateY(-4px)";
+
+        div.style.boxShadow =
+          "0 8px 22px rgba(0,0,0,0.35)";
+      };
+
+      div.onmouseleave = () => {
+
+        div.style.transform =
+          "translateY(0px)";
+
+        div.style.boxShadow =
+          "0 4px 14px rgba(0,0,0,0.25)";
+      };
+
+      // ================= CARD =================
+      div.innerHTML = `
+
+        <!-- Background Decoration -->
+        <div style="
+          position:absolute;
+          right:-10px;
+          bottom:-20px;
+          font-size:70px;
+          opacity:0.12;
+          font-weight:bold;
+        ">
+          🎓
+        </div>
+
+        <!-- Grade -->
+        <div style="
+          font-size:15px;
+          font-weight:700;
+          margin-bottom:10px;
+          letter-spacing:0.5px;
+        ">
+          ${grade}
+        </div>
+
+        <!-- Count -->
+        <div style="
+          font-size:34px;
+          font-weight:800;
+          line-height:1;
+          margin-bottom:8px;
+        ">
+          ${count}
+        </div>
+
+        <!-- Percentage -->
+        <div style="
+          font-size:12px;
+          opacity:0.95;
+          font-weight:600;
+        ">
+          ${percent}% of learners
+        </div>
+      `;
 
       gradeStats.appendChild(div);
     });
@@ -17122,72 +17463,567 @@ function updateDashboardFromStudents() {
     renderGenderChart(genderMap);
   }
 }
-let gradeChart, genderChart;
+// =======================================
+// 📊 GLOBAL CHART REFERENCES
+// =======================================
+let gradeChart = null;
+let genderChart = null;
 
-function renderGradeChart(gradeMap) {
-const ctx = document.getElementById("studentGradeChart");
 
-  if (!ctx) return;
+// =======================================
+// 📊 RENDER GRADE CHART (ULTRA UPGRADED)
+// =======================================
+function renderGradeChart(gradeMap = {}) {
 
-  if (gradeChart) gradeChart.destroy();
+  const canvas =
+    document.getElementById("studentGradeChart");
 
-  gradeChart = new Chart(ctx, {
+  if (!canvas) return;
+
+  // =======================================
+  // 🔥 SAFE DATA CLEANING
+  // =======================================
+  const labels =
+    Object.keys(gradeMap || {})
+      .filter(k => gradeMap[k] > 0);
+
+  const values =
+    labels.map(k => Number(gradeMap[k] || 0));
+
+  const totalLearners =
+    values.reduce((a, b) => a + b, 0);
+
+  // =======================================
+  // 🔥 EMPTY STATE
+  // =======================================
+  if (labels.length === 0) {
+
+    if (window.gradeChart) {
+      window.gradeChart.destroy();
+      window.gradeChart = null;
+    }
+
+    const parent = canvas.parentElement;
+
+    if (parent) {
+
+      parent.innerHTML = `
+        <div style="
+          height:300px;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          flex-direction:column;
+          background:white;
+          border-radius:14px;
+          border:2px dashed #cbd5e1;
+          color:#64748b;
+          font-weight:600;
+          font-size:14px;
+        ">
+          <div style="font-size:45px;">📚</div>
+          <div>No grade data available</div>
+        </div>
+      `;
+    }
+
+    return;
+  }
+
+  // =======================================
+  // 🔥 DESTROY OLD CHART
+  // =======================================
+  if (window.gradeChart) {
+    window.gradeChart.destroy();
+  }
+
+  // =======================================
+  // 🔥 AUTO COLORS
+  // =======================================
+  const colors = [
+    "#2563eb",
+    "#16a34a",
+    "#f59e0b",
+    "#ec4899",
+    "#7c3aed",
+    "#dc2626",
+    "#0891b2",
+    "#65a30d",
+    "#ea580c",
+    "#4338ca"
+  ];
+
+  const bgColors =
+    labels.map((_, i) =>
+      colors[i % colors.length]
+    );
+
+  // =======================================
+  // 🔥 CREATE CHART
+  // =======================================
+  window.gradeChart = new Chart(canvas, {
+
     type: "bar",
+
     data: {
-      labels: Object.keys(gradeMap),
+
+      labels,
+
       datasets: [{
-        label: "Students",
-        data: Object.values(gradeMap),
+
+        label: "Learners",
+
+        data: values,
+
+        backgroundColor: bgColors,
+
+        borderRadius: 10,
+
+        borderSkipped: false,
+
         borderWidth: 1,
-        borderRadius: 6
+
+        maxBarThickness: 55
       }]
     },
+
     options: {
+
       responsive: true,
-      maintainAspectRatio: false, // 🔥 fixes oversized charts
-      plugins: {
-        legend: {
-          display: true
+      maintainAspectRatio: false,
+
+      animation: {
+        duration: 1200
+      },
+
+      layout: {
+        padding: {
+          top: 10,
+          left: 10,
+          right: 10,
+          bottom: 10
         }
       },
+
+      plugins: {
+
+        legend: {
+          display: false
+        },
+
+        title: {
+          display: true,
+          text: `Grade Distribution (${totalLearners} Learners)`,
+          font: {
+            size: 16,
+            weight: "bold"
+          },
+          padding: {
+            bottom: 20
+          }
+        },
+
+        tooltip: {
+
+          callbacks: {
+
+            label: function(context) {
+
+              const value =
+                context.raw || 0;
+
+              const percent =
+                ((value / totalLearners) * 100)
+                  .toFixed(1);
+
+              return `${value} learners (${percent}%)`;
+            }
+          }
+        }
+      },
+
       scales: {
-        y: {
-          beginAtZero: true,
+
+        x: {
+
+          grid: {
+            display: false
+          },
+
           ticks: {
-            precision: 0 // no decimals
+            font: {
+              weight: "bold",
+              size: 12
+            }
+          }
+        },
+
+        y: {
+
+          beginAtZero: true,
+
+          ticks: {
+            precision: 0,
+
+            stepSize: 1,
+
+            font: {
+              size: 11
+            }
+          },
+
+          grid: {
+            color: "#e5e7eb"
           }
         }
       }
-    }
-  });
-}
-
-function renderGenderChart(genderMap) {
-  const ctx = document.getElementById("genderChart");
-
-  if (!ctx) return;
-
-  if (genderChart) genderChart.destroy();
-
-  genderChart = new Chart(ctx, {
-    type: "pie",
-    data: {
-      labels: ["Male", "Female"],
-      datasets: [{
-        data: [genderMap.Male, genderMap.Female],
-        borderWidth: 1
-      }]
     },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false, // 🔥 fixes stretching
-      plugins: {
-        legend: {
-          position: "bottom"
+
+    plugins: [
+
+      // =======================================
+      // 🔥 VALUE LABELS ON BARS
+      // =======================================
+      {
+        id: "valueLabels",
+
+        afterDatasetsDraw(chart) {
+
+          const {
+            ctx
+          } = chart;
+
+          ctx.save();
+
+          chart.data.datasets.forEach((dataset, datasetIndex) => {
+
+            const meta =
+              chart.getDatasetMeta(datasetIndex);
+
+            meta.data.forEach((bar, index) => {
+
+              const value =
+                dataset.data[index];
+
+              ctx.fillStyle = "#111827";
+
+              ctx.font =
+                "bold 11px sans-serif";
+
+              ctx.textAlign = "center";
+
+              ctx.fillText(
+                value,
+                bar.x,
+                bar.y - 8
+              );
+            });
+          });
+
+          ctx.restore();
         }
       }
-    }
+    ]
   });
+
+  // =======================================
+  // 🔥 OPTIONAL LIVE SUMMARY
+  // =======================================
+  const gradeSummary =
+    document.getElementById("gradeSummary");
+
+  if (gradeSummary) {
+
+    let html = "";
+
+    labels.forEach((grade, i) => {
+
+      const count =
+        values[i];
+
+      const percent =
+        ((count / totalLearners) * 100)
+          .toFixed(1);
+
+      html += `
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+          padding:8px 12px;
+          margin-bottom:6px;
+          background:#f8fafc;
+          border-radius:8px;
+          font-size:13px;
+          border-left:5px solid ${bgColors[i]};
+        ">
+          <span><b>${grade}</b></span>
+          <span>
+            ${count} learners (${percent}%)
+          </span>
+        </div>
+      `;
+    });
+
+    gradeSummary.innerHTML = html;
+  }
+}
+
+// ================================
+// 📊 RENDER GENDER CHART (UPGRADED)
+// ================================
+window.genderChart = null;
+
+function renderGenderChart(genderMap = {}) {
+
+  const canvas =
+    document.getElementById("genderChart");
+
+  if (!canvas) return;
+
+  // ================================
+  // 🔥 SAFE VALUES
+  // ================================
+  const male =
+    Number(genderMap.Male || 0);
+
+  const female =
+    Number(genderMap.Female || 0);
+
+  const total = male + female;
+
+  // ================================
+  // 🔥 EMPTY STATE
+  // ================================
+  if (total === 0) {
+
+    // destroy old chart safely
+    if (window.genderChart) {
+      window.genderChart.destroy();
+      window.genderChart = null;
+    }
+
+    const parent = canvas.parentElement;
+
+    if (parent) {
+
+      parent.innerHTML = `
+        <div style="
+          height:260px;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          flex-direction:column;
+          background:white;
+          border-radius:14px;
+          border:2px dashed #cbd5e1;
+          color:#64748b;
+          font-weight:600;
+          font-size:14px;
+        ">
+          <div style="font-size:45px;">📊</div>
+          <div>No gender data available</div>
+        </div>
+      `;
+    }
+
+    return;
+  }
+
+  // ================================
+  // 🔥 RESTORE CANVAS IF REMOVED
+  // ================================
+  if (canvas.tagName !== "CANVAS") return;
+
+  // ================================
+  // 🔥 DESTROY OLD CHART
+  // ================================
+  if (window.genderChart) {
+    window.genderChart.destroy();
+  }
+
+  // ================================
+  // 🔥 CALCULATIONS
+  // ================================
+  const malePercent =
+    ((male / total) * 100).toFixed(1);
+
+  const femalePercent =
+    ((female / total) * 100).toFixed(1);
+
+  // ================================
+  // 🔥 CREATE CHART
+  // ================================
+  window.genderChart = new Chart(canvas, {
+
+    type: "doughnut",
+
+    data: {
+
+      labels: [
+        `Male (${male})`,
+        `Female (${female})`
+      ],
+
+      datasets: [{
+        data: [male, female],
+
+        backgroundColor: [
+          "#2563eb",
+          "#ec4899"
+        ],
+
+        borderColor: "#ffffff",
+        borderWidth: 3,
+
+        hoverOffset: 12
+      }]
+    },
+
+    options: {
+
+      responsive: true,
+      maintainAspectRatio: false,
+
+      animation: {
+        animateRotate: true,
+        animateScale: true,
+        duration: 1200
+      },
+
+      cutout: "58%",
+
+      plugins: {
+
+        legend: {
+          position: "bottom",
+
+          labels: {
+            padding: 18,
+            font: {
+              size: 12,
+              weight: "bold"
+            },
+            usePointStyle: true
+          }
+        },
+
+        tooltip: {
+
+          callbacks: {
+
+            label: function(context) {
+
+              const value =
+                context.raw || 0;
+
+              const percent =
+                ((value / total) * 100).toFixed(1);
+
+              return `${value} learners (${percent}%)`;
+            }
+          }
+        },
+
+        title: {
+          display: true,
+          text: `Gender Distribution (${total} Learners)`,
+          font: {
+            size: 15,
+            weight: "bold"
+          },
+          padding: {
+            bottom: 15
+          }
+        }
+      }
+    },
+
+    plugins: [
+
+      // ================================
+      // 🔥 CENTER TEXT PLUGIN
+      // ================================
+      {
+        id: "centerText",
+
+        beforeDraw(chart) {
+
+          const { width } = chart;
+          const { height } = chart;
+          const ctx = chart.ctx;
+
+          ctx.restore();
+
+          const fontSize =
+            (height / 140).toFixed(2);
+
+          ctx.font =
+            `bold ${fontSize}em sans-serif`;
+
+          ctx.textBaseline = "middle";
+          ctx.fillStyle = "#111827";
+
+          const text = total + "";
+          const textX =
+            Math.round(
+              (width - ctx.measureText(text).width) / 2
+            );
+
+          const textY = height / 2 - 10;
+
+          ctx.fillText(text, textX, textY);
+
+          ctx.font =
+            `600 ${(fontSize * 0.42).toFixed(2)}em sans-serif`;
+
+          const subText = "Learners";
+
+          const subTextX =
+            Math.round(
+              (width - ctx.measureText(subText).width) / 2
+            );
+
+          ctx.fillStyle = "#6b7280";
+
+          ctx.fillText(
+            subText,
+            subTextX,
+            height / 2 + 15
+          );
+
+          ctx.save();
+        }
+      }
+    ]
+  });
+
+  // ================================
+  // 🔥 LIVE SUMMARY (OPTIONAL)
+  // ================================
+  const maleBox =
+    document.getElementById("maleCount");
+
+  const femaleBox =
+    document.getElementById("femaleCount");
+
+  const totalBox =
+    document.getElementById("totalLearners");
+
+  if (maleBox) {
+    maleBox.innerHTML =
+      `${male} (${malePercent}%)`;
+  }
+
+  if (femaleBox) {
+    femaleBox.innerHTML =
+      `${female} (${femalePercent}%)`;
+  }
+
+  if (totalBox) {
+    totalBox.innerHTML =
+      total.toLocaleString();
+  }
 }
 
 
@@ -17832,6 +18668,13 @@ window.loadAttendanceGrades = async function () {
 };
 
 // ================= RENDER ATTENDANCE TABLE =================
+window.__attendancePagination = {
+    page: 0,
+    limit: 30,
+    loading: false,
+    finished: false
+};
+
 window.renderAttendanceTable = function () {
 
     const output =
@@ -17840,7 +18683,7 @@ window.renderAttendanceTable = function () {
     if (!output) return;
 
     // ================= EMPTY =================
-    if (attendanceCache.length === 0) {
+    if (!attendanceCache || attendanceCache.length === 0) {
 
         output.innerHTML = `
             <div style="
@@ -17856,65 +18699,180 @@ window.renderAttendanceTable = function () {
                 No students in this grade
             </div>
         `;
+
         return;
     }
 
-    let html = `
-    <div style="
-        overflow-x:auto;
+    // ================= RESET PAGINATION =================
+    window.__attendancePagination.page = 0;
+    window.__attendancePagination.loading = false;
+    window.__attendancePagination.finished = false;
+
+    // ================= TABLE SHELL =================
+    output.innerHTML = `
+    <div id="attendanceTableWrapper" style="
+        overflow:auto;
         background:#fff;
         border-radius:14px;
         box-shadow:0 2px 10px rgba(0,0,0,0.08);
         margin-top:12px;
         border:2px solid black;
+        max-height:75vh;
     ">
 
-    <table style="
-        width:100%;
-        border-collapse:collapse;
-        table-layout:fixed;
-        font-size:13px;
-        min-width:620px;
-        border:2px solid black;
-    ">
+        <table style="
+            width:100%;
+            border-collapse:collapse;
+            table-layout:fixed;
+            font-size:13px;
+            min-width:620px;
+            border:2px solid black;
+        ">
 
-    <!-- ================= HEADER ================= -->
-    <thead>
-        <tr style="background:#1e40af;color:white;">
-
-            <th style="padding:8px 4px;width:35px;border:1px solid black;">#</th>
-
-            <!-- 🔥 FIXED NAME WIDTH (NO MORE OVERFLOW) -->
-            <th style="
-                padding:8px 6px;
-                width:140px;
-                max-width:140px;
-                border:1px solid black;
-                font-size:12px;
+            <!-- ================= HEADER ================= -->
+            <thead style="
+                position:sticky;
+                top:0;
+                z-index:10;
             ">
-                Learner Name
-            </th>
+                <tr style="
+                    background:#1e40af;
+                    color:white;
+                ">
 
-            <th style="padding:8px 4px;width:70px;border:1px solid black;">
-                ADM
-            </th>
+                    <th style="
+                        padding:8px 4px;
+                        width:35px;
+                        border:1px solid black;
+                    ">
+                        #
+                    </th>
 
-            <th style="padding:8px 4px;width:55px;border:1px solid black;">
-                Grade
-            </th>
+                    <th style="
+                        padding:8px 6px;
+                        width:140px;
+                        max-width:140px;
+                        border:1px solid black;
+                        font-size:12px;
+                    ">
+                        Learner Name
+                    </th>
 
-            <!-- 🔥 REDUCED WIDTH -->
-            <th style="padding:8px 4px;width:120px;border:1px solid black;">
-                Attendance
-            </th>
+                    <th style="
+                        padding:8px 4px;
+                        width:70px;
+                        border:1px solid black;
+                    ">
+                        ADM
+                    </th>
 
-        </tr>
-    </thead>
+                    <th style="
+                        padding:8px 4px;
+                        width:55px;
+                        border:1px solid black;
+                    ">
+                        Grade
+                    </th>
 
-    <tbody>
+                    <th style="
+                        padding:8px 4px;
+                        width:120px;
+                        border:1px solid black;
+                    ">
+                        Attendance
+                    </th>
+
+                </tr>
+            </thead>
+
+            <tbody id="attendanceTableBody"></tbody>
+
+        </table>
+
+        <div id="attendanceLoadingIndicator" style="
+            padding:12px;
+            text-align:center;
+            font-size:12px;
+            color:#64748b;
+            display:none;
+        ">
+            Loading more learners...
+        </div>
+
+    </div>
     `;
 
-    attendanceCache.forEach((s, index) => {
+    // ================= FIRST BATCH =================
+    renderNextAttendanceBatch();
+
+    // ================= SCROLL LOAD =================
+    const wrapper =
+        document.getElementById("attendanceTableWrapper");
+
+    if (!wrapper) return;
+
+    wrapper.onscroll = () => {
+
+        const state = window.__attendancePagination;
+
+        if (state.loading || state.finished) return;
+
+        const nearBottom =
+            wrapper.scrollTop + wrapper.clientHeight >=
+            wrapper.scrollHeight - 150;
+
+        if (nearBottom) {
+            renderNextAttendanceBatch();
+        }
+    };
+};
+
+
+// ================= APPEND BATCH =================
+window.renderNextAttendanceBatch = function () {
+
+    const state = window.__attendancePagination;
+
+    if (state.loading || state.finished) return;
+
+    state.loading = true;
+
+    const loader =
+        document.getElementById("attendanceLoadingIndicator");
+
+    if (loader) loader.style.display = "block";
+
+    const tbody =
+        document.getElementById("attendanceTableBody");
+
+    if (!tbody) {
+        state.loading = false;
+        return;
+    }
+
+    const start = state.page * state.limit;
+    const end = start + state.limit;
+
+    const batch =
+        attendanceCache.slice(start, end);
+
+    if (batch.length === 0) {
+
+        state.finished = true;
+        state.loading = false;
+
+        if (loader) {
+            loader.innerHTML = "All learners loaded";
+        }
+
+        return;
+    }
+
+    let html = "";
+
+    batch.forEach((s, index) => {
+
+        const realIndex = start + index;
 
         const status =
             attendanceMap[s.id]?.status || "Present";
@@ -17923,36 +18881,80 @@ window.renderAttendanceTable = function () {
             attendanceMap[s.id]?.percent || 100;
 
         let bg = "#ecfdf5";
-        let border = "#10b981";
 
         if (percent < 60) {
             bg = "#fef2f2";
-            border = "#ef4444";
-        } else if (percent < 80) {
+        }
+        else if (percent < 80) {
             bg = "#fffbeb";
-            border = "#f59e0b";
         }
 
         let badge = "";
 
         if (status === "Present") {
-            badge = `<span style="background:#dcfce7;color:#166534;padding:3px 6px;border-radius:14px;font-size:11px;font-weight:bold;border:1px solid #166534;">✔ Present</span>`;
+
+            badge = `
+                <span style="
+                    background:#dcfce7;
+                    color:#166534;
+                    padding:3px 6px;
+                    border-radius:14px;
+                    font-size:11px;
+                    font-weight:bold;
+                    border:1px solid #166534;
+                ">
+                    ✔ Present
+                </span>
+            `;
         }
         else if (status === "Absent") {
-            badge = `<span style="background:#fee2e2;color:#991b1b;padding:3px 6px;border-radius:14px;font-size:11px;font-weight:bold;border:1px solid #991b1b;">00 Absent</span>`;
+
+            badge = `
+                <span style="
+                    background:#fee2e2;
+                    color:#991b1b;
+                    padding:3px 6px;
+                    border-radius:14px;
+                    font-size:11px;
+                    font-weight:bold;
+                    border:1px solid #991b1b;
+                ">
+                    ✖ Absent
+                </span>
+            `;
         }
         else {
-            badge = `<span style="background:#fef3c7;color:#92400e;padding:3px 6px;border-radius:14px;font-size:11px;font-weight:bold;border:1px solid #92400e;">⏰ Late</span>`;
+
+            badge = `
+                <span style="
+                    background:#fef3c7;
+                    color:#92400e;
+                    padding:3px 6px;
+                    border-radius:14px;
+                    font-size:11px;
+                    font-weight:bold;
+                    border:1px solid #92400e;
+                ">
+                    ⏰ Late
+                </span>
+            `;
         }
 
         html += `
-        <tr style="background:${bg};border-bottom:1px solid black;">
+        <tr style="
+            background:${bg};
+            border-bottom:1px solid black;
+        ">
 
-            <td style="padding:6px;text-align:center;border:1px solid black;font-weight:bold;">
-                ${index + 1}
+            <td style="
+                padding:6px;
+                text-align:center;
+                border:1px solid black;
+                font-weight:bold;
+            ">
+                ${realIndex + 1}
             </td>
 
-            <!-- 🔥 FIXED NAME CELL -->
             <td style="
                 padding:6px;
                 border:1px solid black;
@@ -17967,18 +18969,36 @@ window.renderAttendanceTable = function () {
                 ${s.name || "-"}
             </td>
 
-            <td style="padding:6px;text-align:center;border:1px solid black;">
+            <td style="
+                padding:6px;
+                text-align:center;
+                border:1px solid black;
+            ">
                 ${s.adm || "-"}
             </td>
 
-            <td style="padding:6px;text-align:center;border:1px solid black;">
+            <td style="
+                padding:6px;
+                text-align:center;
+                border:1px solid black;
+            ">
                 ${s.grade || "-"}
             </td>
 
-            <!-- 🔥 SMALLER STATUS CELL -->
-            <td style="padding:6px;text-align:center;border:1px solid black;width:120px;">
+            <td style="
+                padding:6px;
+                text-align:center;
+                border:1px solid black;
+                width:120px;
+            ">
 
-                <div style="display:flex;gap:5px;justify-content:center;align-items:center;flex-wrap:wrap;">
+                <div style="
+                    display:flex;
+                    gap:5px;
+                    justify-content:center;
+                    align-items:center;
+                    flex-wrap:wrap;
+                ">
 
                     ${badge}
 
@@ -17992,9 +19012,20 @@ window.renderAttendanceTable = function () {
                             min-width:80px;
                         "
                     >
-                        <option value="Present" ${status === "Present" ? "selected" : ""}>Present</option>
-                        <option value="Absent" ${status === "Absent" ? "selected" : ""}>Absent</option>
-                        <option value="Late" ${status === "Late" ? "selected" : ""}>Late</option>
+                        <option value="Present"
+                            ${status === "Present" ? "selected" : ""}>
+                            Present
+                        </option>
+
+                        <option value="Absent"
+                            ${status === "Absent" ? "selected" : ""}>
+                            Absent
+                        </option>
+
+                        <option value="Late"
+                            ${status === "Late" ? "selected" : ""}>
+                            Late
+                        </option>
                     </select>
 
                 </div>
@@ -18005,15 +19036,13 @@ window.renderAttendanceTable = function () {
         `;
     });
 
-    html += `
-    </tbody>
-    </table>
-    </div>
-    `;
+    tbody.insertAdjacentHTML("beforeend", html);
 
-    output.innerHTML = html;
+    state.page++;
+    state.loading = false;
+
+    if (loader) loader.style.display = "none";
 };
-
 
 
 // ================= SET STATUS =================
@@ -18973,50 +20002,183 @@ window.addSupportStaff = async function () {
   }
 };
 /* =========================================================
-   📥 LOAD SUPPORT STAFF (FIXED STABLE VERSION)
+   🚀 SUPPORT STAFF PAGINATION + LIVE RENDER SYSTEM
 ========================================================= */
+
+// =========================================================
+// 🌍 GLOBAL STATE
+// =========================================================
+window.__supportStaffData = [];
+window.__supportStaffListener = null;
+
+window.__supportStaffPagination = {
+  page: 0,
+  limit: 30,
+  loading: false,
+  finished: false
+};
+
+
+// =========================================================
+// 🚀 LOAD SUPPORT STAFF
+// =========================================================
 window.loadSupportStaff = function () {
 
-  onValue(
+  // ===============================
+  // REMOVE OLD LISTENER
+  // ===============================
+  if (window.__supportStaffListener) {
+    window.__supportStaffListener();
+  }
+
+  // ===============================
+  // START LIVE LISTENER
+  // ===============================
+  window.__supportStaffListener = onValue(
+
     schoolRef("supportStaff"),
+
     (snapshot) => {
 
       const data = snapshot.val() || {};
 
+      // ===============================
+      // CONVERT TO ARRAY
+      // ===============================
+      const staffArray = Object.entries(data).map(([id, staff]) => ({
+        id,
+        ...staff
+      }));
+
+      // ===============================
+      // SORT BY NAME
+      // ===============================
+      staffArray.sort((a, b) =>
+        (a.name || "").localeCompare(b.name || "")
+      );
+
+      // ===============================
+      // STORE GLOBALLY
+      // ===============================
+      window.__supportStaffData = staffArray;
+
+      // ===============================
+      // RESET PAGINATION
+      // ===============================
+      window.__supportStaffPagination.page = 0;
+      window.__supportStaffPagination.loading = false;
+      window.__supportStaffPagination.finished = false;
+
+      // ===============================
+      // CLEAR TABLE
+      // ===============================
       const tbody =
         document.getElementById("supportStaffList");
 
       if (!tbody) return;
 
-      let rows = "";
+      tbody.innerHTML = "";
 
-      let totalSalary = 0;
-      let totalStaff = 0;
-      let activeStaff = 0;
-      let onLeave = 0;
+      // ===============================
+      // EMPTY STATE
+      // ===============================
+      if (!staffArray.length) {
 
-      const departmentTotals = {};
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="12"
+                style="
+                  text-align:center;
+                  padding:20px;
+                  color:#666;
+                ">
+              No support staff found
+            </td>
+          </tr>
+        `;
 
-      Object.entries(data).forEach(([id, staff], index) => {
+        updateSupportSummary([]);
+        renderDepartmentStats([]);
 
-        totalStaff++;
+        return;
+      }
 
-        totalSalary += Number(staff.salary || 0);
+      // ===============================
+      // UPDATE SUMMARY
+      // ===============================
+      updateSupportSummary(staffArray);
 
-        if (staff.status === "Active") activeStaff++;
-        if (staff.status === "On Leave") onLeave++;
+      // ===============================
+      // DEPARTMENT STATS
+      // ===============================
+      renderDepartmentStats(staffArray);
 
-        const dept = staff.department || "Other";
+      // ===============================
+      // FIRST BATCH
+      // ===============================
+      renderNextSupportStaffBatch();
+    }
+  );
+};
 
-        departmentTotals[dept] =
-          (departmentTotals[dept] || 0) + 1;
 
-        rows += `
+// =========================================================
+// 🚀 LOAD NEXT STAFF BATCH
+// =========================================================
+function renderNextSupportStaffBatch() {
+
+  const state = window.__supportStaffPagination;
+
+  if (state.loading || state.finished) return;
+
+  state.loading = true;
+
+  const tbody =
+    document.getElementById("supportStaffList");
+
+  if (!tbody) {
+    state.loading = false;
+    return;
+  }
+
+  // ===============================
+  // DATA
+  // ===============================
+  const data = window.__supportStaffData || [];
+
+  const start = state.page * state.limit;
+  const end = start + state.limit;
+
+  const batch = data.slice(start, end);
+
+  // ===============================
+  // FINISHED
+  // ===============================
+  if (!batch.length) {
+
+    state.finished = true;
+    state.loading = false;
+
+    return;
+  }
+
+  // ===============================
+  // BUILD ROWS
+  // ===============================
+  let html = "";
+
+  batch.forEach((staff, index) => {
+
+    const rowNo = start + index + 1;
+
+    html += `
 <tr>
 
-  <td>${index + 1}</td>
+  <td>${rowNo}</td>
 
-  <td><b>${staff.name || ""}</b></td>
+  <td>
+    <b>${staff.name || ""}</b>
+  </td>
 
   <td>${staff.role || ""}</td>
 
@@ -19028,15 +20190,19 @@ window.loadSupportStaff = function () {
 
   <td>${staff.shift || "-"}</td>
 
-  <td>KES ${(staff.salary || 0).toLocaleString()}</td>
+  <td>
+    KES ${Number(staff.salary || 0).toLocaleString()}
+  </td>
 
   <td>${staff.contractType || "-"}</td>
 
+  <!-- STATUS -->
   <td>
     <span style="
       padding:4px 10px;
       border-radius:20px;
       color:white;
+      font-size:12px;
       background:
       ${staff.status === "Active"
         ? "#16a34a"
@@ -19048,11 +20214,11 @@ window.loadSupportStaff = function () {
     </span>
   </td>
 
-  <!-- ================= ATTENDANCE ================= -->
+  <!-- ATTENDANCE -->
   <td>
 
     <button
-      onclick="markStaffAttendance('${id}','Present')"
+      onclick="markStaffAttendance('${staff.id}','Present')"
       style="
         background:#16a34a;
         color:white;
@@ -19064,7 +20230,7 @@ window.loadSupportStaff = function () {
     >✅</button>
 
     <button
-      onclick="markStaffAttendance('${id}','Absent')"
+      onclick="markStaffAttendance('${staff.id}','Absent')"
       style="
         background:#dc2626;
         color:white;
@@ -19077,113 +20243,184 @@ window.loadSupportStaff = function () {
 
   </td>
 
- <!-- ================= ACTIONS ================= -->
-<td style="position:relative; overflow:visible;">
+  <!-- ACTIONS -->
+  <td style="position:relative; overflow:visible;">
 
-  <div class="action-wrapper" style="position:relative; display:inline-block;">
+    <div class="action-wrapper"
+         style="
+           position:relative;
+           display:inline-block;
+         ">
 
-    <button
-      onclick="toggleActionsMenu(this)"
-      style="
-        background:#111827;
-        color:white;
-        border:none;
-        padding:6px 10px;
-        border-radius:6px;
-        cursor:pointer;
-        font-size:12px;
-      "
-    >
-      ⚙ Actions ▾
-    </button>
-
-    <!-- DROPDOWN -->
-    <div class="actions-menu" style="
-      display:none;
-      position:absolute;
-      top:110%;
-      right:0;
-      min-width:160px;
-      background:white;
-      border:1px solid #ddd;
-      border-radius:10px;
-      box-shadow:0 10px 25px rgba(0,0,0,0.15);
-      z-index:9999;
-      overflow:hidden;
-    ">
-
-      <button onclick="paySupportSalary('${id}')" style="width:100%;padding:10px;border:none;background:white;text-align:left;">
-        💵 Pay Salary
+      <button
+        onclick="toggleActionsMenu(this)"
+        style="
+          background:#111827;
+          color:white;
+          border:none;
+          padding:6px 10px;
+          border-radius:6px;
+          cursor:pointer;
+          font-size:12px;
+        "
+      >
+        ⚙ Actions ▾
       </button>
 
-      <button onclick="generateSupportPayslip('${id}')" style="width:100%;padding:10px;border:none;background:white;text-align:left;">
-        🧾 Payslip
-      </button>
+      <!-- DROPDOWN -->
+      <div class="actions-menu" style="
+        display:none;
+        position:absolute;
+        top:110%;
+        right:0;
+        min-width:160px;
+        background:white;
+        border:1px solid #ddd;
+        border-radius:10px;
+        box-shadow:0 10px 25px rgba(0,0,0,0.15);
+        z-index:9999;
+        overflow:hidden;
+      ">
 
-      <button onclick="giveAdvance('${id}')" style="width:100%;padding:10px;border:none;background:white;text-align:left;">
-        💰 Give Advance
-      </button>
+        <button onclick="paySupportSalary('${staff.id}')"
+          style="width:100%;padding:10px;border:none;background:white;text-align:left;">
+          💵 Pay Salary
+        </button>
 
-      <button onclick="editSupportStaff('${id}')" style="width:100%;padding:10px;border:none;background:white;text-align:left;">
-        ✏ Edit Staff
-      </button>
+        <button onclick="generateSupportPayslip('${staff.id}')"
+          style="width:100%;padding:10px;border:none;background:white;text-align:left;">
+          🧾 Payslip
+        </button>
 
-      <button onclick="deleteSupportStaff('${id}')" style="width:100%;padding:10px;border:none;background:white;text-align:left;color:red;">
-        🗑 Delete
-      </button>
+        <button onclick="giveAdvance('${staff.id}')"
+          style="width:100%;padding:10px;border:none;background:white;text-align:left;">
+          💰 Give Advance
+        </button>
+
+        <button onclick="editSupportStaff('${staff.id}')"
+          style="width:100%;padding:10px;border:none;background:white;text-align:left;">
+          ✏ Edit Staff
+        </button>
+
+        <button onclick="deleteSupportStaff('${staff.id}')"
+          style="width:100%;padding:10px;border:none;background:white;text-align:left;color:red;">
+          🗑 Delete
+        </button>
+
+      </div>
 
     </div>
 
-  </div>
+  </td>
 
-</td>
-        `;
-      });
+</tr>
+    `;
+  });
 
-      // ✅ render ONCE (this is the key fix)
-      tbody.innerHTML = rows;
+  // append rows
+  tbody.insertAdjacentHTML("beforeend", html);
 
-      /* ================= SUMMARY ================= */
+  // next page
+  state.page++;
 
-      const setText = (id, value) => {
-        const el = document.getElementById(id);
-        if (el) el.innerText = value;
-      };
+  state.loading = false;
+}
 
-      setText("totalSupportStaff", totalStaff);
-      setText("supportPayroll", "KES " + totalSalary.toLocaleString());
-      setText("activeSupportStaff", activeStaff);
-      setText("supportStaffOnLeave", onLeave);
 
-      /* ================= DEPARTMENTS ================= */
+// =========================================================
+// 🚀 SUPPORT SUMMARY
+// =========================================================
+function updateSupportSummary(list = []) {
 
-      const deptBox =
-        document.getElementById("supportDepartmentStats");
+  let totalSalary = 0;
+  let activeStaff = 0;
+  let onLeave = 0;
 
-      if (deptBox) {
+  list.forEach(staff => {
 
-        deptBox.innerHTML = "";
+    totalSalary += Number(staff.salary || 0);
 
-        Object.entries(departmentTotals).forEach(([dept, total]) => {
+    if (staff.status === "Active") activeStaff++;
 
-          deptBox.innerHTML += `
-            <div style="
-              background:white;
-              padding:10px;
-              border-radius:10px;
-              min-width:150px;
-              box-shadow:0 2px 5px rgba(0,0,0,0.1);
-            ">
-              <h4>${dept}</h4>
-              <h2>${total}</h2>
-            </div>
-          `;
-        });
-      }
+    if (staff.status === "On Leave") onLeave++;
+  });
 
-    }
+  const setText = (id, value) => {
+
+    const el = document.getElementById(id);
+
+    if (el) el.innerText = value;
+  };
+
+  setText("totalSupportStaff", list.length);
+
+  setText(
+    "supportPayroll",
+    "KES " + totalSalary.toLocaleString()
   );
-};
+
+  setText("activeSupportStaff", activeStaff);
+
+  setText("supportStaffOnLeave", onLeave);
+}
+
+
+// =========================================================
+// 🚀 DEPARTMENT STATS
+// =========================================================
+function renderDepartmentStats(list = []) {
+
+  const deptBox =
+    document.getElementById("supportDepartmentStats");
+
+  if (!deptBox) return;
+
+  deptBox.innerHTML = "";
+
+  const totals = {};
+
+  list.forEach(staff => {
+
+    const dept = staff.department || "Other";
+
+    totals[dept] = (totals[dept] || 0) + 1;
+  });
+
+  Object.entries(totals).forEach(([dept, total]) => {
+
+    deptBox.innerHTML += `
+      <div style="
+        background:white;
+        padding:10px;
+        border-radius:10px;
+        min-width:150px;
+        box-shadow:0 2px 5px rgba(0,0,0,0.1);
+      ">
+        <h4>${dept}</h4>
+        <h2>${total}</h2>
+      </div>
+    `;
+  });
+}
+
+
+// =========================================================
+// 🚀 INFINITE SCROLL
+// =========================================================
+window.addEventListener("scroll", () => {
+
+  const state = window.__supportStaffPagination;
+
+  if (state.loading || state.finished) return;
+
+  const nearBottom =
+    (window.innerHeight + window.scrollY) >=
+    (document.body.offsetHeight - 300);
+
+  if (nearBottom) {
+    renderNextSupportStaffBatch();
+  }
+});
 window.toggleActionsMenu = function(btn) {
 
   // close all other menus first
@@ -21150,7 +22387,7 @@ window.loadTransport = function () {
       <div style="overflow-x:auto;">
       <table style="${tableStyle}">
         <tr>
-          <th style="${thStyle}">#</th>
+          <th style="${thStyle}">No</th>
           <th style="${thStyle}">Bus</th>
           <th style="${thStyle}">Driver</th>
           <th style="${thStyle}">Route</th>
@@ -21285,7 +22522,7 @@ window.loadHostel = function () {
       <div style="overflow-x:auto;">
       <table style="${tableStyle}">
         <tr>
-          <th style="${thStyle}">#</th>
+          <th style="${thStyle}">No</th>
           <th style="${thStyle}">Room</th>
           <th style="${thStyle}">Capacity</th>
           <th style="${thStyle}">Student</th>
@@ -21506,7 +22743,7 @@ window.loadICT = function () {
       <div style="overflow-x:auto;">
       <table style="${tableStyle}">
         <tr>
-          <th style="${thStyle}">#</th>
+          <th style="${thStyle}">No</th>
           <th style="${thStyle}">Device</th>
           <th style="${thStyle}">Type</th>
           <th style="${thStyle}">Serial</th>
@@ -21604,7 +22841,7 @@ const schoolId = localStorage.getItem("schoolId");
 
       <tr>
 
-        <th style="${thStyle}">#</th>
+        <th style="${thStyle}">No</th>
         <th style="${thStyle}">Item</th>
         <th style="${thStyle}">Quantity</th>
         <th style="${thStyle}">Location</th>
@@ -21982,7 +23219,7 @@ window.loadICT = function () {
 
       <tr>
 
-        <th style="${thStyle}">#</th>
+        <th style="${thStyle}">No</th>
         <th style="${thStyle}">Device</th>
         <th style="${thStyle}">Type</th>
         <th style="${thStyle}">Serial</th>
@@ -22346,7 +23583,7 @@ window.loadLibrary = function () {
 
       <tr style="background:#0f172a;color:white;">
 
-        <th style="${thStyle}">#</th>
+        <th style="${thStyle}">No</th>
         <th style="${thStyle}">Title</th>
         <th style="${thStyle}">Author</th>
         <th style="${thStyle}">Category</th>
@@ -23231,7 +24468,46 @@ window.addEventListener("load", () => {
 
 });
 
+// =========================================
+// AUTO RISING SCHOOL COUNTER
+// =========================================
 
+const counter =
+document.getElementById(
+  "schoolsCounter"
+);
+
+// Random starting number
+let schoolCount =
+  Math.floor(
+    Math.random() * 300
+  ) + 100;
+
+// Set initial value
+counter.textContent =
+  schoolCount.toLocaleString();
+
+// Increase randomly forever
+setInterval(() => {
+
+  // Random increase
+  const increase =
+    Math.floor(
+      Math.random() * 5
+    ) + 1;
+
+  schoolCount += increase;
+
+  // Maximum limit
+  if (schoolCount > 2000) {
+
+    schoolCount = 2000;
+  }
+
+  counter.textContent =
+    schoolCount.toLocaleString();
+
+}, 4000);
 
 </script>
 
