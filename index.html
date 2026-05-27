@@ -1116,36 +1116,6 @@ table,
   }
 }
 
-/* =========================================================
-   MOBILE
-========================================================= */
-
-@media(max-width:600px){
-
-  .main{
-    margin-left:0;
-    padding:10px;
-  }
-
-  .sidebar{
-    width:40%;
-    height:auto;
-    position:relative;
-  }
-
-  .action-buttons{
-    gap:8px;
-  }
-
-  .action-btn{
-    font-size:12px;
-    padding:7px 12px;
-  }
-
-  .auth-card{
-    width:40%;
-  }
-}
 .submenu.open{
   max-height:400px;
   opacity:1;
@@ -1153,6 +1123,42 @@ table,
 }
 .submenu.open{
   display:flex;
+}
+
+/* =========================================================
+   📱 MOBILE HORIZONTAL DASHBOARD MODE
+========================================================= */
+
+@media (max-width: 600px) {
+
+  /* turn dashboard grid into horizontal scroll row */
+  .dashboard-grid {
+    display: flex !important;
+    flex-direction: row !important;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: 12px;
+    padding-bottom: 10px;
+    scroll-snap-type: x mandatory;
+  }
+
+  /* each card becomes a horizontal tile */
+  .dashboard-card {
+    min-width: 220px;
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
+
+  /* optional: hide sidebar or collapse it */
+  .sidebar {
+    display: none;
+  }
+
+  /* main takes full width */
+  .main {
+    margin-left: 0 !important;
+    width: 100%;
+  }
 }
 </style>
 </head>
