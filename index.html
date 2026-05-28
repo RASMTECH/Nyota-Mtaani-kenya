@@ -1721,7 +1721,63 @@ button.primary{
     justify-content:center;
   }
 }
+/* =========================================
+   E-LEARNING
+========================================= */
 
+#eLearningSection textarea{
+  resize:vertical;
+}
+
+.course-card{
+  background:#f8fafc;
+
+  border-radius:16px;
+
+  padding:18px;
+
+  border:1px solid #e2e8f0;
+
+  transition:.3s;
+}
+
+.course-card:hover{
+  transform:translateY(-4px);
+
+  box-shadow:0 8px 20px rgba(0,0,0,0.08);
+}
+
+.course-title{
+  font-size:18px;
+  font-weight:700;
+  margin-bottom:8px;
+}
+
+.course-meta{
+  color:#64748b;
+  font-size:13px;
+  margin-bottom:10px;
+}
+
+.course-description{
+  font-size:14px;
+  line-height:1.7;
+}
+
+.download-btn{
+  margin-top:15px;
+
+  background:#2563eb;
+  color:white;
+
+  border:none;
+
+  padding:10px 14px;
+
+  border-radius:8px;
+
+  cursor:pointer;
+}
 </style>
 </head>
 
@@ -1844,6 +1900,9 @@ button.primary{
 <button onclick="show('ict')">💻 ICT</button>
 <button onclick="show('inventory')">📦 Inventory</button>
 <button onclick="show('library')">📚 Library</button>
+<button onclick="show('eLearningSection')">
+  🎓 E-Learning
+</button>
       </div>
 
   
@@ -2252,7 +2311,271 @@ button.primary{
   </div>
 
 </div>
+<!-- =========================================
+     E-LEARNING SYSTEM
+========================================= -->
+<div id="eLearningSection"
+     class="section"
+     style="display:none;">
 
+  <!-- HEADER -->
+  <div style="
+    background:linear-gradient(135deg,#2563eb,#1e40af);
+    padding:25px;
+    border-radius:18px;
+    color:white;
+    margin-bottom:20px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.15);
+  ">
+
+    <h1 style="font-size:32px;">
+      🎓 RASM 360 E-Learning
+    </h1>
+
+    <p style="
+      margin-top:8px;
+      opacity:.9;
+      font-size:15px;
+    ">
+      Smart Digital Learning Platform
+    </p>
+
+  </div>
+
+  <!-- QUICK STATS -->
+  <div class="dashboard-grid">
+
+    <div class="dashboard-card blue-card">
+      <div class="card-icon">📚</div>
+
+      <div class="card-content">
+        <h3>Total Courses</h3>
+        <p id="totalCourses">0</p>
+      </div>
+    </div>
+
+    <div class="dashboard-card green-card">
+      <div class="card-icon">📝</div>
+
+      <div class="card-content">
+        <h3>Assignments</h3>
+        <p id="totalAssignments">0</p>
+      </div>
+    </div>
+
+    <div class="dashboard-card purple-card">
+      <div class="card-icon">🎥</div>
+
+      <div class="card-content">
+        <h3>Video Lessons</h3>
+        <p id="totalVideos">0</p>
+      </div>
+    </div>
+
+    <div class="dashboard-card orange-card">
+      <div class="card-icon">👨‍🎓</div>
+
+      <div class="card-content">
+        <h3>Online Learners</h3>
+        <p id="onlineLearners">0</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- =========================================
+       CREATE COURSE
+  ========================================= -->
+  <div style="
+    background:white;
+    padding:20px;
+    border-radius:16px;
+    margin-top:25px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+  ">
+
+    <h2 style="margin-bottom:15px;">
+      📘 Create Learning Content
+    </h2>
+
+    <input id="courseTitle"
+      placeholder="Course Title">
+
+    <input id="courseTeacher"
+      placeholder="Teacher Name">
+
+    <select id="courseGrade">
+      <option value="">Select Grade</option>
+    </select>
+
+    <select id="courseSubject">
+      <option value="">Select Subject</option>
+      <option>Mathematics</option>
+      <option>English</option>
+      <option>Kiswahili</option>
+      <option>Science</option>
+      <option>Social Studies</option>
+      <option>CRE</option>
+      <option>Agriculture</option>
+      <option>Creative Arts</option>
+      <option>Pre-Technical</option>
+    </select>
+
+    <textarea id="courseDescription"
+      placeholder="Course Description"
+      style="
+        width:100%;
+        min-height:120px;
+        margin-top:10px;
+        padding:12px;
+        border:1px solid #ccc;
+        border-radius:10px;
+      "></textarea>
+
+    <!-- FILE -->
+    <div style="margin-top:15px;">
+
+      <label style="font-weight:bold;">
+        📎 Upload Notes / PDF / Video
+      </label>
+
+      <input type="file"
+        id="courseFile"
+        multiple
+        style="margin-top:8px;">
+
+    </div>
+
+    <button onclick="createCourse()"
+      style="
+        margin-top:18px;
+        background:#2563eb;
+        color:white;
+        border:none;
+        padding:12px 18px;
+        border-radius:10px;
+        cursor:pointer;
+        font-weight:bold;
+      ">
+      🚀 Publish Course
+    </button>
+
+  </div>
+
+  <!-- =========================================
+       COURSE LIST
+  ========================================= -->
+  <div style="
+    margin-top:25px;
+    background:white;
+    padding:20px;
+    border-radius:16px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+  ">
+
+    <h2 style="margin-bottom:15px;">
+      📚 Available Courses
+    </h2>
+
+    <div id="coursesContainer"
+      style="
+        display:grid;
+        grid-template-columns:
+        repeat(auto-fit,minmax(280px,1fr));
+        gap:18px;
+      ">
+    </div>
+
+  </div>
+
+  <!-- =========================================
+       ASSIGNMENTS
+  ========================================= -->
+  <div style="
+    margin-top:25px;
+    background:white;
+    padding:20px;
+    border-radius:16px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+  ">
+
+    <h2 style="margin-bottom:15px;">
+      📝 Assignments
+    </h2>
+<!-- ASSIGNMENT TITLE -->
+<input
+  type="text"
+  id="assignmentTitle"
+  placeholder="Assignment Title"
+>
+
+<!-- DEADLINE -->
+<input
+  type="date"
+  id="assignmentDeadline"
+>
+
+<!-- DURATION -->
+<input
+  type="number"
+  id="assignmentDuration"
+  placeholder="Assignment Duration (Minutes)"
+>
+
+<!-- TARGET GRADE -->
+<select
+  id="assignmentGrade"
+
+  style="
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #ccc;
+    margin-top:10px;
+  "
+>
+
+  <option value="">
+    Select Target Grade
+  </option>
+
+  <option>Grade 1</option>
+  <option>Grade 2</option>
+  <option>Grade 3</option>
+  <option>Grade 4</option>
+  <option>Grade 5</option>
+  <option>Grade 6</option>
+  <option>Grade 7</option>
+  <option>Grade 8</option>
+  <option>Grade 9</option>
+
+</select>
+
+<!-- QUESTIONS -->
+<textarea
+  id="assignmentInstructions"
+
+  placeholder="
+Paste all questions here.
+
+Separate each question using ===
+  "
+></textarea>
+
+<!-- PUBLISH -->
+<button
+  onclick="publishAssignment()"
+>
+  Publish Assignment
+</button>
+
+    <div id="assignmentContainer"
+      style="margin-top:20px;">
+    </div>
+
+  </div>
+
+</div>
   <!-- ================= STUDENTS ================= -->
 <div id="students" style="display:none;">
 <h3>
@@ -24766,6 +25089,2077 @@ setInterval(() => {
 
 }, 4000);
 
+
+// =========================================
+// GLOBAL DATA
+// =========================================
+
+let courses = [];
+let assignments = [];
+// =========================================
+// ACTIVE EXAM SESSIONS
+// =========================================
+
+let activeSessions = {};
+// =========================================
+// CREATE COURSE
+// =========================================
+
+window.createCourse = function(){
+
+  const title =
+    document.getElementById(
+      "courseTitle"
+    )?.value.trim();
+
+  const teacher =
+    document.getElementById(
+      "courseTeacher"
+    )?.value.trim();
+
+  const grade =
+    document.getElementById(
+      "courseGrade"
+    )?.value;
+
+  const subject =
+    document.getElementById(
+      "courseSubject"
+    )?.value;
+
+  const description =
+    document.getElementById(
+      "courseDescription"
+    )?.value.trim();
+
+  // VALIDATION
+  if(
+    !title ||
+    !teacher ||
+    !grade ||
+    !subject ||
+    !description
+  ){
+
+    Swal.fire(
+      "Missing Fields",
+      "Please fill all fields",
+      "warning"
+    );
+
+    return;
+  }
+
+const now = new Date();
+
+const course = {
+
+  id:Date.now(),
+
+  title,
+  teacher,
+  grade,
+  subject,
+  description,
+
+  postedDate:
+    now.toLocaleDateString(),
+
+  postedTime:
+    now.toLocaleTimeString(),
+
+  locked:false
+};
+
+  // SAVE
+  courses.push(course);
+
+  // RENDER
+  window.renderCourses();
+
+  // UPDATE COUNTER
+  const totalCourses =
+    document.getElementById(
+      "totalCourses"
+    );
+
+  if(totalCourses){
+
+    totalCourses.textContent =
+      courses.length;
+  }
+
+  // CLEAR
+  window.clearCourseForm();
+
+  // SUCCESS
+  Swal.fire(
+    "Success",
+    "Course Published Successfully",
+    "success"
+  );
+};
+
+// =========================================
+// START ASSIGNMENT
+// =========================================
+
+window.startAssignment = function(id){
+
+  const assignment =
+    assignments.find(
+      a => a.id === id
+    );
+
+  if(!assignment) return;
+
+  // DEADLINE CHECK
+  const dueDate =
+    new Date(assignment.deadline);
+
+  const now =
+    new Date();
+
+  if(now > dueDate){
+
+    Swal.fire(
+      "Closed",
+      "Assignment deadline has passed",
+      "warning"
+    );
+
+    return;
+  }
+
+  // LEARNER NAME
+  const learner =
+    prompt(
+      "Enter Learner Name"
+    );
+
+  if(!learner) return;
+
+  const sessionKey =
+    `${id}-${learner}`;
+
+  // PREVENT MULTIPLE STARTS
+  if(activeSessions[sessionKey]){
+
+    Swal.fire(
+      "Already Started",
+      "This learner already started the assignment",
+      "info"
+    );
+
+    return;
+  }
+
+  // START SESSION
+  activeSessions[sessionKey] = {
+
+    startTime:Date.now(),
+
+    warnings:0,
+
+    learner,
+
+    assignmentId:id,
+
+    submitted:false
+  };
+
+  // SUCCESS MESSAGE
+  Swal.fire(
+    "Assignment Started",
+    `You have ${assignment.duration} minutes to complete this assignment.`,
+    "success"
+  );
+
+  // SHOW SUBMIT BUTTON
+  const submitBtn =
+    document.getElementById(
+      `submitBtn-${assignment.id}`
+    );
+
+  if(submitBtn){
+
+    submitBtn.style.display =
+      "block";
+  }
+
+  // ENABLE ANSWER AREAS
+  assignment.questions.forEach(
+    (q,index) => {
+
+      const textarea =
+        document.getElementById(
+          `answer-${assignment.id}-${index}`
+        );
+
+      if(textarea){
+
+        textarea.disabled = false;
+
+        textarea.style.background =
+          "#ffffff";
+
+        textarea.focus();
+      }
+    }
+  );
+
+  // DISABLE START BUTTON
+  const startButtons =
+    document.querySelectorAll(
+      `button[onclick="startAssignment(${assignment.id})"]`
+    );
+
+  startButtons.forEach(btn => {
+
+    btn.disabled = true;
+
+    btn.innerHTML =
+      "⏳ Assignment Running";
+
+    btn.style.background =
+      "#f59e0b";
+  });
+
+  // START TIMER
+  window.startAssignmentTimer(
+    assignment,
+    learner
+  );
+
+  // ENABLE SECURITY
+  window.enableExamSecurity(
+    sessionKey
+  );
+};// =========================================
+// ASSIGNMENT TIMER
+// =========================================
+
+window.startAssignmentTimer = function(
+  assignment,
+  learner
+){
+
+  const sessionKey =
+    `${assignment.id}-${learner}`;
+
+  const timerId =
+    setInterval(() => {
+
+      const session =
+        activeSessions[sessionKey];
+
+      if(!session){
+
+        clearInterval(timerId);
+
+        return;
+      }
+
+      const elapsed =
+        Math.floor(
+          (
+            Date.now()
+            -
+            session.startTime
+          ) / 1000
+        );
+
+      const remaining =
+        (
+          assignment.duration * 60
+        ) - elapsed;
+
+      // TIMER DISPLAY
+      const timerEl =
+        document.getElementById(
+          `timer-${assignment.id}`
+        );
+
+      if(timerEl){
+
+        const mins =
+          Math.floor(
+            remaining / 60
+          );
+
+        const secs =
+          remaining % 60;
+
+        timerEl.textContent =
+          `⏳ ${mins}m ${secs}s`;
+      }
+
+      // TIME UP
+      if(remaining <= 0){
+
+        clearInterval(timerId);
+
+        delete activeSessions[
+          sessionKey
+        ];
+
+        Swal.fire({
+
+          icon:"warning",
+
+          title:"Time Up",
+
+          text:
+            "Assignment closed automatically"
+
+        });
+
+        // DISABLE FORM
+        const area =
+          document.getElementById(
+            `submissionArea-${assignment.id}`
+          );
+
+        if(area){
+
+          area.innerHTML = `
+            <div style="
+              color:#dc2626;
+              font-weight:bold;
+              padding:20px;
+            ">
+              ⛔ Time Expired
+            </div>
+          `;
+        }
+      }
+
+    },1000);
+};
+// =========================================
+// EXAM SECURITY
+// =========================================
+
+window.enableExamSecurity = function(
+  sessionKey
+){
+
+  document.addEventListener(
+    "visibilitychange",
+
+    function(){
+
+      if(
+        document.hidden
+      ){
+
+        const session =
+          activeSessions[
+            sessionKey
+          ];
+
+        if(!session) return;
+
+        session.warnings++;
+
+        // FIRST WARNING
+        if(
+          session.warnings === 1
+        ){
+
+          Swal.fire({
+
+            icon:"warning",
+
+            title:"Warning",
+
+            text:
+              "Do not leave the exam screen again."
+
+          });
+        }
+
+        // SECOND WARNING
+        if(
+          session.warnings >= 2
+        ){
+
+          delete activeSessions[
+            sessionKey
+          ];
+
+          Swal.fire({
+
+            icon:"error",
+
+            title:"Assignment Closed",
+
+            text:
+              "You left the screen twice."
+
+          });
+
+          // CLOSE ASSIGNMENT
+          location.reload();
+        }
+      }
+
+    }
+  );
+};
+
+// =========================================
+// RENDER COURSES
+// =========================================
+
+window.renderCourses = function(){
+
+  const container =
+    document.getElementById(
+      "coursesContainer"
+    );
+
+  if(!container) return;
+
+  container.innerHTML = "";
+
+  // EMPTY STATE
+  if(courses.length === 0){
+
+    container.innerHTML = `
+      <div style="
+        padding:20px;
+        text-align:center;
+        color:#64748b;
+      ">
+        No courses available.
+      </div>
+    `;
+
+    return;
+  }
+
+  // LOOP
+  courses.forEach(course => {
+
+    container.innerHTML += `
+
+      <div class="course-card">
+
+        <!-- HEADER -->
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+          margin-bottom:12px;
+          gap:10px;
+          flex-wrap:wrap;
+        ">
+
+          <!-- TITLE -->
+          <div class="course-title">
+            📚 ${course.title}
+          </div>
+
+          <!-- LOCK STATUS -->
+          <div style="
+            background:
+              ${course.locked
+                ? '#dc2626'
+                : '#16a34a'};
+
+            color:white;
+
+            padding:6px 10px;
+
+            border-radius:20px;
+
+            font-size:12px;
+
+            font-weight:bold;
+          ">
+
+            ${course.locked
+              ? '🔒 Locked'
+              : '🔓 Open'}
+
+          </div>
+
+        </div>
+
+        <!-- TEACHER -->
+        <div class="course-meta">
+          👨‍🏫 ${course.teacher}
+        </div>
+
+        <!-- GRADE + SUBJECT -->
+        <div class="course-meta">
+          🎓 ${course.grade}
+          •
+          📚 ${course.subject}
+        </div>
+
+        <!-- DESCRIPTION -->
+        <div class="course-description">
+          ${course.description}
+        </div>
+
+        <!-- DATE -->
+        <div style="
+          margin-top:12px;
+          font-size:13px;
+          color:#64748b;
+          line-height:1.6;
+        ">
+
+          📅 Posted:
+          ${
+            course.postedDate ||
+            new Date().toLocaleDateString()
+          }
+
+          <br>
+
+          🕒 Time:
+          ${
+            course.postedTime ||
+            new Date().toLocaleTimeString()
+          }
+
+        </div>
+
+        <!-- ACTIONS -->
+        <div style="
+          margin-top:18px;
+          display:flex;
+          gap:10px;
+          flex-wrap:wrap;
+        ">
+
+          <!-- OPEN -->
+          <button
+
+            onclick="
+              ${course.locked
+                ? `Swal.fire(
+                    'Locked',
+                    'This course is locked by the teacher',
+                    'warning'
+                  )`
+                : `openCourse(${course.id})`
+              }
+            "
+
+            style="
+              background:
+                ${course.locked
+                  ? '#94a3b8'
+                  : '#2563eb'};
+
+              color:white;
+
+              border:none;
+
+              padding:10px 14px;
+
+              border-radius:8px;
+
+              cursor:pointer;
+
+              font-weight:600;
+            "
+          >
+
+            ${course.locked
+              ? '🔒 Locked'
+              : '📖 Open Course'}
+
+          </button>
+
+          <!-- LOCK / UNLOCK -->
+          <button
+
+            onclick="toggleCourseLock(${course.id})"
+
+            style="
+              background:
+                ${course.locked
+                  ? '#16a34a'
+                  : '#f59e0b'};
+
+              color:white;
+
+              border:none;
+
+              padding:10px 14px;
+
+              border-radius:8px;
+
+              cursor:pointer;
+
+              font-weight:600;
+            "
+          >
+
+            ${course.locked
+              ? '🔓 Unlock'
+              : '🔒 Lock'}
+
+          </button>
+
+          <!-- EDIT -->
+          <button
+
+            onclick="editCourse(${course.id})"
+
+            style="
+              background:#2563eb;
+              color:white;
+              border:none;
+              padding:10px 14px;
+              border-radius:8px;
+              cursor:pointer;
+              font-weight:600;
+            "
+          >
+
+            ✏ Edit
+
+          </button>
+
+          <!-- DELETE -->
+          <button
+
+            onclick="deleteCourse(${course.id})"
+
+            style="
+              background:#dc2626;
+              color:white;
+              border:none;
+              padding:10px 14px;
+              border-radius:8px;
+              cursor:pointer;
+              font-weight:600;
+            "
+          >
+
+            🗑 Delete
+
+          </button>
+
+        </div>
+
+      </div>
+
+    `;
+  });
+};
+
+// =========================================
+// TOGGLE COURSE LOCK
+// =========================================
+
+window.toggleCourseLock = function(id){
+
+  const course =
+    courses.find(
+      c => c.id === id
+    );
+
+  if(!course) return;
+
+  course.locked =
+    !course.locked;
+
+  window.renderCourses();
+
+  Swal.fire(
+
+    "Updated",
+
+    course.locked
+      ? "Course Locked"
+      : "Course Unlocked",
+
+    "success"
+  );
+};
+
+// =========================================
+// OPEN COURSE
+// =========================================
+
+window.openCourse = function(id){
+
+  const course =
+    courses.find(
+      c => c.id === id
+    );
+
+  if(!course) return;
+
+  Swal.fire({
+
+    title:course.title,
+
+    html:`
+
+      <div style="
+        text-align:left;
+        line-height:1.8;
+      ">
+
+        <b>Teacher:</b>
+        ${course.teacher}
+
+        <br>
+
+        <b>Grade:</b>
+        ${course.grade}
+
+        <br>
+
+        <b>Subject:</b>
+        ${course.subject}
+
+        <hr>
+
+        ${course.description}
+
+      </div>
+
+    `,
+
+    width:600
+
+  });
+
+};
+
+// =========================================
+// EDIT COURSE
+// =========================================
+
+window.editCourse = function(id){
+
+  const course =
+    courses.find(
+      c => c.id === id
+    );
+
+  if(!course) return;
+
+  Swal.fire({
+
+    title:"Edit Course",
+
+    html:`
+
+      <input
+        id="editCourseTitle"
+        class="swal2-input"
+        value="${course.title}"
+        placeholder="Course Title"
+      >
+
+      <input
+        id="editCourseTeacher"
+        class="swal2-input"
+        value="${course.teacher}"
+        placeholder="Teacher"
+      >
+
+      <input
+        id="editCourseGrade"
+        class="swal2-input"
+        value="${course.grade}"
+        placeholder="Grade"
+      >
+
+      <input
+        id="editCourseSubject"
+        class="swal2-input"
+        value="${course.subject}"
+        placeholder="Subject"
+      >
+
+      <textarea
+        id="editCourseDescription"
+        class="swal2-textarea"
+        placeholder="Description"
+      >${course.description}</textarea>
+
+    `,
+
+    showCancelButton:true,
+
+    confirmButtonText:"Save Changes"
+
+  }).then(result => {
+
+    if(result.isConfirmed){
+
+      course.title =
+        document.getElementById(
+          "editCourseTitle"
+        ).value;
+
+      course.teacher =
+        document.getElementById(
+          "editCourseTeacher"
+        ).value;
+
+      course.grade =
+        document.getElementById(
+          "editCourseGrade"
+        ).value;
+
+      course.subject =
+        document.getElementById(
+          "editCourseSubject"
+        ).value;
+
+      course.description =
+        document.getElementById(
+          "editCourseDescription"
+        ).value;
+
+      window.renderCourses();
+
+      Swal.fire(
+        "Updated",
+        "Course updated successfully",
+        "success"
+      );
+    }
+
+  });
+
+};
+
+
+
+
+// =========================================
+// DELETE COURSE
+// =========================================
+
+window.deleteCourse = function(id){
+
+  Swal.fire({
+
+    title:"Delete Course?",
+
+    text:"This action cannot be undone.",
+
+    icon:"warning",
+
+    showCancelButton:true,
+
+    confirmButtonColor:"#dc2626",
+
+    confirmButtonText:"Delete"
+
+  }).then((result) => {
+
+    if(result.isConfirmed){
+
+      // REMOVE COURSE
+      courses =
+        courses.filter(
+          course => course.id !== id
+        );
+
+      // RE-RENDER
+      window.renderCourses();
+
+      // UPDATE COUNTER
+      const totalCourses =
+        document.getElementById(
+          "totalCourses"
+        );
+
+      if(totalCourses){
+
+        totalCourses.textContent =
+          courses.length;
+      }
+
+      // SUCCESS MESSAGE
+      Swal.fire(
+        "Deleted",
+        "Course removed successfully",
+        "success"
+      );
+    }
+
+  });
+
+};// =========================================
+// CLEAR COURSE FORM
+// =========================================
+
+window.clearCourseForm = function(){
+
+  const ids = [
+
+    "courseTitle",
+
+    "courseTeacher",
+
+    "courseGrade",
+
+    "courseSubject",
+
+    "courseDescription"
+  ];
+
+  ids.forEach(id => {
+
+    const el =
+      document.getElementById(id);
+
+    if(el){
+
+      el.value = "";
+    }
+  });
+};
+// =========================================
+// PUBLISH ASSIGNMENT
+// =========================================
+
+window.publishAssignment = function(){
+
+  const title =
+    document.getElementById(
+      "assignmentTitle"
+    )?.value.trim();
+
+  const deadline =
+    document.getElementById(
+      "assignmentDeadline"
+    )?.value;
+
+  const duration =
+    document.getElementById(
+      "assignmentDuration"
+    )?.value;
+const grade =
+  document.getElementById(
+    "assignmentGrade"
+  )?.value;
+  const instructions =
+    document.getElementById(
+      "assignmentInstructions"
+    )?.value.trim();
+
+  if(
+    !title ||
+    !deadline ||
+    !duration ||
+    !grade ||
+!instructions
+  ){
+
+    Swal.fire(
+      "Missing Fields",
+      "Complete all assignment fields",
+      "warning"
+    );
+
+    return;
+  }
+
+  const questions =
+    instructions
+      .split("===")
+      .map(q => q.trim())
+      .filter(q => q !== "");
+
+  const assignment = {
+
+    id:Date.now(),
+
+    title,
+grade,
+deadline,
+duration,
+questions,
+
+    createdAt:
+      new Date().toLocaleString(),
+
+    submissions:[]
+  };
+
+  assignments.push(assignment);
+
+  window.renderAssignments();
+
+  Swal.fire(
+    "Published",
+    "Assignment published successfully",
+    "success"
+  );
+};// =========================================
+// RENDER ASSIGNMENTS
+// =========================================
+
+window.renderAssignments = function () {
+
+  const container =
+    document.getElementById(
+      "assignmentContainer"
+    );
+
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  // =========================================
+  // EMPTY STATE
+  // =========================================
+
+  if (assignments.length === 0) {
+
+    container.innerHTML = `
+      <div style="
+        padding:20px;
+        text-align:center;
+        color:#64748b;
+      ">
+        No assignments yet.
+      </div>
+    `;
+
+    return;
+  }
+
+  // =========================================
+  // LOOP ASSIGNMENTS
+  // =========================================
+
+  assignments.forEach(a => {
+
+    const dueDate =
+      new Date(a.deadline);
+
+    const now =
+      new Date();
+
+    const expired =
+      now > dueDate;
+
+    // =========================================
+    // QUESTIONS DISPLAY
+    // =========================================
+
+    const questionsHTML =
+      a.questions.map((q, index) => `
+
+        <div style="
+          margin-bottom:15px;
+          padding:14px;
+          background:#f8fafc;
+          border-radius:10px;
+        ">
+
+          <b>
+            Question ${index + 1}
+          </b>
+
+          <div style="
+            margin-top:8px;
+            line-height:1.7;
+          ">
+            ${q}
+          </div>
+
+        </div>
+
+      `).join("");
+
+    // =========================================
+    // DYNAMIC QUESTION FLOW
+    // =========================================
+
+    const dynamicAnswersHTML = `
+
+      <div
+        id="questionContainer-${a.id}"
+      >
+
+        ${a.questions.map((q,index)=>`
+
+          <div
+
+            id="questionBlock-${a.id}-${index}"
+
+            style="
+              margin-top:18px;
+
+              display:
+                ${index === 0
+                  ? 'block'
+                  : 'none'};
+            "
+
+          >
+
+            <!-- QUESTION -->
+            <div style="
+              background:#f8fafc;
+              padding:14px;
+              border-radius:10px;
+              margin-bottom:10px;
+            ">
+
+              <b>
+                Question ${index + 1}
+              </b>
+
+              <div style="
+                margin-top:8px;
+                line-height:1.7;
+              ">
+                ${q}
+              </div>
+
+            </div>
+
+            <!-- ANSWER -->
+            <textarea
+
+              id="answer-${a.id}-${index}"
+
+              disabled
+
+              oninput="
+                unlockNextQuestion(
+                  ${a.id},
+                  ${index}
+                )
+              "
+
+              placeholder="
+Type answer here...
+              "
+
+              style="
+                width:100%;
+                min-height:120px;
+                padding:12px;
+                border-radius:10px;
+                border:1px solid #ccc;
+                background:#f1f5f9;
+              "
+
+            ></textarea>
+
+          </div>
+
+        `).join("")}
+
+      </div>
+
+    `;
+
+    // =========================================
+    // MAIN CARD
+    // =========================================
+
+    container.innerHTML += `
+
+      <div style="
+        background:#ffffff;
+        padding:20px;
+        border-radius:16px;
+        margin-bottom:20px;
+        border:1px solid #e2e8f0;
+        box-shadow:0 2px 10px rgba(0,0,0,0.05);
+      ">
+
+        <!-- HEADER -->
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          align-items:flex-start;
+          flex-wrap:wrap;
+          gap:10px;
+        ">
+
+          <h2 style="
+            margin:0;
+            color:#0f172a;
+          ">
+            📝 ${a.title}
+          </h2>
+
+          <div style="
+            background:
+              ${expired
+                ? '#dc2626'
+                : '#16a34a'};
+
+            color:white;
+
+            padding:6px 12px;
+
+            border-radius:20px;
+
+            font-size:12px;
+
+            font-weight:bold;
+          ">
+
+            ${expired
+              ? '⛔ Closed'
+              : '✅ Active'}
+
+          </div>
+
+        </div>
+
+        <!-- DEADLINE -->
+        <p style="
+          color:#dc2626;
+          font-weight:bold;
+          margin-top:12px;
+        ">
+          ⏰ Deadline:
+          ${a.deadline}
+        </p>
+<br>
+
+🎓 Target Grade:
+${a.grade}
+        <!-- DURATION -->
+        <p style="
+          color:#2563eb;
+          font-weight:bold;
+        ">
+          ⏱ Duration:
+          ${a.duration} Minutes
+        </p>
+
+        <!-- QUESTIONS -->
+        <div style="
+          margin-top:15px;
+          line-height:1.7;
+          color:#334155;
+        ">
+
+          ${questionsHTML}
+
+        </div>
+
+        <!-- SUBMISSION STATS -->
+        <div style="
+          margin-top:15px;
+          font-size:14px;
+          color:#64748b;
+        ">
+
+          📥 Submissions:
+          ${a.submissions.length}
+
+          <br>
+
+          📚 Total Questions:
+          ${a.questions.length}
+
+        </div>
+
+        <!-- STUDENT SUBMISSION -->
+        <div
+
+          id="submissionArea-${a.id}"
+
+          style="
+            margin-top:18px;
+            padding-top:18px;
+            border-top:1px solid #e2e8f0;
+          "
+        >
+
+          <!-- LEARNER NAME -->
+          <input
+
+            id="studentName-${a.id}"
+
+            placeholder="Learner Name"
+
+            style="
+              width:100%;
+              padding:12px;
+              border-radius:10px;
+              border:1px solid #ccc;
+              margin-bottom:10px;
+            "
+
+          >
+
+          <!-- DYNAMIC ANSWERS -->
+          ${dynamicAnswersHTML}
+
+          <!-- TIMER -->
+          <div
+
+            id="timer-${a.id}"
+
+            style="
+              margin-top:15px;
+              margin-bottom:12px;
+              font-weight:bold;
+              color:#dc2626;
+              font-size:15px;
+            "
+
+          ></div>
+
+          <!-- START BUTTON -->
+          <button
+
+            onclick="startAssignment(${a.id})"
+
+            ${expired ? 'disabled' : ''}
+
+            style="
+              margin-top:12px;
+
+              background:
+                ${expired
+                  ? '#94a3b8'
+                  : '#2563eb'};
+
+              color:white;
+
+              border:none;
+
+              padding:12px 18px;
+
+              border-radius:10px;
+
+              cursor:pointer;
+
+              font-weight:bold;
+
+              width:100%;
+            "
+
+          >
+
+            ${expired
+              ? '⛔ Assignment Closed'
+              : '▶ Start Assignment'}
+
+          </button>
+
+          <!-- SUBMIT BUTTON -->
+          <button
+
+            onclick="submitAssignment(${a.id})"
+
+            id="submitBtn-${a.id}"
+
+            style="
+              margin-top:10px;
+
+              background:#16a34a;
+
+              color:white;
+
+              border:none;
+
+              padding:12px 18px;
+
+              border-radius:10px;
+
+              cursor:pointer;
+
+              font-weight:bold;
+
+              width:100%;
+
+              display:none;
+            "
+
+          >
+
+            📤 Submit Answers
+
+          </button>
+
+        </div>
+
+        <!-- TEACHER ACTIONS -->
+        <div style="
+          margin-top:20px;
+          display:flex;
+          gap:10px;
+          flex-wrap:wrap;
+        ">
+
+          <!-- EDIT -->
+          <button
+
+            onclick="editAssignment(${a.id})"
+
+            style="
+              background:#2563eb;
+              color:white;
+              border:none;
+              padding:10px 14px;
+              border-radius:8px;
+              cursor:pointer;
+            "
+
+          >
+
+            ✏ Edit Assignment
+
+          </button>
+
+          <!-- EXTEND -->
+          <button
+
+            onclick="extendDeadline(${a.id})"
+
+            style="
+              background:#f59e0b;
+              color:white;
+              border:none;
+              padding:10px 14px;
+              border-radius:8px;
+              cursor:pointer;
+            "
+
+          >
+
+            ⏳ Extend Deadline
+
+          </button>
+
+          <!-- DELETE -->
+          <button
+
+            onclick="deleteAssignment(${a.id})"
+
+            style="
+              background:#dc2626;
+              color:white;
+              border:none;
+              padding:10px 14px;
+              border-radius:8px;
+              cursor:pointer;
+            "
+
+          >
+
+            🗑 Delete
+
+          </button>
+
+        </div>
+
+        <!-- SUBMISSIONS -->
+        <div style="
+          margin-top:25px;
+          padding-top:20px;
+          border-top:1px solid #e2e8f0;
+        ">
+
+          <h3>
+            📚 Learner Submissions
+          </h3>
+
+          ${renderSubmissions(a)}
+
+        </div>
+
+      </div>
+
+    `;
+  });
+};
+// =========================================
+// SUBMIT ASSIGNMENT
+// =========================================
+
+window.submitAssignment = function(id){
+
+  const assignment =
+    assignments.find(
+      a => a.id === id
+    );
+
+  if(!assignment) return;
+
+  const learner =
+    document.getElementById(
+      `studentName-${id}`
+    )?.value.trim();
+
+  if(!learner){
+
+    Swal.fire(
+      "Missing Name",
+      "Enter learner name",
+      "warning"
+    );
+
+    return;
+  }
+
+  // COLLECT ANSWERS
+  let answers = [];
+
+  for(
+    let i = 0;
+    i < assignment.questions.length;
+    i++
+  ){
+
+    const ans =
+      document.getElementById(
+        `answer-${id}-${i}`
+      )?.value.trim();
+
+    answers.push(ans || "");
+  }
+
+  assignment.submissions.push({
+
+    id:Date.now(),
+
+    learner,
+
+    answers,
+
+    submittedAt:
+      new Date().toLocaleString(),
+
+    marks:[],
+
+    total:0,
+
+    feedback:"Pending Marking"
+  });
+
+  window.renderAssignments();
+
+  Swal.fire(
+    "Submitted",
+    "Assignment submitted successfully",
+    "success"
+  );
+};
+// =========================================
+// RENDER SUBMISSIONS
+// =========================================
+
+window.renderSubmissions = function(a){
+
+  if(a.submissions.length === 0){
+
+    return `
+      <div style="
+        color:#64748b;
+        padding:10px 0;
+      ">
+        No submissions yet.
+      </div>
+    `;
+  }
+
+  let html = "";
+
+  a.submissions.forEach(sub => {
+
+    html += `
+
+      <div style="
+        background:#f8fafc;
+        padding:16px;
+        border-radius:12px;
+        margin-bottom:15px;
+        border:1px solid #e2e8f0;
+      ">
+
+        <h4>
+          👨‍🎓 ${sub.learner}
+        </h4>
+
+        <p>
+          📅 ${sub.submittedAt}
+        </p>
+
+        <div style="
+  margin-top:10px;
+">
+
+  ${sub.answers.map((ans,index)=>`
+
+    <div style="
+      margin-bottom:15px;
+      padding:12px;
+      background:#f8fafc;
+      border-radius:10px;
+    ">
+
+      <b>
+        Answer ${index + 1}
+      </b>
+
+      <div style="
+        margin-top:8px;
+        line-height:1.7;
+      ">
+        ${ans || "No Answer"}
+      </div>
+
+    </div>
+
+  `).join("")}
+
+</div>
+
+        <!-- MARKS -->
+        <div style="
+          margin-top:12px;
+          color:#16a34a;
+          font-weight:bold;
+        ">
+          Marks:
+          ${sub.marks ?? "Not Marked"}
+        </div>
+
+        <!-- FEEDBACK -->
+        <div style="
+          margin-top:8px;
+          color:#334155;
+        ">
+          Feedback:
+          ${sub.feedback}
+        </div>
+
+        <!-- TEACHER MARKING -->
+        <div style="
+          margin-top:15px;
+          display:flex;
+          gap:10px;
+          flex-wrap:wrap;
+        ">
+
+          <input
+            id="marks-${sub.id}"
+
+            type="number"
+
+            placeholder="Marks"
+
+            style="
+              padding:10px;
+              border-radius:8px;
+              border:1px solid #ccc;
+            "
+          >
+
+          <input
+            id="feedback-${sub.id}"
+
+            placeholder="Teacher Feedback"
+
+            style="
+              flex:1;
+              padding:10px;
+              border-radius:8px;
+              border:1px solid #ccc;
+            "
+          >
+
+          <button
+            onclick="
+              markSubmission(
+                ${a.id},
+                ${sub.id}
+              )
+            "
+
+            style="
+              background:#16a34a;
+              color:white;
+              border:none;
+              padding:10px 14px;
+              border-radius:8px;
+              cursor:pointer;
+            "
+          >
+            ✅ Mark
+          </button>
+
+        </div>
+
+      </div>
+
+    `;
+  });
+
+  return html;
+};
+
+// =========================================
+// MARK SUBMISSION
+// =========================================
+
+window.markSubmission = function(
+  assignmentId,
+  submissionId
+){
+
+  const assignment =
+    assignments.find(
+      a => a.id === assignmentId
+    );
+
+  if(!assignment) return;
+
+  const submission =
+    assignment.submissions.find(
+      s => s.id === submissionId
+    );
+
+  if(!submission) return;
+
+  const marks =
+    document.getElementById(
+      `marks-${submissionId}`
+    )?.value;
+
+  const feedback =
+    document.getElementById(
+      `feedback-${submissionId}`
+    )?.value;
+
+  submission.marks = marks;
+
+  submission.feedback = feedback;
+
+  window.renderAssignments();
+
+  Swal.fire(
+    "Marked",
+    "Results returned to learner",
+    "success"
+  );
+};
+
+// =========================================
+// EXTEND DEADLINE
+// =========================================
+
+window.extendDeadline = function(id){
+
+  Swal.fire({
+
+    title:"Extend Deadline",
+
+    input:"date",
+
+    showCancelButton:true,
+
+    confirmButtonText:"Update"
+
+  }).then(result => {
+
+    if(result.isConfirmed){
+
+      const assignment =
+        assignments.find(
+          a => a.id === id
+        );
+
+      if(!assignment) return;
+
+      assignment.deadline =
+        result.value;
+
+      window.renderAssignments();
+
+      Swal.fire(
+        "Updated",
+        "Deadline extended",
+        "success"
+      );
+    }
+
+  });
+
+};
+
+// =========================================
+// DELETE ASSIGNMENT
+// =========================================
+
+window.deleteAssignment = function(id){
+
+  Swal.fire({
+
+    title:"Delete Assignment?",
+
+    text:"This action cannot be undone.",
+
+    icon:"warning",
+
+    showCancelButton:true,
+
+    confirmButtonColor:"#dc2626",
+
+    confirmButtonText:"Delete"
+
+  }).then((result) => {
+
+    if(result.isConfirmed){
+
+      // REMOVE
+      assignments =
+        assignments.filter(
+          a => a.id !== id
+        );
+
+      // RE-RENDER
+      window.renderAssignments();
+
+      // UPDATE COUNTER
+      const totalAssignments =
+        document.getElementById(
+          "totalAssignments"
+        );
+
+      if(totalAssignments){
+
+        totalAssignments.textContent =
+          assignments.length;
+      }
+
+      // SUCCESS
+      Swal.fire(
+        "Deleted",
+        "Assignment removed successfully",
+        "success"
+      );
+    }
+
+  });
+
+};
+
+// =========================================
+// CLEAR ASSIGNMENT FORM
+// =========================================
+
+window.clearAssignmentForm = function(){
+
+  const ids = [
+
+    "assignmentTitle",
+
+    "assignmentDeadline",
+
+    "assignmentInstructions"
+  ];
+
+  ids.forEach(id => {
+
+    const el =
+      document.getElementById(id);
+
+    if(el){
+
+      el.value = "";
+    }
+  });
+};
+
+// =========================================
+// LOAD GRADES
+// =========================================
+
+window.addEventListener(
+  "DOMContentLoaded",
+  () => {
+
+    const gradeSelect =
+      document.getElementById(
+        "courseGrade"
+      );
+
+    if(gradeSelect){
+
+      gradeSelect.innerHTML =
+        `<option value="">
+          Select Grade
+        </option>`;
+
+      for(let i = 1; i <= 9; i++){
+
+        gradeSelect.innerHTML += `
+          <option value="Grade ${i}">
+            Grade ${i}
+          </option>
+        `;
+      }
+    }
+
+    // INITIAL RENDER
+    window.renderCourses();
+
+    window.renderAssignments();
+  }
+);
+// =========================================
+// EDIT ASSIGNMENT
+// =========================================
+
+window.editAssignment = function(id){
+
+  const assignment =
+    assignments.find(
+      a => a.id === id
+    );
+
+  if(!assignment) return;
+
+  Swal.fire({
+
+    title:"Edit Assignment",
+
+    html:`
+
+      <input
+        id="editTitle"
+
+        class="swal2-input"
+
+        value="${assignment.title}"
+
+        placeholder="Assignment Title"
+      >
+
+      <input
+        id="editDeadline"
+
+        type="date"
+
+        class="swal2-input"
+
+        value="${assignment.deadline}"
+      >
+
+      <input
+        id="editDuration"
+
+        type="number"
+
+        class="swal2-input"
+
+        value="${assignment.duration}"
+
+        placeholder="Duration"
+      >
+
+      <textarea
+        id="editQuestions"
+
+        class="swal2-textarea"
+
+        placeholder="
+Separate questions using ===
+        "
+      >${assignment.questions.join(" === ")}</textarea>
+
+    `,
+
+    showCancelButton:true,
+
+    confirmButtonText:"Save Changes"
+
+  }).then(result => {
+
+    if(result.isConfirmed){
+
+      assignment.title =
+        document.getElementById(
+          "editTitle"
+        ).value;
+
+      assignment.deadline =
+        document.getElementById(
+          "editDeadline"
+        ).value;
+
+      assignment.duration =
+        Number(
+          document.getElementById(
+            "editDuration"
+          ).value
+        );
+
+      assignment.questions =
+        document.getElementById(
+          "editQuestions"
+        )
+        .value
+        .split("===")
+        .map(q => q.trim())
+        .filter(q => q !== "");
+
+      window.renderAssignments();
+
+      Swal.fire(
+        "Updated",
+        "Assignment updated successfully",
+        "success"
+      );
+    }
+
+  });
+
+};
+// =========================================
+// UNLOCK NEXT QUESTION
+// =========================================
+
+window.unlockNextQuestion = function(
+  assignmentId,
+  currentIndex
+){
+
+  const currentAnswer =
+    document.getElementById(
+      `answer-${assignmentId}-${currentIndex}`
+    );
+
+  if(
+    !currentAnswer ||
+    currentAnswer.value.trim() === ""
+  ) return;
+
+  // NEXT QUESTION
+  const nextQuestion =
+    document.getElementById(
+      `questionBlock-${assignmentId}-${currentIndex + 1}`
+    );
+
+  if(nextQuestion){
+
+    nextQuestion.style.display =
+      "block";
+  }
+};
+
+</script>
 
 </script>
 
