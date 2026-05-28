@@ -2475,7 +2475,7 @@ button.primary{
   ">
 
     <h2 style="margin-bottom:15px;">
-      📚 Available Courses
+      📚 Available Resources 
     </h2>
 
     <div id="coursesContainer"
@@ -25104,124 +25104,369 @@ let assignments = [];
 let activeSessions = {};
 // =========================================
 // CREATE COURSE
+// FIREBASE REALTIME DATABASE VERSION
 // =========================================
 
-window.createCourse = function(){
+window.createCourse = async function () {
 
-  const title =
-    document.getElementById(
-      "courseTitle"
-    )?.value.trim();
+  try {
 
-  const teacher =
-    document.getElementById(
-      "courseTeacher"
-    )?.value.trim();
+    // =====================================
+    // SCHOOL SESSION
+    // =====================================
 
-  const grade =
-    document.getElementById(
-      "courseGrade"
-    )?.value;
+    const schoolId =
+      window.schoolId ||
+      localStorage.getItem("schoolId") ||
+      localStorage.getItem("currentSchoolId") ||
+      sessionStorage.getItem("schoolId") ||
+      sessionStorage.getItem("currentSchoolId");
 
-  const subject =
-    document.getElementById(
-      "courseSubject"
-    )?.value;
+    if (!schoolId) {
 
-  const description =
-    document.getElementById(
-      "courseDescription"
-    )?.value.trim();
+      return Swal.fire(
+        "Access Denied",
+        "School session not found",
+        "error"
+      );
+    }
 
-  // VALIDATION
-  if(
-    !title ||
-    !teacher ||
-    !grade ||
-    !subject ||
-    !description
-  ){
+    // =====================================
+    // GET FIELDS
+    // =====================================
+
+    const title =
+      document.getElementById(
+        "courseTitle"
+      )?.value
+        ?.trim();
+
+    const teacher =
+      document.getElementById(
+        "courseTeacher"
+      )?.value
+        ?.trim();
+
+    const grade =
+      document.getElementById(
+        "courseGrade"
+      )?.value
+        ?.trim();
+
+    const subject =
+      document.getElementById(
+        "courseSubject"
+      )?.value
+        ?.trim();
+
+    const description =
+      document.getElementById(
+        "courseDescription"
+      )?.value
+        ?.trim();
+
+    // =====================================
+    // VALIDATION
+    // =====================================
+
+    if (
+      !title ||
+      !teacher ||
+      !grade ||
+      !subject ||
+      !description
+    ) {
+
+      console.log({
+        title,
+        teacher,
+        grade,
+        subject,
+        description
+      });
+
+      return Swal.fire(
+        "Missing Fields",
+        "Please fill all course fields",
+        "warning"
+      );
+    }
+
+    // =====================================
+    // COURSE ID
+    // =====================================
+
+    const courseId =
+      "COURSE-" + Date.now();
+
+    const now =
+      new Date();
+
+    // =====================================
+    // COURSE DATA
+    // =====================================
+
+    const course = {
+
+      id: courseId,
+
+      schoolId,
+
+      title,
+
+      teacher,
+
+      grade,
+
+      subject,
+
+      description,
+
+      postedDate:
+        now.toLocaleDateString(),
+
+      postedTime:
+        now.toLocaleTimeString(),
+
+      locked: false,
+
+      createdAt:
+        Date.now()
+    };
+
+    // =====================================
+    // SAVE TO FIREBASE
+    // =====================================
+
+    await set(
+
+      ref(
+        db,
+        `schools/${schoolId}/courses/${courseId}`
+      ),
+
+      course
+    );
+
+    // =====================================
+    // LOCAL ARRAY UPDATE
+    // =====================================
+
+    courses.push(course);
+
+    // =====================================
+    // SUCCESS
+    // =====================================
 
     Swal.fire(
-      "Missing Fields",
-      "Please fill all fields",
-      "warning"
+      "Success",
+      "Course Published Successfully",
+      "success"
     );
 
-    return;
-  }
+    // =====================================
+    // CLEAR FORM
+    // =====================================
 
-const now = new Date();
-
-const course = {
-
-  id:Date.now(),
-
-  title,
-  teacher,
-  grade,
-  subject,
-  description,
-
-  postedDate:
-    now.toLocaleDateString(),
-
-  postedTime:
-    now.toLocaleTimeString(),
-
-  locked:false
-};
-
-  // SAVE
-  courses.push(course);
-
-  // RENDER
-  window.renderCourses();
-
-  // UPDATE COUNTER
-  const totalCourses =
     document.getElementById(
-      "totalCourses"
+      "courseTitle"
+    ).value = "";
+
+    document.getElementById(
+      "courseTeacher"
+    ).value = "";
+
+    document.getElementById(
+      "courseGrade"
+    ).value = "";
+
+    document.getElementById(
+      "courseSubject"
+    ).value = "";
+
+    document.getElementById(
+      "courseDescription"
+    ).value = "";
+
+    // =====================================
+    // REFRESH
+    // =====================================
+
+    if (window.loadCourses) {
+
+      window.loadCourses();
+    }
+
+  } catch (error) {
+
+    console.error(
+      "CREATE_COURSE_ERROR:",
+      error
     );
 
-  if(totalCourses){
-
-    totalCourses.textContent =
-      courses.length;
+    Swal.fire(
+      "Error",
+      error.message ||
+      "Failed to save course",
+      "error"
+    );
   }
-
-  // CLEAR
-  window.clearCourseForm();
-
-  // SUCCESS
-  Swal.fire(
-    "Success",
-    "Course Published Successfully",
-    "success"
-  );
 };
 
+
+// =========================================
+// LOAD COURSES
+// FIREBASE REALTIME DATABASE VERSION
+// =========================================
+
+window.loadCourses = async function () {
+
+  try {
+
+    // =====================================
+    // SCHOOL SESSION
+    // =====================================
+
+    const schoolId =
+      window.schoolId ||
+      localStorage.getItem("schoolId") ||
+      localStorage.getItem("currentSchoolId") ||
+      sessionStorage.getItem("schoolId") ||
+      sessionStorage.getItem("currentSchoolId");
+
+    if (!schoolId) return;
+
+    // =====================================
+    // LOAD COURSES
+    // =====================================
+
+    const snapshot =
+      await get(
+
+        ref(
+          db,
+          `schools/${schoolId}/courses`
+        )
+      );
+
+    courses = [];
+
+    if (snapshot.exists()) {
+
+      snapshot.forEach(child => {
+
+        courses.push({
+
+          firebaseId:
+            child.key,
+
+          ...child.val()
+        });
+
+      });
+    }
+
+    // =====================================
+    // SORT NEWEST FIRST
+    // =====================================
+
+    courses.sort(
+      (a, b) =>
+        (b.createdAt || 0) -
+        (a.createdAt || 0)
+    );
+
+    // =====================================
+    // RENDER
+    // =====================================
+
+    if (window.renderCourses) {
+
+      window.renderCourses();
+    }
+
+    // =====================================
+    // UPDATE COUNTER
+    // =====================================
+
+    const totalCourses =
+      document.getElementById(
+        "totalCourses"
+      );
+
+    if (totalCourses) {
+
+      totalCourses.textContent =
+        courses.length;
+    }
+
+  } catch (error) {
+
+    console.error(
+      "LOAD_COURSES_ERROR:",
+      error
+    );
+
+    Swal.fire(
+      "Error",
+      "Failed to load courses",
+      "error"
+    );
+  }
+};
+
+
+window.enableExamMode = function(){
+
+  // ONLY APPLY RESTRICTIONS FOR STUDENTS
+  if(window.userRole === "teacher") return;
+
+  // disable right click (students only)
+  document.addEventListener("contextmenu", e => e.preventDefault());
+
+  // block copy/paste/cut ONLY for students
+  document.addEventListener("copy", e => e.preventDefault());
+  document.addEventListener("paste", e => e.preventDefault());
+  document.addEventListener("cut", e => e.preventDefault());
+
+  // tab switching warning (students only)
+  document.addEventListener("visibilitychange", function(){
+
+    if(document.hidden){
+
+      Swal.fire(
+        "Warning",
+        "Do not leave the exam screen.",
+        "warning"
+      );
+    }
+  });
+
+};
 // =========================================
 // START ASSIGNMENT
+// SWEET ALERT LEARNER INPUT VERSION
 // =========================================
 
-window.startAssignment = function(id){
+// =========================================
+// START ASSIGNMENT (UPGRADED)
+// =========================================
+// =========================================
+// START ASSIGNMENT (FINAL VERSION)
+// =========================================
+
+window.startAssignment = async function (id) {
 
   const assignment =
-    assignments.find(
-      a => a.id === id
-    );
+    assignments.find(a => a.id === id);
 
-  if(!assignment) return;
+  if (!assignment) return;
 
   // DEADLINE CHECK
-  const dueDate =
-    new Date(assignment.deadline);
+  const dueDate = new Date(assignment.deadline);
+  const now = new Date();
 
-  const now =
-    new Date();
-
-  if(now > dueDate){
+  if (now > dueDate) {
 
     Swal.fire(
       "Closed",
@@ -25232,19 +25477,63 @@ window.startAssignment = function(id){
     return;
   }
 
-  // LEARNER NAME
-  const learner =
-    prompt(
-      "Enter Learner Name"
-    );
+  // =========================================
+  // LEARNER NAME (SWEET ALERT)
+  // =========================================
 
-  if(!learner) return;
+  const savedName =
+    localStorage.getItem("lastLearnerName") || "";
 
-  const sessionKey =
-    `${id}-${learner}`;
+  const { value: learner } =
+    await Swal.fire({
+
+      title: "👨‍🎓 Start Assignment",
+
+      html: `
+        <div style="
+          text-align:left;
+          font-size:14px;
+          color:#475569;
+          margin-bottom:10px;
+        ">
+          Enter learner name to begin this assignment
+        </div>
+
+        <input
+          id="startLearnerName"
+          class="swal2-input"
+          placeholder="Learner name"
+          value="${savedName}"
+        >
+      `,
+
+      confirmButtonText: "Start Assignment",
+      cancelButtonText: "Cancel",
+      showCancelButton: true,
+      confirmButtonColor: "#2563eb",
+
+      preConfirm: () => {
+
+        const value =
+          document.getElementById("startLearnerName").value.trim();
+
+        if (!value) {
+          Swal.showValidationMessage("Learner name is required");
+          return false;
+        }
+
+        return value;
+      }
+    });
+
+  if (!learner) return;
+
+  localStorage.setItem("lastLearnerName", learner);
+
+  const sessionKey = `${id}-${learner}`;
 
   // PREVENT MULTIPLE STARTS
-  if(activeSessions[sessionKey]){
+  if (activeSessions[sessionKey]) {
 
     Swal.fire(
       "Already Started",
@@ -25258,15 +25547,11 @@ window.startAssignment = function(id){
   // START SESSION
   activeSessions[sessionKey] = {
 
-    startTime:Date.now(),
-
-    warnings:0,
-
+    startTime: Date.now(),
+    warnings: 0,
     learner,
-
-    assignmentId:id,
-
-    submitted:false
+    assignmentId: id,
+    submitted: false
   };
 
   // SUCCESS MESSAGE
@@ -25278,65 +25563,63 @@ window.startAssignment = function(id){
 
   // SHOW SUBMIT BUTTON
   const submitBtn =
-    document.getElementById(
-      `submitBtn-${assignment.id}`
-    );
+    document.getElementById(`submitBtn-${assignment.id}`);
 
-  if(submitBtn){
-
-    submitBtn.style.display =
-      "block";
+  if (submitBtn) {
+    submitBtn.style.display = "block";
   }
 
-  // ENABLE ANSWER AREAS
-  assignment.questions.forEach(
-    (q,index) => {
+  // ENABLE ANSWER AREAS + COPY/PASTE CONTROL
+  assignment.questions.forEach((q, index) => {
 
-      const textarea =
-        document.getElementById(
-          `answer-${assignment.id}-${index}`
-        );
+    const textarea =
+      document.getElementById(`answer-${assignment.id}-${index}`);
 
-      if(textarea){
+    if (textarea) {
 
-        textarea.disabled = false;
+      textarea.disabled = false;
+      textarea.style.background = "#ffffff";
+      textarea.focus();
 
-        textarea.style.background =
-          "#ffffff";
+      // =========================================
+      // COPY/PASTE CONTROL (STUDENTS ONLY)
+      // =========================================
 
-        textarea.focus();
+      if (window.userRole === "student") {
+
+        textarea.addEventListener("copy", e => e.preventDefault());
+        textarea.addEventListener("paste", e => e.preventDefault());
+        textarea.addEventListener("cut", e => e.preventDefault());
       }
     }
-  );
+  });
 
   // DISABLE START BUTTON
   const startButtons =
     document.querySelectorAll(
-      `button[onclick="startAssignment(${assignment.id})"]`
+      `button[onclick="startAssignment('${assignment.id}')"]`
     );
 
   startButtons.forEach(btn => {
 
     btn.disabled = true;
-
-    btn.innerHTML =
-      "⏳ Assignment Running";
-
-    btn.style.background =
-      "#f59e0b";
+    btn.innerHTML = "⏳ Assignment Running";
+    btn.style.background = "#f59e0b";
   });
 
   // START TIMER
-  window.startAssignmentTimer(
-    assignment,
-    learner
-  );
+  window.startAssignmentTimer(assignment, learner);
 
   // ENABLE SECURITY
-  window.enableExamSecurity(
-    sessionKey
-  );
-};// =========================================
+  window.enableExamSecurity(sessionKey);
+
+  // OPTIONAL EXAM MODE
+  if (window.enableExamMode) {
+    window.enableExamMode();
+  }
+};
+
+// =========================================
 // ASSIGNMENT TIMER
 // =========================================
 
@@ -25441,18 +25724,22 @@ window.startAssignmentTimer = function(
 // EXAM SECURITY
 // =========================================
 
+window.examSecurityEnabled = false;
+
 window.enableExamSecurity = function(
   sessionKey
 ){
+
+  if(window.examSecurityEnabled) return;
+
+  window.examSecurityEnabled = true;
 
   document.addEventListener(
     "visibilitychange",
 
     function(){
 
-      if(
-        document.hidden
-      ){
+      if(document.hidden){
 
         const session =
           activeSessions[
@@ -25463,10 +25750,7 @@ window.enableExamSecurity = function(
 
         session.warnings++;
 
-        // FIRST WARNING
-        if(
-          session.warnings === 1
-        ){
+        if(session.warnings === 1){
 
           Swal.fire({
 
@@ -25480,10 +25764,7 @@ window.enableExamSecurity = function(
           });
         }
 
-        // SECOND WARNING
-        if(
-          session.warnings >= 2
-        ){
+        if(session.warnings >= 2){
 
           delete activeSessions[
             sessionKey
@@ -25500,7 +25781,6 @@ window.enableExamSecurity = function(
 
           });
 
-          // CLOSE ASSIGNMENT
           location.reload();
         }
       }
@@ -25638,49 +25918,50 @@ window.renderCourses = function(){
         ">
 
           <!-- OPEN -->
-          <button
+         <!-- OPEN -->
+<button
 
-            onclick="
-              ${course.locked
-                ? `Swal.fire(
-                    'Locked',
-                    'This course is locked by the teacher',
-                    'warning'
-                  )`
-                : `openCourse(${course.id})`
-              }
-            "
+  onclick="
+    ${course.locked
+      ? `Swal.fire(
+          'Locked',
+          'This course is locked by the teacher',
+          'warning'
+        )`
+      : `openCourse('${course.id}')`
+    }
+  "
 
-            style="
-              background:
-                ${course.locked
-                  ? '#94a3b8'
-                  : '#2563eb'};
+  style="
+    background:
+      ${course.locked
+        ? '#94a3b8'
+        : '#2563eb'};
 
-              color:white;
+    color:white;
 
-              border:none;
+    border:none;
 
-              padding:10px 14px;
+    padding:10px 14px;
 
-              border-radius:8px;
+    border-radius:8px;
 
-              cursor:pointer;
+    cursor:pointer;
 
-              font-weight:600;
-            "
-          >
+    font-weight:600;
+  "
+>
 
-            ${course.locked
-              ? '🔒 Locked'
-              : '📖 Open Course'}
+  ${course.locked
+    ? '🔒 Locked'
+    : '📖 Open Course'}
 
-          </button>
+</button>
 
           <!-- LOCK / UNLOCK -->
           <button
 
-            onclick="toggleCourseLock(${course.id})"
+          onclick="toggleCourseLock('${course.id}')"
 
             style="
               background:
@@ -25711,8 +25992,7 @@ window.renderCourses = function(){
           <!-- EDIT -->
           <button
 
-            onclick="editCourse(${course.id})"
-
+          onclick="editCourse('${course.id}')"
             style="
               background:#2563eb;
               color:white;
@@ -25731,7 +26011,7 @@ window.renderCourses = function(){
           <!-- DELETE -->
           <button
 
-            onclick="deleteCourse(${course.id})"
+      onclick="deleteCourse('${course.id}')"
 
             style="
               background:#dc2626;
@@ -25760,30 +26040,56 @@ window.renderCourses = function(){
 // TOGGLE COURSE LOCK
 // =========================================
 
-window.toggleCourseLock = function(id){
+window.toggleCourseLock =
+async function(id){
 
-  const course =
-    courses.find(
-      c => c.id === id
+  try{
+
+    const schoolId =
+      window.schoolId ||
+      localStorage.getItem("schoolId") ||
+      localStorage.getItem("currentSchoolId");
+
+    const course =
+      courses.find(c => c.id === id);
+
+    if(!course) return;
+
+    course.locked =
+      !course.locked;
+
+    await update(
+
+      ref(
+        db,
+        `schools/${schoolId}/courses/${course.id}`
+      ),
+
+      {
+        locked:course.locked
+      }
     );
 
-  if(!course) return;
+    window.renderCourses();
 
-  course.locked =
-    !course.locked;
+    Swal.fire(
+      "Updated",
+      course.locked
+        ? "Course Locked"
+        : "Course Unlocked",
+      "success"
+    );
 
-  window.renderCourses();
+  }catch(err){
 
-  Swal.fire(
+    console.error(err);
 
-    "Updated",
-
-    course.locked
-      ? "Course Locked"
-      : "Course Unlocked",
-
-    "success"
-  );
+    Swal.fire(
+      "Error",
+      "Failed to update course",
+      "error"
+    );
+  }
 };
 
 // =========================================
@@ -25844,9 +26150,7 @@ window.openCourse = function(id){
 window.editCourse = function(id){
 
   const course =
-    courses.find(
-      c => c.id === id
-    );
+    courses.find(c => c.id === id);
 
   if(!course) return;
 
@@ -25860,83 +26164,115 @@ window.editCourse = function(id){
         id="editCourseTitle"
         class="swal2-input"
         value="${course.title}"
-        placeholder="Course Title"
       >
 
       <input
         id="editCourseTeacher"
         class="swal2-input"
         value="${course.teacher}"
-        placeholder="Teacher"
       >
 
       <input
         id="editCourseGrade"
         class="swal2-input"
         value="${course.grade}"
-        placeholder="Grade"
       >
 
       <input
         id="editCourseSubject"
         class="swal2-input"
         value="${course.subject}"
-        placeholder="Subject"
       >
 
       <textarea
         id="editCourseDescription"
         class="swal2-textarea"
-        placeholder="Description"
       >${course.description}</textarea>
 
     `,
 
     showCancelButton:true,
 
-    confirmButtonText:"Save Changes"
+    confirmButtonText:"Save"
 
-  }).then(result => {
+  }).then(async(result)=>{
 
     if(result.isConfirmed){
 
-      course.title =
-        document.getElementById(
-          "editCourseTitle"
-        ).value;
+      try{
 
-      course.teacher =
-        document.getElementById(
-          "editCourseTeacher"
-        ).value;
+        const schoolId =
+          window.schoolId ||
+          localStorage.getItem("schoolId") ||
+          localStorage.getItem("currentSchoolId");
 
-      course.grade =
-        document.getElementById(
-          "editCourseGrade"
-        ).value;
+        const updatedData = {
 
-      course.subject =
-        document.getElementById(
-          "editCourseSubject"
-        ).value;
+          title:
+            document.getElementById(
+              "editCourseTitle"
+            ).value,
 
-      course.description =
-        document.getElementById(
-          "editCourseDescription"
-        ).value;
+          teacher:
+            document.getElementById(
+              "editCourseTeacher"
+            ).value,
 
-      window.renderCourses();
+          grade:
+            document.getElementById(
+              "editCourseGrade"
+            ).value,
 
-      Swal.fire(
-        "Updated",
-        "Course updated successfully",
-        "success"
-      );
+          subject:
+            document.getElementById(
+              "editCourseSubject"
+            ).value,
+
+          description:
+            document.getElementById(
+              "editCourseDescription"
+            ).value
+        };
+
+        await update(
+
+          ref(
+            db,
+            `schools/${schoolId}/courses/${id}`
+          ),
+
+          updatedData
+        );
+
+        Object.assign(
+          course,
+          updatedData
+        );
+
+        window.renderCourses();
+
+        Swal.fire(
+          "Updated",
+          "Course updated successfully",
+          "success"
+        );
+
+      }catch(err){
+
+        console.error(err);
+
+        Swal.fire(
+          "Error",
+          "Failed to update course",
+          "error"
+        );
+      }
     }
 
   });
-
 };
+
+
 
 
 
@@ -25961,37 +26297,48 @@ window.deleteCourse = function(id){
 
     confirmButtonText:"Delete"
 
-  }).then((result) => {
+  }).then(async(result) => {
 
     if(result.isConfirmed){
 
-      // REMOVE COURSE
-      courses =
-        courses.filter(
-          course => course.id !== id
+      try{
+
+        const schoolId =
+          window.schoolId ||
+          localStorage.getItem("schoolId") ||
+          localStorage.getItem("currentSchoolId");
+
+        await remove(
+
+          ref(
+            db,
+            `schools/${schoolId}/courses/${id}`
+          )
         );
 
-      // RE-RENDER
-      window.renderCourses();
+        courses =
+          courses.filter(
+            c => c.id !== id
+          );
 
-      // UPDATE COUNTER
-      const totalCourses =
-        document.getElementById(
-          "totalCourses"
+        window.renderCourses();
+
+        Swal.fire(
+          "Deleted",
+          "Course removed successfully",
+          "success"
         );
 
-      if(totalCourses){
+      }catch(err){
 
-        totalCourses.textContent =
-          courses.length;
+        console.error(err);
+
+        Swal.fire(
+          "Error",
+          "Failed to delete course",
+          "error"
+        );
       }
-
-      // SUCCESS MESSAGE
-      Swal.fire(
-        "Deleted",
-        "Course removed successfully",
-        "success"
-      );
     }
 
   });
@@ -26028,82 +26375,291 @@ window.clearCourseForm = function(){
 };
 // =========================================
 // PUBLISH ASSIGNMENT
+// FIREBASE COMPLIANT
 // =========================================
 
-window.publishAssignment = function(){
+window.publishAssignment = async function () {
 
-  const title =
-    document.getElementById(
-      "assignmentTitle"
-    )?.value.trim();
+  try {
 
-  const deadline =
-    document.getElementById(
-      "assignmentDeadline"
-    )?.value;
+    // =====================================
+    // SCHOOL SESSION
+    // =====================================
 
-  const duration =
-    document.getElementById(
-      "assignmentDuration"
-    )?.value;
-const grade =
-  document.getElementById(
-    "assignmentGrade"
-  )?.value;
-  const instructions =
-    document.getElementById(
-      "assignmentInstructions"
-    )?.value.trim();
+    const schoolId =
+      window.schoolId ||
+      localStorage.getItem("schoolId") ||
+      localStorage.getItem("currentSchoolId") ||
+      sessionStorage.getItem("schoolId") ||
+      sessionStorage.getItem("currentSchoolId");
 
-  if(
-    !title ||
-    !deadline ||
-    !duration ||
-    !grade ||
-!instructions
-  ){
+    if (!schoolId) {
 
-    Swal.fire(
-      "Missing Fields",
-      "Complete all assignment fields",
-      "warning"
+      return Swal.fire(
+        "Access Denied",
+        "School session not found",
+        "error"
+      );
+    }
+
+    // =====================================
+    // GET FIELDS
+    // =====================================
+
+    const title =
+      document.getElementById("assignmentTitle")
+      ?.value
+      ?.trim();
+
+    const deadline =
+      document.getElementById("assignmentDeadline")
+      ?.value
+      ?.trim();
+
+    const duration =
+      document.getElementById("assignmentDuration")
+      ?.value
+      ?.trim();
+
+    const grade =
+      document.getElementById("assignmentGrade")
+      ?.value
+      ?.trim();
+
+    const instructions =
+      document.getElementById("assignmentInstructions")
+      ?.value
+      ?.trim();
+
+    // =====================================
+    // VALIDATION
+    // =====================================
+
+    if (
+      !title ||
+      !deadline ||
+      !duration ||
+      !grade ||
+      !instructions
+    ) {
+
+      console.log({
+        title,
+        deadline,
+        duration,
+        grade,
+        instructions
+      });
+
+      return Swal.fire(
+        "Missing Data",
+        "Fill all assignment fields",
+        "error"
+      );
+    }
+
+    // =====================================
+    // SPLIT QUESTIONS
+    // =====================================
+
+    const questions =
+      instructions
+        .split("===")
+        .map(q => q.trim())
+        .filter(q => q !== "");
+
+    if (!questions.length) {
+
+      return Swal.fire(
+        "No Questions",
+        "Please enter assignment questions",
+        "error"
+      );
+    }
+
+    // =====================================
+    // ASSIGNMENT ID
+    // =====================================
+
+    const assignmentId =
+      "ASS-" + Date.now();
+
+    // =====================================
+    // DATA
+    // =====================================
+
+    const assignmentData = {
+
+      id: assignmentId,
+
+      title,
+
+      deadline,
+
+      duration: Number(duration),
+
+      grade,
+
+      instructions,
+
+      questions,
+
+      createdAt: Date.now(),
+
+      schoolId,
+
+      submissions: []
+    };
+
+    // =====================================
+    // SAVE TO FIREBASE
+    // =====================================
+
+    await set(
+
+      ref(
+        db,
+        `schools/${schoolId}/assignments/${assignmentId}`
+      ),
+
+      assignmentData
     );
 
-    return;
+    // =====================================
+    // LOCAL ARRAY
+    // =====================================
+
+    assignments.push(
+      assignmentData
+    );
+
+    // =====================================
+    // REFRESH UI
+    // =====================================
+
+    if (window.renderAssignments) {
+
+      window.renderAssignments();
+    }
+
+    // =====================================
+    // RESET FORM
+    // =====================================
+
+    document.getElementById(
+      "assignmentTitle"
+    ).value = "";
+
+    document.getElementById(
+      "assignmentDeadline"
+    ).value = "";
+
+    document.getElementById(
+      "assignmentDuration"
+    ).value = "";
+
+    document.getElementById(
+      "assignmentGrade"
+    ).value = "";
+
+    document.getElementById(
+      "assignmentInstructions"
+    ).value = "";
+
+    // =====================================
+    // SUCCESS
+    // =====================================
+
+    Swal.fire(
+      "Success",
+      "Assignment published successfully",
+      "success"
+    );
+
+  } catch (err) {
+
+    console.error(
+      "PUBLISH_ASSIGNMENT_ERROR:",
+      err
+    );
+
+    Swal.fire(
+      "Error",
+      err.message ||
+      "Failed to publish assignment",
+      "error"
+    );
   }
+};
+// =========================================
+// LOAD ASSIGNMENTS
+// =========================================
 
-  const questions =
-    instructions
-      .split("===")
-      .map(q => q.trim())
-      .filter(q => q !== "");
+window.loadAssignments = async function () {
 
-  const assignment = {
+  try {
 
-    id:Date.now(),
+    const schoolId =
+      window.schoolId ||
+      localStorage.getItem("schoolId") ||
+      localStorage.getItem("currentSchoolId") ||
+      sessionStorage.getItem("schoolId") ||
+      sessionStorage.getItem("currentSchoolId");
 
-    title,
-grade,
-deadline,
-duration,
-questions,
+    if (!schoolId) return;
 
-    createdAt:
-      new Date().toLocaleString(),
+    const snapshot = await get(
+      ref(
+        db,
+        `schools/${schoolId}/assignments`
+      )
+    );
 
-    submissions:[]
-  };
+    assignments = [];
 
-  assignments.push(assignment);
+    if (snapshot.exists()) {
 
-  window.renderAssignments();
+      snapshot.forEach(child => {
 
-  Swal.fire(
-    "Published",
-    "Assignment published successfully",
-    "success"
-  );
-};// =========================================
+        assignments.push({
+
+          firebaseId: child.key,
+
+          ...child.val()
+        });
+      });
+    }
+
+    assignments.sort(
+      (a, b) =>
+        (b.createdAt || 0) -
+        (a.createdAt || 0)
+    );
+
+    window.renderAssignments();
+
+    const totalAssignments =
+      document.getElementById(
+        "totalAssignments"
+      );
+
+    if (totalAssignments) {
+
+      totalAssignments.textContent =
+        assignments.length;
+    }
+
+  } catch (error) {
+
+    console.error(
+      "LOAD_ASSIGNMENTS_ERROR:",
+      error
+    );
+  }
+};
+
+
+// =========================================
 // RENDER ASSIGNMENTS
 // =========================================
 
@@ -26230,33 +26786,11 @@ window.renderAssignments = function () {
             </div>
 
             <!-- ANSWER -->
-            <textarea
-
-              id="answer-${a.id}-${index}"
-
-              disabled
-
-              oninput="
-                unlockNextQuestion(
-                  ${a.id},
-                  ${index}
-                )
-              "
-
-              placeholder="
-Type answer here...
-              "
-
-              style="
-                width:100%;
-                min-height:120px;
-                padding:12px;
-                border-radius:10px;
-                border:1px solid #ccc;
-                background:#f1f5f9;
-              "
-
-            ></textarea>
+       <textarea
+  id="answer-${a.id}-${index}"
+  ${index !== 0 ? "disabled" : ""}
+  oninput="unlockNextQuestion('${a.id}', ${index})"
+></textarea>
 
           </div>
 
@@ -26363,7 +26897,7 @@ ${a.grade}
         ">
 
           📥 Submissions:
-          ${a.submissions.length}
+          ${(a.submissions || []).length}
 
           <br>
 
@@ -26403,7 +26937,28 @@ ${a.grade}
 
           <!-- DYNAMIC ANSWERS -->
           ${dynamicAnswersHTML}
+<!-- PROGRESS -->
+<div
 
+  id="progress-${a.id}"
+
+  style="
+    margin-top:15px;
+    padding:12px;
+    background:#eff6ff;
+    border:1px solid #bfdbfe;
+    border-radius:10px;
+    color:#1e3a8a;
+    font-weight:bold;
+    text-align:center;
+  "
+>
+
+  📘 Progress:
+  0 / ${a.questions.length}
+  Questions Answered
+
+</div>
           <!-- TIMER -->
           <div
 
@@ -26422,7 +26977,7 @@ ${a.grade}
           <!-- START BUTTON -->
           <button
 
-            onclick="startAssignment(${a.id})"
+          onclick="startAssignment('${a.id}')"
 
             ${expired ? 'disabled' : ''}
 
@@ -26460,7 +27015,7 @@ ${a.grade}
           <!-- SUBMIT BUTTON -->
           <button
 
-            onclick="submitAssignment(${a.id})"
+          onclick="submitAssignment('${a.id}')"
 
             id="submitBtn-${a.id}"
 
@@ -26505,7 +27060,7 @@ ${a.grade}
           <!-- EDIT -->
           <button
 
-            onclick="editAssignment(${a.id})"
+         onclick="editAssignment('${a.id}')"
 
             style="
               background:#2563eb;
@@ -26525,7 +27080,7 @@ ${a.grade}
           <!-- EXTEND -->
           <button
 
-            onclick="extendDeadline(${a.id})"
+           onclick="extendDeadline('${a.id}')"
 
             style="
               background:#f59e0b;
@@ -26545,8 +27100,7 @@ ${a.grade}
           <!-- DELETE -->
           <button
 
-            onclick="deleteAssignment(${a.id})"
-
+        onclick="deleteAssignment('${a.id}')"
             style="
               background:#dc2626;
               color:white;
@@ -26575,7 +27129,10 @@ ${a.grade}
             📚 Learner Submissions
           </h3>
 
-          ${renderSubmissions(a)}
+          ${renderSubmissions({
+  ...a,
+  submissions: a.submissions || []
+})}
 
         </div>
 
@@ -26586,75 +27143,328 @@ ${a.grade}
 };
 // =========================================
 // SUBMIT ASSIGNMENT
+// FIREBASE COMPLIANT
+// =========================================
+// =========================================
+// SUBMIT ASSIGNMENT
+// FIREBASE COMPLIANT
 // =========================================
 
-window.submitAssignment = function(id){
+window.submitAssignment = async function(id){
 
-  const assignment =
-    assignments.find(
-      a => a.id === id
-    );
+  try{
 
-  if(!assignment) return;
+    // =========================================
+    // FIND ASSIGNMENT
+    // =========================================
 
-  const learner =
-    document.getElementById(
-      `studentName-${id}`
-    )?.value.trim();
+    const assignment =
+      assignments.find(a => a.id === id);
 
-  if(!learner){
+    if(!assignment){
 
-    Swal.fire(
-      "Missing Name",
-      "Enter learner name",
-      "warning"
-    );
+      return Swal.fire(
+        "Error",
+        "Assignment not found",
+        "error"
+      );
+    }
 
-    return;
-  }
+    // =========================================
+    // SCHOOL SESSION
+    // =========================================
 
-  // COLLECT ANSWERS
-  let answers = [];
+    const schoolId =
+      window.schoolId ||
+      localStorage.getItem("schoolId") ||
+      localStorage.getItem("currentSchoolId") ||
+      sessionStorage.getItem("schoolId") ||
+      sessionStorage.getItem("currentSchoolId");
 
-  for(
-    let i = 0;
-    i < assignment.questions.length;
-    i++
-  ){
+    if(!schoolId){
 
-    const ans =
-      document.getElementById(
-        `answer-${id}-${i}`
-      )?.value.trim();
+      return Swal.fire(
+        "Access Denied",
+        "School session not found",
+        "error"
+      );
+    }
 
-    answers.push(ans || "");
-  }
+    // =========================================
+    // ASK LEARNER NAME
+    // =========================================
 
-  assignment.submissions.push({
+   // =========================================
+// ASK LEARNER NAME
+// SWEET ALERT VERSION
+// =========================================
 
-    id:Date.now(),
+const { value: learner } =
+  await Swal.fire({
 
-    learner,
+    title: "👨‍🎓 Learner Verification",
 
-    answers,
+    html: `
 
-    submittedAt:
-      new Date().toLocaleString(),
+      <div style="
+        text-align:left;
+        margin-bottom:10px;
+        color:#475569;
+        font-size:14px;
+      ">
+        Please enter your full learner name
+        before submitting the assignment.
+      </div>
 
-    marks:[],
+      <input
+        id="swalLearnerName"
 
-    total:0,
+        class="swal2-input"
 
-    feedback:"Pending Marking"
+        placeholder="Enter learner name"
+
+        style="
+          width:100%;
+          border-radius:10px;
+        "
+      >
+    `,
+
+    confirmButtonText:
+      "📤 Submit Assignment",
+
+    cancelButtonText:
+      "Cancel",
+
+    showCancelButton: true,
+
+    confirmButtonColor:
+      "#16a34a",
+
+    cancelButtonColor:
+      "#64748b",
+
+    focusConfirm: false,
+
+    preConfirm: () => {
+
+      const value =
+        document.getElementById(
+          "swalLearnerName"
+        ).value.trim();
+
+      if(!value){
+
+        Swal.showValidationMessage(
+          "Learner name is required"
+        );
+
+        return false;
+      }
+
+      return value;
+    }
   });
 
-  window.renderAssignments();
+// CANCELLED
+if(!learner) return;
 
-  Swal.fire(
-    "Submitted",
-    "Assignment submitted successfully",
-    "success"
-  );
+    // =========================================
+    // PREVENT DOUBLE SUBMISSION
+    // =========================================
+
+    const alreadySubmitted =
+      assignment.submissions?.find(
+        s =>
+          s.learner?.toLowerCase()
+          ===
+          learner.trim().toLowerCase()
+      );
+
+    if(alreadySubmitted){
+
+      return Swal.fire(
+        "Already Submitted",
+        "This learner already submitted this assignment",
+        "warning"
+      );
+    }
+
+    // =========================================
+    // COLLECT ANSWERS
+    // =========================================
+
+    let answers = [];
+
+    for(
+      let i = 0;
+      i < assignment.questions.length;
+      i++
+    ){
+
+      const ans =
+        document.getElementById(
+          `answer-${id}-${i}`
+        )?.value
+          ?.trim() || "";
+
+      answers.push(ans);
+    }
+
+    // =========================================
+    // SUBMISSION DATA
+    // =========================================
+
+    const submissionId =
+      "SUB-" + Date.now();
+
+    const submissionData = {
+
+      id: submissionId,
+
+      assignmentId: assignment.id,
+
+      assignmentTitle:
+        assignment.title || "",
+
+      learner:
+        learner.trim(),
+
+      answers,
+
+      submittedAt:
+        new Date().toLocaleString(),
+
+      timestamp: Date.now(),
+
+      marks: [],
+
+      total: 0,
+
+      feedback:
+        "Pending Marking",
+
+      schoolId
+    };
+
+    // =========================================
+    // SAVE TO FIREBASE
+    // =========================================
+
+    await set(
+
+      ref(
+        db,
+        `schools/${schoolId}/assignmentSubmissions/${submissionId}`
+      ),
+
+      submissionData
+    );
+
+    // =========================================
+    // LOCAL UI UPDATE
+    // =========================================
+
+    if(!assignment.submissions){
+
+      assignment.submissions = [];
+    }
+
+    assignment.submissions.push(
+      submissionData
+    );
+
+    // =========================================
+    // DISABLE SUBMIT BUTTON
+    // =========================================
+
+    const submitBtn =
+      document.getElementById(
+        `submitBtn-${id}`
+      );
+
+    if(submitBtn){
+
+      submitBtn.disabled = true;
+
+      submitBtn.innerHTML =
+        "✅ Submitted";
+
+      submitBtn.style.background =
+        "#94a3b8";
+    }
+
+    // =========================================
+    // DISABLE ANSWERS
+    // =========================================
+
+    assignment.questions.forEach(
+      (q,index) => {
+
+        const textarea =
+          document.getElementById(
+            `answer-${id}-${index}`
+          );
+
+        if(textarea){
+
+          textarea.disabled = true;
+
+          textarea.style.background =
+            "#f1f5f9";
+        }
+      }
+    );
+
+    // =========================================
+    // CLEAR ACTIVE SESSION
+    // =========================================
+
+    const sessionKey =
+      `${id}-${learner}`;
+
+    delete activeSessions[
+      sessionKey
+    ];
+
+    // =========================================
+    // SUCCESS
+    // =========================================
+
+    Swal.fire(
+
+      "Submitted",
+
+      "Assignment submitted successfully",
+
+      "success"
+    );
+
+    // =========================================
+    // REFRESH UI
+    // =========================================
+
+    window.renderAssignments();
+
+  }
+
+  catch(err){
+
+    console.error(
+      "SUBMIT_ASSIGNMENT_ERROR:",
+      err
+    );
+
+    Swal.fire(
+
+      "Error",
+
+      err.message ||
+      "Failed to submit assignment",
+
+      "error"
+    );
+  }
 };
 // =========================================
 // RENDER SUBMISSIONS
@@ -26700,29 +27510,59 @@ window.renderSubmissions = function(a){
   margin-top:10px;
 ">
 
-  ${sub.answers.map((ans,index)=>`
+${sub.answers.map((ans,index)=>`
 
+  <div style="
+    margin-bottom:18px;
+    padding:14px;
+    background:#f8fafc;
+    border-radius:12px;
+    border:1px solid #e2e8f0;
+  ">
+
+    <!-- QUESTION -->
     <div style="
-      margin-bottom:15px;
-      padding:12px;
-      background:#f8fafc;
-      border-radius:10px;
+      font-weight:bold;
+      color:#0f172a;
+      margin-bottom:8px;
     ">
-
-      <b>
-        Answer ${index + 1}
-      </b>
-
-      <div style="
-        margin-top:8px;
-        line-height:1.7;
-      ">
-        ${ans || "No Answer"}
-      </div>
-
+      ❓ Question ${index + 1}
     </div>
 
-  `).join("")}
+    <div style="
+      background:#ffffff;
+      padding:12px;
+      border-radius:8px;
+      line-height:1.7;
+      margin-bottom:12px;
+      border-left:4px solid #2563eb;
+    ">
+      ${a.questions[index] || "Question Missing"}
+    </div>
+
+    <!-- ANSWER -->
+    <div style="
+      font-weight:bold;
+      color:#16a34a;
+      margin-bottom:8px;
+    ">
+      ✍ Learner Answer
+    </div>
+
+    <div style="
+      background:#ffffff;
+      padding:12px;
+      border-radius:8px;
+      line-height:1.7;
+      border-left:4px solid #16a34a;
+      white-space:pre-wrap;
+    ">
+      ${ans || "No Answer"}
+    </div>
+
+  </div>
+
+`).join("")}
 
 </div>
 
@@ -26733,7 +27573,7 @@ window.renderSubmissions = function(a){
           font-weight:bold;
         ">
           Marks:
-          ${sub.marks ?? "Not Marked"}
+          ${sub.marks ? sub.marks : "Not Marked"}
         </div>
 
         <!-- FEEDBACK -->
@@ -26781,13 +27621,12 @@ window.renderSubmissions = function(a){
           >
 
           <button
-            onclick="
-              markSubmission(
-                ${a.id},
-                ${sub.id}
-              )
-            "
-
+        onclick="
+  markSubmission(
+    '${a.id}',
+    '${sub.id}'
+  )
+"
             style="
               background:#16a34a;
               color:white;
@@ -26814,53 +27653,88 @@ window.renderSubmissions = function(a){
 // MARK SUBMISSION
 // =========================================
 
-window.markSubmission = function(
+window.markSubmission =
+async function(
   assignmentId,
   submissionId
 ){
 
-  const assignment =
-    assignments.find(
-      a => a.id === assignmentId
+  try{
+
+    const schoolId =
+      window.schoolId ||
+      localStorage.getItem("schoolId") ||
+      localStorage.getItem("currentSchoolId");
+
+    const marks =
+      document.getElementById(
+        `marks-${submissionId}`
+      )?.value;
+
+    const feedback =
+      document.getElementById(
+        `feedback-${submissionId}`
+      )?.value;
+
+    await update(
+
+      ref(
+        db,
+        `schools/${schoolId}/assignmentSubmissions/${submissionId}`
+      ),
+
+      {
+        marks,
+        feedback
+      }
     );
 
-  if(!assignment) return;
+    const assignment =
+      assignments.find(
+        a => a.id === assignmentId
+      );
 
-  const submission =
-    assignment.submissions.find(
-      s => s.id === submissionId
+    if(assignment){
+
+      const submission =
+        assignment.submissions.find(
+          s => s.id === submissionId
+        );
+
+      if(submission){
+
+        submission.marks =
+          marks;
+
+        submission.feedback =
+          feedback;
+      }
+    }
+
+    window.renderAssignments();
+
+    Swal.fire(
+      "Marked",
+      "Results returned successfully",
+      "success"
     );
 
-  if(!submission) return;
+  }catch(err){
 
-  const marks =
-    document.getElementById(
-      `marks-${submissionId}`
-    )?.value;
+    console.error(err);
 
-  const feedback =
-    document.getElementById(
-      `feedback-${submissionId}`
-    )?.value;
-
-  submission.marks = marks;
-
-  submission.feedback = feedback;
-
-  window.renderAssignments();
-
-  Swal.fire(
-    "Marked",
-    "Results returned to learner",
-    "success"
-  );
+    Swal.fire(
+      "Error",
+      "Failed to mark submission",
+      "error"
+    );
+  }
 };
-
 // =========================================
 // EXTEND DEADLINE
 // =========================================
-
-window.extendDeadline = function(id){
+window.extendDeadline =
+function(id){
 
   Swal.fire({
 
@@ -26868,31 +27742,59 @@ window.extendDeadline = function(id){
 
     input:"date",
 
-    showCancelButton:true,
+    showCancelButton:true
 
-    confirmButtonText:"Update"
-
-  }).then(result => {
+  }).then(async(result)=>{
 
     if(result.isConfirmed){
 
-      const assignment =
-        assignments.find(
-          a => a.id === id
+      try{
+
+        const schoolId =
+          window.schoolId ||
+          localStorage.getItem("schoolId") ||
+          localStorage.getItem("currentSchoolId");
+
+        const assignment =
+          assignments.find(
+            a => a.id === id
+          );
+
+        if(!assignment) return;
+
+        assignment.deadline =
+          result.value;
+
+        await update(
+
+          ref(
+            db,
+            `schools/${schoolId}/assignments/${id}`
+          ),
+
+          {
+            deadline:result.value
+          }
         );
 
-      if(!assignment) return;
+        window.renderAssignments();
 
-      assignment.deadline =
-        result.value;
+        Swal.fire(
+          "Updated",
+          "Deadline extended",
+          "success"
+        );
 
-      window.renderAssignments();
+      }catch(err){
 
-      Swal.fire(
-        "Updated",
-        "Deadline extended",
-        "success"
-      );
+        console.error(err);
+
+        Swal.fire(
+          "Error",
+          "Failed to extend deadline",
+          "error"
+        );
+      }
     }
 
   });
@@ -26903,58 +27805,68 @@ window.extendDeadline = function(id){
 // DELETE ASSIGNMENT
 // =========================================
 
-window.deleteAssignment = function(id){
+window.deleteAssignment =
+function(id){
 
   Swal.fire({
 
     title:"Delete Assignment?",
 
-    text:"This action cannot be undone.",
-
     icon:"warning",
 
     showCancelButton:true,
 
-    confirmButtonColor:"#dc2626",
+    confirmButtonText:"Delete",
 
-    confirmButtonText:"Delete"
+    confirmButtonColor:"#dc2626"
 
-  }).then((result) => {
+  }).then(async(result)=>{
 
     if(result.isConfirmed){
 
-      // REMOVE
-      assignments =
-        assignments.filter(
-          a => a.id !== id
+      try{
+
+        const schoolId =
+          window.schoolId ||
+          localStorage.getItem("schoolId") ||
+          localStorage.getItem("currentSchoolId");
+
+        await remove(
+
+          ref(
+            db,
+            `schools/${schoolId}/assignments/${id}`
+          )
         );
 
-      // RE-RENDER
-      window.renderAssignments();
+        assignments =
+          assignments.filter(
+            a => a.id !== id
+          );
 
-      // UPDATE COUNTER
-      const totalAssignments =
-        document.getElementById(
-          "totalAssignments"
+        window.renderAssignments();
+
+        Swal.fire(
+          "Deleted",
+          "Assignment removed",
+          "success"
         );
 
-      if(totalAssignments){
+      }catch(err){
 
-        totalAssignments.textContent =
-          assignments.length;
+        console.error(err);
+
+        Swal.fire(
+          "Error",
+          "Failed to delete assignment",
+          "error"
+        );
       }
-
-      // SUCCESS
-      Swal.fire(
-        "Deleted",
-        "Assignment removed successfully",
-        "success"
-      );
     }
 
   });
-
 };
+
 
 // =========================================
 // CLEAR ASSIGNMENT FORM
@@ -27040,41 +27952,29 @@ window.editAssignment = function(id){
 
       <input
         id="editTitle"
-
         class="swal2-input"
-
         value="${assignment.title}"
-
         placeholder="Assignment Title"
       >
 
       <input
         id="editDeadline"
-
         type="date"
-
         class="swal2-input"
-
         value="${assignment.deadline}"
       >
 
       <input
         id="editDuration"
-
         type="number"
-
         class="swal2-input"
-
         value="${assignment.duration}"
-
         placeholder="Duration"
       >
 
       <textarea
         id="editQuestions"
-
         class="swal2-textarea"
-
         placeholder="
 Separate questions using ===
         "
@@ -27086,43 +27986,83 @@ Separate questions using ===
 
     confirmButtonText:"Save Changes"
 
-  }).then(result => {
+  }).then(async(result) => {
 
     if(result.isConfirmed){
 
-      assignment.title =
-        document.getElementById(
-          "editTitle"
-        ).value;
+      try{
 
-      assignment.deadline =
-        document.getElementById(
-          "editDeadline"
-        ).value;
+        const schoolId =
+          window.schoolId ||
+          localStorage.getItem("schoolId") ||
+          localStorage.getItem("currentSchoolId") ||
+          sessionStorage.getItem("schoolId") ||
+          sessionStorage.getItem("currentSchoolId");
 
-      assignment.duration =
-        Number(
-          document.getElementById(
-            "editDuration"
-          ).value
+        const updatedData = {
+
+          title:
+            document.getElementById(
+              "editTitle"
+            ).value.trim(),
+
+          deadline:
+            document.getElementById(
+              "editDeadline"
+            ).value,
+
+          duration:Number(
+            document.getElementById(
+              "editDuration"
+            ).value
+          ),
+
+          questions:
+            document.getElementById(
+              "editQuestions"
+            )
+            .value
+            .split("===")
+            .map(q => q.trim())
+            .filter(q => q !== "")
+        };
+
+        updatedData.instructions =
+          updatedData.questions.join(" === ");
+
+        await update(
+
+          ref(
+            db,
+            `schools/${schoolId}/assignments/${id}`
+          ),
+
+          updatedData
         );
 
-      assignment.questions =
-        document.getElementById(
-          "editQuestions"
-        )
-        .value
-        .split("===")
-        .map(q => q.trim())
-        .filter(q => q !== "");
+        Object.assign(
+          assignment,
+          updatedData
+        );
 
-      window.renderAssignments();
+        window.renderAssignments();
 
-      Swal.fire(
-        "Updated",
-        "Assignment updated successfully",
-        "success"
-      );
+        Swal.fire(
+          "Updated",
+          "Assignment updated successfully",
+          "success"
+        );
+
+      }catch(err){
+
+        console.error(err);
+
+        Swal.fire(
+          "Error",
+          "Failed to update assignment",
+          "error"
+        );
+      }
     }
 
   });
@@ -27132,31 +28072,129 @@ Separate questions using ===
 // UNLOCK NEXT QUESTION
 // =========================================
 
+// =========================================
+// UNLOCK NEXT QUESTION (AUTO FLOW)
+// =========================================
+// =========================================
+// UNLOCK NEXT QUESTION + PROGRESS
+// =========================================
+
 window.unlockNextQuestion = function(
   assignmentId,
   currentIndex
 ){
 
-  const currentAnswer =
+  const current =
     document.getElementById(
       `answer-${assignmentId}-${currentIndex}`
     );
 
-  if(
-    !currentAnswer ||
-    currentAnswer.value.trim() === ""
-  ) return;
+  if(!current) return;
 
-  // NEXT QUESTION
-  const nextQuestion =
-    document.getElementById(
-      `questionBlock-${assignmentId}-${currentIndex + 1}`
+  // REMOVE EXTRA SPACES
+  const value =
+    current.value.trim();
+
+  if(value === "") return;
+
+  // =========================================
+  // COUNT ANSWERED QUESTIONS
+  // =========================================
+
+  const allAnswers =
+    document.querySelectorAll(
+      `[id^="answer-${assignmentId}-"]`
     );
 
-  if(nextQuestion){
+  let answered = 0;
 
-    nextQuestion.style.display =
+  allAnswers.forEach(area => {
+
+    if(area.value.trim() !== ""){
+
+      answered++;
+    }
+  });
+
+  // =========================================
+  // UPDATE PROGRESS DISPLAY
+  // =========================================
+
+  const progress =
+    document.getElementById(
+      `progress-${assignmentId}`
+    );
+
+  if(progress){
+
+    progress.innerHTML = `
+      📘 Progress:
+      ${answered} /
+      ${allAnswers.length}
+      Questions Answered
+    `;
+
+    // COMPLETE STATE
+    if(answered === allAnswers.length){
+
+      progress.style.background =
+        "#dcfce7";
+
+      progress.style.border =
+        "1px solid #86efac";
+
+      progress.style.color =
+        "#166534";
+
+      progress.innerHTML = `
+        ✅ All Questions Answered
+        (${answered}/${allAnswers.length})
+      `;
+    }
+  }
+
+  // =========================================
+  // NEXT QUESTION
+  // =========================================
+
+  const nextIndex =
+    currentIndex + 1;
+
+  const nextBlock =
+    document.getElementById(
+      `questionBlock-${assignmentId}-${nextIndex}`
+    );
+
+  const nextAnswer =
+    document.getElementById(
+      `answer-${assignmentId}-${nextIndex}`
+    );
+
+  // SHOW NEXT QUESTION
+  if(nextBlock && nextAnswer){
+
+    nextBlock.style.display =
       "block";
+
+    nextAnswer.disabled = false;
+
+    nextAnswer.style.background =
+      "#ffffff";
+
+    // AUTO MOVE
+    setTimeout(() => {
+
+      nextAnswer.focus();
+
+      nextBlock.scrollIntoView({
+
+        behavior:"smooth",
+
+        block:"center"
+
+      });
+
+    },150);
   }
 };
 
