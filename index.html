@@ -4248,7 +4248,9 @@ background:rgba(0,0,0,0.5);justify-content:center;align-items:center;">
     </button>
 
   </div>
-
+<button onclick="viewTransportRevenue()">
+  View Transport Revenue
+</button>
   <!-- LIST -->
   <div
     id="transportList"
@@ -4264,96 +4266,125 @@ background:rgba(0,0,0,0.5);justify-content:center;align-items:center;">
 </div>
 
 
-<!-- ================= HOSTEL MODULE ================= -->
-<div id="hostel" style="display:none;padding:20px;">
+<!-- =========================================================
+   🔥 ADVANCED HOSTEL MANAGEMENT SYSTEM
+========================================================= -->
+
+<div id="hostel" class="section" style="display:none; padding:20px;">
 
   <h2 style="
-    margin-bottom:20px;
-    color:#0f172a;
-    font-size:24px;
-    font-weight:700;
+    background:#0f172a;
+    color:white;
+    padding:15px;
+    border-radius:12px;
   ">
-    🏨 Hostel Management
+    🏨 Advanced Hostel Management
   </h2>
 
-  <!-- FORM -->
-  <div style="
-    background:white;
-    padding:20px;
-    border-radius:14px;
-    box-shadow:0 4px 15px rgba(0,0,0,0.08);
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:15px;
-    margin-bottom:25px;
-  ">
+  <!-- ================= DASHBOARD ================= -->
 
-    <input
-      id="roomNumber"
-      placeholder="Room Number"
-      style="
-        padding:12px;
-        border:1px solid #cbd5e1;
-        border-radius:10px;
-        outline:none;
-      "
-    >
+  <div class="report-grid">
 
-    <input
-      id="capacity"
-      type="number"
-      placeholder="Capacity"
-      style="
-        padding:12px;
-        border:1px solid #cbd5e1;
-        border-radius:10px;
-        outline:none;
-      "
-    >
+    <div class="report-card">
+      <div class="report-title">🏠 Total Rooms</div>
+      <div class="report-value" id="hostelTotalRooms">0</div>
+    </div>
 
-    <select
-      id="hostelStudent"
-      style="
-        padding:12px;
-        border:1px solid #cbd5e1;
-        border-radius:10px;
-        outline:none;
-        background:white;
-      "
-    >
-      <option value="">Assign Student</option>
-    </select>
+    <div class="report-card">
+      <div class="report-title">🛏️ Occupied Beds</div>
+      <div class="report-value" id="occupiedBeds">0</div>
+    </div>
 
-    <button
-      onclick="addHostel()"
-      style="
-        background:#2563eb;
-        color:white;
-        border:none;
-        border-radius:10px;
-        padding:12px;
-        cursor:pointer;
-        font-weight:600;
-      "
-    >
-      ➕ Add Room
-    </button>
+    <div class="report-card">
+      <div class="report-title">🟢 Available Beds</div>
+      <div class="report-value" id="availableBeds">0</div>
+    </div>
+
+    <div class="report-card">
+      <div class="report-title">👨 Boys</div>
+      <div class="report-value" id="boysCount">0</div>
+    </div>
+
+    <div class="report-card">
+      <div class="report-title">👩 Girls</div>
+      <div class="report-value" id="girlsCount">0</div>
+    </div>
 
   </div>
 
-  <!-- LIST -->
-  <div
-    id="hostelList"
+  <br>
+
+  <!-- ================= HOSTEL FORM ================= -->
+
+  <div style="
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    margin-bottom:20px;
+  ">
+
+    <h3>➕ Allocate Hostel Room</h3>
+
+    <input id="roomNumber" placeholder="Room Number">
+
+    <input id="bedNumber" placeholder="Bed Number">
+
+    <input id="capacity" type="number" placeholder="Room Capacity">
+
+    <!-- HOSTEL TYPE -->
+    <select id="hostelType">
+      <option value="">Select Hostel Type</option>
+      <option value="Boys">👨 Boys Hostel</option>
+      <option value="Girls">👩 Girls Hostel</option>
+    </select>
+
+    <!-- GRADE -->
+    <select id="hostelGrade" onchange="loadHostelLearners()">
+      <option value="">Select Grade</option>
+    </select>
+
+    <!-- LEARNER -->
+    <select id="hostelStudent">
+      <option value="">Select Learner</option>
+    </select>
+
+    <!-- WARDEN -->
+    <input id="hostelWarden" placeholder="Hostel Warden">
+
+    <!-- FEES -->
+    <input id="hostelFee" type="number" placeholder="Hostel Fee">
+
+    <button onclick="addHostel()" class="primary-btn">
+      ➕ Allocate Room
+    </button>
+
+  </div>
+<button onclick="viewGradeAttendanceHistory(hostelGrade.value)">
+  View Grade History
+</button>
+  <!-- ================= SEARCH ================= -->
+
+  <input
+    type="text"
+    id="hostelSearch"
+    placeholder="🔍 Search learner, room or grade..."
+    onkeyup="loadHostel()"
     style="
-      background:white;
-      border-radius:14px;
-      padding:15px;
-      box-shadow:0 4px 15px rgba(0,0,0,0.08);
-      overflow-x:auto;
+      width:100%;
+      padding:12px;
+      border-radius:8px;
+      border:1px solid #ccc;
+      margin-bottom:15px;
     "
-  ></div>
+  >
+
+  <!-- ================= TABLE ================= -->
+
+  <div id="hostelList"></div>
 
 </div>
+
+
 
 
 <!-- ================= INVENTORY MODULE ================= -->
@@ -8417,7 +8448,8 @@ function loadStudents() {
       loadFeeFilterGrades();
       loadGradesFromStudents();
       loadAttendanceGrades();
-
+populateHostelGrades();
+populateHostelLearners();
       updateDashboardFromStudents();
 
       return;
@@ -22947,8 +22979,10 @@ const deleteBtnStyle = `
 `;
 
 /* =========================================================
-   TRANSPORT MANAGEMENT
+   TRANSPORT MANAGEMENT (FULL ERP UPGRADE)
 ========================================================= */
+
+/* ================= ADD TRANSPORT ================= */
 
 window.addTransport = async function () {
 
@@ -22961,11 +22995,7 @@ window.addTransport = async function () {
       return;
     }
 
-    if (
-      !busName.value ||
-      !driverName.value ||
-      !route.value
-    ) {
+    if (!busName.value || !driverName.value || !route.value) {
       Swal.fire("Missing Fields", "Fill all transport fields", "warning");
       return;
     }
@@ -22973,10 +23003,26 @@ window.addTransport = async function () {
     openSweetLoader("Saving Transport...");
 
     const data = {
+
       busName: busName.value,
       driverName: driverName.value,
       route: route.value,
-      fuelLog: fuelLog.value || 0,
+
+      capacity: Number(capacity.value || 0),
+      fuelPerTrip: Number(fuelLog.value || 0),
+
+      status: "Active",
+      lastUpdated: Date.now(),
+
+      students: [],
+
+      trips: {
+        morning: [],
+        evening: []
+      },
+
+      fuelLogHistory: [],
+
       createdAt: Date.now()
     };
 
@@ -22990,6 +23036,7 @@ window.addTransport = async function () {
     driverName.value = "";
     route.value = "";
     fuelLog.value = "";
+    capacity.value = "";
 
   } catch (error) {
 
@@ -22997,12 +23044,89 @@ window.addTransport = async function () {
 
     closeSweetLoader();
 
-    Swal.fire(
-      "Error",
-      error.message || "Failed to save transport",
-      "error"
-    );
+    Swal.fire("Error", error.message || "Failed to save transport", "error");
   }
+};
+
+/* ================= LOG TRIP ================= */
+window.logTrip = async function (busId, type) {
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  const { value: formValues } = await Swal.fire({
+
+    title: `${type.toUpperCase()} Trip Log`,
+
+    html: `
+      <div style="text-align:left">
+
+        <label style="font-size:12px;">Fuel Used (Litres)</label>
+        <input id="swalFuel" type="number"
+          class="swal2-input"
+          placeholder="e.g. 20"
+        />
+
+        <label style="font-size:12px;">Notes (optional)</label>
+        <input id="swalNotes" type="text"
+          class="swal2-input"
+          placeholder="e.g. smooth trip / delays"
+        />
+
+      </div>
+    `,
+
+    focusConfirm: false,
+    showCancelButton: true,
+    confirmButtonText: "Save Trip",
+    confirmButtonColor: "#16a34a",
+
+    preConfirm: () => {
+
+      const fuelUsed = document.getElementById("swalFuel").value;
+      const notes = document.getElementById("swalNotes").value;
+
+      if (!fuelUsed || isNaN(fuelUsed) || Number(fuelUsed) <= 0) {
+        Swal.showValidationMessage("Enter valid fuel amount");
+        return false;
+      }
+
+      return {
+        fuelUsed: Number(fuelUsed),
+        notes: notes || ""
+      };
+    }
+
+  });
+
+  if (!formValues) return;
+
+  const trip = {
+    date: new Date().toISOString().split("T")[0],
+    time: new Date().toLocaleTimeString(),
+    fuelUsed: formValues.fuelUsed,
+    notes: formValues.notes
+  };
+
+  const path = `transport/${schoolId}/${busId}/trips/${type}`;
+
+  const snap = await get(ref(db, path));
+  const data = snap.exists() ? snap.val() : [];
+
+  data.push(trip);
+
+  await set(ref(db, path), data);
+
+  await update(ref(db, `transport/${schoolId}/${busId}`), {
+    lastUpdated: Date.now()
+  });
+
+  Swal.fire({
+    icon: "success",
+    title: "Trip Logged",
+    text: `${type} trip saved successfully`,
+    timer: 1500,
+    showConfirmButton: false
+  });
 };
 
 window.loadTransport = function () {
@@ -23014,27 +23138,40 @@ window.loadTransport = function () {
     let html = "";
 
     if (!snap.exists()) {
-
-      html = `
-        <div style="padding:20px;color:gray;">
-          No transport records found
-        </div>
-      `;
-
-      transportList.innerHTML = html;
+      transportList.innerHTML = `
+        <div style="
+          padding:20px;
+          text-align:center;
+          color:#64748b;
+          font-size:14px;
+        ">
+          🚫 No transport records found
+        </div>`;
       return;
     }
 
     html += `
-      <div style="overflow-x:auto;">
-      <table style="${tableStyle}">
-        <tr>
-          <th style="${thStyle}">No</th>
-          <th style="${thStyle}">Bus</th>
-          <th style="${thStyle}">Driver</th>
-          <th style="${thStyle}">Route</th>
-          <th style="${thStyle}">Fuel</th>
-          <th style="${thStyle}">Action</th>
+      <div style="overflow-x:auto;padding:10px;">
+
+      <table style="
+        width:100%;
+        border-collapse:separate;
+        border-spacing:0 10px;
+        font-family:Arial;
+        font-size:13px;
+      ">
+
+        <tr style="color:#64748b;text-align:left;font-size:12px;">
+          <th>No</th>
+          <th>Bus</th>
+          <th>Driver</th>
+          <th>Route</th>
+          <th>Fuel</th>
+          <th>Capacity</th>
+          <th>Status</th>
+          <th>Students</th>
+          <th>Trips</th>
+          <th>Actions</th>
         </tr>
     `;
 
@@ -23045,19 +23182,180 @@ window.loadTransport = function () {
       const d = child.val();
       const key = child.key;
 
+      const statusColor =
+        d.status === "Active" ? "#16a34a"
+        : d.status === "Maintenance" ? "#f59e0b"
+        : "#ef4444";
+
       html += `
-        <tr>
-          <td style="${tdStyle}">${i++}</td>
-          <td style="${tdStyle}">${d.busName}</td>
-          <td style="${tdStyle}">${d.driverName}</td>
-          <td style="${tdStyle}">${d.route}</td>
-          <td style="${tdStyle}">${d.fuelLog} L</td>
-          <td style="${tdStyle}">
+        <tr style="
+          background:white;
+          box-shadow:0 2px 8px rgba(0,0,0,0.05);
+          border-radius:12px;
+        ">
+
+          <td style="padding:12px 10px;">${i++}</td>
+
+          <td style="padding:12px 10px;font-weight:600;color:#111827;">
+            🚌 ${d.busName}
+          </td>
+
+          <td style="padding:12px 10px;color:#374151;">
+            👨‍✈️ ${d.driverName}
+          </td>
+
+          <td style="padding:12px 10px;color:#374151;">
+            📍 ${d.route}
+          </td>
+
+          <td style="padding:12px 10px;">
+            ⛽ ${d.fuelPerTrip || 0} L
+          </td>
+
+          <td style="padding:12px 10px;">
+            ${d.capacity || 0}
+          </td>
+
+          <!-- ================= STATUS ================= -->
+          <td style="padding:12px 10px;">
+
+            <div style="
+              display:inline-block;
+              background:${statusColor};
+              color:white;
+              padding:4px 10px;
+              border-radius:999px;
+              font-size:11px;
+              margin-bottom:5px;
+            ">
+              ${d.status || "Active"}
+            </div>
+
+            <select onchange="updateTransportStatus('${key}', this.value)"
+              style="
+                display:block;
+                margin-top:5px;
+                padding:4px;
+                border-radius:6px;
+                font-size:11px;
+                border:1px solid #e5e7eb;
+              ">
+              <option ${d.status === "Active" ? "selected" : ""}>Active</option>
+              <option ${d.status === "Maintenance" ? "selected" : ""}>Maintenance</option>
+              <option ${d.status === "Offline" ? "selected" : ""}>Offline</option>
+            </select>
+
+          </td>
+
+          <!-- ================= STUDENTS ================= -->
+          <td style="padding:12px 10px;">
+
+            <div style="
+              display:inline-block;
+              background:#f1f5f9;
+              padding:4px 10px;
+              border-radius:999px;
+              font-size:12px;
+            ">
+              ${(d.students || []).length} learners
+            </div>
+
+            <button onclick="viewBusStudents('${key}')"
+              style="
+                margin-top:6px;
+                display:block;
+                background:#6366f1;
+                color:white;
+                border:none;
+                padding:4px 8px;
+                border-radius:6px;
+                font-size:11px;
+                cursor:pointer;
+              ">
+              View
+            </button>
+
+          </td>
+
+          <!-- ================= TRIPS ================= -->
+          <td style="padding:12px 10px;">
+
+            <button onclick="logTrip('${key}', 'morning')"
+              style="
+                background:#3b82f6;
+                color:white;
+                border:none;
+                padding:4px 8px;
+                border-radius:6px;
+                font-size:11px;
+                margin-bottom:5px;
+                cursor:pointer;
+              ">
+              Morning
+            </button>
+
+            <button onclick="logTrip('${key}', 'evening')"
+              style="
+                background:#8b5cf6;
+                color:white;
+                border:none;
+                padding:4px 8px;
+                border-radius:6px;
+                font-size:11px;
+                cursor:pointer;
+              ">
+              Evening
+            </button>
+
+          </td>
+
+          <!-- ================= ACTIONS ================= -->
+          <td style="padding:12px 10px;">
+
+            <button onclick="assignStudentToBus('${key}')"
+              style="
+                background:#16a34a;
+                color:white;
+                border:none;
+                padding:5px 10px;
+                border-radius:6px;
+                font-size:11px;
+                margin-bottom:5px;
+                cursor:pointer;
+                display:block;
+              ">
+              + Add Learner
+            </button>
+<button onclick="updateBusCapacity('${key}')"
+  style="
+    background:#0ea5e9;
+    color:white;
+    border:none;
+    padding:5px 8px;
+    border-radius:6px;
+    font-size:11px;
+    margin-bottom:5px;
+    cursor:pointer;
+    display:block;
+  ">
+  Set Capacity
+</button>
             <button onclick="deleteTransport('${key}')"
-              style="${deleteBtnStyle}">
+              style="
+                background:#ef4444;
+                color:white;
+                border:none;
+                padding:5px 10px;
+                border-radius:6px;
+                font-size:11px;
+                cursor:pointer;
+                display:block;
+              ">
               Delete
             </button>
+
           </td>
+
         </tr>
       `;
     });
@@ -23067,6 +23365,283 @@ window.loadTransport = function () {
     transportList.innerHTML = html;
   });
 };
+window.assignStudentToBus = async function (busId) {
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  if (!allStudents || allStudents.length === 0) {
+    Swal.fire("Error", "No students loaded", "error");
+    return;
+  }
+
+  const busRef = ref(db, `transport/${schoolId}/${busId}`);
+  const snap = await get(busRef);
+
+  if (!snap.exists()) return;
+
+  const bus = snap.val();
+
+  // ================= SAFE DATA =================
+  const capacity = Number(bus.capacity ?? 0);
+
+  const currentStudents = Array.isArray(bus.students)
+    ? bus.students
+    : [];
+
+  // ================= REMAINING SEATS =================
+  const remaining =
+    capacity > 0
+      ? capacity - currentStudents.length
+      : "∞";
+
+  // ================= BUILD GRADE LIST =================
+  const grades = [...new Set(allStudents.map(s =>
+    (s.grade || s.class || s.studentGrade || "").trim()
+  ))].filter(Boolean);
+
+  const gradeOptions = grades.map(g =>
+    `<option value="${g}">${g}</option>`
+  ).join("");
+
+  // ================= SWEET ALERT MODAL =================
+  const { value: form } = await Swal.fire({
+
+    title: "Assign Learner to Bus",
+
+    html: `
+      <div style="text-align:left">
+
+        <!-- ================= BUS STATUS ================= -->
+        <div style="margin-bottom:10px;font-size:13px;">
+          🚌 Capacity: <b>${capacity || "∞"}</b><br>
+          👥 Assigned: <b>${currentStudents.length}</b><br>
+          🚍 Remaining Seats: <b>${remaining}</b>
+        </div>
+
+        <!-- ================= FULLNESS BAR ================= -->
+        <div style="background:#e5e7eb;border-radius:20px;height:10px;overflow:hidden;">
+          <div style="
+            width:${capacity > 0 ? (currentStudents.length / capacity) * 100 : 0}%;
+            background:${capacity > 0 && currentStudents.length >= capacity ? 'red' : '#16a34a'};
+            height:10px;
+          "></div>
+        </div>
+
+        <hr>
+
+        <!-- ================= GRADE FILTER ================= -->
+        <label style="font-size:12px;">Select Grade</label>
+        <select id="swalGrade" class="swal2-input" style="width:100%;">
+          <option value="">-- Select Grade --</option>
+          ${gradeOptions}
+        </select>
+
+        <!-- ================= STUDENT LIST ================= -->
+        <label style="font-size:12px;margin-top:10px;">Learner</label>
+        <select id="swalStudent" class="swal2-input" style="width:100%;">
+          <option value="">-- Select Learner --</option>
+        </select>
+
+      </div>
+    `,
+
+    focusConfirm: false,
+    showCancelButton: true,
+    confirmButtonText: "Assign",
+    confirmButtonColor: "#16a34a",
+
+    didOpen: () => {
+
+      const gradeSelect = document.getElementById("swalGrade");
+      const studentSelect = document.getElementById("swalStudent");
+
+      gradeSelect.addEventListener("change", function () {
+
+        const selectedGrade = this.value;
+
+        studentSelect.innerHTML = `<option value="">-- Select Learner --</option>`;
+
+        const filtered = allStudents.filter(s =>
+          (s.grade || s.class || s.studentGrade || "").trim() === selectedGrade
+        );
+
+        filtered.forEach(s => {
+
+          const name = (s.name || s.studentName || s.fullName || "").trim();
+
+          if (!name) return;
+
+          studentSelect.innerHTML += `
+            <option value="${name}">${name}</option>
+          `;
+        });
+      });
+    },
+
+    preConfirm: () => {
+
+      const student = document.getElementById("swalStudent").value;
+
+      if (!student) {
+        Swal.showValidationMessage("Select a learner");
+        return false;
+      }
+
+      return student;
+    }
+
+  });
+
+  if (!form) return;
+
+  // ================= CAPACITY CHECK =================
+  if (capacity > 0 && currentStudents.length >= capacity) {
+
+    Swal.fire({
+      icon: "error",
+      title: "Bus Full",
+      text: "Cannot assign more learners. Capacity reached."
+    });
+
+    return;
+  }
+
+  // ================= DUPLICATE CHECK =================
+  if (currentStudents.includes(form)) {
+
+    Swal.fire({
+      icon: "warning",
+      title: "Already Assigned",
+      text: `${form} is already on this bus`
+    });
+
+    return;
+  }
+
+  // ================= UPDATE =================
+  currentStudents.push(form);
+
+  await update(busRef, {
+    students: currentStudents,
+    lastUpdated: Date.now()
+  });
+
+  Swal.fire({
+    icon: "success",
+    title: "Assigned",
+    text: `${form} added to bus`,
+    timer: 1500,
+    showConfirmButton: false
+  });
+};
+window.updateBusCapacity = async function (busId) {
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  const busRef = ref(db, `transport/${schoolId}/${busId}`);
+
+  const snap = await get(busRef);
+
+  if (!snap.exists()) return;
+
+  const bus = snap.val();
+
+  const { value: capacity } = await Swal.fire({
+    title: "Set Bus Capacity",
+    text: `Bus: ${bus.busName}`,
+
+    input: "number",
+    inputLabel: "Maximum learners allowed",
+    inputPlaceholder: "e.g 40",
+
+    showCancelButton: true,
+    confirmButtonText: "Save",
+    confirmButtonColor: "#16a34a",
+
+    inputValidator: (value) => {
+      if (!value) return "Capacity is required";
+      if (isNaN(value) || Number(value) < 1) {
+        return "Enter a valid number";
+      }
+    }
+  });
+
+  if (!capacity) return;
+
+  const newCapacity = Number(capacity);
+  const currentStudents = Array.isArray(bus.students) ? bus.students : [];
+
+  // ⚠️ Warn if new capacity is smaller than current students
+  if (newCapacity < currentStudents.length) {
+
+    const confirm = await Swal.fire({
+      icon: "warning",
+      title: "Capacity Too Low",
+      text: `This bus already has ${currentStudents.length} learners`,
+      showCancelButton: true,
+      confirmButtonText: "Force Update"
+    });
+
+    if (!confirm.isConfirmed) return;
+  }
+
+  await update(busRef, {
+    capacity: newCapacity,
+    lastUpdated: Date.now()
+  });
+
+  Swal.fire({
+    icon: "success",
+    title: "Updated",
+    text: `Bus capacity set to ${newCapacity}`,
+    timer: 1500,
+    showConfirmButton: false
+  });
+};
+window.viewBusStudents = async function (busId) {
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  const snap = await get(ref(db, `transport/${schoolId}/${busId}`));
+
+  if (!snap.exists()) {
+    Swal.fire("Error", "Bus not found", "error");
+    return;
+  }
+
+  const data = snap.val();
+  const students = data.students || [];
+
+  Swal.fire({
+    title: "Bus Learners",
+    html: `
+      <div style="text-align:left;max-height:300px;overflow:auto;">
+
+        <div style="margin-bottom:10px;font-size:13px;">
+          🚌 <b>${data.busName}</b><br>
+          👨‍✈️ Driver: ${data.driverName}<br>
+          📍 Route: ${data.route}
+        </div>
+
+        <hr>
+
+        ${
+          students.length
+            ? students.map((s, i) =>
+                `<div style="padding:6px 0;border-bottom:1px solid #eee;">
+                  ${i + 1}. ${s}
+                </div>`
+              ).join("")
+            : `<div style="color:gray;">No learners assigned</div>`
+        }
+
+      </div>
+    `,
+    width: 400,
+    confirmButtonText: "Close"
+  });
+};
+/* ================= DELETE TRANSPORT ================= */
 
 window.deleteTransport = async function (id) {
 
@@ -23091,8 +23666,336 @@ window.deleteTransport = async function (id) {
   Swal.fire("Deleted", "Transport removed", "success");
 };
 
+
+/* ================= STATUS UPDATE ================= */
+
+window.updateTransportStatus = async function (id, status) {
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  await update(ref(db, `transport/${schoolId}/${id}`), {
+    status,
+    lastUpdated: Date.now()
+  });
+
+  Swal.fire({
+    icon: "success",
+    title: "Updated",
+    text: `Transport marked as ${status}`,
+    timer: 1200,
+    showConfirmButton: false
+  });
+};
+
+window.viewTripSummary = async function (busId) {
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  const snap = await get(ref(db, `transport/${schoolId}/${busId}`));
+
+  if (!snap.exists()) return;
+
+  const d = snap.val();
+
+  const morning = d.trips?.morning?.length || 0;
+  const evening = d.trips?.evening?.length || 0;
+
+  Swal.fire({
+    title: "Trip Summary",
+    html: `
+      <div style="text-align:left">
+        🚍 Bus: ${d.busName}<br><br>
+        🌅 Morning Trips: ${morning}<br>
+        🌙 Evening Trips: ${evening}<br>
+        👨‍🎓 Students: ${(d.students || []).length}
+      </div>
+    `
+  });
+};
+window.loadTransportStats = function () {
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  onValue(ref(db, `transport/${schoolId}`), (snap) => {
+
+    let buses = 0;
+    let students = 0;
+    let fuel = 0;
+
+    snap.forEach(bus => {
+
+      const d = bus.val();
+
+      buses++;
+
+      students += (d.students || []).length;
+
+      const trips = d.trips || {};
+      const allTrips = [...(trips.morning || []), ...(trips.evening || [])];
+
+      allTrips.forEach(t => {
+        fuel += Number(t.fuelUsed || 0);
+      });
+    });
+
+    document.getElementById("transportBuses").innerText = buses;
+    document.getElementById("transportStudents").innerText = students;
+    document.getElementById("transportFuel").innerText = fuel + " L";
+  });
+};
+window.viewTransportRevenue = async function () {
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  const snap = await get(ref(db, `transport/${schoolId}`));
+
+  if (!snap.exists()) {
+    Swal.fire("No Data", "No transport records found", "info");
+    return;
+  }
+
+  let total = 0;
+
+  let html = `<div style="text-align:left;font-size:13px">`;
+
+  snap.forEach(busSnap => {
+
+    const bus = busSnap.val();
+
+    const fees = bus.fees || {};
+
+    let busTotal = 0;
+    let paid = 0;
+    let unpaid = 0;
+
+    Object.values(fees).forEach(f => {
+
+      const amount = Number(f.fee || 0);
+
+      busTotal += amount;
+
+      if (f.paid) paid++;
+      else unpaid++;
+    });
+
+    total += busTotal;
+
+    html += `
+      <div style="padding:10px;border-bottom:1px solid #eee">
+        🚌 <b>${bus.busName}</b><br>
+        💰 Total: KES ${busTotal}<br>
+        ✅ Paid: ${paid} | ❌ Pending: ${unpaid}
+      </div>
+    `;
+  });
+
+  html += `
+    <hr>
+    <b>Total Revenue: KES ${total}</b>
+  </div>`;
+
+  Swal.fire({
+    title: "Transport Revenue",
+    html,
+    width: 600
+  });
+};
+window.setTransportFee = async function (busId, studentName) {
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  const { value: fee } = await Swal.fire({
+
+    title: `Set Transport Fee`,
+    text: `Student: ${studentName}`,
+
+    input: "number",
+    inputLabel: "Monthly Transport Fee (KES)",
+    inputPlaceholder: "Enter amount",
+
+    showCancelButton: true,
+    confirmButtonText: "Save",
+    confirmButtonColor: "#16a34a",
+
+    inputValidator: (value) => {
+      if (!value) return "Fee is required";
+      if (isNaN(value) || Number(value) <= 0) {
+        return "Enter a valid amount";
+      }
+    }
+
+  });
+
+  if (!fee) return;
+
+  const path = `transport/${schoolId}/${busId}/fees`;
+
+  const snap = await get(ref(db, path));
+
+  const data = snap.exists() ? snap.val() : {};
+
+  data[studentName] = {
+    fee: Number(fee),
+    paid: false,
+    updatedAt: Date.now()
+  };
+
+  await set(ref(db, path), data);
+
+  Swal.fire({
+    icon: "success",
+    title: "Saved",
+    text: `${studentName} fee updated successfully`,
+    timer: 1500,
+    showConfirmButton: false
+  });
+};
+window.loadTransportStats = function () {
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  onValue(ref(db, `transport/${schoolId}`), (snap) => {
+
+    let buses = 0;
+    let students = 0;
+    let fuel = 0;
+
+    snap.forEach(bus => {
+
+      const d = bus.val();
+
+      buses++;
+
+      students += (d.students || []).length;
+
+      const trips = d.trips || {};
+      const allTrips = [...(trips.morning || []), ...(trips.evening || [])];
+
+      allTrips.forEach(t => {
+        fuel += Number(t.fuelUsed || 0);
+      });
+    });
+
+    document.getElementById("transportBuses").innerText = buses;
+    document.getElementById("transportStudents").innerText = students;
+    document.getElementById("transportFuel").innerText = fuel + " L";
+  });
+};
+
 /* =========================================================
-   HOSTEL MANAGEMENT
+   TERM + DATE HELPERS
+========================================================= */
+
+function getTodayDate() {
+  return new Date().toISOString().split("T")[0];
+}
+
+function getCurrentTerm() {
+  const month = new Date().getMonth() + 1;
+  if (month <= 4) return "term1";
+  if (month <= 8) return "term2";
+  return "term3";
+}
+
+/* =========================================================
+   LOAD HOSTEL GRADES
+========================================================= */
+
+window.loadHostelGrades = function () {
+
+  const hostelGrade =
+    document.getElementById("hostelGrade");
+
+  if (!hostelGrade) return;
+
+  if (!allStudents || allStudents.length === 0) {
+    setTimeout(loadHostelGrades, 300);
+    return;
+  }
+
+  const grades = [
+    ...new Set(
+      allStudents
+        .map(s =>
+          (s.grade || s.class || s.studentGrade || "").trim()
+        )
+        .filter(Boolean)
+    )
+  ];
+
+  hostelGrade.innerHTML = `<option value="">Select Grade</option>`;
+
+  grades.sort().forEach(g => {
+    hostelGrade.appendChild(new Option(g, g));
+  });
+
+  setTimeout(() => {
+    if (typeof loadHostelLearners === "function") {
+      loadHostelLearners();
+    }
+  }, 200);
+};
+
+/* =========================================================
+   LOAD HOSTEL LEARNERS
+========================================================= */
+
+window.loadHostelLearners = function () {
+
+  const hostelGrade =
+    document.getElementById("hostelGrade");
+
+  const hostelStudent =
+    document.getElementById("hostelStudent");
+
+  if (!hostelGrade || !hostelStudent) return;
+
+  if (!allStudents || allStudents.length === 0) {
+    setTimeout(loadHostelLearners, 300);
+    return;
+  }
+
+  const selectedGrade = hostelGrade.value;
+
+  hostelStudent.innerHTML = `<option value="">Select Learner</option>`;
+
+  if (!selectedGrade) return;
+
+  const learners = allStudents.filter(s => {
+    const grade = (s.grade || s.class || s.studentGrade || "").trim();
+    return grade === selectedGrade;
+  });
+
+  learners.sort((a, b) => {
+    const A = (a.name || a.studentName || a.fullName || "").toLowerCase();
+    const B = (b.name || b.studentName || b.fullName || "").toLowerCase();
+    return A.localeCompare(B);
+  });
+
+  learners.forEach(s => {
+    const name = (s.name || s.studentName || s.fullName || "").trim();
+    if (!name) return;
+    hostelStudent.appendChild(new Option(name, name));
+  });
+};
+
+/* =========================================================
+   AUTO INIT
+========================================================= */
+
+window.addEventListener("DOMContentLoaded", () => {
+
+  loadHostelGrades();
+  loadHostel();
+
+  const hostelGrade = document.getElementById("hostelGrade");
+  if (hostelGrade) {
+    hostelGrade.addEventListener("change", loadHostelLearners);
+  }
+});
+
+/* =========================================================
+   ADD HOSTEL
 ========================================================= */
 
 window.addHostel = async function () {
@@ -23101,23 +24004,35 @@ window.addHostel = async function () {
 
     const schoolId = localStorage.getItem("schoolId");
 
-    if (!roomNumber.value || !capacity.value) {
-
-      Swal.fire(
-        "Missing Fields",
-        "Fill all hostel fields",
-        "warning"
-      );
-
+    if (
+      !roomNumber.value ||
+      !bedNumber.value ||
+      !capacity.value ||
+      !hostelType.value ||
+      !hostelGrade.value ||
+      !hostelStudent.value
+    ) {
+      Swal.fire("Missing Fields", "Please fill all fields", "warning");
       return;
     }
 
-    openSweetLoader("Saving Hostel Room...");
+    openSweetLoader("Allocating Room...");
 
     const data = {
+
       roomNumber: roomNumber.value,
+      bedNumber: bedNumber.value,
       capacity: capacity.value,
-      student: hostelStudent.value || "Not Assigned",
+      hostelType: hostelType.value,
+      grade: hostelGrade.value,
+      learner: hostelStudent.value,
+      warden: hostelWarden.value || "N/A",
+      hostelFee: hostelFee.value || 0,
+
+      // default structure (now upgraded)
+      nightAttendance: {},
+      discipline: "Good",
+
       createdAt: Date.now()
     };
 
@@ -23125,20 +24040,27 @@ window.addHostel = async function () {
 
     closeSweetLoader();
 
-    Swal.fire("Success", "Hostel room added", "success");
+    Swal.fire("Success", "Room allocated successfully", "success");
 
     roomNumber.value = "";
+    bedNumber.value = "";
     capacity.value = "";
+    hostelFee.value = "";
+    hostelWarden.value = "";
+    hostelType.value = "";
+    hostelGrade.value = "";
+    hostelStudent.innerHTML = `<option value="">Select Learner</option>`;
 
   } catch (error) {
-
     console.error(error);
-
     closeSweetLoader();
-
     Swal.fire("Error", error.message, "error");
   }
 };
+
+/* =========================================================
+   LOAD HOSTEL (MODERN UI UPGRADE)
+========================================================= */
 
 window.loadHostel = function () {
 
@@ -23147,28 +24069,32 @@ window.loadHostel = function () {
   onValue(ref(db, `hostel/${schoolId}`), (snap) => {
 
     let html = "";
+    let totalRooms = 0, occupied = 0, boys = 0, girls = 0;
+
+    const search =
+      document.getElementById("hostelSearch")?.value?.toLowerCase() || "";
 
     if (!snap.exists()) {
-
-      html = `
-        <div style="padding:20px;color:gray;">
-          No hostel rooms found
-        </div>
-      `;
-
-      hostelList.innerHTML = html;
+      hostelList.innerHTML =
+        `<div style="padding:20px;color:gray;">No hostel rooms found</div>`;
       return;
     }
 
     html += `
       <div style="overflow-x:auto;">
-      <table style="${tableStyle}">
+      <table class="learners-table">
         <tr>
-          <th style="${thStyle}">No</th>
-          <th style="${thStyle}">Room</th>
-          <th style="${thStyle}">Capacity</th>
-          <th style="${thStyle}">Student</th>
-          <th style="${thStyle}">Action</th>
+          <th>No</th>
+          <th>Room</th>
+          <th>Bed</th>
+          <th>Type</th>
+          <th>Grade</th>
+          <th>Learner</th>
+          <th>Warden</th>
+          <th>Fee</th>
+          <th>Night</th>
+          <th>Discipline</th>
+          <th>Action</th>
         </tr>
     `;
 
@@ -23179,18 +24105,155 @@ window.loadHostel = function () {
       const d = child.val();
       const key = child.key;
 
+      const searchText =
+        `${d.roomNumber} ${d.grade} ${d.learner}`.toLowerCase();
+
+      if (!searchText.includes(search)) return;
+
+      totalRooms++;
+      occupied++;
+
+      if (d.hostelType === "Boys") boys++;
+      if (d.hostelType === "Girls") girls++;
+
+      const term = getCurrentTerm();
+      const today = getTodayDate();
+
+      const todayAttendance =
+        d.nightAttendance?.[term]?.[today] || "Not Marked";
+
+      // ================= NIGHT COLOR =================
+      const nightColor =
+        todayAttendance === "Present"
+          ? "#16a34a"
+          : todayAttendance === "Absent"
+            ? "#dc2626"
+            : "#6b7280";
+
+      // ================= DISCIPLINE COLOR =================
+      const disciplineColor =
+        d.discipline === "Good"
+          ? "#16a34a"
+          : d.discipline === "Warning"
+            ? "#f59e0b"
+            : "#dc2626";
+
       html += `
         <tr>
-          <td style="${tdStyle}">${i++}</td>
-          <td style="${tdStyle}">${d.roomNumber}</td>
-          <td style="${tdStyle}">${d.capacity}</td>
-          <td style="${tdStyle}">${d.student}</td>
-          <td style="${tdStyle}">
-            <button onclick="deleteHostel('${key}')"
-              style="${deleteBtnStyle}">
+
+          <td>${i++}</td>
+          <td>${d.roomNumber}</td>
+          <td>${d.bedNumber}</td>
+          <td>${d.hostelType}</td>
+          <td>${d.grade}</td>
+          <td>${d.learner}</td>
+          <td>${d.warden}</td>
+          <td>KES ${d.hostelFee}</td>
+<!-- ================= NIGHT ATTENDANCE (COMPACT) ================= -->
+<td style="width:120px;">
+
+  <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-start;">
+
+    <div style="
+      background:${nightColor};
+      color:white;
+      padding:2px 8px;
+      border-radius:14px;
+      font-size:11px;
+      width:fit-content;
+      line-height:1.2;
+    ">
+      ${todayAttendance}
+    </div>
+
+    <select
+      onchange="updateNightAttendance('${key}', this.value)"
+      style="
+        padding:3px 6px;
+        border-radius:6px;
+        border:1px solid #ddd;
+        font-size:11px;
+        width:90px;
+        cursor:pointer;
+      "
+    >
+      <option ${todayAttendance === "Present" ? "selected" : ""}>Present</option>
+      <option ${todayAttendance === "Absent" ? "selected" : ""}>Absent</option>
+    </select>
+
+  </div>
+
+</td>
+
+<!-- ================= DISCIPLINE (COMPACT) ================= -->
+<td style="width:50px;">
+
+  <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-start;">
+
+    <div style="
+      background:${disciplineColor};
+      color:white;
+      padding:2px 8px;
+      border-radius:14px;
+      font-size:11px;
+      width:fit-content;
+      line-height:1.2;
+    ">
+      ${d.discipline}
+    </div>
+
+    <select
+      onchange="updateDiscipline('${key}', this.value)"
+      style="
+        padding:3px 6px;
+        border-radius:6px;
+        border:1px solid #ddd;
+        font-size:11px;
+        width:90px;
+        cursor:pointer;
+      "
+    >
+      <option ${d.discipline === "Good" ? "selected" : ""}>Good</option>
+      <option ${d.discipline === "Warning" ? "selected" : ""}>Warning</option>
+      <option ${d.discipline === "Suspended" ? "selected" : ""}>Suspended</option>
+    </select>
+
+  </div>
+
+</td>
+
+          <!-- ================= ACTION ================= -->
+          <td>
+            <button
+              onclick="viewAttendanceHistory('${key}')"
+              style="
+                margin-bottom:5px;
+                padding:6px 10px;
+                border:none;
+                border-radius:6px;
+                background:#2563eb;
+                color:white;
+                cursor:pointer;
+              "
+            >
+              History
+            </button>
+
+            <button
+              onclick="deleteHostel('${key}')"
+              style="
+                background:red;
+                color:white;
+                border:none;
+                padding:6px 10px;
+                border-radius:6px;
+                cursor:pointer;
+              "
+            >
               Delete
             </button>
           </td>
+
         </tr>
       `;
     });
@@ -23198,28 +24261,221 @@ window.loadHostel = function () {
     html += `</table></div>`;
 
     hostelList.innerHTML = html;
+
+    document.getElementById("hostelTotalRooms").innerText = totalRooms;
+    document.getElementById("occupiedBeds").innerText = occupied;
+    document.getElementById("availableBeds").innerText = totalRooms - occupied;
+    document.getElementById("boysCount").innerText = boys;
+    document.getElementById("girlsCount").innerText = girls;
   });
 };
+
+/* =========================================================
+   NIGHT ATTENDANCE (NOW TRACKS HISTORY)
+========================================================= */
+
+window.updateNightAttendance = async function (id, status) {
+
+  try {
+
+    const schoolId = localStorage.getItem("schoolId");
+
+    const term = getCurrentTerm();
+    const today = getTodayDate();
+
+    const path =
+      `hostel/${schoolId}/${id}/nightAttendance/${term}/${today}`;
+
+    openSweetLoader("Updating attendance...");
+
+    await set(ref(db, path), status); // ✅ FIX HERE
+
+    closeSweetLoader();
+
+    Swal.fire({
+      icon: "success",
+      title: "Success",
+      text: `Marked ${status}`,
+      timer: 1200,
+      showConfirmButton: false
+    });
+
+    loadHostel();
+
+  } catch (error) {
+
+    console.error(error);
+
+    closeSweetLoader();
+
+    Swal.fire("Error", error.message, "error");
+  }
+};
+window.viewGradeAttendanceHistory = async function (grade) {
+
+  try {
+
+    const schoolId = localStorage.getItem("schoolId");
+
+    const snap =
+      await get(ref(db, `hostel/${schoolId}`));
+
+    if (!snap.exists()) {
+      Swal.fire("No Data", "No hostel records found", "info");
+      return;
+    }
+
+    const data = snap.val();
+
+    let report = {};
+
+    // ================= COLLECT DATA BY GRADE =================
+    Object.values(data).forEach(record => {
+
+      if (record.grade !== grade) return;
+
+      const learner = record.learner || "Unknown";
+      const attendance = record.nightAttendance || {};
+
+      Object.keys(attendance).forEach(term => {
+
+        if (!report[term]) report[term] = {};
+
+        Object.keys(attendance[term]).forEach(date => {
+
+          if (!report[term][date]) report[term][date] = [];
+
+          report[term][date].push({
+            learner,
+            status: attendance[term][date]
+          });
+        });
+      });
+    });
+
+    // ================= BUILD HTML =================
+    let html = `<div style="text-align:left;max-height:400px;overflow:auto;">`;
+
+    const terms = Object.keys(report);
+
+    if (terms.length === 0) {
+      Swal.fire("No Records", "No attendance history for this grade", "info");
+      return;
+    }
+
+    terms.forEach(term => {
+
+      html += `<h2>${term.toUpperCase()}</h2>`;
+
+      Object.keys(report[term]).sort().forEach(date => {
+
+        html += `<h4 style="margin-top:10px;">📅 ${date}</h4>`;
+
+        report[term][date].forEach(entry => {
+
+          html += `
+            <div>
+              <b>${entry.learner}</b> :
+              <span style="color:${entry.status === "Present" ? "green" : "red"}">
+                ${entry.status}
+              </span>
+            </div>
+          `;
+        });
+
+      });
+
+    });
+
+    html += `</div>`;
+
+    Swal.fire({
+      title: `Grade ${grade} Night Attendance`,
+      html,
+      width: "800px"
+    });
+
+  } catch (error) {
+
+    console.error(error);
+    Swal.fire("Error", error.message, "error");
+  }
+};
+/* =========================================================
+   VIEW HISTORY (NEW FEATURE)
+========================================================= */
+
+window.viewAttendanceHistory = async function (id) {
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  const snap =
+    await get(ref(db, `hostel/${schoolId}/${id}/nightAttendance`));
+
+  if (!snap.exists()) {
+    Swal.fire("No history", "No attendance records found", "info");
+    return;
+  }
+
+  const data = snap.val();
+
+  let html = "<div style='text-align:left'>";
+
+  Object.keys(data).forEach(term => {
+
+    html += `<h3>${term.toUpperCase()}</h3>`;
+
+    Object.keys(data[term]).forEach(date => {
+      html += `<div>${date} : ${data[term][date]}</div>`;
+    });
+
+  });
+
+  html += "</div>";
+
+  Swal.fire({
+    title: "Night Attendance History",
+    html
+  });
+};
+
+/* =========================================================
+   DISCIPLINE
+========================================================= */
+
+window.updateDiscipline = async function (id, status) {
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  await update(
+    ref(db, `hostel/${schoolId}/${id}`),
+    { discipline: status }
+  );
+};
+
+/* =========================================================
+   DELETE HOSTEL
+========================================================= */
 
 window.deleteHostel = async function (id) {
 
   const schoolId = localStorage.getItem("schoolId");
 
   const confirmDelete = await Swal.fire({
-    title: "Delete Hostel Room?",
+    title: "Delete Hostel Allocation?",
     icon: "warning",
     showCancelButton: true
   });
 
   if (!confirmDelete.isConfirmed) return;
 
-  openSweetLoader("Deleting Room...");
+  openSweetLoader("Deleting...");
 
   await remove(ref(db, `hostel/${schoolId}/${id}`));
 
   closeSweetLoader();
 
-  Swal.fire("Deleted", "Hostel room removed", "success");
+  Swal.fire("Deleted", "Allocation removed", "success");
 };
 
 /* =========================================================
