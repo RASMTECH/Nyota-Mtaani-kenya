@@ -2667,40 +2667,101 @@ style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc;"></te
 
 <hr>
 
-      <!-- ================= ACTION BUTTONS ================= -->
-<div style="display:flex; gap:10px; flex-wrap:wrap; margin:15px 0;">
+<!-- ================= MAIN ACTION TOGGLE BUTTON ================= -->
+<div style="margin:15px 0;">
 
-  <button onclick="promoteSelected()"
-    style="background:#10b981; color:white; border:none; padding:10px 14px; border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:6px;">
-    ⬆ Promote
+  <!-- MAIN BUTTON -->
+  <button onclick="toggleActionButtons()"
+    style="
+      background:#1e293b;
+      color:white;
+      border:none;
+      padding:12px 16px;
+      border-radius:10px;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-weight:bold;
+    ">
+    ⚙ Actions
   </button>
 
-  <button onclick="deleteSelected()"
-    style="background:#ef4444; color:white; border:none; padding:10px 14px; border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:6px;">
-    🗑 Delete
-  </button>
+  <!-- HIDDEN ACTION BUTTONS -->
+  <div id="actionButtonsPanel"
+    style="
+      display:none;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:12px;
+      animation:fadeIn 0.3s ease;
+    ">
 
-  <button onclick="undoPromotion()"
-    style="background:#f59e0b; color:white; border:none; padding:10px 14px; border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:6px;">
-    ↩ Undo
-  </button>
-<button class="action-btn yellow-btn" id="sendMeetingSmsBtn"
-  style="
-    background:#f59e0b;
-    color:white;
-    border:none;
-    padding:10px 14px;
-    border-radius:8px;
-    cursor:pointer;
-    display:flex;
-    align-items:center;
-    gap:6px;
-  ">
-  <i class="fas fa-bullhorn"></i>
-  Send Parent Meeting SMS
-</button>
-      </div>
+    <button onclick="promoteSelected()"
+      style="
+        background:#10b981;
+        color:white;
+        border:none;
+        padding:10px 14px;
+        border-radius:8px;
+        cursor:pointer;
+        display:flex;
+        align-items:center;
+        gap:6px;
+      ">
+      ⬆ Promote
+    </button>
 
+    <button onclick="deleteSelected()"
+      style="
+        background:#ef4444;
+        color:white;
+        border:none;
+        padding:10px 14px;
+        border-radius:8px;
+        cursor:pointer;
+        display:flex;
+        align-items:center;
+        gap:6px;
+      ">
+      🗑 Delete
+    </button>
+
+    <button onclick="undoPromotion()"
+      style="
+        background:#f59e0b;
+        color:white;
+        border:none;
+        padding:10px 14px;
+        border-radius:8px;
+        cursor:pointer;
+        display:flex;
+        align-items:center;
+        gap:6px;
+      ">
+      ↩ Undo
+    </button>
+
+    <button class="action-btn yellow-btn"
+      id="sendMeetingSmsBtn"
+      style="
+        background:#3b82f6;
+        color:white;
+        border:none;
+        padding:10px 14px;
+        border-radius:8px;
+        cursor:pointer;
+        display:flex;
+        align-items:center;
+        gap:6px;
+      ">
+      <i class="fas fa-bullhorn"></i>
+      Send Parent Meeting SMS
+    </button>
+
+  </div>
+
+  </div>
       <div style="margin-top:10px;">
 
 
@@ -28197,7 +28258,33 @@ window.unlockNextQuestion = function(
     },150);
   }
 };
+// =========================================
+// TOGGLE ACTION BUTTONS
+// =========================================
 
+window.toggleActionButtons = function(){
+
+  const panel =
+    document.getElementById(
+      "actionButtonsPanel"
+    );
+
+  if(!panel) return;
+
+  if(
+    panel.style.display === "none" ||
+    panel.style.display === ""
+  ){
+
+    panel.style.display = "flex";
+
+  }else{
+
+    panel.style.display = "none";
+
+  }
+
+};
 </script>
 
 </script>
