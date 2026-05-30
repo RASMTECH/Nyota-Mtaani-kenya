@@ -1778,7 +1778,54 @@ button.primary{
 
   cursor:pointer;
 }
+.report-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:15px;
+}
 
+/* base card */
+.report-card{
+  padding:15px;
+  border-radius:12px;
+  color:white;
+  font-family:Arial;
+  box-shadow:0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* ===== UNIQUE COLORS ===== */
+
+.card-rooms{
+  background:linear-gradient(135deg,#1e3a8a,#2563eb);
+}
+
+.card-occupied{
+  background:linear-gradient(135deg,#7c2d12,#ef4444);
+}
+
+.card-available{
+  background:linear-gradient(135deg,#14532d,#22c55e);
+}
+
+.card-boys{
+  background:linear-gradient(135deg,#0f172a,#38bdf8);
+}
+
+.card-girls{
+  background:linear-gradient(135deg,#4c1d95,#d946ef);
+}
+
+/* text styling */
+.report-title{
+  font-size:13px;
+  opacity:0.9;
+}
+
+.report-value{
+  font-size:22px;
+  font-weight:bold;
+  margin-top:5px;
+}
 </style>
 </head>
 
@@ -2036,17 +2083,14 @@ button.primary{
             👨‍🎓 Filtered Learners
           </option>
 
-          <option value="genderGroupedContent">
-            ⚧ Gender Classification
-          </option>
+       
 
           <option value="teacherList">
             👨‍🏫 Teachers List
           </option>
-
-          <option value="supportStaffList">
-            🧹 Support Staff List
-          </option>
+<option value="supportStaffContent">
+  🧹 Support Staff List
+</option>
 
           <option value="feesTable">
             💰 Fees Table
@@ -2069,11 +2113,6 @@ button.primary{
   📚 Library Records
 </option>
 
-<option value="libraryIssuedBooksContent">
-  📖 Issued Books Report
-</option>
-
-
 
 <!-- ================= INVENTORY ================= -->
 <option value="inventoryContent">
@@ -2081,9 +2120,7 @@ button.primary{
 </option>
 
 
-<option value="inventoryIssuedContent">
-  📤 Issued Inventory Report
-</option>
+
 
 <!-- ================= TRANSPORT ================= -->
 <option value="transportContent">
@@ -2097,14 +2134,11 @@ button.primary{
 
 <!-- ================= ICT ================= -->
 <option value="ictContent">
-  💻 ICT Assets Report
+  💻 ICT  Report
 </option>
 
 
-<!-- ================= ATTENDANCE ================= -->
-<option value="attendanceReportOutput">
-  📅 Attendance Report
-</option>
+
 
         </select>
 
@@ -4282,35 +4316,34 @@ background:rgba(0,0,0,0.5);justify-content:center;align-items:center;">
   </h2>
 
   <!-- ================= DASHBOARD ================= -->
+<div class="report-grid">
 
-  <div class="report-grid">
-
-    <div class="report-card">
-      <div class="report-title">🏠 Total Rooms</div>
-      <div class="report-value" id="hostelTotalRooms">0</div>
-    </div>
-
-    <div class="report-card">
-      <div class="report-title">🛏️ Occupied Beds</div>
-      <div class="report-value" id="occupiedBeds">0</div>
-    </div>
-
-    <div class="report-card">
-      <div class="report-title">🟢 Available Beds</div>
-      <div class="report-value" id="availableBeds">0</div>
-    </div>
-
-    <div class="report-card">
-      <div class="report-title">👨 Boys</div>
-      <div class="report-value" id="boysCount">0</div>
-    </div>
-
-    <div class="report-card">
-      <div class="report-title">👩 Girls</div>
-      <div class="report-value" id="girlsCount">0</div>
-    </div>
-
+  <div class="report-card card-rooms">
+    <div class="report-title">🏠 Total Rooms</div>
+    <div class="report-value" id="hostelTotalRooms">0</div>
   </div>
+
+  <div class="report-card card-occupied">
+    <div class="report-title">🛏️ Occupied Beds</div>
+    <div class="report-value" id="occupiedBeds">0</div>
+  </div>
+
+  <div class="report-card card-available">
+    <div class="report-title">🟢 Available Beds</div>
+    <div class="report-value" id="availableBeds">0</div>
+  </div>
+
+  <div class="report-card card-boys">
+    <div class="report-title">👨 Boys</div>
+    <div class="report-value" id="boysCount">0</div>
+  </div>
+
+  <div class="report-card card-girls">
+    <div class="report-title">👩 Girls</div>
+    <div class="report-value" id="girlsCount">0</div>
+  </div>
+
+</div>
 
   <br>
 
@@ -4386,12 +4419,11 @@ background:rgba(0,0,0,0.5);justify-content:center;align-items:center;">
 
 
 
-
 <!-- ================= INVENTORY MODULE ================= -->
 <div id="inventory" style="display:none;padding:20px;">
 
   <h2 style="
-    margin-bottom:20px;
+    margin-bottom:15px;
     color:#0f172a;
     font-size:24px;
     font-weight:700;
@@ -4399,7 +4431,30 @@ background:rgba(0,0,0,0.5);justify-content:center;align-items:center;">
     📦 Inventory Management
   </h2>
 
-  <!-- FORM -->
+  <!-- ================= STATS ================= -->
+  <div id="inventoryStats" style="
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:10px;
+    margin-bottom:20px;
+  "></div>
+
+  <!-- ================= SEARCH ================= -->
+  <input
+    id="inventorySearch"
+    placeholder="Search inventory..."
+    onkeyup="filterInventory()"
+    style="
+      padding:12px;
+      width:100%;
+      margin-bottom:15px;
+      border:1px solid #cbd5e1;
+      border-radius:10px;
+      outline:none;
+    "
+  >
+
+  <!-- ================= FORM ================= -->
   <div style="
     background:white;
     padding:20px;
@@ -4414,35 +4469,20 @@ background:rgba(0,0,0,0.5);justify-content:center;align-items:center;">
     <input
       id="itemName"
       placeholder="Item Name"
-      style="
-        padding:12px;
-        border:1px solid #cbd5e1;
-        border-radius:10px;
-        outline:none;
-      "
+      style="padding:12px;border:1px solid #cbd5e1;border-radius:10px;"
     >
 
     <input
       id="quantity"
       type="number"
       placeholder="Quantity"
-      style="
-        padding:12px;
-        border:1px solid #cbd5e1;
-        border-radius:10px;
-        outline:none;
-      "
+      style="padding:12px;border:1px solid #cbd5e1;border-radius:10px;"
     >
 
     <input
       id="location"
       placeholder="Store Location"
-      style="
-        padding:12px;
-        border:1px solid #cbd5e1;
-        border-radius:10px;
-        outline:none;
-      "
+      style="padding:12px;border:1px solid #cbd5e1;border-radius:10px;"
     >
 
     <button
@@ -4462,7 +4502,7 @@ background:rgba(0,0,0,0.5);justify-content:center;align-items:center;">
 
   </div>
 
-  <!-- LIST -->
+  <!-- ================= LIST ================= -->
   <div
     id="inventoryList"
     style="
@@ -4649,16 +4689,16 @@ background:rgba(0,0,0,0.5);justify-content:center;align-items:center;">
 
 <div id="libraryContent" style="display:none;"></div>
 <div id="libraryIssuedBooksContent" style="display:none;"></div>
-<div id="libraryDefaultersContent" style="display:none;"></div>
+
 
 <div id="inventoryContent" style="display:none;"></div>
 <div id="inventoryStockContent" style="display:none;"></div>
-<div id="inventoryIssuedContent" style="display:none;"></div>
+
 
 <div id="transportContent" style="display:none;"></div>
-<div id="hostelContent" style="display:none;"></div>
+
 <div id="ictContent" style="display:none;"></div>
-<div id="payrollContent" style="display:none;"></div>
+<div id="hostelContent" style="display:none;"></div>
 
 <div id="filteredLearnersContent" style="display:none;"></div>
 <div id="genderGroupedContent" style="display:none;"></div>
@@ -21031,12 +21071,50 @@ function renderNextSupportStaffBatch() {
   });
 
   // append rows
-  tbody.insertAdjacentHTML("beforeend", html);
+// =====================================================
+// APPEND TO SCREEN TABLE
+// =====================================================
 
-  // next page
-  state.page++;
+tbody.insertAdjacentHTML("beforeend", html);
 
-  state.loading = false;
+// =====================================================
+// UPDATE PRINT REPORT
+// =====================================================
+
+const printContainer =
+  document.getElementById("supportStaffContent");
+
+const reportTable =
+  document.querySelector("#supportStaffTable");
+
+if (printContainer && reportTable) {
+
+  printContainer.innerHTML = `
+    <div style="
+      padding:20px;
+      font-family:Arial,sans-serif;
+    ">
+
+      <h2 style="
+        text-align:center;
+        margin-bottom:20px;
+      ">
+        🧹 SUPPORT STAFF REPORT
+      </h2>
+
+      ${reportTable.outerHTML}
+
+    </div>
+  `;
+}
+
+// =====================================================
+// NEXT PAGE
+// =====================================================
+
+state.page++;
+
+state.loading = false;
 }
 
 
@@ -22614,11 +22692,7 @@ window.printSelectedReport = function () {
     libraryContent:
       "Library Records",
 
-    libraryIssuedBooksContent:
-      "Issued Books Report",
-
-    libraryDefaultersContent:
-      "Library Defaulters",
+  
 
     inventoryContent:
       "Inventory Records",
@@ -22629,7 +22703,7 @@ window.printSelectedReport = function () {
     inventoryIssuedContent:
       "Issued Inventory Report",
 
-    transportContent:
+    transport:
       "Transport Report",
 
     hostelContent:
@@ -22638,14 +22712,7 @@ window.printSelectedReport = function () {
     ictContent:
       "ICT Assets Report",
 
-    payrollContent:
-      "Payroll Report",
 
-    attendanceReportOutput:
-      "Attendance Report",
-
-    teacherAttendanceOutput:
-      "Teacher Attendance Report",
 
     supportAttendanceOutput:
       "Support Staff Attendance"
@@ -23128,17 +23195,19 @@ window.logTrip = async function (busId, type) {
     showConfirmButton: false
   });
 };
-
 window.loadTransport = function () {
 
   const schoolId = localStorage.getItem("schoolId");
 
   onValue(ref(db, `transport/${schoolId}`), (snap) => {
 
-    let html = "";
+    // =====================================================
+    // NO DATA
+    // =====================================================
 
     if (!snap.exists()) {
-      transportList.innerHTML = `
+
+      const noDataHtml = `
         <div style="
           padding:20px;
           text-align:center;
@@ -23146,33 +23215,56 @@ window.loadTransport = function () {
           font-size:14px;
         ">
           🚫 No transport records found
-        </div>`;
+        </div>
+      `;
+
+      transportList.innerHTML = noDataHtml;
+
+      const transportContent =
+        document.getElementById("transportContent");
+
+      if (transportContent) {
+        transportContent.innerHTML = noDataHtml;
+      }
+
       return;
     }
 
-    html += `
+    // =====================================================
+    // BUILD REPORT
+    // =====================================================
+
+    let html = `
       <div style="overflow-x:auto;padding:10px;">
 
       <table style="
         width:100%;
-        border-collapse:separate;
-        border-spacing:0 10px;
+        border-collapse:collapse;
         font-family:Arial;
         font-size:13px;
+        border:2px solid #000;
       ">
 
-        <tr style="color:#64748b;text-align:left;font-size:12px;">
-          <th>No</th>
-          <th>Bus</th>
-          <th>Driver</th>
-          <th>Route</th>
-          <th>Fuel</th>
-          <th>Capacity</th>
-          <th>Status</th>
-          <th>Students</th>
-          <th>Trips</th>
-          <th>Actions</th>
-        </tr>
+        <thead>
+          <tr style="
+            background:#111827;
+            color:white;
+            text-align:left;
+          ">
+            <th style="border:1px solid #000;padding:10px;">No</th>
+            <th style="border:1px solid #000;padding:10px;">Bus</th>
+            <th style="border:1px solid #000;padding:10px;">Driver</th>
+            <th style="border:1px solid #000;padding:10px;">Route</th>
+            <th style="border:1px solid #000;padding:10px;">Fuel</th>
+            <th style="border:1px solid #000;padding:10px;">Capacity</th>
+            <th style="border:1px solid #000;padding:10px;">Status</th>
+            <th style="border:1px solid #000;padding:10px;">Students</th>
+            <th style="border:1px solid #000;padding:10px;">Trips</th>
+            <th style="border:1px solid #000;padding:10px;">Action</th>
+          </tr>
+        </thead>
+
+        <tbody>
     `;
 
     let i = 1;
@@ -23182,177 +23274,144 @@ window.loadTransport = function () {
       const d = child.val();
       const key = child.key;
 
-      const statusColor =
-        d.status === "Active" ? "#16a34a"
-        : d.status === "Maintenance" ? "#f59e0b"
-        : "#ef4444";
-
       html += `
-        <tr style="
-          background:white;
-          box-shadow:0 2px 8px rgba(0,0,0,0.05);
-          border-radius:12px;
-        ">
+        <tr>
 
-          <td style="padding:12px 10px;">${i++}</td>
+          <td style="border:1px solid #000;padding:10px;">${i++}</td>
 
-          <td style="padding:12px 10px;font-weight:600;color:#111827;">
-            🚌 ${d.busName}
+          <td style="border:1px solid #000;padding:10px;font-weight:600;">
+            🚌 ${d.busName || "-"}
           </td>
 
-          <td style="padding:12px 10px;color:#374151;">
-            👨‍✈️ ${d.driverName}
+          <td style="border:1px solid #000;padding:10px;">
+            👨‍✈️ ${d.driverName || "-"}
           </td>
 
-          <td style="padding:12px 10px;color:#374151;">
-            📍 ${d.route}
+          <td style="border:1px solid #000;padding:10px;">
+            📍 ${d.route || "-"}
           </td>
 
-          <td style="padding:12px 10px;">
+          <td style="border:1px solid #000;padding:10px;">
             ⛽ ${d.fuelPerTrip || 0} L
           </td>
 
-          <td style="padding:12px 10px;">
+          <td style="border:1px solid #000;padding:10px;">
             ${d.capacity || 0}
           </td>
 
-          <!-- ================= STATUS ================= -->
-          <td style="padding:12px 10px;">
-
-            <div style="
-              display:inline-block;
-              background:${statusColor};
-              color:white;
-              padding:4px 10px;
-              border-radius:999px;
-              font-size:11px;
-              margin-bottom:5px;
-            ">
+          <td style="border:1px solid #000;padding:10px;">
+            <div style="font-size:11px;margin-bottom:5px;">
               ${d.status || "Active"}
             </div>
 
-            <select onchange="updateTransportStatus('${key}', this.value)"
-              style="
-                display:block;
-                margin-top:5px;
-                padding:4px;
-                border-radius:6px;
-                font-size:11px;
-                border:1px solid #e5e7eb;
-              ">
-              <option ${d.status === "Active" ? "selected" : ""}>Active</option>
-              <option ${d.status === "Maintenance" ? "selected" : ""}>Maintenance</option>
-              <option ${d.status === "Offline" ? "selected" : ""}>Offline</option>
-            </select>
+            <select
+              onchange="updateTransportStatus('${key}', this.value)"
+              style="width:100%;font-size:11px;"
+            >
+              <option ${d.status === "Active" ? "selected" : ""}>
+                Active
+              </option>
 
+              <option ${d.status === "Maintenance" ? "selected" : ""}>
+                Maintenance
+              </option>
+
+              <option ${d.status === "Offline" ? "selected" : ""}>
+                Offline
+              </option>
+            </select>
           </td>
 
-          <!-- ================= STUDENTS ================= -->
-          <td style="padding:12px 10px;">
+          <td style="border:1px solid #000;padding:10px;">
+            ${(d.students || []).length}
 
-            <div style="
-              display:inline-block;
-              background:#f1f5f9;
-              padding:4px 10px;
-              border-radius:999px;
-              font-size:12px;
-            ">
-              ${(d.students || []).length} learners
-            </div>
-
-            <button onclick="viewBusStudents('${key}')"
-              style="
-                margin-top:6px;
-                display:block;
-                background:#6366f1;
-                color:white;
-                border:none;
-                padding:4px 8px;
-                border-radius:6px;
-                font-size:11px;
-                cursor:pointer;
-              ">
+            <button
+              onclick="viewBusStudents('${key}')"
+              style="display:block;margin-top:5px;"
+            >
               View
             </button>
-
           </td>
 
-          <!-- ================= TRIPS ================= -->
-          <td style="padding:12px 10px;">
-
-            <button onclick="logTrip('${key}', 'morning')"
-              style="
-                background:#3b82f6;
-                color:white;
-                border:none;
-                padding:4px 8px;
-                border-radius:6px;
-                font-size:11px;
-                margin-bottom:5px;
-                cursor:pointer;
-              ">
+          <td style="border:1px solid #000;padding:10px;">
+            <button onclick="logTrip('${key}','morning')">
               Morning
             </button>
 
-            <button onclick="logTrip('${key}', 'evening')"
-              style="
-                background:#8b5cf6;
-                color:white;
-                border:none;
-                padding:4px 8px;
-                border-radius:6px;
-                font-size:11px;
-                cursor:pointer;
-              ">
+            <button onclick="logTrip('${key}','evening')">
               Evening
             </button>
-
           </td>
 
-          <!-- ================= ACTIONS ================= -->
-          <td style="padding:12px 10px;">
+          <td style="
+            border:1px solid #000;
+            padding:10px;
+            position:relative;
+          ">
 
-            <button onclick="assignStudentToBus('${key}')"
+            <button
+              onclick="toggleActionPanel('${key}')"
               style="
-                background:#16a34a;
+                background:#111827;
                 color:white;
+                padding:6px 10px;
                 border:none;
-                padding:5px 10px;
                 border-radius:6px;
-                font-size:11px;
-                margin-bottom:5px;
                 cursor:pointer;
-                display:block;
-              ">
-              + Add Learner
+              "
+            >
+              ⚙ Actions
             </button>
-<button onclick="updateBusCapacity('${key}')"
-  style="
-    background:#0ea5e9;
-    color:white;
-    border:none;
-    padding:5px 8px;
-    border-radius:6px;
-    font-size:11px;
-    margin-bottom:5px;
-    cursor:pointer;
-    display:block;
-  ">
-  Set Capacity
-</button>
-            <button onclick="deleteTransport('${key}')"
+
+            <div
+              id="panel-${key}"
               style="
-                background:#ef4444;
-                color:white;
-                border:none;
-                padding:5px 10px;
-                border-radius:6px;
-                font-size:11px;
-                cursor:pointer;
-                display:block;
-              ">
-              Delete
-            </button>
+                display:none;
+                position:absolute;
+                right:10px;
+                top:40px;
+                background:white;
+                border:2px solid #000;
+                padding:8px;
+                z-index:10;
+                width:140px;
+              "
+            >
+
+              <button
+                onclick="assignStudentToBus('${key}')"
+                style="
+                  display:block;
+                  width:100%;
+                  margin-bottom:5px;
+                "
+              >
+                + Learner
+              </button>
+
+              <button
+                onclick="updateBusCapacity('${key}')"
+                style="
+                  display:block;
+                  width:100%;
+                  margin-bottom:5px;
+                "
+              >
+                Capacity
+              </button>
+
+              <button
+                onclick="deleteTransport('${key}')"
+                style="
+                  display:block;
+                  width:100%;
+                  color:red;
+                "
+              >
+                Delete
+              </button>
+
+            </div>
 
           </td>
 
@@ -23360,11 +23419,63 @@ window.loadTransport = function () {
       `;
     });
 
-    html += `</table></div>`;
+    html += `
+        </tbody>
+      </table>
+      </div>
+    `;
+
+    // =====================================================
+    // DISPLAY REPORT
+    // =====================================================
 
     transportList.innerHTML = html;
+
+    // =====================================================
+    // PRINT REPORT
+    // =====================================================
+
+    const transportContent =
+      document.getElementById("transportContent");
+
+    if (transportContent) {
+
+      transportContent.innerHTML = `
+        <div style="padding:20px;">
+
+          <h2 style="
+            text-align:center;
+            margin-bottom:20px;
+            color:#111827;
+          ">
+            🚌 TRANSPORT REPORT
+          </h2>
+
+          ${html}
+
+        </div>
+      `;
+    }
+
   });
+
 };
+
+window.toggleActionPanel = function (id) {
+
+  const panel = document.getElementById(`panel-${id}`);
+
+  if (!panel) return;
+
+  // close all others
+  document.querySelectorAll("[id^='panel-']").forEach(p => {
+    if (p !== panel) p.style.display = "none";
+  });
+
+  panel.style.display =
+    panel.style.display === "block" ? "none" : "block";
+};
+
 window.assignStudentToBus = async function (busId) {
 
   const schoolId = localStorage.getItem("schoolId");
@@ -24074,11 +24185,29 @@ window.loadHostel = function () {
     const search =
       document.getElementById("hostelSearch")?.value?.toLowerCase() || "";
 
-    if (!snap.exists()) {
-      hostelList.innerHTML =
-        `<div style="padding:20px;color:gray;">No hostel rooms found</div>`;
-      return;
-    }
+ if (!snap.exists()) {
+
+  const noDataHtml = `
+    <div style="
+      padding:20px;
+      color:gray;
+      text-align:center;
+    ">
+      No hostel rooms found
+    </div>
+  `;
+
+  hostelList.innerHTML = noDataHtml;
+
+  const hostelContent =
+    document.getElementById("hostelContent");
+
+  if (hostelContent) {
+    hostelContent.innerHTML = noDataHtml;
+  }
+
+  return;
+}
 
     html += `
       <div style="overflow-x:auto;">
@@ -24258,15 +24387,125 @@ window.loadHostel = function () {
       `;
     });
 
-    html += `</table></div>`;
+html += `</table></div>`;
 
-    hostelList.innerHTML = html;
+// =====================================================
+// DISPLAY REPORT
+// =====================================================
 
-    document.getElementById("hostelTotalRooms").innerText = totalRooms;
-    document.getElementById("occupiedBeds").innerText = occupied;
-    document.getElementById("availableBeds").innerText = totalRooms - occupied;
-    document.getElementById("boysCount").innerText = boys;
-    document.getElementById("girlsCount").innerText = girls;
+hostelList.innerHTML = html;
+
+// =====================================================
+// PRINT REPORT
+// =====================================================
+
+const hostelContent =
+  document.getElementById("hostelContent");
+
+if (hostelContent) {
+
+  hostelContent.innerHTML = `
+    <div style="
+      padding:20px;
+      font-family:Arial,sans-serif;
+    ">
+
+      <h2 style="
+        text-align:center;
+        margin-bottom:20px;
+        color:#111827;
+      ">
+        🏨 HOSTEL REPORT
+      </h2>
+
+      <div style="
+        display:grid;
+        grid-template-columns:repeat(5,1fr);
+        gap:10px;
+        margin-bottom:20px;
+      ">
+
+        <div style="
+          background:#2563eb;
+          color:white;
+          padding:10px;
+          border-radius:8px;
+          text-align:center;
+        ">
+          <b>Total Rooms</b><br>
+          ${totalRooms}
+        </div>
+
+        <div style="
+          background:#dc2626;
+          color:white;
+          padding:10px;
+          border-radius:8px;
+          text-align:center;
+        ">
+          <b>Occupied Beds</b><br>
+          ${occupied}
+        </div>
+
+        <div style="
+          background:#16a34a;
+          color:white;
+          padding:10px;
+          border-radius:8px;
+          text-align:center;
+        ">
+          <b>Available Beds</b><br>
+          ${totalRooms - occupied}
+        </div>
+
+        <div style="
+          background:#0ea5e9;
+          color:white;
+          padding:10px;
+          border-radius:8px;
+          text-align:center;
+        ">
+          <b>Boys</b><br>
+          ${boys}
+        </div>
+
+        <div style="
+          background:#d946ef;
+          color:white;
+          padding:10px;
+          border-radius:8px;
+          text-align:center;
+        ">
+          <b>Girls</b><br>
+          ${girls}
+        </div>
+
+      </div>
+
+      ${html}
+
+    </div>
+  `;
+}
+
+// =====================================================
+// DASHBOARD COUNTERS
+// =====================================================
+
+document.getElementById("hostelTotalRooms").innerText =
+  totalRooms;
+
+document.getElementById("occupiedBeds").innerText =
+  occupied;
+
+document.getElementById("availableBeds").innerText =
+  totalRooms - occupied;
+
+document.getElementById("boysCount").innerText =
+  boys;
+
+document.getElementById("girlsCount").innerText =
+  girls;
   });
 };
 
@@ -24532,6 +24771,170 @@ window.addDevice = async function () {
     Swal.fire("Error", error.message, "error");
   }
 };
+
+window.loadICT = function () {
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  onValue(ref(db, `ict/${schoolId}`), (snap) => {
+
+    // =====================================================
+    // NO DATA
+    // =====================================================
+
+    if (!snap.exists()) {
+
+      const noDataHtml = `
+        <div style="padding:20px;color:gray;text-align:center;">
+          ❌ No ICT devices found
+        </div>
+      `;
+
+      ictList.innerHTML = noDataHtml;
+
+      const ictContent = document.getElementById("ictContent");
+      if (ictContent) ictContent.innerHTML = noDataHtml;
+
+      return;
+    }
+
+    // =====================================================
+    // BUILD TABLE
+    // =====================================================
+
+    let html = `
+      <div style="overflow-x:auto;padding:10px;">
+
+      <table style="
+        width:100%;
+        border-collapse:collapse;
+        font-family:Arial;
+        font-size:13px;
+        border:2px solid #000;
+      ">
+
+        <thead>
+          <tr style="background:#111827;color:white;">
+            <th style="border:1px solid #000;padding:10px;">No</th>
+            <th style="border:1px solid #000;padding:10px;">Device</th>
+            <th style="border:1px solid #000;padding:10px;">Type</th>
+            <th style="border:1px solid #000;padding:10px;">Serial</th>
+            <th style="border:1px solid #000;padding:10px;">Status</th>
+            <th style="border:1px solid #000;padding:10px;">Action</th>
+          </tr>
+        </thead>
+
+        <tbody>
+    `;
+
+    let i = 1;
+
+    snap.forEach(child => {
+
+      const d = child.val();
+      const key = child.key;
+
+      html += `
+        <tr>
+
+          <td style="border:1px solid #000;padding:10px;">${i++}</td>
+
+          <td style="border:1px solid #000;padding:10px;font-weight:600;">
+            💻 ${d.deviceName || "-"}
+          </td>
+
+          <td style="border:1px solid #000;padding:10px;">
+            ${d.deviceType || "-"}
+          </td>
+
+          <td style="border:1px solid #000;padding:10px;">
+            ${d.serialNo || "-"}
+          </td>
+
+          <td style="border:1px solid #000;padding:10px;">
+            ${d.status || "Active"}
+          </td>
+
+          <td style="border:1px solid #000;padding:10px;">
+
+            <button onclick="deleteICT('${key}')"
+              style="
+                background:#ef4444;
+                color:white;
+                border:none;
+                padding:5px 10px;
+                border-radius:6px;
+                cursor:pointer;
+              ">
+              Delete
+            </button>
+
+          </td>
+
+        </tr>
+      `;
+    });
+
+    html += `
+        </tbody>
+      </table>
+      </div>
+    `;
+
+    // =====================================================
+    // SCREEN DISPLAY
+    // =====================================================
+
+    ictList.innerHTML = html;
+
+    // =====================================================
+    // PRINT SUPPORT
+    // =====================================================
+
+    const ictContent = document.getElementById("ictContent");
+
+    if (ictContent) {
+
+      ictContent.innerHTML = `
+        <div style="padding:20px;">
+
+          <h2 style="
+            text-align:center;
+            margin-bottom:20px;
+            color:#111827;
+          ">
+            💻 ICT ASSETS REPORT
+          </h2>
+
+          ${html}
+
+        </div>
+      `;
+    }
+
+  });
+};
+
+window.deleteICT = async function (id) {
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  const confirmDelete = await Swal.fire({
+    title: "Delete Device?",
+    icon: "warning",
+    showCancelButton: true
+  });
+
+  if (!confirmDelete.isConfirmed) return;
+
+  openSweetLoader("Deleting Device...");
+
+  await remove(ref(db, `ict/${schoolId}/${id}`));
+
+  closeSweetLoader();
+
+  Swal.fire("Deleted", "Device removed", "success");
+};
 /* =========================================================
    ADD INVENTORY ITEM
 ========================================================= */
@@ -24578,12 +24981,39 @@ window.addInventory = async function () {
     openSweetLoader("Saving Inventory Item...");
 
     // DATA
-    const data = {
-      itemName: item,
-      quantity: qty,
-      location: location,
-      createdAt: Date.now()
-    };
+const data = {
+
+  itemName: item,
+
+  stock: Number(qty),   // CHANGED (was quantity)
+
+  location,
+
+  category:
+    document.getElementById("category")?.value || "General",
+
+  assetCode:
+    "AST-" + Date.now().toString().slice(-6),
+
+  unitCost:
+    Number(document.getElementById("unitCost")?.value || 0),
+
+  minStock:
+    Number(document.getElementById("minStock")?.value || 5),
+
+  issued: [],
+
+  transactions: [
+    {
+      action: "Created",
+      qty: Number(qty),
+      date: Date.now(),
+      by: localStorage.getItem("staffName") || "System"
+    }
+  ],
+
+  createdAt: Date.now()
+};
 
     // SAVE TO FIREBASE
     await push(
@@ -24617,268 +25047,865 @@ window.addInventory = async function () {
     );
   }
 };
-window.loadICT = function () {
 
-  const schoolId = localStorage.getItem("schoolId");
+window.loadInventoryStats = function () {
 
-  onValue(ref(db, `ict/${schoolId}`), (snap) => {
+  const schoolId =
+    localStorage.getItem("schoolId");
 
-    let html = "";
+  onValue(
+    ref(db, `inventory/${schoolId}`),
 
-    if (!snap.exists()) {
+    snap => {
 
-      html = `
-        <div style="padding:20px;color:gray;">
-          No devices found
-        </div>
-      `;
+      let totalItems = 0;
+      let lowStock = 0;
+      let borrowed = 0;
+      let totalValue = 0;
 
-      ictList.innerHTML = html;
-      return;
+      const inventoryStats =
+        document.getElementById("inventoryStats");
+
+      const inventoryContent =
+        document.getElementById("inventoryContent");
+
+      snap.forEach(item => {
+
+        const d = item.val();
+
+        totalItems++;
+
+        totalValue +=
+          Number(d.stock || 0) *
+          Number(d.unitCost || 0);
+
+        if (
+          Number(d.stock || 0) <=
+          Number(d.minStock || 5)
+        ) {
+          lowStock++;
+        }
+
+        if (d.status === "Borrowed") {
+          borrowed++;
+        }
+
+      });
+
+      // ==============================
+      // DASHBOARD UI
+      // ==============================
+      if (inventoryStats) {
+        inventoryStats.innerHTML = `
+          <div class="dashboard-card">
+            📦 Items
+            <h2>${totalItems}</h2>
+          </div>
+
+          <div class="dashboard-card">
+            ⚠️ Low Stock
+            <h2>${lowStock}</h2>
+          </div>
+
+          <div class="dashboard-card">
+            📤 Borrowed
+            <h2>${borrowed}</h2>
+          </div>
+
+          <div class="dashboard-card">
+            💰 Value
+            <h2>KES ${totalValue.toLocaleString()}</h2>
+          </div>
+        `;
+      }
+
+      // ==============================
+      // PRINT CONTENT FIX
+      // ==============================
+      if (inventoryContent) {
+        inventoryContent.innerHTML = `
+          <div style="padding:20px;">
+
+            <h2 style="
+              text-align:center;
+              margin-bottom:20px;
+              color:#111827;
+            ">
+              📦 INVENTORY REPORT
+            </h2>
+
+            <div style="
+              display:grid;
+              grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+              gap:15px;
+            ">
+
+              <div class="dashboard-card">📦 Items<h2>${totalItems}</h2></div>
+
+              <div class="dashboard-card">⚠️ Low Stock<h2>${lowStock}</h2></div>
+
+              <div class="dashboard-card">📤 Borrowed<h2>${borrowed}</h2></div>
+
+              <div class="dashboard-card">💰 Value<h2>KES ${totalValue.toLocaleString()}</h2></div>
+
+            </div>
+
+          </div>
+        `;
+      }
+
     }
+  );
 
-    html += `
-      <div style="overflow-x:auto;">
-      <table style="${tableStyle}">
-        <tr>
-          <th style="${thStyle}">No</th>
-          <th style="${thStyle}">Device</th>
-          <th style="${thStyle}">Type</th>
-          <th style="${thStyle}">Serial</th>
-          <th style="${thStyle}">Status</th>
-          <th style="${thStyle}">Action</th>
-        </tr>
-    `;
-
-    let i = 1;
-
-    snap.forEach(child => {
-
-      const d = child.val();
-      const key = child.key;
-
-      html += `
-        <tr>
-          <td style="${tdStyle}">${i++}</td>
-          <td style="${tdStyle}">${d.deviceName}</td>
-          <td style="${tdStyle}">${d.deviceType}</td>
-          <td style="${tdStyle}">${d.serialNo}</td>
-          <td style="${tdStyle}">${d.status}</td>
-          <td style="${tdStyle}">
-            <button onclick="deleteICT('${key}')"
-              style="${deleteBtnStyle}">
-              Delete
-            </button>
-          </td>
-        </tr>
-      `;
-    });
-
-    html += `</table></div>`;
-
-    ictList.innerHTML = html;
-  });
 };
 
-window.deleteICT = async function (id) {
+window.filterInventory = function(){
 
-  const schoolId = localStorage.getItem("schoolId");
+  const value =
+    document.getElementById("inventorySearch")
+    .value.toLowerCase();
 
-  const confirmDelete = await Swal.fire({
-    title: "Delete Device?",
-    icon: "warning",
-    showCancelButton: true
+  const rows =
+    document.querySelectorAll("#inventoryTable tr");
+
+  rows.forEach((row, index) => {
+
+    if(index === 0) return;
+
+    const text = row.innerText.toLowerCase();
+
+    row.style.display =
+      text.includes(value) ? "" : "none";
+
   });
 
-  if (!confirmDelete.isConfirmed) return;
-
-  openSweetLoader("Deleting Device...");
-
-  await remove(ref(db, `ict/${schoolId}/${id}`));
-
-  closeSweetLoader();
-
-  Swal.fire("Deleted", "Device removed", "success");
 };
-
 /* =========================================================
-   LOAD INVENTORY WITH BORROWING SYSTEM
+/* =========================================================
+   LOAD INVENTORY (ERP UPGRADE)
 ========================================================= */
 
 window.loadInventory = function () {
 
-const schoolId = localStorage.getItem("schoolId");
+  const schoolId = localStorage.getItem("schoolId");
 
-  onValue(ref(db, `inventory/${schoolId}`), (snap) => {
+  onValue(
+    ref(db, `inventory/${schoolId}`),
+    (snap) => {
 
-    let html = "";
+      let html = "";
+
+      if (!snap.exists()) {
+
+        inventoryList.innerHTML = `
+          <div style="
+            padding:30px;
+            text-align:center;
+            color:#64748b;
+            font-size:14px;
+          ">
+            📦 No inventory items found
+          </div>
+        `;
+
+        return;
+      }
+
+      html += `
+
+      <div style="
+        overflow-x:auto;
+        padding:10px;
+      ">
+
+      <table
+        id="inventoryTable"
+        style="
+          width:100%;
+          border-collapse:collapse;
+          background:white;
+          min-width:1200px;
+          font-family:Arial,sans-serif;
+        "
+      >
+
+        <thead>
+
+          <tr style="
+            background:#0f172a;
+            color:white;
+            position:sticky;
+            top:0;
+          ">
+            <th style="border:1px solid #000;padding:12px;">No</th>
+            <th style="border:1px solid #000;padding:12px;">Asset</th>
+            <th style="border:1px solid #000;padding:12px;">Item</th>
+            <th style="border:1px solid #000;padding:12px;">Category</th>
+            <th style="border:1px solid #000;padding:12px;">Stock</th>
+            <th style="border:1px solid #000;padding:12px;">Status</th>
+            <th style="border:1px solid #000;padding:12px;">Value</th>
+            <th style="border:1px solid #000;padding:12px;">Location</th>
+            <th style="border:1px solid #000;padding:12px;">Department</th>
+            <th style="border:1px solid #000;padding:12px;">Borrowers</th>
+            <th style="border:1px solid #000;padding:12px;">Actions</th>
+          </tr>
+
+        </thead>
+
+        <tbody>
+      `;
+
+      let i = 1;
+
+      snap.forEach(child => {
+
+        const d = child.val();
+        const key = child.key;
+
+        const stock =
+          Number(d.stock || 0);
+
+        const minStock =
+          Number(d.minStock || 5);
+
+        const totalValue =
+          stock *
+          Number(d.unitCost || 0);
+
+        let stockBadge = "";
+
+        if(stock <= 0){
+
+          stockBadge = `
+            <span style="
+              background:#dc2626;
+              color:white;
+              padding:5px 10px;
+              border-radius:20px;
+              font-size:11px;
+            ">
+              Out Of Stock
+            </span>
+          `;
+
+        }else if(stock <= minStock){
+
+          stockBadge = `
+            <span style="
+              background:#f59e0b;
+              color:white;
+              padding:5px 10px;
+              border-radius:20px;
+              font-size:11px;
+            ">
+              Low Stock
+            </span>
+          `;
+
+        }else{
+
+          stockBadge = `
+            <span style="
+              background:#16a34a;
+              color:white;
+              padding:5px 10px;
+              border-radius:20px;
+              font-size:11px;
+            ">
+              In Stock
+            </span>
+          `;
+        }
+
+        html += `
+
+        <tr
+          style="
+            border:1px solid #000;
+            background:${i % 2 ? "#ffffff" : "#f8fafc"};
+          "
+          onmouseover="
+            this.style.background='#eef2ff'
+          "
+          onmouseout="
+            this.style.background='${
+              i % 2 ? "#ffffff" : "#f8fafc"
+            }'
+          "
+        >
+
+          <td style="border:1px solid #000;padding:10px;">
+            ${i++}
+          </td>
+
+          <td style="border:1px solid #000;padding:10px;">
+            ${d.assetCode || "-"}
+          </td>
+
+          <td style="border:1px solid #000;padding:10px;">
+
+            <div style="
+              font-weight:700;
+              color:#111827;
+            ">
+              ${d.itemName || "-"}
+            </div>
+
+          </td>
+
+          <td style="border:1px solid #000;padding:10px;">
+            ${d.category || "General"}
+          </td>
+
+          <td style="border:1px solid #000;padding:10px;">
+            <b>${stock}</b>
+          </td>
+
+          <td style="border:1px solid #000;padding:10px;">
+            ${stockBadge}
+          </td>
+
+          <td style="border:1px solid #000;padding:10px;">
+            KES ${totalValue.toLocaleString()}
+          </td>
+
+          <td style="border:1px solid #000;padding:10px;">
+            ${d.location || "-"}
+          </td>
+
+          <td style="border:1px solid #000;padding:10px;">
+            ${d.department || "-"}
+          </td>
+
+          <td style="border:1px solid #000;padding:10px;">
+
+            ${
+              d.issued &&
+              d.issued.length > 0
+
+              ? d.issued.map(b => `
+
+                <div style="
+                  background:#ecfdf5;
+                  border:1px solid #10b981;
+                  padding:5px;
+                  margin-bottom:4px;
+                  border-radius:6px;
+                  font-size:11px;
+                ">
+                  👤 ${b.borrower}<br>
+                  Qty: ${b.qty}
+                </div>
+
+              `).join("")
+
+              : `
+                <span style="color:#94a3b8;">
+                  No Borrowers
+                </span>
+              `
+            }
+
+          </td>
+
+          <td style="
+            border:1px solid #000;
+            padding:10px;
+            position:relative;
+          ">
+
+            <button
+              onclick="toggleInventoryActions('${key}', event)"
+              style="
+                background:#0f172a;
+                color:white;
+                border:none;
+                padding:8px 12px;
+                border-radius:8px;
+                cursor:pointer;
+                font-weight:600;
+              "
+            >
+              ⚙️ Actions
+            </button>
+
+            <div
+              id="inventory-actions-${key}"
+            style="
+  display:none;
+  position:fixed;
+  background:white;
+  border:1px solid #d1d5db;
+  border-radius:10px;
+  min-width:180px;
+  z-index:999999;
+  box-shadow:0 8px 25px rgba(0,0,0,.15);
+  overflow:hidden;
+"
+            >
+
+              ${
+                stock > 0
+                ? `
+                <button
+                  onclick="borrowInventory('${key}')"
+                  style="
+                    width:100%;
+                    border:none;
+                    background:white;
+                    padding:12px;
+                    text-align:left;
+                    cursor:pointer;
+                  "
+                >
+                  📤 Borrow
+                </button>
+                `
+                : ""
+              }
+
+              ${
+                d.issued &&
+                d.issued.length > 0
+                ? `
+                <button
+                  onclick="returnInventory('${key}')"
+                  style="
+                    width:100%;
+                    border:none;
+                    background:white;
+                    padding:12px;
+                    text-align:left;
+                    cursor:pointer;
+                  "
+                >
+                  📥 Return
+                </button>
+                `
+                : ""
+              }
+
+              <button
+                onclick="issueInventory('${key}')"
+                style="
+                  width:100%;
+                  border:none;
+                  background:white;
+                  padding:12px;
+                  text-align:left;
+                  cursor:pointer;
+                "
+              >
+                📦 Issue
+              </button>
+
+              <button
+                onclick="viewInventoryHistory('${key}')"
+                style="
+                  width:100%;
+                  border:none;
+                  background:white;
+                  padding:12px;
+                  text-align:left;
+                  cursor:pointer;
+                "
+              >
+                📜 History
+              </button>
+
+              <button
+                onclick="editInventory('${key}')"
+                style="
+                  width:100%;
+                  border:none;
+                  background:white;
+                  padding:12px;
+                  text-align:left;
+                  cursor:pointer;
+                "
+              >
+                ✏️ Edit
+              </button>
+
+              <button
+                onclick="deleteInventory('${key}')"
+                style="
+                  width:100%;
+                  border:none;
+                  background:#fee2e2;
+                  color:#b91c1c;
+                  padding:12px;
+                  text-align:left;
+                  cursor:pointer;
+                "
+              >
+                🗑️ Delete
+              </button>
+
+            </div>
+
+          </td>
+
+        </tr>
+        `;
+      });
+
+      html += `
+        </tbody>
+        </table>
+        </div>
+      `;
+
+      inventoryList.innerHTML = html;
+    }
+  );
+};
+document.addEventListener("click", function (e) {
+
+  // =========================
+  // BUTTON DETECTION
+  // =========================
+
+  const isLibraryButton =
+    e.target.closest("[onclick*='toggleLibraryActions']");
+
+  const isInventoryButton =
+    e.target.closest("[onclick*='toggleInventoryActions']");
+
+  const isTransportButton =
+    e.target.closest("[onclick*='toggleActionPanel']");
+
+  // =========================
+  // MENU DETECTION
+  // =========================
+
+  const isAnyMenu =
+    e.target.closest("[id^='library-actions-']") ||
+    e.target.closest("[id^='inventory-actions-']") ||
+    e.target.closest("[id^='panel-']"); // 👈 transport panels
+
+  // =========================
+  // CLOSE LOGIC
+  // =========================
+
+  if (!isLibraryButton && !isInventoryButton && !isTransportButton && !isAnyMenu) {
+
+    // close library menus
+    document
+      .querySelectorAll("[id^='library-actions-']")
+      .forEach(m => {
+        m.style.display = "none";
+      });
+
+    // close inventory menus
+    document
+      .querySelectorAll("[id^='inventory-actions-']")
+      .forEach(m => {
+        m.style.display = "none";
+      });
+
+    // close transport menus
+    document
+      .querySelectorAll("[id^='panel-']")
+      .forEach(m => {
+        m.style.display = "none";
+      });
+
+  }
+
+});
+window.toggleInventoryActions = function(id, event){
+
+  const menuId = `inventory-actions-${id}`;
+
+  const menu = document.getElementById(menuId);
+
+  // close others
+  document.querySelectorAll("[id^='inventory-actions-']")
+    .forEach(m => {
+      if(m.id !== menuId) m.style.display = "none";
+    });
+
+  if(!menu) return;
+
+  const rect = event?.target?.getBoundingClientRect?.();
+
+  if(!rect){
+    menu.style.display = "block";
+    return;
+  }
+
+  // position floating menu near button
+  menu.style.position = "fixed";
+  menu.style.left = rect.left + "px";
+  menu.style.top = (rect.bottom + 5) + "px";
+
+  menu.style.zIndex = 999999;
+
+  menu.style.display =
+    menu.style.display === "block" ? "none" : "block";
+};
+window.returnInventory = async function(id){
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  const itemRef = ref(db, `inventory/${schoolId}/${id}`);
+  const snap = await get(itemRef);
+
+  if(!snap.exists()) return;
+
+  const d = snap.val();
+
+  const issued = d.issued || [];
+
+  if(issued.length === 0){
+    Swal.fire("Info", "No active borrow records", "info");
+    return;
+  }
+
+  // ================= SELECT WHO IS RETURNING =================
+  const { value: selected } = await Swal.fire({
+
+    title: "Select Return Record",
+
+    input: "select",
+
+    inputOptions: issued.reduce((acc, i, index) => {
+
+      acc[index] =
+        `${i.borrower} - Qty: ${i.qty}`;
+
+      return acc;
+
+    }, {}),
+
+    inputPlaceholder: "Select borrower",
+
+    showCancelButton: true
+
+  });
+
+  if (selected === undefined) return;
+
+  const index = Number(selected);
+
+  const returning = issued[index];
+
+  if (!returning) return;
+
+  // ================= RESTORE STOCK =================
+  const newStock =
+    Number(d.stock || 0) +
+    Number(returning.qty || 0);
+
+  // remove ONLY selected record
+  issued.splice(index, 1);
+
+  const transactions = d.transactions || [];
+
+  transactions.push({
+    action: "Returned",
+    borrower: returning.borrower,
+    qty: returning.qty,
+    date: Date.now(),
+    by: localStorage.getItem("staffName") || "System"
+  });
+
+  await update(itemRef, {
+    stock: newStock,
+    issued,
+    transactions,
+    status: issued.length ? "Borrowed" : "Available"
+  });
+
+  Swal.fire(
+    "Success",
+    `${returning.borrower} returned ${returning.qty} item(s)`,
+    "success"
+  );
+};
+/* =========================================================
+   INVENTORY BORROWING + ERP LEVEL TRACKING
+========================================================= */
+
+window.borrowInventory = async function(id) {
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  const { value: formValues } = await Swal.fire({
+
+    title: "Borrow Inventory Item",
+
+    html: `
+
+      <input id="borrowerName"
+        class="swal2-input"
+        placeholder="Staff Name">
+
+      <input id="department"
+        class="swal2-input"
+        placeholder="Department">
+
+      <input type="number"
+        id="borrowQty"
+        class="swal2-input"
+        placeholder="Quantity to borrow"
+        value="1">
+
+      <input type="date"
+        id="returnDate"
+        class="swal2-input">
+
+    `,
+
+    showCancelButton: true,
+
+    preConfirm: () => {
+
+      const borrower =
+        document.getElementById("borrowerName").value;
+
+      const department =
+        document.getElementById("department").value;
+
+      const qty =
+        Number(document.getElementById("borrowQty").value || 1);
+
+      const returnDate =
+        document.getElementById("returnDate").value;
+
+      if (!borrower) {
+        Swal.showValidationMessage("Enter borrower name");
+        return false;
+      }
+
+      if (qty <= 0) {
+        Swal.showValidationMessage("Quantity must be at least 1");
+        return false;
+      }
+
+      return {
+        borrower,
+        department,
+        qty,
+        returnDate
+      };
+    }
+
+  });
+
+  if (!formValues) return;
+
+  openSweetLoader("Processing Borrow Request...");
+
+  try {
+
+    const itemRef =
+      ref(db, `inventory/${schoolId}/${id}`);
+
+    const snap =
+      await get(itemRef);
 
     if (!snap.exists()) {
 
-      inventoryList.innerHTML = `
-        <div style="
-          padding:20px;
-          color:gray;
-        ">
-          No inventory items found
-        </div>
-      `;
+      closeSweetLoader();
+
+      Swal.fire("Error", "Item not found", "error");
 
       return;
     }
 
-    html += `
-    <div style="overflow-x:auto;">
+    const d = snap.val();
 
-    <table style="
-      width:100%;
-      border-collapse:collapse;
-      margin-top:15px;
-      background:white;
-    ">
+    const currentStock =
+      Number(d.stock || 0);
 
-      <tr>
+    const borrowQty =
+      Number(formValues.qty);
 
-        <th style="${thStyle}">No</th>
-        <th style="${thStyle}">Item</th>
-        <th style="${thStyle}">Quantity</th>
-        <th style="${thStyle}">Location</th>
-        <th style="${thStyle}">Status</th>
-        <th style="${thStyle}">Borrower</th>
-        <th style="${thStyle}">Return Date</th>
-        <th style="${thStyle}">Actions</th>
+    // 🔴 STOCK CHECK
+    if (borrowQty > currentStock) {
 
-      </tr>
-    `;
+      closeSweetLoader();
 
-    let i = 1;
+      Swal.fire(
+        "Error",
+        "Not enough stock available",
+        "error"
+      );
 
-    snap.forEach(child => {
+      return;
+    }
 
-      const d = child.val();
-      const key = child.key;
+    // =========================
+    // ISSUED ARRAY (WHO HAS WHAT)
+    // =========================
+    const issued = d.issued || [];
 
-      // STATUS BADGE
-      const statusBadge =
-        d.status === "Borrowed"
-        ? `
-          <span style="
-            background:#dc2626;
-            color:white;
-            padding:5px 10px;
-            border-radius:20px;
-            font-size:12px;
-          ">
-            Borrowed
-          </span>
-        `
-        : `
-          <span style="
-            background:#16a34a;
-            color:white;
-            padding:5px 10px;
-            border-radius:20px;
-            font-size:12px;
-          ">
-            Available
-          </span>
-        `;
-
-      // ACTION BUTTONS
-      const actionButtons =
-        d.status === "Borrowed"
-        ? `
-
-          <button
-            onclick="returnInventory('${key}')"
-            style="
-              background:#2563eb;
-              color:white;
-              border:none;
-              padding:8px 12px;
-              border-radius:6px;
-              cursor:pointer;
-              margin-right:5px;
-            ">
-            Return
-          </button>
-
-          <button
-            onclick="deleteInventory('${key}')"
-            style="${deleteBtnStyle}">
-            Delete
-          </button>
-
-        `
-        : `
-
-          <button
-            onclick="borrowInventory('${key}')"
-            style="
-              background:#16a34a;
-              color:white;
-              border:none;
-              padding:8px 12px;
-              border-radius:6px;
-              cursor:pointer;
-              margin-right:5px;
-            ">
-            Borrow
-          </button>
-
-          <button
-            onclick="deleteInventory('${key}')"
-            style="${deleteBtnStyle}">
-            Delete
-          </button>
-
-        `;
-
-      html += `
-
-      <tr>
-
-        <td style="${tdStyle}">
-          ${i++}
-        </td>
-
-        <td style="${tdStyle}">
-          ${d.itemName}
-        </td>
-
-        <td style="${tdStyle}">
-          ${d.quantity}
-        </td>
-
-        <td style="${tdStyle}">
-          ${d.location}
-        </td>
-
-        <td style="${tdStyle}">
-          ${statusBadge}
-        </td>
-
-        <td style="${tdStyle}">
-          ${d.borrowedBy || "-"}
-        </td>
-
-        <td style="${tdStyle}">
-          ${d.returnDate || "-"}
-        </td>
-
-        <td style="${tdStyle}">
-          ${actionButtons}
-        </td>
-
-      </tr>
-      `;
+    issued.push({
+      borrower: formValues.borrower,
+      department: formValues.department,
+      qty: borrowQty,
+      returnDate: formValues.returnDate,
+      date: Date.now()
     });
 
-    html += `</table></div>`;
+    // =========================
+    // TRANSACTIONS (FULL AUDIT)
+    // =========================
+    const transactions = d.transactions || [];
 
-    inventoryList.innerHTML = html;
-  });
+    transactions.push({
+      action: "Borrowed",
+      borrower: formValues.borrower,
+      department: formValues.department,
+      qty: borrowQty,
+      date: Date.now(),
+      by: localStorage.getItem("staffName") || "System"
+    });
+
+    // =========================
+    // UPDATE FIREBASE
+    // =========================
+    await update(itemRef, {
+
+      stock: currentStock - borrowQty,
+
+      issued,
+
+      transactions,
+
+      status:
+        (currentStock - borrowQty) === 0
+        ? "Out Of Stock"
+        : "Borrowed"
+
+    });
+
+    closeSweetLoader();
+
+    Swal.fire(
+      "Success",
+      "Item borrowed successfully",
+      "success"
+    );
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    closeSweetLoader();
+
+    Swal.fire(
+      "Error",
+      error.message,
+      "error"
+    );
+  }
 };
+
+
 window.deleteInventory = async function (id) {
 
   const schoolId = localStorage.getItem("schoolId");
@@ -24898,6 +25925,327 @@ window.deleteInventory = async function (id) {
   closeSweetLoader();
 
   Swal.fire("Deleted", "Inventory item removed", "success");
+};
+
+window.viewInventoryHistory = async function(id){
+
+  const schoolId =
+    localStorage.getItem("schoolId");
+
+  const snap =
+    await get(
+      ref(db,
+      `inventory/${schoolId}/${id}`)
+    );
+
+  if(!snap.exists()) return;
+
+  const d = snap.val();
+
+  const transactions =
+    d.transactions || [];
+
+  let html = "";
+
+  if(transactions.length === 0){
+
+    html = `
+      <div style="
+        padding:20px;
+        text-align:center;
+        color:#64748b;
+      ">
+        No history found
+      </div>
+    `;
+
+  } else {
+
+    transactions
+      .sort((a,b)=>b.date-a.date)
+      .forEach(t=>{
+
+        html += `
+          <div style="
+            padding:12px;
+            border-bottom:1px solid #e5e7eb;
+            text-align:left;
+          ">
+
+            <div style="
+              font-weight:700;
+              color:#111827;
+            ">
+              ${t.action}
+            </div>
+
+            <div>
+              👤 Borrower:
+              <b>${t.borrower || "-"}</b>
+            </div>
+
+            <div>
+              📦 Quantity:
+              <b>${t.qty || 0}</b>
+            </div>
+
+            <div>
+              🏢 Department:
+              <b>${t.department || "-"}</b>
+            </div>
+
+            <div>
+              👨‍💼 Performed By:
+              <b>${t.by || "System"}</b>
+            </div>
+
+            <div>
+              🕒 ${new Date(
+                t.date
+              ).toLocaleString()}
+            </div>
+
+          </div>
+        `;
+
+      });
+
+  }
+
+  Swal.fire({
+
+    title: "Inventory History",
+
+    html,
+
+    width: 700,
+
+    confirmButtonText: "Close"
+
+  });
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+window.issueInventory = async function(id){
+
+  const schoolId =
+    localStorage.getItem("schoolId");
+
+  const { value } =
+    await Swal.fire({
+
+      title:"Issue Stock",
+
+      input:"number",
+
+      inputLabel:"Quantity To Issue",
+
+      showCancelButton:true
+
+    });
+
+  if(!value) return;
+
+  const snap =
+    await get(
+      ref(db,
+      `inventory/${schoolId}/${id}`)
+    );
+
+  if(!snap.exists()) return;
+
+  const d = snap.val();
+
+  const currentQty =
+    Number(d.stock || 0);
+
+  if(Number(value) > currentQty){
+
+    Swal.fire(
+      "Error",
+      "Not enough stock available",
+      "error"
+    );
+
+    return;
+  }
+
+  const newQty =
+    currentQty - Number(value);
+
+  const history =
+    d.history || [];
+
+ history.push({
+  action: "Issued",
+  quantity: Number(value),
+  performedBy: localStorage.getItem("staffName") || "System",
+  date: Date.now()
+});
+
+  await update(
+    ref(db,
+    `inventory/${schoolId}/${id}`),
+    {
+      stock: newQty,
+      history
+    }
+  );
+
+  Swal.fire(
+    "Success",
+    "Stock issued successfully",
+    "success"
+  );
+};
+window.viewInventoryReport =
+async function(){
+
+  const schoolId =
+    localStorage.getItem("schoolId");
+
+  const snap =
+    await get(
+      ref(db,
+      `inventory/${schoolId}`)
+    );
+
+  if(!snap.exists()) return;
+
+  let totalItems = 0;
+  let borrowed = 0;
+  let lowStock = 0;
+  let value = 0;
+
+  snap.forEach(item=>{
+
+    const d = item.val();
+
+    totalItems +=
+      Number(d.stock || 0);
+
+    value +=
+      Number(
+        d.stock || 0
+      ) *
+      Number(
+        d.unitCost || 0
+      );
+
+    if(
+      d.status ===
+      "Borrowed"
+    ){
+      borrowed++;
+    }
+
+    if(
+      Number(d.stock || 0)
+      <=
+      Number(d.minStock || 5)
+    ){
+      lowStock++;
+    }
+
+  });
+
+  Swal.fire({
+
+    title:"Inventory Report",
+
+    html:`
+
+      📦 Total Stock:
+      <b>${totalItems}</b><br><br>
+
+      💰 Total Value:
+      <b>KES ${value}</b><br><br>
+
+      ⚠️ Low Stock:
+      <b>${lowStock}</b><br><br>
+
+      📤 Borrowed:
+      <b>${borrowed}</b>
+
+    `,
+
+    width:500
+
+  });
+
+};
+window.editInventory = async function(id){
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  const snap = await get(
+    ref(db, `inventory/${schoolId}/${id}`)
+  );
+
+  if(!snap.exists()) return;
+
+  const d = snap.val();
+
+  const { value } = await Swal.fire({
+
+    title: "Edit Inventory",
+
+    html: `
+      <input id="editItem" class="swal2-input" value="${d.itemName || ""}">
+      <input id="editQty" type="number" class="swal2-input" value="${d.stock || 0}">
+      <input id="editCost" type="number" class="swal2-input" value="${d.unitCost || 0}">
+    `,
+
+    showCancelButton: true,
+
+    preConfirm: () => ({
+      itemName: document.getElementById("editItem").value,
+      stock: Number(document.getElementById("editQty").value),
+      unitCost: Number(document.getElementById("editCost").value)
+    })
+
+  });
+
+  if(!value) return;
+
+  const history = d.history || [];
+
+  history.push({
+    action: "Edited",
+    date: Date.now()
+  });
+
+  await update(
+    ref(db, `inventory/${schoolId}/${id}`),
+    { ...value, history }
+  );
+
+  Swal.fire("Success", "Item updated", "success");
 };
 
 /* =========================================================
@@ -25234,135 +26582,7 @@ window.loadICT = function () {
   });
 };
 
-/* =========================================================
-   INVENTORY BORROWING
-========================================================= */
 
-window.borrowInventory = async function(id) {
-
-  const schoolId = localStorage.getItem("schoolId");
-
-  const { value: formValues } = await Swal.fire({
-
-    title: "Borrow Inventory Item",
-
-    html: `
-
-      <input id="borrowerName"
-        class="swal2-input"
-        placeholder="Staff Name">
-
-      <input id="department"
-        class="swal2-input"
-        placeholder="Department">
-
-      <input type="date"
-        id="returnDate"
-        class="swal2-input">
-
-    `,
-
-    showCancelButton: true,
-
-    preConfirm: () => {
-
-      return {
-        borrower: borrowerName.value,
-        department: department.value,
-        returnDate: returnDate.value
-      };
-    }
-  });
-
-  if (!formValues) return;
-
-  openSweetLoader("Borrowing Item...");
-
-  try {
-
-    await update(ref(db, `inventory/${schoolId}/${id}`), {
-
-      status: "Borrowed",
-      borrowedBy: formValues.borrower,
-      department: formValues.department,
-      returnDate: formValues.returnDate,
-      borrowDate: new Date().toLocaleDateString()
-
-    });
-
-    closeSweetLoader();
-
-    Swal.fire(
-      "Success",
-      "Item borrowed successfully",
-      "success"
-    );
-
-  } catch (error) {
-
-    console.error(error);
-
-    closeSweetLoader();
-
-    Swal.fire(
-      "Error",
-      error.message,
-      "error"
-    );
-  }
-};
-
-/* =========================================================
-   RETURN INVENTORY ITEM
-========================================================= */
-
-window.returnInventory = async function(id) {
-
-  const schoolId = localStorage.getItem("schoolId");
-
-  const confirmReturn = await Swal.fire({
-    title: "Return Item?",
-    icon: "question",
-    showCancelButton: true
-  });
-
-  if (!confirmReturn.isConfirmed) return;
-
-  openSweetLoader("Returning Item...");
-
-  try {
-
-    await update(ref(db, `inventory/${schoolId}/${id}`), {
-
-      status: "Available",
-      borrowedBy: "",
-      department: "",
-      returnDate: "",
-      borrowDate: ""
-
-    });
-
-    closeSweetLoader();
-
-    Swal.fire(
-      "Returned",
-      "Inventory item returned",
-      "success"
-    );
-
-  } catch (error) {
-
-    console.error(error);
-
-    closeSweetLoader();
-
-    Swal.fire(
-      "Error",
-      error.message,
-      "error"
-    );
-  }
-};
 
 /* =========================================================
    📚 LIBRARY MANAGEMENT SYSTEM
@@ -25446,7 +26666,7 @@ window.addBook = async function () {
 };
 
 /* =========================================================
-   LOAD LIBRARY
+   LOAD LIBRARY (ACTION MENU VERSION)
 ========================================================= */
 
 window.loadLibrary = function () {
@@ -25477,10 +26697,10 @@ window.loadLibrary = function () {
       border-collapse:collapse;
       margin-top:15px;
       background:white;
+      font-family:Arial;
     ">
 
       <tr style="background:#0f172a;color:white;">
-
         <th style="${thStyle}">No</th>
         <th style="${thStyle}">Title</th>
         <th style="${thStyle}">Author</th>
@@ -25489,7 +26709,6 @@ window.loadLibrary = function () {
         <th style="${thStyle}">Copies</th>
         <th style="${thStyle}">Status</th>
         <th style="${thStyle}">Actions</th>
-
       </tr>
     `;
 
@@ -25502,95 +26721,87 @@ window.loadLibrary = function () {
 
       const statusBadge =
         d.available > 0
-        ? `
-          <span style="
-            background:#16a34a;
-            color:white;
-            padding:5px 10px;
-            border-radius:20px;
-            font-size:12px;
-          ">
-            Available
-          </span>
-        `
-        : `
-          <span style="
-            background:#dc2626;
-            color:white;
-            padding:5px 10px;
-            border-radius:20px;
-            font-size:12px;
-          ">
-            Out Of Stock
-          </span>
-        `;
+          ? `<span style="background:#16a34a;color:white;padding:5px 10px;border-radius:20px;font-size:12px;">Available</span>`
+          : `<span style="background:#dc2626;color:white;padding:5px 10px;border-radius:20px;font-size:12px;">Out Of Stock</span>`;
 
       html += `
 
-      <tr>
+      <tr style="border-bottom:1px solid #eee;">
 
-        <td style="${tdStyle}">
-          ${i++}
-        </td>
+        <td style="${tdStyle}">${i++}</td>
 
-        <td style="${tdStyle}">
-          ${d.title}
-        </td>
-
-        <td style="${tdStyle}">
-          ${d.author}
-        </td>
-
-        <td style="${tdStyle}">
-          ${d.category}
-        </td>
-
-        <td style="${tdStyle}">
-          ${d.isbn || "-"}
-        </td>
-
-        <td style="${tdStyle}">
-          ${d.available}/${d.quantity}
-        </td>
+        <td style="${tdStyle}">${d.title}</td>
+        <td style="${tdStyle}">${d.author}</td>
+        <td style="${tdStyle}">${d.category}</td>
+        <td style="${tdStyle}">${d.isbn || "-"}</td>
+        <td style="${tdStyle}">${d.available}/${d.stock}</td>
 
         <td style="${tdStyle}">
           ${statusBadge}
         </td>
 
-        <td style="${tdStyle}">
+        <td style="${tdStyle};position:relative;">
 
+          <!-- MAIN ACTION BUTTON -->
           <button
-            onclick="borrowBook('${key}')"
+            onclick="toggleLibraryActions('${key}', event)"
             style="
-              background:#16a34a;
+              background:#111827;
               color:white;
               border:none;
               padding:8px 12px;
-              border-radius:6px;
+              border-radius:8px;
               cursor:pointer;
-              margin-bottom:5px;
-            ">
-            Borrow
+              font-size:12px;
+              font-weight:600;
+            "
+          >
+            ⚙️ Actions
           </button>
 
-          <br>
-
-          <button
-            onclick="viewBorrowings('${key}')"
+          <!-- DROPDOWN -->
+          <div
+            id="library-actions-${key}"
             style="
-              background:#2563eb;
-              color:white;
-              border:none;
-              padding:8px 12px;
-              border-radius:6px;
-              cursor:pointer;
-            ">
-            View Borrowers
-          </button>
+              display:none;
+              position:fixed;
+              background:white;
+              border:1px solid #e5e7eb;
+              border-radius:10px;
+              min-width:180px;
+              box-shadow:0 10px 25px rgba(0,0,0,0.15);
+              z-index:99999;
+              overflow:hidden;
+            "
+          >
+
+            <button
+              onclick="borrowBook('${key}')"
+              style="width:100%;padding:12px;border:none;background:white;text-align:left;cursor:pointer;"
+            >
+              📚 Borrow
+            </button>
+
+            <button
+              onclick="viewBorrowings('${key}')"
+              style="width:100%;padding:12px;border:none;background:white;text-align:left;cursor:pointer;"
+            >
+              👀 View Borrowers
+            </button>
+
+            <button
+              onclick="deleteBook('${key}')"
+              style="width:100%;padding:12px;border:none;background:#fee2e2;color:#b91c1c;text-align:left;cursor:pointer;"
+            >
+              🗑️ Delete
+            </button>
+
+          </div>
 
         </td>
 
       </tr>
+
       `;
     });
 
@@ -25600,6 +26811,57 @@ window.loadLibrary = function () {
   });
 };
 
+window.toggleLibraryActions = function(id, event){
+
+  const menuId = `library-actions-${id}`;
+
+  const menu = document.getElementById(menuId);
+
+  // close others
+  document.querySelectorAll("[id^='library-actions-']")
+    .forEach(m => {
+      if(m.id !== menuId) m.style.display = "none";
+    });
+
+  const rect = event.target.getBoundingClientRect();
+
+  menu.style.left = rect.left + "px";
+  menu.style.top = (rect.bottom + 5) + "px";
+
+  menu.style.display =
+    menu.style.display === "block" ? "none" : "block";
+};
+window.deleteBook = async function(id){
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  const confirmDelete = await Swal.fire({
+    title: "Delete Book?",
+    text: "This action cannot be undone",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Yes Delete"
+  });
+
+  if(!confirmDelete.isConfirmed) return;
+
+  openSweetLoader("Deleting book...");
+
+  try {
+
+    await remove(ref(db, `library/${schoolId}/${id}`));
+
+    closeSweetLoader();
+
+    Swal.fire("Deleted", "Book removed successfully", "success");
+
+  } catch (error) {
+
+    closeSweetLoader();
+
+    Swal.fire("Error", error.message, "error");
+  }
+};
 /* =========================================================
    BORROW BOOK
 ========================================================= */
