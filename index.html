@@ -59,7 +59,7 @@ li{
 
 .sidebar{
   width:200px;
-  height:200vh;
+  height:150vh;
   background:#0f172a;
   color:#fff;
 
@@ -221,7 +221,7 @@ li{
 
 /* ACTIVE */
 
-.active{
+.section.active{
   background:#991b1b !important;
   color:white !important;
 
@@ -1062,7 +1062,7 @@ button.primary{
   align-items:center;
   gap:14px;
 
-  min-width:230px;
+  min-width:50px;
 
   padding:14px 18px;
 
@@ -1325,17 +1325,14 @@ button.primary{
 /* =========================================================
    🌍 MODAL
 ========================================================= */
-
 .modal-backdrop{
   display:none;
-
   position:fixed;
   inset:0;
-
   background:rgba(0,0,0,0.6);
-
   z-index:9999;
 
+  display:flex;
   align-items:center;
   justify-content:center;
 }
@@ -1441,42 +1438,17 @@ button.primary{
 }
 
 
-
-/* MOBILE */
 @media(max-width:600px){
 
-  #floatingSchoolsCounter{
-
-    right:12px !important;
-    bottom:12px !important;
-
-    padding:12px 16px;
-
-    gap:10px;
+  .main{
+    margin-left:0;
+    width:100%;
   }
-
-  .schools-counter-icon{
-
-    width:50px;
-    height:50px;
-
-    font-size:24px;
-  }
-
-  .schools-counter-number{
-    font-size:24px;
-  }
-}
-
-  /* INPUTS */
 
   input,
   select{
     width:100%;
-    max-width:100%;
   }
-
-  /* TABLES */
 
   .marks-table,
   .learners-table{
@@ -1492,6 +1464,11 @@ button.primary{
   .load-btn{
     width:100%;
     justify-content:center;
+  }
+
+  #floatingSchoolsCounter{
+    right:12px;
+    bottom:12px;
   }
 }
 /* =========================================
@@ -1550,20 +1527,6 @@ button.primary{
   border-radius:8px;
 
   cursor:pointer;
-}
-.report-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-  gap:15px;
-}
-
-/* base card */
-.report-card{
-  padding:15px;
-  border-radius:12px;
-  color:white;
-  font-family:Arial;
-  box-shadow:0 2px 10px rgba(0,0,0,0.1);
 }
 
 /* ===== UNIQUE COLORS ===== */
