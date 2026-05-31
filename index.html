@@ -59,7 +59,7 @@ li{
 
 .sidebar{
   width:200px;
-  height:150vh;
+  height:100vh;
   background:#0f172a;
   color:#fff;
 
@@ -221,7 +221,7 @@ li{
 
 /* ACTIVE */
 
-.section.active{
+.active{
   background:#991b1b !important;
   color:white !important;
 
@@ -231,12 +231,36 @@ li{
 }
 
 /* FOOTER */
-
 .sidebar-footer{
-  border-top:1px solid rgba(255,255,255,0.1);
-  padding:10px;
-}
+  position: sticky;
+  bottom: 0;
 
+  background: #0f172a;
+  padding: 12px;
+
+  border-top: 1px solid rgba(255,255,255,0.1);
+
+  z-index: 10;
+}
+.logout-btn{
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: 90%;
+
+  z-index: 999;
+
+  background: #dc2626;
+  color: white;
+
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+
+  cursor: pointer;
+}
 .subscription-box{
   background:#1e293b;
   padding:12px;
@@ -1047,107 +1071,87 @@ button.primary{
     background-position:200% 0;
   }
 }
-
 /* =========================================================
-   🌍 FLOATING COUNTER
+   🌍 FLOATING COUNTER (FIXED FOR MOBILE OVERLAP)
 ========================================================= */
 
 #floatingSchoolsCounter{
   position:fixed;
-
   top:20px;
   right:20px;
 
   display:flex;
   align-items:center;
-  gap:14px;
+  gap:10px;
 
-  min-width:50px;
+  min-width:200px;
+  max-width:280px;
 
-  padding:14px 18px;
+  padding:12px 14px;
 
-  border-radius:18px;
+  border-radius:16px;
 
   background:rgba(255,255,255,0.95);
-
   backdrop-filter:blur(12px);
 
   border:1px solid rgba(255,255,255,0.3);
 
   box-shadow:0 10px 35px rgba(0,0,0,0.15);
 
-  z-index:99999;
-
-  animation:
-    floatUp .5s ease,
-    floatPulse 3s ease-in-out infinite;
+  z-index:1000; /* FIX: was WAY too high */
 }
 
-#floatingSchoolsCounter:hover{
-  transform:translateY(-3px);
-  box-shadow:0 15px 45px rgba(0,0,0,0.18);
-}
-
+/* ICON */
 .schools-counter-icon{
-  width:52px;
-  height:52px;
+  width:42px;
+  height:42px;
 
-  border-radius:16px;
+  font-size:18px;
 
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  flex-shrink:0;
-
-  font-size:24px;
-  color:white;
-
-  background:
-    linear-gradient(
-      135deg,
-      #10b981,
-      #059669
-    );
-
-  box-shadow:0 8px 20px rgba(16,185,129,0.35);
+  border-radius:12px;
 }
 
+/* TEXT */
 .schools-counter-title{
-  font-size:13px;
-  font-weight:600;
-  color:#64748b;
-
-  margin-bottom:5px;
+  font-size:12px;
+  margin-bottom:2px;
 }
 
 .schools-counter-number{
-  font-size:28px;
-  font-weight:800;
-  color:#0f172a;
+  font-size:22px;
 }
 
-/* FLOAT */
+/* =========================================================
+   🌍 MOBILE FIX (CRITICAL)
+========================================================= */
 
-@keyframes floatUp{
-  from{
-    opacity:0;
-    transform:translateY(-20px) scale(.95);
+@media (max-width:600px){
+
+  #floatingSchoolsCounter{
+
+    /* move away from blocking content */
+    top:auto;
+    bottom:12px;
+    right:12px;
+    left:12px;
+
+    width:calc(100% - 24px);
+
+    justify-content:space-between;
+
+    padding:10px 12px;
+
+    border-radius:12px;
   }
 
-  to{
-    opacity:1;
-    transform:translateY(0) scale(1);
-  }
-}
-
-@keyframes floatPulse{
-  0%,100%{
-    transform:translateY(0);
+  .schools-counter-icon{
+    width:38px;
+    height:38px;
+    font-size:16px;
   }
 
-  50%{
-    transform:translateY(-2px);
+  .schools-counter-number{
+    font-size:20px;
   }
 }
 
@@ -1325,14 +1329,17 @@ button.primary{
 /* =========================================================
    🌍 MODAL
 ========================================================= */
+
 .modal-backdrop{
   display:none;
+
   position:fixed;
   inset:0;
+
   background:rgba(0,0,0,0.6);
+
   z-index:9999;
 
-  display:flex;
   align-items:center;
   justify-content:center;
 }
@@ -1340,7 +1347,7 @@ button.primary{
 .modal-box{
   position:relative;
 
-  width:400px;
+  width:300px;
   max-width:90%;
 
   background:white;
@@ -1436,41 +1443,6 @@ button.primary{
   display:block;
   min-height:20px;
 }
-
-
-@media(max-width:600px){
-
-  .main{
-    margin-left:0;
-    width:100%;
-  }
-
-  input,
-  select{
-    width:100%;
-  }
-
-  .marks-table,
-  .learners-table{
-    font-size:13px;
-  }
-
-  .action-buttons{
-    flex-direction:column;
-    align-items:stretch;
-  }
-
-  .action-btn,
-  .load-btn{
-    width:100%;
-    justify-content:center;
-  }
-
-  #floatingSchoolsCounter{
-    right:12px;
-    bottom:12px;
-  }
-}
 /* =========================================
    E-LEARNING
 ========================================= */
@@ -1527,6 +1499,20 @@ button.primary{
   border-radius:8px;
 
   cursor:pointer;
+}
+.report-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:15px;
+}
+
+/* base card */
+.report-card{
+  padding:15px;
+  border-radius:12px;
+  color:white;
+  font-family:Arial;
+  box-shadow:0 2px 10px rgba(0,0,0,0.1);
 }
 
 /* ===== UNIQUE COLORS ===== */
