@@ -1705,92 +1705,160 @@ button.primary{
     <!-- SCROLLABLE MENU -->
     <div class="sidebar-scroll">
 
-      <!-- MAIN MENU -->
-      <div class="menu-section">
-        <h4>MAIN MENU</h4>
+ <!-- MAIN MENU -->
+<!-- MAIN MENU -->
+<div class="menu-section" id="mainMenu">
 
-        <button onclick="show('dashboard')">🏠 Dashboard</button>
-        <button onclick="show('students')">👨🎓 Students</button>
-        <button onclick="show('teachers')">👨🏫 Teachers</button>
-        <button onclick="show('attendanceSection')">🗓️ Attendance</button>
-        <button onclick="show('fees')">💰 Fees</button>
-        <button onclick="show('payroll')">💳 Payroll</button>
-        <button onclick="show('supportStaff')">🧹 Support Staff</button>
-<button onclick="show('transport')">🚌 Transport</button>
-<button onclick="show('hostel')">🏨 Hostel</button>
-<button onclick="show('ict')">💻 ICT</button>
-<button onclick="show('inventory')">📦 Inventory</button>
-<button onclick="show('library')">📚 Library</button>
-<button onclick="show('eLearningSection')">
-  🎓 E-Learning
-</button>
-      </div>
+  <h4>MAIN MENU</h4>
 
-  
+  <button id="menuDashboard"
+    onclick="show('dashboard')">
+    🏠 Dashboard
+  </button>
 
-      <!-- EXAMS -->
-      <div class="menu-section">
+  <button id="menuStudents"
+    onclick="show('students')">
+    👨🎓 Students
+  </button>
 
-        <button class="menu-btn" onclick="toggleMenu('examsSubmenu')">
-          📊 Exams Management ▾
-        </button>
+  <button id="menuTeachers"
+    onclick="show('teachers')">
+    👨🏫 Teachers
+  </button>
 
-        <div id="examsSubmenu" class="submenu">
+  <button id="menuAttendance"
+    onclick="show('attendanceSection')">
+    🗓️ Attendance
+  </button>
 
-          <button onclick="show('recordMarksSection')">
-            📝 Enter Marks
-          </button>
+  <button id="menuFees"
+    onclick="show('fees')">
+    💰 Fees
+  </button>
 
-          <button onclick="show('examResults')">
-            📄 Results
-          </button>
 
-          <button onclick="show('subjectChampions')">
-            🏆 Subject Champions
-          </button>
 
-          <button onclick="show('meritListSection')">
-            📊 Generate Merit List
-          </button>
+  <button id="menuSupportStaff"
+    onclick="show('supportStaff')">
+    🧹 Support Staff
+  </button>
 
-          <button onclick="show('subjectPerformance')">
-            📈 Subject Performance
-          </button>
+  <button id="menuTransport"
+    onclick="show('transport')">
+    🚌 Transport
+  </button>
 
-          <button onclick="show('genderPerformance')">
-            ⚧ Gender Performance
-          </button>
+  <button id="menuHostel"
+    onclick="show('hostel')">
+    🏨 Hostel
+  </button>
 
-          <button onclick="show('levelSummary')">
-            📚 Subject Level Summary
-          </button>
+  <button id="menuICT"
+    onclick="show('ict')">
+    💻 ICT
+  </button>
 
-          <button onclick="show('groupByPathways')">
-            🧩 Group Learners Per Pathways
-          </button>
+  <button id="menuInventory"
+    onclick="show('inventory')">
+    📦 Inventory
+  </button>
 
-          <button onclick="show('combineMarksByGrade')">
-            🧮 Combine Marks Per Grade
-          </button>
+  <button id="menuLibrary"
+    onclick="show('library')">
+    📚 Library
+  </button>
 
-          <button onclick="show('generateAssessmentReports')">
-            📄 Assessment Reports
-          </button>
+  <button id="menuELearning"
+    onclick="show('eLearningSection')">
+    🎓 E-Learning
+  </button>
 
-          <button onclick="show('subjectRankingReport')">
-            📊 Track Learner Progress
-          </button>
+</div>
 
-          <button onclick="generateBlankMeritList(); show('generateBlankMerit')">
-            📄 Blank Merit Lists
-          </button>
 
-          <button onclick="show('marksStatus')">
-            👁️ Marks Recording Status
-          </button>
+<!-- EXAMS -->
+<!-- MAIN MENU -->
+<div class="menu-section" id="mainMenu">
 
-        </div>
-      </div>
+  <button
+    id="menuExams"
+    class="menu-btn"
+    onclick="toggleMenu('examsSubmenu')">
+
+    📊 Exams Management ▾
+
+  </button>
+
+  <div id="examsSubmenu" class="submenu">
+
+    <button id="menuRecordMarks"
+      onclick="show('recordMarksSection')">
+      📝 Enter Marks
+    </button>
+
+    <button id="menuResults"
+      onclick="show('examResults')">
+      📄 Results
+    </button>
+
+    <button id="menuSubjectChampions"
+      onclick="show('subjectChampions')">
+      🏆 Subject Champions
+    </button>
+
+    <button id="menuMeritList"
+      onclick="show('meritListSection')">
+      📊 Generate Merit List
+    </button>
+
+    <button id="menuSubjectPerformance"
+      onclick="show('subjectPerformance')">
+      📈 Subject Performance
+    </button>
+
+    <button id="menuGenderPerformance"
+      onclick="show('genderPerformance')">
+      ⚧ Gender Performance
+    </button>
+
+    <button id="menuLevelSummary"
+      onclick="show('levelSummary')">
+      📚 Subject Level Summary
+    </button>
+
+    <button id="menuPathways"
+      onclick="show('groupByPathways')">
+      🧩 Group Learners Per Pathways
+    </button>
+
+    <button id="menuCombineMarks"
+      onclick="show('combineMarksByGrade')">
+      🧮 Combine Marks Per Grade
+    </button>
+
+    <button id="menuAssessmentReports"
+      onclick="show('generateAssessmentReports')">
+      📄 Assessment Reports
+    </button>
+
+    <button id="menuLearnerProgress"
+      onclick="show('subjectRankingReport')">
+      📊 Track Learner Progress
+    </button>
+
+    <button id="menuBlankMerit"
+      onclick="generateBlankMeritList(); show('generateBlankMerit')">
+      📄 Blank Merit Lists
+    </button>
+
+    <button id="menuMarksStatus"
+      onclick="show('marksStatus')">
+      👁️ Marks Recording Status
+    </button>
+
+  </div>
+
+</div>
 
       <!-- PRINT REPORTS -->
       <div class="menu-section">
@@ -2191,32 +2259,53 @@ button.primary{
 
   </div>
 
-  <!-- =========================================
-       CREATE COURSE
-  ========================================= -->
-  <div style="
-    background:white;
-    padding:20px;
-    border-radius:16px;
-    margin-top:25px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.08);
-  ">
+<!-- =========================================
+       CREATE COURSE (WITH BACKGROUND)
+========================================= -->
+<div style="
+  background-image: url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f');
+  background-size: cover;
+  background-position: center;
+  padding:20px;
+  border-radius:16px;
+  margin-top:25px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.15);
+  position:relative;
+  overflow:hidden;
+">
 
-    <h2 style="margin-bottom:15px;">
+  <!-- DARK OVERLAY -->
+  <div style="
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.55);
+  "></div>
+
+  <!-- CONTENT WRAPPER -->
+  <div style="position:relative; z-index:2; color:white;">
+
+    <h2 style="margin-bottom:15px; color:white;">
       📘 Create Learning Content
     </h2>
 
     <input id="courseTitle"
-      placeholder="Course Title">
+      placeholder="Course Title"
+      style="width:100%;padding:10px;margin-bottom:8px;border:none;border-radius:8px;"><br>
 
     <input id="courseTeacher"
-      placeholder="Teacher Name">
+      placeholder="Teacher Name"
+      style="width:100%;padding:10px;margin-bottom:8px;border:none;border-radius:8px;"><br>
 
-    <select id="courseGrade">
+    <select id="courseGrade"
+      style="width:100%;padding:10px;margin-bottom:8px;border:none;border-radius:8px;">
       <option value="">Select Grade</option>
-    </select>
+    </select><br>
 
-    <select id="courseSubject">
+    <select id="courseSubject"
+      style="width:100%;padding:10px;margin-bottom:8px;border:none;border-radius:8px;">
       <option value="">Select Subject</option>
       <option>Mathematics</option>
       <option>English</option>
@@ -2236,39 +2325,41 @@ button.primary{
         min-height:120px;
         margin-top:10px;
         padding:12px;
-        border:1px solid #ccc;
+        border:none;
         border-radius:10px;
       "></textarea>
 
     <!-- FILE -->
     <div style="margin-top:15px;">
 
-      <label style="font-weight:bold;">
+      <label style="font-weight:bold; color:white;">
         📎 Upload Notes / PDF / Video
       </label>
 
       <input type="file"
         id="courseFile"
         multiple
-        style="margin-top:8px;">
+        style="margin-top:8px; width:100%;">
 
     </div>
 
     <button onclick="createCourse()"
       style="
         margin-top:18px;
-        background:#2563eb;
+        background:linear-gradient(135deg,#2563eb,#1e40af);
         color:white;
         border:none;
         padding:12px 18px;
         border-radius:10px;
         cursor:pointer;
         font-weight:bold;
+        width:100%;
       ">
       🚀 Publish Course
     </button>
 
   </div>
+</div>
 
   <!-- =========================================
        COURSE LIST
@@ -2373,8 +2464,24 @@ Separate each question using ===
 <!-- PUBLISH -->
 <button
   onclick="publishAssignment()"
+  style="
+    background:linear-gradient(135deg,#22c55e,#16a34a);
+    color:white;
+    padding:10px 16px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    transition:0.2s ease;
+    box-shadow:0 3px 10px rgba(0,0,0,0.15);
+  "
+  onmouseover="this.style.transform='translateY(-1px)'"
+  onmouseout="this.style.transform='translateY(0)'"
 >
-  Publish Assignment
+  🚀 Publish Assignment
 </button>
 
     <div id="assignmentContainer"
@@ -2397,83 +2504,134 @@ Separate each question using ===
   </span>
 </h3>
 
-  <!-- 🔥 BULK FRIENDLY INPUT -->
-  <textarea id="studentName" placeholder="Enter/paste names here...
+<!-- ================= FORM WRAPPER WITH BACKGROUND ================= -->
+<div style="
+  background-image: url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1');
+  background-size: cover;
+  background-position: center;
+  padding: 18px;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+">
+
+  <!-- DARK OVERLAY FOR READABILITY -->
+  <div style="
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.55);
+  "></div>
+
+  <!-- CONTENT (IMPORTANT Z-INDEX) -->
+  <div style="position:relative; z-index:2;">
+
+    <!-- 🔥 BULK FRIENDLY INPUT -->
+    <textarea id="studentName" placeholder="Enter/paste names here...
 One per line for bulk registration
-John Doe
+Rowan Aiden
 Mary Wanjiku
 Peter Kimani"
-rows="6"
-style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc;"></textarea>
+    rows="6"
+    style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc;"></textarea>
 
-  <!-- 📊 LIVE COUNTER -->
-  <div id="nameCounter" style="margin-top:6px; font-weight:bold; color:#2E7D32;">
-    0 names detected
+    <!-- 📊 LIVE COUNTER -->
+    <div id="nameCounter" style="margin-top:6px; font-weight:bold; color:#A5D6A7;">
+      0 names detected
+    </div>
+
+    <!-- 📥 EXCEL PASTE -->
+    <button onclick="pasteFromClipboard()" style="
+      margin-top:8px;
+      background:#1976D2;
+      color:white;
+      padding:8px 12px;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+    ">
+      📥 Paste from Excel
+    </button>
+
+    <!-- 🔥 GENDER -->
+    <label style="color:white;">Gender:</label>
+    <select id="gender" style="width:100%; padding:8px; margin:6px 0; background-color:rgba(255,255,255,0.85); border:none; border-radius:4px;">
+      <option value="">Select Gender</option>
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+    </select>
+
+    <small style="color:#ddd;">Used for single OR applied to all in bulk</small><br><br>
+
+    <!-- 🔥 GRADE -->
+    <label style="color:white;">Grade:</label>
+    <input type="text" id="grade" placeholder="Enter grade e.g. Grade 9A"
+    style="width:100%; padding:8px; margin:6px 0; background-color:rgba(255,255,255,0.85); border:none; border-radius:4px;"><br>
+
+    <!-- 🔥 AGE -->
+    <label style="color:white;">Age:</label>
+    <input type="number" id="age" placeholder="Leave empty for auto"
+    style="width:100%; padding:8px; margin:6px 0; background-color:rgba(255,255,255,0.85); border:none; border-radius:4px;"><br>
+
+    <!-- 🔥 PARENT NAME -->
+    <label style="color:white;">Parent Name:</label>
+    <input type="text" id="parentName" placeholder="Optional (applies to all in bulk)"
+    style="width:100%; padding:8px; margin:6px 0; background-color:rgba(255,255,255,0.85); border:none; border-radius:4px;"><br>
+
+    <!-- 🔥 PHONE -->
+    <label style="color:white;">Parent Phone:</label>
+    <input type="tel" id="parentPhone" placeholder="Optional"
+    style="width:100%; padding:8px; margin:6px 0; background-color:rgba(255,255,255,0.85); border:none; border-radius:4px;"><br>
+
+    <!-- 🔥 BIRTH CERT -->
+    <label style="color:white;">Birth Certificate No:</label>
+    <input type="text" id="birthCert" placeholder="Optional"
+    style="width:100%; padding:8px; margin:6px 0; background-color:rgba(255,255,255,0.85); border:none; border-radius:4px;"><br>
+
+    <!-- 🔥 ADMISSION -->
+    <label style="color:white;">Admission Number:</label>
+    <input type="text" id="admissionNo" placeholder="Leave empty for auto-generation"
+    style="width:100%; padding:8px; margin:6px 0; background-color:rgba(255,255,255,0.85); border:none; border-radius:4px;"><br>
+
+    <input id="photo" type="file">
+
+    <!-- 👀 PREVIEW BUTTON -->
+    <button onclick="previewStudents()" style="
+      margin-top:8px;
+      background:#6A1B9A;
+      color:white;
+      padding:8px 12px;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+    ">
+      👀 Preview List
+    </button>
+
+    <!-- ➕ ADD BUTTON -->
+    <button onclick="addStudent()" style="
+      margin-top:6px;
+      background: linear-gradient(135deg, #4CAF50, #2E7D32);
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    ">
+      ➕ Add Student
+    </button>
+
+    <hr>
+
   </div>
-
-  <!-- 📥 EXCEL PASTE -->
-  <button onclick="pasteFromClipboard()" style="
-    margin-top:8px;
-    background:#1976D2;
-    color:white;
-    padding:8px 12px;
-    border:none;
-    border-radius:6px;
-    cursor:pointer;
-  ">
-    📥 Paste from Excel
-  </button>
-
-  <input id="adm" placeholder="ADM No">
-  <input id="grade" placeholder="Grade">
-
-  <select id="gender">
-    <option value="">Select Gender</option>
-    <option value="Male">Male</option>
-    <option value="Female">Female</option>
-  </select>
-
-  <input id="age" placeholder="Age">
-  <input id="parentName" placeholder="Parent Name">
-  <input id="parentPhone" placeholder="Parent Phone">
-  <input id="birthCert" placeholder="Birth Cert No">
-  <input id="admissionNo" placeholder="Admission No">
-
-  <input id="photo" type="file">
-
-  <!-- 👀 PREVIEW BUTTON -->
-  <button onclick="previewStudents()" style="
-    margin-top:8px;
-    background:#6A1B9A;
-    color:white;
-    padding:8px 12px;
-    border:none;
-    border-radius:6px;
-    cursor:pointer;
-  ">
-    👀 Preview List
-  </button>
-
-<!-- ➕ ADD BUTTON -->
-<button onclick="addStudent()" style="
-  margin-top:6px;
-  background: linear-gradient(135deg, #4CAF50, #2E7D32);
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 13px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-">
-  ➕ Add Student
-</button>
-
-<hr>
-
+</div>
 <!-- ================= MAIN ACTION TOGGLE BUTTON ================= -->
 <div style="margin:15px 0;">
 
@@ -2628,22 +2786,68 @@ style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc;"></te
     </div>
 <div id="teachers" style="display:none;">
 
-  <h3>👨🏫 Teachers Management</h3>
+  <h3 style="color:white;">👨🏫 Teachers Management</h3>
 
-  <!-- ================= FORM ================= -->
-  <div style="background:#fff;padding:15px;border-radius:10px;margin-bottom:15px;">
+  <!-- ================= FORM (WITH BACKGROUND) ================= -->
+  <div style="
+    background-image: url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f');
+    background-size: cover;
+    background-position: center;
+    padding:15px;
+    border-radius:10px;
+    margin-bottom:15px;
+    position:relative;
+    overflow:hidden;
+  ">
 
-    <input id="teacherName" placeholder="Full Name">
-    <input id="teacherPhone" placeholder="Phone">
-    <input id="teacherEmail" placeholder="Email">
-    
-    <input id="teacherSubject" placeholder="Subject (e.g Math)">
-    <input id="teacherClass" placeholder="Assigned Class (e.g Grade 7)">
+    <!-- DARK OVERLAY -->
+    <div style="
+      position:absolute;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      background:rgba(0,0,0,0.55);
+    "></div>
 
-    <button onclick="addTeacher()" class="primary">
-      ➕ Add Teacher
-    </button>
+    <!-- CONTENT -->
+    <div style="position:relative; z-index:2;">
 
+      <input id="teacherName"
+        placeholder="Full Name"
+        style="width:100%;padding:10px;margin-bottom:8px;border:none;border-radius:6px;">
+
+      <input id="teacherPhone"
+        placeholder="Phone"
+        style="width:100%;padding:10px;margin-bottom:8px;border:none;border-radius:6px;">
+
+      <input id="teacherEmail"
+        placeholder="Email"
+        style="width:100%;padding:10px;margin-bottom:8px;border:none;border-radius:6px;">
+
+      <input id="teacherSubject"
+        placeholder="Subject (e.g Math)"
+        style="width:100%;padding:10px;margin-bottom:8px;border:none;border-radius:6px;">
+
+      <input id="teacherClass"
+        placeholder="Assigned Class (e.g Grade 7)"
+        style="width:100%;padding:10px;margin-bottom:8px;border:none;border-radius:6px;">
+
+      <button onclick="addTeacher()" class="primary"
+        style="
+          background:linear-gradient(135deg,#4CAF50,#2E7D32);
+          color:white;
+          border:none;
+          padding:10px 14px;
+          border-radius:6px;
+          cursor:pointer;
+          width:100%;
+          font-weight:bold;
+        ">
+        ➕ Add Teacher
+      </button>
+
+    </div>
   </div>
 
   <!-- ================= SEARCH ================= -->
@@ -4870,14 +5074,72 @@ if (window.schoolId) {
 
   }
 };
+window.show = function (section) {
 
+  const role = window.userRole || "admin";
+
+  const permissions = {
+    admin: "all",
+    teacher: [
+      "dashboard","students","attendanceSection",
+      "recordMarksSection","examResults","eLearningSection"
+    ],
+    parent: [
+      "dashboard","fees","examResults"
+    ]
+  };
+
+  const allowed = permissions[role];
+
+  if (allowed !== "all" && !allowed.includes(section)) {
+    console.warn("🚫 Access denied for role:", role);
+    Swal.fire("Access Denied", "You cannot open this section", "warning");
+    return;
+  }
+
+  const el = document.getElementById(section);
+  if (!el) return;
+
+  document.querySelectorAll(".section").forEach(s => s.style.display = "none");
+  el.style.display = "block";
+};
 
 /* ================= GLOBAL BUTTON FIX ================= */
 
 window.show = show;
 window.logout = logout;
+window.createTeacher = async function (name, email, password) {
 
+  const user = await createUserWithEmailAndPassword(auth, email, password);
 
+  await set(ref(db, "users/" + user.user.uid), {
+    uid: user.user.uid,
+    role: "teacher",
+    schoolId: window.schoolId,
+    name,
+    email,
+    createdAt: Date.now(),
+    active: true
+  });
+
+  Swal.fire("Success", "Teacher created", "success");
+};
+window.createParent = async function (name, email, password) {
+
+  const user = await createUserWithEmailAndPassword(auth, email, password);
+
+  await set(ref(db, "users/" + user.user.uid), {
+    uid: user.user.uid,
+    role: "parent",
+    schoolId: window.schoolId,
+    name,
+    email,
+    createdAt: Date.now(),
+    active: true
+  });
+
+  Swal.fire("Success", "Parent created", "success");
+};
 /* ================= REGISTER (SAAS FINAL CLEAN VERSION) ================= */
 
 window.register = async () => {
@@ -4969,8 +5231,7 @@ window.register = async () => {
 
       amountPaid: 0,
       trialStartedAt: now,
-      trialEndsAt: now + (5 * 24 * 60 * 60 * 1000),
-
+   trialEndsAt: now + (5 * 60 * 1000),
       subscriptionStartedAt: 0,
       subscriptionEndsAt: 0,
 
@@ -6125,7 +6386,37 @@ function () {
   return !!window.schoolId;
 
 };
-/* ================= LOGIN (CLEAN SAAS VERSION) ================= */
+
+
+window.getLoginErrorMessage = function(error){
+
+  const code = error?.code || "";
+
+  const messages = {
+
+    "auth/invalid-credential":
+      "Incorrect email or password.",
+
+    "auth/wrong-password":
+      "Incorrect email or password.",
+
+    "auth/user-not-found":
+      "Account not found.",
+
+    "auth/invalid-email":
+      "Invalid email address.",
+
+    "auth/network-request-failed":
+      "Internet connection problem.",
+
+    "auth/too-many-requests":
+      "Too many login attempts. Please try again later."
+  };
+
+  return messages[code] ||
+         "Unable to sign in. Please try again.";
+};
+/* ================= LOGIN (CLEAN SAAS VERSION + ROLE FIX) ================= */
 
 window.login = async () => {
 
@@ -6226,6 +6517,14 @@ window.login = async () => {
     const userData = userSnap.val();
 
     // =========================
+    // ROLE (FIXED & SAFE)
+    // =========================
+    window.userRole = userData.role || "admin";
+    sessionStorage.setItem("userRole", window.userRole);
+applyRolePermissions?.();
+    console.log("👤 Role:", window.userRole);
+
+    // =========================
     // SCHOOL ID
     // =========================
     const schoolId = userData.schoolId;
@@ -6235,7 +6534,7 @@ window.login = async () => {
     }
 
     // =========================
-    // SAVE SCHOOL CONTEXT
+    // SAVE CONTEXT
     // =========================
     window.schoolId = schoolId;
     window.userUid = uid;
@@ -6243,14 +6542,10 @@ window.login = async () => {
 
     localStorage.setItem("schoolId", schoolId);
 
-    console.log("✅ School ID Loaded:", schoolId);
-
     // =========================
     // SCHOOL DATA
     // =========================
-    const schoolSnap = await get(
-      ref(db, `schools/${schoolId}`)
-    );
+    const schoolSnap = await get(ref(db, `schools/${schoolId}`));
 
     if (!schoolSnap.exists()) {
       throw new Error("School account not found.");
@@ -6282,14 +6577,11 @@ window.login = async () => {
     sessionStorage.setItem("schoolName", schoolName);
 
     // =========================
-    // UPDATE LAST LOGIN
+    // LAST LOGIN
     // =========================
-    update(
-      ref(db, `users/${uid}`),
-      {
-        lastLogin: Date.now()
-      }
-    ).catch(() => {});
+    update(ref(db, `users/${uid}`), {
+      lastLogin: Date.now()
+    }).catch(() => {});
 
     // =========================
     // SUBSCRIPTION CHECK
@@ -6297,29 +6589,17 @@ window.login = async () => {
     let accessAllowed = true;
 
     try {
-
-      accessAllowed =
-        await checkSubscriptionAccess();
-
+      accessAllowed = await checkSubscriptionAccess();
     } catch (err) {
-
       accessAllowed = false;
-
     }
 
-    // =========================
-    // ACCESS CHECK
-    // =========================
     if (!accessAllowed) {
 
       btns.forEach(btn => btn.disabled = false);
 
-      document
-        .getElementById("modernLoginLoader")
-        ?.style.setProperty(
-          "display",
-          "none"
-        );
+      document.getElementById("modernLoginLoader")
+        ?.style.setProperty("display", "none");
 
       return;
     }
@@ -6327,7 +6607,7 @@ window.login = async () => {
     Swal.close();
 
     // =========================
-    // SUCCESS MESSAGE
+    // SUCCESS
     // =========================
     await Swal.fire({
       icon: "success",
@@ -6338,54 +6618,28 @@ window.login = async () => {
     });
 
     // =========================
-    // HIDE LOADER
-    // =========================
-    document
-      .getElementById("modernLoginLoader")
-      ?.style.setProperty(
-        "display",
-        "none"
-      );
-
-    // =========================
     // OPEN APP
     // =========================
-    document
-      .getElementById("authSection")
-      ?.style.setProperty(
-        "display",
-        "none"
-      );
+    document.getElementById("authSection")
+      ?.style.setProperty("display", "none");
 
-    const app =
-      document.getElementById("app");
+    const app = document.getElementById("app");
 
     if (app) {
-
       app.style.display = "block";
       app.style.opacity = "0";
 
       setTimeout(() => {
-
-        app.style.transition =
-          "0.4s ease";
-
+        app.style.transition = "0.4s ease";
         app.style.opacity = "1";
-
       }, 50);
     }
 
     // =========================
-    // UPDATE UI
+    // UI UPDATE
     // =========================
-    const el =
-      document.getElementById(
-        "schoolNameDisplay"
-      );
-
-    if (el) {
-      el.textContent = schoolName;
-    }
+    const el = document.getElementById("schoolNameDisplay");
+    if (el) el.textContent = schoolName;
 
     // =========================
     // START SYSTEMS
@@ -6394,61 +6648,69 @@ window.login = async () => {
     startSubscriptionUI?.();
 
     // =========================
-    // LOAD EVERYTHING
+    // LOAD DATA THEN APPLY ROLE
     // =========================
     if (typeof loadAll === "function") {
-
       await loadAll();
-
-    } else {
-
-      console.warn(
-        "loadAll is not defined yet"
-      );
-
     }
 
-    console.log(
-      "✅ Login completed successfully"
-    );
+    // 🔥 IMPORTANT: run AFTER everything is ready
+    applyRolePermissions?.();
+
+    console.log("✅ Login completed successfully");
 
   } catch (error) {
 
-    console.error(
-      "LOGIN ERROR:",
-      error
-    );
+    console.warn("Login Failed:", error?.code || error?.message);
 
     Swal.close();
+
+    let message = "Unable to sign in. Please try again.";
+
+    switch (error?.code) {
+
+      case "auth/invalid-credential":
+      case "auth/wrong-password":
+        message = "Incorrect email or password.";
+        break;
+
+      case "auth/user-not-found":
+        message = "Account not found.";
+        break;
+
+      case "auth/invalid-email":
+        message = "Invalid email address.";
+        break;
+
+      case "auth/too-many-requests":
+        message = "Too many login attempts. Try again later.";
+        break;
+
+      case "auth/network-request-failed":
+        message = "Network problem. Check your internet.";
+        break;
+
+      default:
+        message = error?.message || message;
+    }
 
     Swal.fire({
       icon: "error",
       title: "Login Failed",
-      text:
-        error.message ||
-        "Unable to sign in.",
+      text: message,
       confirmButtonColor: "#ef4444"
     });
 
   } finally {
 
-    document
-      .getElementById("modernLoginLoader")
-      ?.style.setProperty(
-        "display",
-        "none"
-      );
+    document.getElementById("modernLoginLoader")
+      ?.style.setProperty("display", "none");
 
     window.__loggingIn = false;
 
-    btns.forEach(
-      btn => btn.disabled = false
-    );
+    btns.forEach(btn => btn.disabled = false);
 
-    if (loginBtn) {
-      loginBtn.innerHTML =
-        "🔐 Login";
-    }
+    if (loginBtn) loginBtn.innerHTML = "🔐 Login";
   }
 };
 /* =========================================================
@@ -6611,6 +6873,40 @@ if (
     style
   );
 }
+window.applyRolePermissions = function () {
+
+  const role = window.userRole;
+
+  document.querySelectorAll("button").forEach(btn => {
+
+    const txt = (btn.innerText || "").toLowerCase();
+
+    if (role === "parent") {
+
+      if (
+        txt.includes("payroll") ||
+        txt.includes("ict") ||
+        txt.includes("inventory") ||
+        txt.includes("transport") ||
+        txt.includes("hostel") ||
+        txt.includes("support staff")
+      ) {
+        btn.style.display = "none";
+      }
+    }
+
+    if (role === "teacher") {
+
+      if (
+        txt.includes("payroll") ||
+        txt.includes("inventory") ||
+        txt.includes("hostel")
+      ) {
+        btn.style.display = "none";
+      }
+    }
+  });
+};
 window.syncSchoolNameUI = () => {
 
   const name =
@@ -25460,31 +25756,6 @@ window.editInventory = async function(id){
   Swal.fire("Success", "Item updated", "success");
 };
 
-/* =========================================================
-   AUTO LOAD MODULES
-========================================================= */
-
-window.addEventListener("load", () => {
-
-  loadTransport();
-  loadHostel();
-  loadICT();
-  loadInventory();
-
-});
-
-/* =========================================================
-   AUTO LOAD MODULES
-========================================================= */
-
-window.addEventListener("load", () => {
-
-  loadTransport();
-  loadHostel();
-  loadICT();
-  loadInventory();
-
-});
 
 /* =========================================================
    🚀 ICT + INVENTORY BORROWING SYSTEM
