@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
- <style>
+  <style>
 
 /* =========================================================
    🌍 GLOBAL RESET
@@ -1615,8 +1615,8 @@ button.primary{
     <!-- ROLE -->
     <select id="role">
       <option value="admin">👑 Admin</option>
-      <option value="teacher">👨‍🏫 Teacher</option>
-      <option value="parent">👨‍👩‍👧 Parent</option>
+      <option value="teacher">👨🏫 Teacher</option>
+      <option value="parent">👨👩👧 Parent</option>
     </select>
 
     <input id="schoolName" placeholder="🏫 School Name">
@@ -1710,8 +1710,8 @@ button.primary{
         <h4>MAIN MENU</h4>
 
         <button onclick="show('dashboard')">🏠 Dashboard</button>
-        <button onclick="show('students')">👨‍🎓 Students</button>
-        <button onclick="show('teachers')">👨‍🏫 Teachers</button>
+        <button onclick="show('students')">👨🎓 Students</button>
+        <button onclick="show('teachers')">👨🏫 Teachers</button>
         <button onclick="show('attendanceSection')">🗓️ Attendance</button>
         <button onclick="show('fees')">💰 Fees</button>
         <button onclick="show('payroll')">💳 Payroll</button>
@@ -1853,13 +1853,13 @@ button.primary{
           </option>
 
           <option value="filteredLearnersContent">
-            👨‍🎓 Filtered Learners
+            👨🎓 Filtered Learners
           </option>
 
        
 
           <option value="teacherList">
-            👨‍🏫 Teachers List
+            👨🏫 Teachers List
           </option>
 <option value="supportStaffContent">
   🧹 Support Staff List
@@ -2047,7 +2047,7 @@ button.primary{
 
     <!-- TOTAL TEACHERS -->
     <div class="dashboard-card purple-card">
-      <div class="card-icon">👩‍🏫</div>
+      <div class="card-icon">👩🏫</div>
 
       <div class="card-content">
         <h3>Total Teachers</h3>
@@ -2067,7 +2067,7 @@ button.primary{
 
     <!-- TOTAL STUDENTS -->
     <div class="dashboard-card orange-card">
-      <div class="card-icon">👨‍🎓</div>
+      <div class="card-icon">👨🎓</div>
 
       <div class="card-content">
         <h3>Total Students</h3>
@@ -2181,7 +2181,7 @@ button.primary{
     </div>
 
     <div class="dashboard-card orange-card">
-      <div class="card-icon">👨‍🎓</div>
+      <div class="card-icon">👨🎓</div>
 
       <div class="card-content">
         <h3>Online Learners</h3>
@@ -2628,7 +2628,7 @@ style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc;"></te
     </div>
 <div id="teachers" style="display:none;">
 
-  <h3>👨‍🏫 Teachers Management</h3>
+  <h3>👨🏫 Teachers Management</h3>
 
   <!-- ================= FORM ================= -->
   <div style="background:#fff;padding:15px;border-radius:10px;margin-bottom:15px;">
@@ -3257,7 +3257,7 @@ style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc;"></te
 
       <button class="action-btn btn-students"
         data-target="topStudentsSection">
-        👨‍🎓 Top Students
+        👨🎓 Top Students
       </button>
 
       <button class="action-btn btn-term"
@@ -3396,7 +3396,7 @@ style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc;"></te
 </div>
 
 <div id="topStudentsSection" class="section" style="display:none; padding:20px;">
-  <h2>👨‍🎓 Top 5 Students</h2>
+  <h2>👨🎓 Top 5 Students</h2>
   <div id="topStudentsContent"></div>
 </div>
 
@@ -4599,17 +4599,35 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 
+/* ================= GLOBAL STATE (CLEAN SAAS VERSION) ================= */
 
-let schoolId = null;
+// ❌ REMOVE: let schoolId = null;
 let editingTeacherId = null;
-
 let subscriptionData = null;
 
+// ✔ SINGLE SOURCE OF TRUTH
+window.schoolId = null;
+
+/* ================= SCHOOL SETTER ================= */
+function setSchool(id) {
+  window.schoolId = id;
+}
+window.appReady = false;
 /* ================= SAFE HELPERS ================= */
-function schoolRef(path) {
+function schoolRef(path = "") {
+
+  const schoolId = window.getSchoolId();
+
+  if (!schoolId) {
+    console.error("❌ Missing schoolId - access blocked");
+    throw new Error("School not initialized. Please login again.");
+  }
+
   return ref(db, `schools/${schoolId}/${path}`);
 }
-
+window.getSchoolId = function () {
+  return window.schoolId || null;
+};
 function show(id) {
 
   // ===============================
@@ -4686,13 +4704,6 @@ function show(id) {
 }
 
 
-function getSchoolId() {
-
-  return sessionStorage.getItem(
-    "schoolId"
-  );
-
-}
 /* =========================================================
    🚀 ULTRA SAFE LOGOUT SYSTEM
    NO FREEZE • FAST • SECURE • PRODUCTION READY
@@ -4793,7 +4804,12 @@ window.logout = async function () {
     // =====================================================
     // 🧹 CLEAR GLOBALS
     // =====================================================
-    window.schoolId = null;
+    // ✅ RESTORE SCHOOL SESSION ON PAGE LOAD
+window.schoolId = localStorage.getItem("schoolId");
+
+if (window.schoolId) {
+  console.log("✅ Restored schoolId:", window.schoolId);
+}
     window.currentUser = null;
     window.allStudents = [];
     window.allLoadedLearners = [];
@@ -4862,18 +4878,14 @@ window.show = show;
 window.logout = logout;
 
 
-/* ================= REGISTER (ULTRA UPGRADED + SAAS READY + SECURE) ================= */
+/* ================= REGISTER (SAAS FINAL CLEAN VERSION) ================= */
 
 window.register = async () => {
 
   const btn = document.getElementById("registerBtn");
 
-  // 🚫 Prevent double click / spam
   if (!btn || btn.disabled || window.__registering) return;
 
-  // =========================
-  // INPUTS
-  // =========================
   const school =
     document.getElementById("schoolName")?.value.trim();
 
@@ -4887,7 +4899,6 @@ window.register = async () => {
   // VALIDATION
   // =========================
   if (!school || !userEmail || !userPassword) {
-
     return Swal.fire({
       icon: "warning",
       title: "Missing Fields",
@@ -4896,9 +4907,7 @@ window.register = async () => {
     });
   }
 
-  // 🔐 Password strength
   if (userPassword.length < 6) {
-
     return Swal.fire({
       icon: "warning",
       title: "Weak Password",
@@ -4907,12 +4916,9 @@ window.register = async () => {
     });
   }
 
-  // 📧 Email validation
-  const emailRegex =
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   if (!emailRegex.test(userEmail)) {
-
     return Swal.fire({
       icon: "warning",
       title: "Invalid Email",
@@ -4924,79 +4930,33 @@ window.register = async () => {
   try {
 
     window.__registering = true;
-
-    // =========================
-    // BUTTON LOADING
-    // =========================
     btn.disabled = true;
 
     btn.innerHTML = `
-      <div style="
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        gap:10px;
-      ">
+      <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
         <div class="spinner"></div>
         <span>Creating School...</span>
       </div>
     `;
 
     // =========================
-    // CREATE ACCOUNT
+    // CREATE AUTH USER
     // =========================
     const userCredential =
-      await createUserWithEmailAndPassword(
-        auth,
-        userEmail,
-        userPassword
-      );
+      await createUserWithEmailAndPassword(auth, userEmail, userPassword);
 
     const uid = userCredential.user.uid;
 
-    // =========================
-    // SCHOOL ID
-    // =========================
-    const schoolId =
-      "school_" + uid;
-
-    // =========================
-    // SESSION STORAGE
-    // =========================
-    sessionStorage.setItem(
-      "schoolId",
-      schoolId
-    );
-
-    sessionStorage.setItem(
-      "userUid",
-      uid
-    );
-
-    sessionStorage.setItem(
-      "schoolEmail",
-      userEmail
-    );
-
-    sessionStorage.setItem(
-      "schoolName",
-      school
-    );
-
-    // =========================
-    // TIMESTAMPS
-    // =========================
+    const schoolId = "school_" + uid;
     const now = Date.now();
 
     // =========================
     // SCHOOL DATA
     // =========================
     const schoolData = {
-
       schoolId,
       uid,
       ownerUid: uid,
-
       name: school,
       email: userEmail,
 
@@ -5008,12 +4968,8 @@ window.register = async () => {
       package: "trial",
 
       amountPaid: 0,
-
       trialStartedAt: now,
-
-      // ⏳ 5 DAY TRIAL
-      trialEndsAt:
-        now + (5 * 24 * 60 * 60 * 1000),
+      trialEndsAt: now + (5 * 24 * 60 * 60 * 1000),
 
       subscriptionStartedAt: 0,
       subscriptionEndsAt: 0,
@@ -5024,7 +4980,6 @@ window.register = async () => {
 
       mpesaCode: "",
       phone: "",
-
       paidAt: 0,
 
       registeredBy: userEmail,
@@ -5038,20 +4993,14 @@ window.register = async () => {
     // USER DATA
     // =========================
     const userData = {
-
       uid,
       role: "admin",
-
       schoolId,
       schoolName: school,
-
       email: userEmail,
-
       createdAt: now,
-
       active: true,
       deleted: false,
-
       lastLogin: now
     };
 
@@ -5059,45 +5008,31 @@ window.register = async () => {
     // SAVE TO FIREBASE
     // =========================
     await Promise.all([
-
-      set(
-        ref(db, "schools/" + schoolId),
-        schoolData
-      ),
-
-      set(
-        ref(db, "users/" + uid),
-        userData
-      )
-
+      set(ref(db, "schools/" + schoolId), schoolData),
+      set(ref(db, "users/" + uid), userData)
     ]);
 
     // =========================
-    // SUCCESS MESSAGE
+    // SET GLOBAL CONTEXT (IMPORTANT FIX)
+    // =========================
+    window.schoolId = schoolId;
+    window.userUid = uid;
+    window.appReady = true;
+
+    // =========================
+    // SUCCESS UI
     // =========================
     await Swal.fire({
       icon: "success",
       title: "🎉 School Created Successfully!",
       html: `
         <div style="text-align:center;">
-
-          <div style="
-            font-size:18px;
-            font-weight:700;
-            color:#16a34a;
-            margin-bottom:10px;
-          ">
+          <div style="font-size:18px;font-weight:700;color:#16a34a;margin-bottom:10px;">
             ${school}
           </div>
-
-          <div style="
-            color:#64748b;
-            font-size:14px;
-          ">
-            Your school management system
-            is now ready 🚀
+          <div style="color:#64748b;font-size:14px;">
+            Your school management system is now ready 🚀
           </div>
-
         </div>
       `,
       confirmButtonText: "Continue",
@@ -5108,15 +5043,9 @@ window.register = async () => {
     // =========================
     // OPEN APP
     // =========================
-    const authSection =
-      document.getElementById("authSection");
+    document.getElementById("authSection")?.style.setProperty("display", "none");
 
-    const app =
-      document.getElementById("app");
-
-    if (authSection) {
-      authSection.style.display = "none";
-    }
+    const app = document.getElementById("app");
 
     if (app) {
       app.style.display = "block";
@@ -5129,94 +5058,52 @@ window.register = async () => {
     }
 
     // =========================
-    // UPDATE SCHOOL NAME UI
+    // UI UPDATE
     // =========================
-    const schoolEl =
-      document.getElementById(
-        "schoolNameDisplay"
-      );
+    const schoolEl = document.getElementById("schoolNameDisplay");
 
     const updateUI = () => {
-
-      if (schoolEl) {
-        schoolEl.textContent = school;
-      }
-
+      if (schoolEl) schoolEl.textContent = school;
     };
 
     updateUI();
-
     setTimeout(updateUI, 300);
     setTimeout(updateUI, 1000);
 
     // =========================
-    // START SYSTEMS
+    // SAFE SYSTEM START
     // =========================
-    if (
-      typeof startSubscriptionWatcher ===
-      "function"
-    ) {
-      startSubscriptionWatcher();
-    }
+    startSubscriptionWatcher?.();
+    startSubscriptionUI?.();
 
-    if (
-      typeof startSubscriptionUI ===
-      "function"
-    ) {
-      startSubscriptionUI();
-    }
-
-    if (
-      typeof loadAll === "function"
-    ) {
+    // 🔥 FIX: prevent crash if loadAll missing
+    if (typeof loadAll === "function") {
       loadAll();
+    } else {
+      console.warn("⚠️ loadAll not defined yet - skipped safely");
     }
-
-    // =========================
-    // OPTIONAL WELCOME SOUND
-    // =========================
-    /*
-    new Audio("success.mp3").play();
-    */
 
   } catch (error) {
 
-    console.error(
-      "REGISTER ERROR:",
-      error
-    );
+    console.error("REGISTER ERROR:", error);
 
-    // =========================
-    // FRIENDLY ERRORS
-    // =========================
-    let message =
-      "Something went wrong.";
+    let message = "Something went wrong.";
 
     switch (error.code) {
-
       case "auth/email-already-in-use":
-        message =
-          "This email is already registered.";
+        message = "This email is already registered.";
         break;
-
       case "auth/invalid-email":
-        message =
-          "Invalid email address.";
+        message = "Invalid email address.";
         break;
-
       case "auth/weak-password":
-        message =
-          "Password is too weak.";
+        message = "Password is too weak.";
         break;
-
       case "auth/network-request-failed":
-        message =
-          "Network error. Check internet connection.";
+        message = "Network error. Check internet connection.";
         break;
-
       default:
-        message =
-          error.message || message;
+        message = error.message || message;
     }
 
     Swal.fire({
@@ -5228,19 +5115,13 @@ window.register = async () => {
 
   } finally {
 
-    // =========================
-    // RESET BUTTON
-    // =========================
     window.__registering = false;
 
+ 
+
     if (btn) {
-
       btn.disabled = false;
-
-      btn.innerHTML = `
-        🏫 Create School
-      `;
-
+      btn.innerHTML = "🏫 Create School";
       btn.style.background =
         "linear-gradient(135deg, #FF9800, #F57C00)";
     }
@@ -5250,17 +5131,13 @@ window.register = async () => {
 
 /* ================= SPINNER STYLE ================= */
 
-if (
-  !document.getElementById("spinnerStyle")
-) {
+if (!document.getElementById("spinnerStyle")) {
 
-  const style =
-    document.createElement("style");
+  const style = document.createElement("style");
 
   style.id = "spinnerStyle";
 
   style.innerHTML = `
-
     .spinner{
       width:18px;
       height:18px;
@@ -5271,15 +5148,15 @@ if (
     }
 
     @keyframes spin{
-      to{
-        transform:rotate(360deg);
-      }
+      to{ transform:rotate(360deg); }
     }
-
   `;
 
   document.head.appendChild(style);
 }
+
+
+
 /* ======================================================
    SUBSCRIPTION SYSTEM
 ====================================================== */
@@ -5289,7 +5166,7 @@ async function checkSubscriptionAccess() {
   try {
 
     const snap = await get(
-      ref(db, `schools/${getSchoolId()}`)
+      ref(db, `schools/${window.schoolId}`)
     );
 
     if (!snap.exists()) {
@@ -5347,7 +5224,7 @@ async function checkSubscriptionAccess() {
     // 🔥 EXPIRED
     // =====================================
     await update(
-      ref(db, `schools/${getSchoolId()}`),
+      ref(db, `schools/${window.schoolId}`),
       {
         subscriptionStatus: "expired"
       }
@@ -5986,13 +5863,13 @@ function startSubscriptionWatcher() {
 
     try {
 
-      const schoolId = getSchoolId();
+      const schoolId = window.schoolId;
 
 if (!schoolId) return;
 
       const snap =
         await get(
-          ref(db, `schools/${getSchoolId()}`)
+          ref(db, `schools/${window.schoolId}`)
         );
 
       if (!snap.exists()) return;
@@ -6032,7 +5909,7 @@ if (!schoolId) return;
         clearInterval(trialTimer);
 
         await update(
-          ref(db, `schools/${getSchoolId()}`),
+          ref(db, `schools/${window.schoolId}`),
           {
             subscriptionStatus:
               "expired"
@@ -6062,7 +5939,7 @@ if (!schoolId) return;
         clearInterval(trialTimer);
 
         await update(
-          ref(db, `schools/${getSchoolId()}`),
+          ref(db, `schools/${window.schoolId}`),
           {
             subscriptionStatus:
               "expired"
@@ -6088,12 +5965,12 @@ if (!schoolId) return;
   }, 1000);
 }
 /* ======================================================
-   🔥 LIVE SUBSCRIPTION UI (FINAL FIX)
+   🔥 LIVE SUBSCRIPTION UI (SAAS SAFE)
 ====================================================== */
 
 let subscriptionUIInterval = null;
 
-function startSubscriptionUI() {
+window.startSubscriptionUI = function () {
 
   clearInterval(subscriptionUIInterval);
 
@@ -6101,12 +5978,14 @@ function startSubscriptionUI() {
 
     try {
 
-      // =====================================
-      // WAIT FOR SCHOOL ID
-      // =====================================
-const schoolId = getSchoolId();
+      // =========================
+      // WAIT FOR LOGIN
+      // =========================
+      const schoolId = window.schoolId;
 
-if (!schoolId) return;
+      if (!schoolId) {
+        return;
+      }
 
       const planEl =
         document.getElementById(
@@ -6118,13 +5997,13 @@ if (!schoolId) return;
           "subscriptionCountdown"
         );
 
-      if (!planEl || !countdownEl)
+      if (!planEl || !countdownEl) {
         return;
+      }
 
-      const snap =
-        await get(
-          ref(db, `schools/${getSchoolId()}`)
-        );
+      const snap = await get(
+        ref(db, `schools/${schoolId}`)
+      );
 
       if (!snap.exists()) {
 
@@ -6143,10 +6022,9 @@ if (!schoolId) return;
 
       let endTime = 0;
 
-      // =====================================
-      // DETERMINE END TIME
-      // =====================================
-
+      // =========================
+      // END DATE
+      // =========================
       if (
         school.subscriptionStatus ===
         "trial"
@@ -6154,21 +6032,20 @@ if (!schoolId) return;
 
         endTime =
           school.trialEndsAt || 0;
-      }
 
-      if (
+      } else if (
         school.subscriptionStatus ===
         "active"
       ) {
 
         endTime =
           school.subscriptionEndsAt || 0;
+
       }
 
-      // =====================================
-      // PLAN DISPLAY
-      // =====================================
-
+      // =========================
+      // PLAN INFO
+      // =========================
       planEl.innerHTML = `
         Plan: ${school.plan || "Free Trial"}
         <br>
@@ -6177,10 +6054,9 @@ if (!schoolId) return;
         Amount: KES ${school.amountPaid || 0}
       `;
 
-      // =====================================
-      // NO ACTIVE TIMER
-      // =====================================
-
+      // =========================
+      // EXPIRED
+      // =========================
       if (!endTime) {
 
         countdownEl.innerHTML =
@@ -6189,16 +6065,8 @@ if (!schoolId) return;
         return;
       }
 
-      // =====================================
-      // CALCULATE TIME
-      // =====================================
-
       const remaining =
         endTime - now;
-
-      // =====================================
-      // EXPIRED
-      // =====================================
 
       if (remaining <= 0) {
 
@@ -6208,37 +6076,24 @@ if (!schoolId) return;
         return;
       }
 
-      const days =
-        Math.floor(
-          remaining /
-          (1000 * 60 * 60 * 24)
-        );
+      const days = Math.floor(
+        remaining / 86400000
+      );
 
-      const hours =
-        Math.floor(
-          (
-            remaining %
-            (1000 * 60 * 60 * 24)
-          ) /
-          (1000 * 60 * 60)
-        );
+      const hours = Math.floor(
+        (remaining % 86400000) /
+        3600000
+      );
 
-      const mins =
-        Math.floor(
-          (
-            remaining %
-            (1000 * 60 * 60)
-          ) /
-          (1000 * 60)
-        );
+      const mins = Math.floor(
+        (remaining % 3600000) /
+        60000
+      );
 
-      const secs =
-        Math.floor(
-          (
-            remaining %
-            (1000 * 60)
-          ) / 1000
-        );
+      const secs = Math.floor(
+        (remaining % 60000) /
+        1000
+      );
 
       countdownEl.innerHTML = `
         Remaining:
@@ -6258,74 +6113,53 @@ if (!schoolId) return;
     }
 
   }, 1000);
-}
-/* ================= LOGIN (FINAL PRODUCTION VERSION) ================= */
+
+};
+
+// =========================
+// SAFE SCHOOL CONTEXT CHECK
+// =========================
+window.ensureSchoolContext =
+function () {
+
+  return !!window.schoolId;
+
+};
+/* ================= LOGIN (CLEAN SAAS VERSION) ================= */
 
 window.login = async () => {
 
-  // 🚫 Prevent multiple login attempts
   if (window.__loggingIn) return;
 
-  const btns =
-    document.querySelectorAll(
-      '#authSection button'
-    );
+  const btns = document.querySelectorAll('#authSection button');
+  const loginBtn = document.getElementById("loginBtn");
 
-  const loginBtn =
-    document.getElementById(
-      "loginBtn"
-    );
+  const emailInput = document.getElementById("email");
+  const passwordInput = document.getElementById("password");
 
-  const emailInput =
-    document.getElementById(
-      "email"
-    );
-
-  const passwordInput =
-    document.getElementById(
-      "password"
-    );
-
-  const userEmail =
-    emailInput?.value.trim();
-
-  const userPassword =
-    passwordInput?.value.trim();
+  const userEmail = emailInput?.value.trim();
+  const userPassword = passwordInput?.value.trim();
 
   // =========================
   // VALIDATION
   // =========================
   if (!userEmail || !userPassword) {
-
     return Swal.fire({
       icon: "warning",
       title: "Missing Fields",
-      text:
-        "Please enter email and password.",
-      confirmButtonColor:
-        "#f59e0b",
-      background: "#ffffff",
-      color: "#0f172a"
+      text: "Please enter email and password.",
+      confirmButtonColor: "#f59e0b"
     });
   }
 
-  // =========================
-  // EMAIL VALIDATION
-  // =========================
-  const emailRegex =
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   if (!emailRegex.test(userEmail)) {
-
     return Swal.fire({
       icon: "warning",
       title: "Invalid Email",
-      text:
-        "Please enter a valid email address.",
-      confirmButtonColor:
-        "#f59e0b",
-      background: "#ffffff",
-      color: "#0f172a"
+      text: "Please enter a valid email address.",
+      confirmButtonColor: "#f59e0b"
     });
   }
 
@@ -6333,339 +6167,129 @@ window.login = async () => {
 
     window.__loggingIn = true;
 
-    // =========================
-    // DISABLE BUTTONS
-    // =========================
-    btns.forEach(btn => {
+    btns.forEach(btn => btn.disabled = true);
 
-      btn.disabled = true;
-
-    });
-
-    // =========================
-    // LOGIN BUTTON LOADING
-    // =========================
     if (loginBtn) {
-
       loginBtn.innerHTML = `
-        <div style="
-          display:flex;
-          align-items:center;
-          justify-content:center;
-          gap:10px;
-        ">
+        <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
           <div class="spinner"></div>
           <span>Signing In...</span>
         </div>
       `;
     }
 
- // =========================
-// MODERN DOT LOADER
-// =========================
-let loginOverlay =
-document.getElementById("modernLoginLoader");
-
-if (!loginOverlay) {
-
-  loginOverlay = document.createElement("div");
-
-  loginOverlay.id = "modernLoginLoader";
-
-  loginOverlay.innerHTML = `
-
-    <div class="modern-loader-box">
-
-      <div class="modern-dots">
-
-        <span></span>
-        <span></span>
-        <span></span>
-
-      </div>
-
-      <div class="modern-loader-text">
-        Signing you in securely...
-      </div>
-
-    </div>
-  `;
-
-  document.body.appendChild(loginOverlay);
-}
-
-// ✅ SHOW
-loginOverlay.style.display = "flex";
-
     // =========================
-    // SAFE LOGIN WITH TIMEOUT
+    // LOADER
     // =========================
-    const userCred =
-      await Promise.race([
+    let loginOverlay = document.getElementById("modernLoginLoader");
 
-        signInWithEmailAndPassword(
-          auth,
-          userEmail,
-          userPassword
-        ),
-
-        new Promise((_, reject) =>
-
-          setTimeout(() =>
-
-            reject(
-              new Error(
-                "Login timeout"
-              )
-            ),
-
-          15000)
-        )
-
-      ]);
-
-    const uid =
-      userCred.user.uid;
-
-    // =========================
-    // SAFE TOKEN REFRESH
-    // =========================
-    try {
-
-      await Promise.race([
-
-        auth.currentUser
-          .getIdToken(true),
-
-        new Promise((_, reject) =>
-
-          setTimeout(() =>
-
-            reject(
-              new Error(
-                "Token refresh timeout"
-              )
-            ),
-
-          10000)
-        )
-
-      ]);
-
-    } catch (e) {
-
-      console.warn(
-        "Token refresh skipped"
-      );
+    if (!loginOverlay) {
+      loginOverlay = document.createElement("div");
+      loginOverlay.id = "modernLoginLoader";
+      loginOverlay.innerHTML = `
+        <div class="modern-loader-box">
+          <div class="modern-dots">
+            <span></span><span></span><span></span>
+          </div>
+          <div class="modern-loader-text">
+            Signing you in securely...
+          </div>
+        </div>
+      `;
+      document.body.appendChild(loginOverlay);
     }
 
+    loginOverlay.style.display = "flex";
+
     // =========================
-    // GET USER PROFILE
+    // LOGIN
     // =========================
-    const userSnap =
-      await Promise.race([
+    const userCred = await signInWithEmailAndPassword(
+      auth,
+      userEmail,
+      userPassword
+    );
 
-        get(
-          ref(db, `users/${uid}`)
-        ),
+    const uid = userCred.user.uid;
 
-        new Promise((_, reject) =>
+    await auth.currentUser?.getIdToken(true).catch(() => {});
 
-          setTimeout(() =>
-
-            reject(
-              new Error(
-                "User profile timeout"
-              )
-            ),
-
-          10000)
-        )
-
-      ]);
+    // =========================
+    // USER PROFILE
+    // =========================
+    const userSnap = await get(ref(db, `users/${uid}`));
 
     if (!userSnap.exists()) {
-
-      throw new Error(
-        "User profile not found."
-      );
+      throw new Error("User profile not found.");
     }
 
-    const userData =
-      userSnap.val();
+    const userData = userSnap.val();
 
     // =========================
     // SCHOOL ID
     // =========================
-    const schoolId =
-
-      userData.schoolId ||
-
-      sessionStorage.getItem(
-        "schoolId"
-      ) ||
-
-      localStorage.getItem(
-        "schoolId"
-      );
+    const schoolId = userData.schoolId;
 
     if (!schoolId) {
-
-      throw new Error(
-        "School ID missing."
-      );
+      throw new Error("School ID missing in user profile.");
     }
 
     // =========================
-    // GLOBAL ACCESS
+    // SAVE SCHOOL CONTEXT
     // =========================
-    window.schoolId =
-      schoolId;
+    window.schoolId = schoolId;
+    window.userUid = uid;
+    window.appReady = true;
+
+    localStorage.setItem("schoolId", schoolId);
+
+    console.log("✅ School ID Loaded:", schoolId);
 
     // =========================
-    // STORAGE
+    // SCHOOL DATA
     // =========================
-    localStorage.setItem(
-      "schoolId",
-      schoolId
+    const schoolSnap = await get(
+      ref(db, `schools/${schoolId}`)
     );
-
-    sessionStorage.setItem(
-      "schoolId",
-      schoolId
-    );
-
-    sessionStorage.setItem(
-      "userUid",
-      uid
-    );
-
-    sessionStorage.setItem(
-      "schoolEmail",
-      userEmail
-    );
-
-    // =========================
-    // GET SCHOOL DATA
-    // =========================
-    const schoolSnap =
-      await Promise.race([
-
-        get(
-          ref(
-            db,
-            `schools/${schoolId}`
-          )
-        ),
-
-        new Promise((_, reject) =>
-
-          setTimeout(() =>
-
-            reject(
-              new Error(
-                "School data timeout"
-              )
-            ),
-
-          10000)
-        )
-
-      ]);
 
     if (!schoolSnap.exists()) {
-
-      throw new Error(
-        "School account not found."
-      );
+      throw new Error("School account not found.");
     }
 
-    const schoolData =
-      schoolSnap.val();
+    const schoolData = schoolSnap.val();
 
-    // =========================
-    // ACCOUNT SECURITY CHECKS
-    // =========================
-    if (
-      schoolData.deleted
-    ) {
+    if (schoolData.deleted)
+      throw new Error("This school was deleted.");
 
-      throw new Error(
-        "This school account was deleted."
-      );
-    }
+    if (schoolData.locked)
+      throw new Error("This school is locked.");
 
-    if (
-      schoolData.locked
-    ) {
+    if (!schoolData.active)
+      throw new Error("This school is inactive.");
 
-      throw new Error(
-        "This school account is locked."
-      );
-    }
-
-    if (
-      schoolData.active === false
-    ) {
-
-      throw new Error(
-        "This school account is inactive."
-      );
-    }
-
-    // =========================
-    // SCHOOL NAME
-    // =========================
     const schoolName =
-
       schoolData.name ||
-
-      schoolData.schoolName ||
-
       userData.schoolName ||
-
       "My School";
 
-    window.schoolName =
-      schoolName;
+    window.schoolName = schoolName;
 
     // =========================
-    // SAVE SCHOOL INFO
+    // SAFE STORAGE
     // =========================
-    localStorage.setItem(
-      "schoolName",
-      schoolName
-    );
-
-    sessionStorage.setItem(
-      "schoolName",
-      schoolName
-    );
-
-    console.log(
-      "🏫 SCHOOL LOADED:",
-      schoolName
-    );
+    sessionStorage.setItem("userUid", uid);
+    sessionStorage.setItem("schoolEmail", userEmail);
+    sessionStorage.setItem("schoolName", schoolName);
 
     // =========================
     // UPDATE LAST LOGIN
     // =========================
-    try {
-
-      await update(
-        ref(db, `users/${uid}`),
-        {
-          lastLogin:
-            Date.now()
-        }
-      );
-
-    } catch (e) {
-
-      console.warn(
-        "Could not update last login"
-      );
-    }
+    update(
+      ref(db, `users/${uid}`),
+      {
+        lastLogin: Date.now()
+      }
+    ).catch(() => {});
 
     // =========================
     // SUBSCRIPTION CHECK
@@ -6675,107 +6299,70 @@ loginOverlay.style.display = "flex";
     try {
 
       accessAllowed =
-        await Promise.race([
-
-          checkSubscriptionAccess(),
-
-          new Promise((_, reject) =>
-
-            setTimeout(() =>
-
-              reject(
-                new Error(
-                  "Subscription timeout"
-                )
-              ),
-
-            10000)
-          )
-
-        ]);
+        await checkSubscriptionAccess();
 
     } catch (err) {
 
-      console.error(err);
-
-      Swal.fire({
-        icon: "warning",
-        title:
-          "Subscription Warning",
-        text:
-          "Subscription verification failed. Limited access may apply.",
-        confirmButtonColor:
-          "#f59e0b"
-      });
-
       accessAllowed = false;
+
     }
 
+    // =========================
+    // ACCESS CHECK
+    // =========================
     if (!accessAllowed) {
 
-      btns.forEach(btn => {
-        btn.disabled = false;
-      });
+      btns.forEach(btn => btn.disabled = false);
 
-      const loader =
-document.getElementById("modernLoginLoader");
-
-if (loader) {
-  loader.style.display = "none";
-}
+      document
+        .getElementById("modernLoginLoader")
+        ?.style.setProperty(
+          "display",
+          "none"
+        );
 
       return;
     }
 
-    // =========================
-    // CLOSE LOADING ALERT
-    // =========================
     Swal.close();
 
     // =========================
-    // SUCCESS ALERT
+    // SUCCESS MESSAGE
     // =========================
-  await Swal.fire({
-  icon: "success",
-  title: "Login Successful",
-  text: `Welcome back to ${schoolName}`,
-  timer: 1500,
-  showConfirmButton: false,
-  background: "#ffffff",
-  color: "#0f172a"
-});
+    await Swal.fire({
+      icon: "success",
+      title: "Login Successful",
+      text: `Welcome back to ${schoolName}`,
+      timer: 1500,
+      showConfirmButton: false
+    });
 
-// 👇 INSERT HERE
-
-// =========================
-// HIDE LOGIN LOADER
-// =========================
-const loader = document.getElementById("modernLoginLoader");
-
-if (loader) {
-  loader.style.display = "none";
-}
-
-// =========================
-// OPEN APP
-// =========================
-const authSection = document.getElementById("authSection");
-    const app =
-      document.getElementById(
-        "app"
+    // =========================
+    // HIDE LOADER
+    // =========================
+    document
+      .getElementById("modernLoginLoader")
+      ?.style.setProperty(
+        "display",
+        "none"
       );
 
-    if (authSection) {
+    // =========================
+    // OPEN APP
+    // =========================
+    document
+      .getElementById("authSection")
+      ?.style.setProperty(
+        "display",
+        "none"
+      );
 
-      authSection.style.display =
-        "none";
-    }
+    const app =
+      document.getElementById("app");
 
     if (app) {
 
-      app.style.display =
-        "block";
-
+      app.style.display = "block";
       app.style.opacity = "0";
 
       setTimeout(() => {
@@ -6789,72 +6376,41 @@ const authSection = document.getElementById("authSection");
     }
 
     // =========================
-    // SAFE SCHOOL UI UPDATE
+    // UPDATE UI
     // =========================
-    const updateSchoolUI =
-      () => {
+    const el =
+      document.getElementById(
+        "schoolNameDisplay"
+      );
 
-        const el =
-          document.getElementById(
-            "schoolNameDisplay"
-          );
-
-        if (el) {
-
-          el.textContent =
-            schoolName;
-
-          console.log(
-            "🏫 UI UPDATED:",
-            schoolName
-          );
-        }
-      };
-
-    updateSchoolUI();
-
-    requestAnimationFrame(
-      updateSchoolUI
-    );
-
-    setTimeout(
-      updateSchoolUI,
-      300
-    );
-
-    setTimeout(
-      updateSchoolUI,
-      1000
-    );
+    if (el) {
+      el.textContent = schoolName;
+    }
 
     // =========================
     // START SYSTEMS
     // =========================
-    if (
-      typeof
-      startSubscriptionWatcher
-      === "function"
-    ) {
+    startSubscriptionWatcher?.();
+    startSubscriptionUI?.();
 
-      startSubscriptionWatcher();
+    // =========================
+    // LOAD EVERYTHING
+    // =========================
+    if (typeof loadAll === "function") {
+
+      await loadAll();
+
+    } else {
+
+      console.warn(
+        "loadAll is not defined yet"
+      );
+
     }
 
-    if (
-      typeof
-      startSubscriptionUI
-      === "function"
-    ) {
-
-      startSubscriptionUI();
-    }
-
-    if (
-      typeof loadAll
-      === "function"
-    ) {
-
-      loadAll();
-    }
+    console.log(
+      "✅ Login completed successfully"
+    );
 
   } catch (error) {
 
@@ -6863,199 +6419,38 @@ const authSection = document.getElementById("authSection");
       error
     );
 
-    // 🔥 Close loading popup
     Swal.close();
 
-    // =========================
-    // FRIENDLY ERRORS
-    // =========================
-    let title =
-      "Login Failed";
-
-    let message =
-      "Unable to sign in.";
-
-    let icon =
-      "error";
-
-    switch (error.code) {
-
-      // 🔐 Invalid credentials
-      case "auth/invalid-login-credentials":
-      case "auth/wrong-password":
-      case "auth/user-not-found":
-
-        title =
-          "Invalid Login";
-
-        message =
-          "Incorrect email or password.";
-        break;
-
-      // 📧 Invalid email
-      case "auth/invalid-email":
-
-        title =
-          "Invalid Email";
-
-        message =
-          "Please enter a valid email address.";
-
-        icon =
-          "warning";
-        break;
-
-      // 🌐 Network
-      case "auth/network-request-failed":
-
-        title =
-          "Connection Error";
-
-        message =
-          "Check your internet connection and try again.";
-
-        icon =
-          "warning";
-        break;
-
-      // 🚫 Too many attempts
-      case "auth/too-many-requests":
-
-        title =
-          "Too Many Attempts";
-
-        message =
-          "Too many login attempts. Try again later.";
-
-        icon =
-          "warning";
-        break;
-
-      // ⛔ Disabled
-      case "auth/user-disabled":
-
-        title =
-          "Account Disabled";
-
-        message =
-          "This account has been disabled.";
-        break;
-
-      // ⏳ Timeout
-      default:
-
-        if (
-          error.message?.includes(
-            "timeout"
-          )
-        ) {
-
-          title =
-            "Request Timeout";
-
-          message =
-            "The server took too long to respond. Please try again.";
-
-          icon =
-            "warning";
-
-        } else {
-
-          title =
-            "Login Failed";
-
-          message =
-            error.message ||
-            "Something went wrong while signing in.";
-        }
-    }
-
     Swal.fire({
-      icon,
-      title,
-      text: message,
-
-      confirmButtonColor:
-        "#ef4444",
-
-      background: "#ffffff",
-      color: "#0f172a",
-
-      customClass: {
-        popup:
-          "rounded-2xl shadow-xl"
-      }
+      icon: "error",
+      title: "Login Failed",
+      text:
+        error.message ||
+        "Unable to sign in.",
+      confirmButtonColor: "#ef4444"
     });
-} finally {
 
-  // =========================
-  // FORCE HIDE LOADER
-  // =========================
-  const loader =
-    document.getElementById("modernLoginLoader");
+  } finally {
 
-  if (loader) {
-    loader.style.display = "none";
-  }
+    document
+      .getElementById("modernLoginLoader")
+      ?.style.setProperty(
+        "display",
+        "none"
+      );
 
-  // =========================
-  // RESET STATE
-  // =========================
-  window.__loggingIn = false;
+    window.__loggingIn = false;
 
-  btns.forEach(btn => {
-    btn.disabled = false;
-  });
-
-  // =========================
-  // RESTORE BUTTON
-  // =========================
-  if (loginBtn) {
-    loginBtn.innerHTML = "🔐 Login";
-  }
-}
-};
-
-
-/* ================= SPINNER STYLE ================= */
-
-if (
-  !document.getElementById(
-    "spinnerStyle"
-  )
-) {
-
-  const style =
-    document.createElement(
-      "style"
+    btns.forEach(
+      btn => btn.disabled = false
     );
 
-  style.id =
-    "spinnerStyle";
-
-  style.innerHTML = `
-
-    .spinner{
-      width:18px;
-      height:18px;
-      border:3px solid rgba(255,255,255,0.3);
-      border-top:3px solid #fff;
-      border-radius:50%;
-      animation:spin .7s linear infinite;
+    if (loginBtn) {
+      loginBtn.innerHTML =
+        "🔐 Login";
     }
-
-    @keyframes spin{
-      to{
-        transform:rotate(360deg);
-      }
-    }
-
-  `;
-
-  document.head.appendChild(
-    style
-  );
-}
+  }
+};
 /* =========================================================
    🚀 MODERN LOGIN DOT LOADER
 ========================================================= */
@@ -7379,8 +6774,7 @@ async function generateAdmissionNumber() {
     }
 }
 /* =========================================================
-   🚀 ULTRA ADVANCED STUDENT REGISTRATION SYSTEM
-   FAST • SAFE • BULK OPTIMIZED • ENTERPRISE READY
+   🚀 STUDENT REGISTRATION SYSTEM (SAAS SAFE VERSION)
 ========================================================= */
 
 window.addStudent = async () => {
@@ -7389,6 +6783,15 @@ window.addStudent = async () => {
     window.__addingStudents = true;
 
     try {
+
+        // =========================
+        // SAFETY CHECK (CRITICAL)
+        // =========================
+        if (!window.schoolId) {
+            throw new Error("School ID missing. Access denied.");
+        }
+
+        const studentsRef = ref(db, `schools/${window.schoolId}/students`);
 
         // =====================================================
         // 🔹 GET FORM VALUES
@@ -7503,7 +6906,7 @@ window.addStudent = async () => {
                     updatedAt: Date.now()
                 };
 
-                await push(schoolRef("students"), studentData);
+                await push(studentsRef, studentData);
 
                 Swal.fire({
                     icon: 'success',
@@ -7513,8 +6916,8 @@ window.addStudent = async () => {
                 });
 
                 studentNameField.value = "";
-                if (ageField) ageField.value = "";
-                if (photoInput) photoInput.value = "";
+                ageField && (ageField.value = "");
+                photoInput && (photoInput.value = "");
 
                 return;
 
@@ -7529,7 +6932,7 @@ window.addStudent = async () => {
         }
 
         // =====================================================
-        // ⚡ ENTERPRISE BULK ENGINE (FAST + PARALLEL + SAFE)
+        // ⚡ BULK ENGINE (SAFE)
         // =====================================================
 
         const progressBox = document.createElement("div");
@@ -7543,7 +6946,6 @@ window.addStudent = async () => {
             border-radius:10px;
             z-index:99999;
             font-size:13px;
-            box-shadow:0 10px 20px rgba(0,0,0,0.3);
         `;
         document.body.appendChild(progressBox);
 
@@ -7553,8 +6955,6 @@ window.addStudent = async () => {
             allowOutsideClick: false,
             didOpen: () => Swal.showLoading()
         });
-
-        const studentsRef = schoolRef("students");
 
         const batchSize = 25;
         const concurrency = 4;
@@ -7596,9 +6996,7 @@ window.addStudent = async () => {
             try {
                 await update(studentsRef, updates);
             } catch (err) {
-                if (attempt < maxRetries) {
-                    return safeWrite(updates, attempt + 1);
-                }
+                if (attempt < maxRetries) return safeWrite(updates, attempt + 1);
                 failed += Object.keys(updates).length;
             }
         };
@@ -7606,7 +7004,6 @@ window.addStudent = async () => {
         const queue = [...batches];
 
         const worker = async () => {
-
             while (queue.length) {
 
                 const batch = queue.shift();
@@ -7615,7 +7012,6 @@ window.addStudent = async () => {
                 const updates = {};
 
                 for (const name of batch) {
-
                     const key = push(studentsRef).key;
                     updates[key] = buildStudent(name);
                     processed++;
@@ -7625,18 +7021,16 @@ window.addStudent = async () => {
 
                 progressBox.innerHTML = `
                     <b>Uploading...</b><br>
-                    ${processed}/${total} learners<br>
+                    ${processed}/${total}<br>
                     ${failed ? `Failed: ${failed}` : ""}
                 `;
             }
         };
 
-        const workers = Array(concurrency).fill(0).map(worker);
-
-        await Promise.all(workers);
+        await Promise.all(Array(concurrency).fill(0).map(worker));
 
         // =====================================================
-        // 🔥 FINAL REFRESH
+        // 🔥 REFRESH
         // =====================================================
 
         requestAnimationFrame(async () => {
@@ -7654,8 +7048,8 @@ window.addStudent = async () => {
         progressBox.remove();
 
         studentNameField.value = "";
-        if (ageField) ageField.value = "";
-        if (photoInput) photoInput.value = "";
+        ageField && (ageField.value = "");
+        photoInput && (photoInput.value = "");
 
     } catch (error) {
 
@@ -7862,8 +7256,137 @@ function () {
     });
 };
 
+/* =========================================================
+   🚀 LOAD ALL SCHOOL DATA
+========================================================= */
 
+window.loadAll = async function () {
 
+  if (!window.schoolId) {
+    console.warn("⏳ loadAll waiting for schoolId");
+    return;
+  }
+
+  try {
+
+    console.log(
+      "🚀 Loading school data for:",
+      window.schoolId
+    );
+
+    // =========================
+    // SCHOOL PROFILE
+    // =========================
+    if (typeof loadSchoolProfile === "function") {
+      await loadSchoolProfile();
+    }
+
+    // =========================
+    // STUDENTS
+    // =========================
+    if (typeof loadStudents === "function") {
+      await loadStudents();
+    }
+
+    // =========================
+    // TEACHERS
+    // =========================
+    if (typeof loadTeachers === "function") {
+      await loadTeachers();
+    }
+
+    // =========================
+    // SUPPORT STAFF
+    // =========================
+    if (typeof loadSupportStaff === "function") {
+      await loadSupportStaff();
+    }
+
+    // =========================
+    // FEES
+    // =========================
+    if (typeof loadFees === "function") {
+      await loadFees();
+    }
+
+    // =========================
+    // FINANCE SUMMARY
+    // =========================
+    if (typeof loadFinanceSummary === "function") {
+      await loadFinanceSummary();
+    }
+
+    // =========================
+    // TRANSPORT
+    // =========================
+    if (typeof loadTransport === "function") {
+      console.log("🚌 Loading Transport...");
+      await loadTransport();
+    } else {
+      console.warn("⚠️ loadTransport not found");
+    }
+
+    // =========================
+    // INVENTORY
+    // =========================
+    if (typeof loadInventory === "function") {
+      console.log("📦 Loading Inventory...");
+      await loadInventory();
+    } else {
+      console.warn("⚠️ loadInventory not found");
+    }
+
+    // =========================
+    // ICT
+    // =========================
+    if (typeof loadICT === "function") {
+      console.log("💻 Loading ICT...");
+      await loadICT();
+    } else {
+      console.warn("⚠️ loadICT not found");
+    }
+
+    // =========================
+    // LIBRARY
+    // =========================
+    if (typeof loadLibrary === "function") {
+      console.log("📚 Loading Library...");
+      await loadLibrary();
+    } else {
+      console.warn("⚠️ loadLibrary not found");
+    }
+
+    // =========================
+    // HOSTEL
+    // =========================
+    if (typeof loadHostel === "function") {
+      console.log("🏠 Loading Hostel...");
+      await loadHostel();
+    } else {
+      console.warn("⚠️ loadHostel not found");
+    }
+
+    // =========================
+    // DASHBOARD CHARTS
+    // =========================
+    if (typeof loadDashboardCharts === "function") {
+      await loadDashboardCharts();
+    }
+
+    console.log(
+      "✅ All school data loaded successfully"
+    );
+
+  } catch (err) {
+
+    console.error(
+      "❌ loadAll Error:",
+      err
+    );
+
+  }
+
+};
 window.addTeacher = async () => {
 
   const teacherData = {
@@ -8018,7 +7541,7 @@ function loadTeachers() {
 
     document.getElementById("totalTeachers").innerText = count;
 
-    console.log("👩‍🏫 Teachers loaded:", count);
+    console.log("👩🏫 Teachers loaded:", count);
 
   });
 }
@@ -8137,7 +7660,7 @@ window.viewTeacherAttendance = async function (date) {
     if (!container) return;
 
     let html = `
-      <h3>👩‍🏫 Teacher Attendance (${targetDate})</h3>
+      <h3>👩🏫 Teacher Attendance (${targetDate})</h3>
 
       <table style="width:100%; border-collapse:collapse;">
 
@@ -8226,7 +7749,7 @@ window.viewTeacherMonthlyAttendance = async function () {
       document.getElementById("teacherAttendanceOutput");
 
     let html = `
-      <h3>👩‍🏫 Teacher Monthly Attendance (${month})</h3>
+      <h3>👩🏫 Teacher Monthly Attendance (${month})</h3>
 
       <table style="width:100%; border-collapse:collapse;">
 
@@ -8292,23 +7815,71 @@ window.viewTeacherMonthlyAttendance = async function () {
     Swal.fire("Error", error.message, "error");
   }
 };
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
 
-  loadTeachers();
+  const bootApp = async () => {
 
-  await loadFeeYears();
+    try {
 
-  loadFeeFormYears();
+      // =========================
+      // WAIT FOR LOGIN SESSION
+      // =========================
+      if (!window.schoolId) {
+        console.log("⏳ Waiting for login session...");
+        return;
+      }
 
-  loadFeeFilterGrades();
+      // =========================
+      // PREVENT DOUBLE BOOT
+      // =========================
+      if (window.appReady) return;
 
-  loadFees();
+      window.appReady = true;
 
-  loadFinanceSummary();
+      console.log("🚀 APP STARTING FOR SCHOOL:", window.schoolId);
 
-  loadStudents();
+      // =========================
+      // SAFE LOAD ORDER
+      // =========================
+      await loadSchoolProfile?.();
 
-  loadDashboardCharts(); // 🔥 ADD THIS
+      loadTeachers?.();
+
+      await loadFeeYears?.();
+      loadFeeFormYears?.();
+      loadFeeFilterGrades?.();
+
+      loadStudents?.();
+
+      loadFees?.();
+      loadFinanceSummary?.();
+
+      loadDashboardCharts?.();
+
+      // =========================
+      // GLOBAL SYSTEMS
+      // =========================
+      startSubscriptionUI?.();
+      startSubscriptionWatcher?.();
+
+      console.log("✅ APP READY");
+
+    } catch (err) {
+      console.error("❌ BOOT ERROR:", err);
+    }
+  };
+
+  // =========================
+  // WAIT LOOP (LOGIN SAFE)
+  // =========================
+  const interval = setInterval(() => {
+
+    if (window.schoolId && !window.appReady) {
+      clearInterval(interval);
+      bootApp();
+    }
+
+  }, 200);
 
 });
 let filtersReady = false;
@@ -8569,24 +8140,43 @@ window.addFee = async () => {
   loadFinanceSummary();
 };
 
-
 window.loadFinanceSummary = async () => {
 
   try {
-const selectedYear =
-  document.getElementById("filterFeeYear")?.value
-  || "2026";
 
-const snapshot = await get(
-  schoolRef(`fees/${selectedYear}`)
-);
+    // =========================
+    // VERIFY SCHOOL SESSION
+    // =========================
+    const schoolId = window.schoolId;
+
+    if (!schoolId) {
+      console.warn("⏳ Finance summary skipped: schoolId not ready");
+      return;
+    }
+
+    // =========================
+    // YEAR
+    // =========================
+    const selectedYear =
+      document.getElementById("filterFeeYear")?.value ||
+      new Date().getFullYear().toString();
+
+    // =========================
+    // LOAD DATA
+    // =========================
+    const snapshot = await get(
+      ref(db, `schools/${schoolId}/fees/${selectedYear}`)
+    );
+
     const data = snapshot.val() || {};
 
     let totalPaid = 0;
     let totalBalance = 0;
     let expected = 0;
 
-    // ================= PAYMENT METHODS =================
+    // =========================
+    // PAYMENT METHODS
+    // =========================
     let cashTotal = 0;
     let mpesaTotal = 0;
     let bankTotal = 0;
@@ -8595,78 +8185,68 @@ const snapshot = await get(
 
       const feesObj = fee.fees || {};
 
-      // ================= LOOP ALL CATEGORIES =================
       Object.values(feesObj).forEach(list => {
 
-        if (Array.isArray(list)) {
+        if (!Array.isArray(list)) return;
 
-          list.forEach(item => {
+        list.forEach(item => {
 
-            const amount =
-              Number(item.amount || 0);
+          const amount = Number(item.amount || 0);
 
-            totalPaid += amount;
+          totalPaid += amount;
 
-            // ================= METHOD TOTALS =================
-            const method =
-              item.paymentMethod || "Cash";
+          const method =
+            (item.paymentMethod || "Cash").trim();
 
-            if (method === "Cash") {
-              cashTotal += amount;
-            }
+          if (method === "Cash") {
+            cashTotal += amount;
+          }
 
-            else if (method === "M-Pesa") {
-              mpesaTotal += amount;
-            }
+          else if (
+            method === "M-Pesa" ||
+            method === "Mpesa"
+          ) {
+            mpesaTotal += amount;
+          }
 
-            else if (method === "Bank") {
-              bankTotal += amount;
-            }
+          else if (method === "Bank") {
+            bankTotal += amount;
+          }
 
-          });
-        }
+        });
+
       });
 
-      // ================= BALANCE =================
       totalBalance += Number(
         fee.balance || 0
       );
 
-      // ================= EXPECTED =================
       expected += Number(
         fee.expectedTotal || 0
       );
 
     });
 
-    // ================= MAIN TOTALS =================
-    document.getElementById("totalPaid")
-      .textContent =
-      totalPaid.toLocaleString();
+    // =========================
+    // UPDATE UI SAFELY
+    // =========================
+    const setText = (id, value) => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.textContent = Number(value).toLocaleString();
+      }
+    };
 
-    document.getElementById("totalBalance")
-      .textContent =
-      totalBalance.toLocaleString();
+    setText("totalPaid", totalPaid);
+    setText("totalBalance", totalBalance);
+    setText("totalExpected", expected);
 
-    document.getElementById("totalExpected")
-      .textContent =
-      expected.toLocaleString();
-
-    // ================= METHOD TOTALS =================
-    document.getElementById("cashTotal")
-      .textContent =
-      cashTotal.toLocaleString();
-
-    document.getElementById("mpesaTotal")
-      .textContent =
-      mpesaTotal.toLocaleString();
-
-    document.getElementById("bankTotal")
-      .textContent =
-      bankTotal.toLocaleString();
+    setText("cashTotal", cashTotal);
+    setText("mpesaTotal", mpesaTotal);
+    setText("bankTotal", bankTotal);
 
     console.log(
-      "✅ Finance summary updated"
+      `✅ Finance summary loaded for ${schoolId}`
     );
 
   } catch (err) {
@@ -8675,21 +8255,43 @@ const snapshot = await get(
       "Finance summary error:",
       err
     );
+
   }
+
 };
+
+/* ================= LOAD FEES (SAAS SAFE VERSION) ================= */
 
 window.loadFees = async () => {
 
-const selectedYear =
-  document.getElementById("filterFeeYear")?.value
-  || new Date().getFullYear().toString();
+  // =========================
+  // SAFETY CHECK (CRITICAL)
+  // =========================
+if (!schoolId) {
+  console.error("❌ Missing schoolId - access blocked");
 
-const selectedGrade =
-  document.getElementById("filterFeeGrade")?.value
-  || "";
-const snapshot = await get(
-  schoolRef(`fees/${selectedYear}`)
-);
+  Swal.fire({
+    icon: "error",
+    title: "Session expired",
+    text: "Please login again"
+  });
+
+  document.getElementById("authSection").style.display = "flex";
+  document.getElementById("app").style.display = "none";
+
+  return null;
+}
+  const selectedYear =
+    document.getElementById("filterFeeYear")?.value ||
+    new Date().getFullYear().toString();
+
+  const selectedGrade =
+    document.getElementById("filterFeeGrade")?.value || "";
+
+  const snapshot = await get(
+    ref(db, `schools/${window.schoolId}/fees/${selectedYear}`)
+  );
+
   const data = snapshot.val() || {};
 
   const table = document.getElementById("feesTable");
@@ -8697,7 +8299,6 @@ const snapshot = await get(
 
   const thead = table.querySelector("thead");
   const tbody = table.querySelector("tbody");
-
 
   tbody.innerHTML = "";
 
@@ -8721,9 +8322,7 @@ const snapshot = await get(
       <th>No</th>
       <th>Learner</th>
       <th>Grade</th>
-
       ${feeTypes.map(type => `<th>${type}</th>`).join("")}
-
       <th>Total Paid</th>
       <th>Balance</th>
       <th>Status</th>
@@ -8733,18 +8332,18 @@ const snapshot = await get(
   `;
 
   // ===============================
-  // SAFE HELPERS
+  // HELPERS
   // ===============================
-  function sumFee(list) {
+  const sumFee = (list) => {
     if (!Array.isArray(list)) return Number(list) || 0;
     return list.reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
-  }
+  };
 
-  function totalAllFees(feesObj) {
-    return Object.values(feesObj || {}).reduce((sum, list) => {
+  const totalAllFees = (feesObj = {}) => {
+    return Object.values(feesObj).reduce((sum, list) => {
       return sum + sumFee(list);
     }, 0);
-  }
+  };
 
   // ===============================
   // TOTALS
@@ -8754,38 +8353,34 @@ const snapshot = await get(
 
   let count = 0;
 
-Object.entries(data).forEach(([feeId, fee]) => {
+  Object.entries(data).forEach(([feeId, fee]) => {
 
-  // ================= FILTER BY GRADE =================
-  if (selectedGrade && fee.grade !== selectedGrade) return;
+    // ================= FILTER =================
+    if (selectedGrade && fee.grade !== selectedGrade) return;
 
-  count++;
+    count++;
 
-  const feesObj = fee.fees || {};
+    const feesObj = fee.fees || {};
+
     feeTypes.forEach(type => {
       categoryTotals[type] += sumFee(feesObj[type]);
     });
 
-    const student = allStudents.find(s => s.id === fee.studentId);
+    // SAFE STUDENT LOOKUP
+    const student = (window.allStudents || []).find(
+      s => s.id === fee.studentId
+    );
 
     const displayName = student
       ? `${student.name} / ${student.parentPhone || ""}`
       : fee.studentName || "-";
 
-    // ===============================
-    // STATUS
-    // ===============================
+    // ================= STATUS =================
     let status = "OWING";
     if ((fee.balance || 0) <= 0) status = "PAID";
     else if ((fee.totalPaid || 0) > 0) status = "PARTIAL";
 
-    const statusColor =
-      status === "PAID" ? "green" :
-      status === "PARTIAL" ? "orange" : "red";
-
-    // ===============================
-    // ROW
-    // ===============================
+    // ================= ROW =================
     tbody.innerHTML += `
       <tr>
         <td>${count}</td>
@@ -8799,11 +8394,16 @@ Object.entries(data).forEach(([feeId, fee]) => {
         <td>${totalAllFees(feesObj)}</td>
         <td>${fee.balance || 0}</td>
 
-        <td class="${status === 'PAID' ? 'status-paid' : status === 'PARTIAL' ? 'status-partial' : 'status-owing'}">
+        <td class="${
+          status === 'PAID'
+            ? 'status-paid'
+            : status === 'PARTIAL'
+              ? 'status-partial'
+              : 'status-owing'
+        }">
           ${status}
         </td>
 
-        <!-- HISTORY BUTTON -->
         <td>
           <button onclick='openFeeHistory(${JSON.stringify(fee)})'
             style="background:#111827;color:white;padding:6px 10px;border-radius:6px;width:100%;">
@@ -8811,38 +8411,37 @@ Object.entries(data).forEach(([feeId, fee]) => {
           </button>
         </td>
 
-        <!-- ACTIONS (CLEAN STACK LIKE YOUR FRIEND) -->
-   <td>
-  <div class="dropdown-actions">
+        <td>
+          <div class="dropdown-actions">
 
-    <button class="action-toggle">
-      ⚙ Actions
-    </button>
+            <button class="action-toggle">⚙ Actions</button>
 
-    <div class="dropdown-menu">
+            <div class="dropdown-menu">
 
-      <button onclick='openEditFeeModal("${selectedYear}", "${feeId}")'>
-        ✏️ Edit
-      </button>
+              <button onclick='openEditFeeModal("${selectedYear}", "${feeId}")'>
+                ✏️ Edit
+              </button>
 
-      <button onclick='generateReceipt(${JSON.stringify(fee)})'>
-        🧾 Receipt
-      </button>
+              <button onclick='generateReceipt(${JSON.stringify(fee)})'>
+                🧾 Receipt
+              </button>
 
-    <button onclick="sendSingleSMS('${selectedYear}', '${fee.studentId}')">
-        📩 SMS
-      </button>
+              <button onclick="sendSingleSMS('${selectedYear}', '${fee.studentId}')">
+                📩 SMS
+              </button>
 
- <button onclick='openRefundModal("${selectedYear}", "${feeId}")'>
-        💸 Refund
-      </button>
+              <button onclick='openRefundModal("${selectedYear}", "${feeId}")'>
+                💸 Refund
+              </button>
 
-     <button onclick="deleteLearnerFee('${selectedYear}', '${feeId}', '${fee.studentName}')">   🗑 Delete
-      </button>
+              <button onclick="deleteLearnerFee('${selectedYear}', '${feeId}', '${fee.studentName}')">
+                🗑 Delete
+              </button>
 
-    </div>
-  </div>
-</td>
+            </div>
+          </div>
+        </td>
+
       </tr>
     `;
   });
@@ -8859,14 +8458,11 @@ Object.entries(data).forEach(([feeId, fee]) => {
     footerRow += `<td>${categoryTotals[type] || 0}</td>`;
   });
 
-  footerRow += `
-      <td colspan="5"></td>
-    </tr>
-  `;
+  footerRow += `<td colspan="5"></td></tr>`;
 
   tbody.innerHTML += footerRow;
 
-  console.log("✅ Fees loaded (clean structured buttons version)");
+  console.log("✅ Fees loaded (SAAS SAFE - school isolated)");
 };
 window.sendSingleSMS = async (year, studentId) => {
 
@@ -9403,10 +8999,7 @@ window.loadFeeFormYears = function () {
 
   console.log("✅ Fee form years loaded:", years);
 };
-// ================= INIT =================
-document.addEventListener("DOMContentLoaded", () => {
-  loadFees();
-});
+
 window.openEditFeeModal = async (year, feeId) => {
 
   try {
@@ -10203,9 +9796,7 @@ const feeBreakdown = Object.entries(feesObj)
   };
 };
 
-document.addEventListener("DOMContentLoaded", () => {
-  loadFinanceSummary();
-});
+
 
 window.loadFeeYears = async function () {
 
@@ -10474,7 +10065,12 @@ window.loadFeeGrades = async function () {
     console.error("Error loading fee grades:", err);
   }
 };
-
+function getSchoolId() {
+  if (!window.schoolId) {
+    throw new Error("School not initialized. Please login again.");
+  }
+  return window.schoolId;
+}
 // ==============================
 // 💰 LOAD FEE LEARNERS
 // ==============================
@@ -10571,25 +10167,13 @@ async function loadLearnersFromStudents() {
 
   try {
 
-    const schoolId =
-      window.schoolId ||
-      localStorage.getItem("schoolId") ||
-      localStorage.getItem("currentSchoolId") ||
-      sessionStorage.getItem("schoolId") ||
-      sessionStorage.getItem("currentSchoolId");
+  const schoolId = window.schoolId;
 
-    let studentsRef;
+if (!schoolId) {
+  throw new Error("School ID missing. Please login again.");
+}
 
-    if (schoolId) {
-
-      studentsRef =
-        ref(db, `schools/${schoolId}/students`);
-
-    } else {
-
-      studentsRef =
-        ref(db, "students");
-    }
+const studentsRef = ref(db, `schools/${schoolId}/students`);
 
     const snapshot =
       await get(studentsRef);
@@ -11064,13 +10648,11 @@ async function autoSaveMarks() {
 
   if (window.__savingMarks) return;
 
-  const schoolId =
-    window.schoolId ||
-    localStorage.getItem("schoolId") ||
-    localStorage.getItem("currentSchoolId") ||
-    sessionStorage.getItem("schoolId") ||
-    sessionStorage.getItem("currentSchoolId");
+ const schoolId = window.schoolId;
 
+if (!schoolId) {
+  throw new Error("School ID missing. Please login again.");
+}
   const examPeriod =
     document.getElementById("examPeriod")?.value;
 
@@ -11156,13 +10738,11 @@ document.getElementById("saveMarksButton")
 
   try {
 
-    const schoolId =
-      window.schoolId ||
-      localStorage.getItem("schoolId") ||
-      localStorage.getItem("currentSchoolId") ||
-      sessionStorage.getItem("schoolId") ||
-      sessionStorage.getItem("currentSchoolId");
+ const schoolId = window.schoolId;
 
+if (!schoolId) {
+  throw new Error("School ID missing. Please login again.");
+}
     const examPeriod =
       document.getElementById("examPeriod")?.value;
 
@@ -11339,11 +10919,11 @@ async function loadMarksUnifiedClean() {
     return Swal.fire("Not Logged In", "Please login first", "error");
   }
 
-  const schoolId =
-    window.schoolId ||
-    localStorage.getItem("schoolId") ||
-    sessionStorage.getItem("schoolId");
+ const schoolId = window.schoolId;
 
+if (!schoolId) {
+  throw new Error("School ID missing. Please login again.");
+}
   if (!schoolId) {
     return Swal.fire("School Error", "School ID missing (login again)", "error");
   }
@@ -12863,7 +12443,7 @@ function generateTopStudents() {
       // 📊 RENDER CARDS
       // ==========================
       container.innerHTML = `
-        <h2>👨‍🎓 TOP 5 STUDENTS PERFORMANCE</h2>
+        <h2>👨🎓 TOP 5 STUDENTS PERFORMANCE</h2>
 
         <div style="
           display:grid;
@@ -17216,7 +16796,7 @@ function updateTeachersCount() {
       el.innerText = total;
     }
 
-    console.log("👩‍🏫 Teachers count updated:", total);
+    console.log("👩🏫 Teachers count updated:", total);
 
   });
 }
@@ -21976,119 +21556,115 @@ window.viewSupportMonthlyAttendance = async function () {
     );
   }
 };
-
 // =====================================
-// 🏫 SAAS SCHOOL PROFILE SYSTEM (FIREBASE)
+// 🏫 SAAS SCHOOL PROFILE SYSTEM
 // =====================================
 
-// GLOBAL SCHOOL OBJECT
 window.currentSchool = null;
 
 // =====================================
-// 🔐 LOAD SCHOOL PROFILE FROM FIREBASE
+// LOAD SCHOOL PROFILE
 // =====================================
 window.loadSchoolProfile = async function () {
 
   try {
 
-    const schoolId = localStorage.getItem("schoolId");
+    const schoolId = window.schoolId;
 
     if (!schoolId) {
-      console.warn("No schoolId found for user");
+      console.warn("⏳ School profile skipped: schoolId not ready");
       return;
     }
 
-    const snap = await get(ref(db, `schools/${schoolId}`));
+    const snap = await get(
+      ref(db, `schools/${schoolId}`)
+    );
 
-    if (snap.exists()) {
+    if (!snap.exists()) {
 
-      window.currentSchool = snap.val();
-
-      console.log(
-        "🏫 School loaded:",
-        window.currentSchool.name
+      console.warn(
+        `School ${schoolId} not found`
       );
 
-      // =========================
-      // AUTO UPDATE SCHOOL NAME
-      // =========================
-      const schoolNameDisplay =
-        document.getElementById("schoolNameDisplay");
-
-      if (schoolNameDisplay) {
-        schoolNameDisplay.innerText =
-          window.currentSchool.name || "RASM 360";
-      }
-
-    } else {
-
-      console.warn("School not found in database");
       window.currentSchool = {
+        name: "",
+        motto: "",
+        address: "",
+        logo: ""
+      };
 
-  name: "",
-  motto: "",
-  address: "",
-  logo: ""
+      return;
+    }
 
-};
+    window.currentSchool = snap.val();
+
+    console.log(
+      "🏫 School loaded:",
+      window.currentSchool.name
+    );
+
+    const schoolNameDisplay =
+      document.getElementById(
+        "schoolNameDisplay"
+      );
+
+    if (schoolNameDisplay) {
+
+      schoolNameDisplay.textContent =
+        window.currentSchool.name ||
+        "RASM 360";
 
     }
 
   } catch (err) {
 
     console.error(
-      "Error loading school profile:",
+      "School Profile Error:",
       err
     );
 
   }
+
 };
 
 // =====================================
-// 💾 SAVE SCHOOL PROFILE
+// SAVE SCHOOL PROFILE
 // =====================================
 window.saveSchoolProfile = async function () {
 
-  const schoolId =
-    window.schoolId ||
-    localStorage.getItem("schoolId");
+  const schoolId = window.schoolId;
 
   if (!schoolId) {
 
-    Swal.fire(
-      "Error",
-      "No school session found. Please login again.",
-      "error"
-    );
+    return Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "School session not found. Please login again."
+    });
 
-    return;
   }
 
   const schoolData = {
 
     name:
-      document
-      .getElementById("profileSchoolName")
-      .value
-      .trim(),
+      document.getElementById(
+        "profileSchoolName"
+      )?.value.trim() || "",
 
     motto:
-      document
-      .getElementById("schoolMotto")
-      .value
-      .trim(),
+      document.getElementById(
+        "schoolMotto"
+      )?.value.trim() || "",
 
     address:
-      document
-      .getElementById("schoolAddress")
-      .value
-      .trim(),
+      document.getElementById(
+        "schoolAddress"
+      )?.value.trim() || "",
 
     logo:
-      document
-      .getElementById("schoolLogo")
-      .value
-      .trim() || "",
+      document.getElementById(
+        "schoolLogo"
+      )?.value.trim() || "",
 
     updatedAt: Date.now()
 
@@ -22096,42 +21672,34 @@ window.saveSchoolProfile = async function () {
 
   if (!schoolData.name) {
 
-    Swal.fire(
-      "Error",
-      "School name is required",
-      "error"
-    );
+    return Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "School name is required"
+    });
 
-    return;
   }
 
   try {
 
-    // =====================================
-    // UPDATE FIREBASE
-    // =====================================
     await update(
       ref(db, `schools/${schoolId}`),
       schoolData
     );
 
-    // =====================================
-    // UPDATE GLOBAL OBJECT
-    // =====================================
     window.currentSchool = {
       ...window.currentSchool,
       ...schoolData
     };
 
-    // =====================================
-    // UPDATE SCHOOL NAME ON UI
-    // =====================================
     const schoolNameDisplay =
-      document.getElementById("schoolNameDisplay");
+      document.getElementById(
+        "schoolNameDisplay"
+      );
 
     if (schoolNameDisplay) {
 
-      schoolNameDisplay.innerText =
+      schoolNameDisplay.textContent =
         schoolData.name;
 
     }
@@ -22141,79 +21709,31 @@ window.saveSchoolProfile = async function () {
       title: "School profile updated"
     });
 
-    // =====================================
-    // CLOSE MODAL
-    // =====================================
     document.getElementById(
       "schoolProfileModal"
-    ).style.display = "none";
+    )?.style.setProperty(
+      "display",
+      "none"
+    );
 
   } catch (err) {
 
     console.error(err);
 
-    Swal.fire(
-      "Error",
-      err.message || "Failed to save school profile",
-      "error"
-    );
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text:
+        err.message ||
+        "Failed to save school profile"
+    });
 
   }
-};
-
-// =====================================
-// 🏫 CREATE SCHOOL PROFILE (ADMIN ONLY)
-// =====================================
-window.createSchoolProfile = async function () {
-
-  const schoolId =
-    "school_" + Date.now();
-
-  const schoolData = {
-
-    name:
-      document
-      .getElementById("profileSchoolName")
-      .value
-      .trim(),
-
-    motto:
-      document
-      .getElementById("schoolMotto")
-      .value
-      .trim(),
-
-    address:
-      document
-      .getElementById("schoolAddress")
-      .value
-      .trim(),
-
-    logo:
-      document
-      .getElementById("schoolLogo")
-      .value
-      .trim() || "",
-
-    createdAt: Date.now()
-
-  };
-
-  await set(
-    ref(db, `schools/${schoolId}`),
-    schoolData
-  );
-
-  Swal.fire(
-    "Success",
-    "School created successfully",
-    "success"
-  );
 
 };
 
 // =====================================
-// 🪟 OPEN SCHOOL PROFILE FORM
+// OPEN SCHOOL PROFILE FORM
 // =====================================
 window.openSchoolProfileForm = async function () {
 
@@ -22222,22 +21742,24 @@ window.openSchoolProfileForm = async function () {
       "schoolProfileModal"
     );
 
-  if (!modal) {
-
-    console.error("Modal not found");
-    return;
-
-  }
+  if (!modal) return;
 
   modal.style.display =
     modal.style.display === "none"
       ? "block"
       : "none";
 
-  const schoolId =
-    localStorage.getItem("schoolId");
+  const schoolId = window.schoolId;
 
-  if (!schoolId) return;
+  if (!schoolId) {
+
+    console.warn(
+      "⏳ schoolId not ready"
+    );
+
+    return;
+
+  }
 
   try {
 
@@ -22245,32 +21767,34 @@ window.openSchoolProfileForm = async function () {
       ref(db, `schools/${schoolId}`)
     );
 
-    if (snap.exists()) {
+    if (!snap.exists()) return;
 
-      const data = snap.val();
+    const data = snap.val();
 
-      document.getElementById(
-        "profileSchoolName"
-      ).value = data.name || "";
+    document.getElementById(
+      "profileSchoolName"
+    ).value =
+      data.name || "";
 
-      document.getElementById(
-        "schoolMotto"
-      ).value = data.motto || "";
+    document.getElementById(
+      "schoolMotto"
+    ).value =
+      data.motto || "";
 
-      document.getElementById(
-        "schoolAddress"
-      ).value = data.address || "";
+    document.getElementById(
+      "schoolAddress"
+    ).value =
+      data.address || "";
 
-      document.getElementById(
-        "schoolLogo"
-      ).value = data.logo || "";
-
-    }
+    document.getElementById(
+      "schoolLogo"
+    ).value =
+      data.logo || "";
 
   } catch (err) {
 
     console.error(
-      "Error opening profile:",
+      "Profile Form Error:",
       err
     );
 
@@ -22902,7 +22426,7 @@ window.addTransport = async function () {
 
   try {
 
-    const schoolId = localStorage.getItem("schoolId");
+    const schoolId = window.schoolId;
 
     if (!schoolId) {
       Swal.fire("Error", "No school session found", "error");
@@ -22940,7 +22464,7 @@ window.addTransport = async function () {
       createdAt: Date.now()
     };
 
-    await push(ref(db, `transport/${schoolId}`), data);
+    await push(schoolRef("transport"), data);
 
     closeSweetLoader();
 
@@ -22964,8 +22488,8 @@ window.addTransport = async function () {
 
 /* ================= LOG TRIP ================= */
 window.logTrip = async function (busId, type) {
-
-  const schoolId = localStorage.getItem("schoolId");
+window.schoolId = window.schoolId || null;
+  const schoolId = window.schoolId;
 
   const { value: formValues } = await Swal.fire({
 
@@ -23042,42 +22566,61 @@ window.logTrip = async function (busId, type) {
     showConfirmButton: false
   });
 };
+/* =========================================================
+   🚀 LOAD TRANSPORT (SAAS LIVE FIXED VERSION)
+========================================================= */
+
 window.loadTransport = function () {
 
-  const schoolId = localStorage.getItem("schoolId");
+  // ===============================
+  // REMOVE OLD LISTENER (IMPORTANT)
+  // ===============================
+  if (window.__transportListener) {
+    window.__transportListener();
+  }
 
-  onValue(ref(db, `transport/${schoolId}`), (snap) => {
+  // ===============================
+  // LIVE LISTENER (SAME AS SUPPORT STAFF)
+  // ===============================
+  window.__transportListener = onValue(
+    schoolRef("transport"),
+    (snap) => {
 
-    // =====================================================
-    // NO DATA
-    // =====================================================
+      const transportList =
+        document.getElementById("transportList");
 
-    if (!snap.exists()) {
+      if (!transportList) return;
 
-      const noDataHtml = `
-        <div style="
-          padding:20px;
-          text-align:center;
-          color:#64748b;
-          font-size:14px;
-        ">
-          🚫 No transport records found
-        </div>
-      `;
+      const data = snap.val() || {};
 
-      transportList.innerHTML = noDataHtml;
+      // ===============================
+      // CONVERT TO ARRAY
+      // ===============================
+      const transportArray = Object.entries(data).map(([id, item]) => ({
+        id,
+        ...item
+      }));
 
-      const transportContent =
-        document.getElementById("transportContent");
+      // ===============================
+      // EMPTY STATE
+      // ===============================
+      if (transportArray.length === 0) {
 
-      if (transportContent) {
-        transportContent.innerHTML = noDataHtml;
+        const emptyHTML = `
+          <div style="padding:20px;text-align:center;color:#64748b;">
+            🚫 No transport records found
+          </div>
+        `;
+
+        transportList.innerHTML = emptyHTML;
+
+        document.getElementById("transportContent") &&
+          (document.getElementById("transportContent").innerHTML = emptyHTML);
+
+        return;
       }
 
-      return;
-    }
-
-    // =====================================================
+      // =====================================================
     // BUILD REPORT
     // =====================================================
 
@@ -23307,7 +22850,6 @@ window.loadTransport = function () {
   });
 
 };
-
 window.toggleActionPanel = function (id) {
 
   const panel = document.getElementById(`panel-${id}`);
@@ -23322,88 +22864,94 @@ window.toggleActionPanel = function (id) {
   panel.style.display =
     panel.style.display === "block" ? "none" : "block";
 };
-
 window.assignStudentToBus = async function (busId) {
 
-  const schoolId = localStorage.getItem("schoolId");
+  const schoolId = window.schoolId;
+
+  if (!schoolId) {
+    Swal.fire("Error", "Missing school session", "error");
+    return;
+  }
 
   if (!allStudents || allStudents.length === 0) {
     Swal.fire("Error", "No students loaded", "error");
     return;
   }
 
-  const busRef = ref(db, `transport/${schoolId}/${busId}`);
+  const busRef = ref(db, `schools/${schoolId}/transport/${busId}`);
   const snap = await get(busRef);
 
-  if (!snap.exists()) return;
+  if (!snap.exists()) {
+    Swal.fire("Error", "Bus not found", "error");
+    return;
+  }
 
   const bus = snap.val();
 
-  // ================= SAFE DATA =================
-  const capacity = Number(bus.capacity ?? 0);
+  const capacity = Number(bus.capacity || 0);
 
-  const currentStudents = Array.isArray(bus.students)
-    ? bus.students
-    : [];
+  // ================= NORMALIZE students =================
+  let currentStudents = [];
 
-  // ================= REMAINING SEATS =================
-  const remaining =
-    capacity > 0
-      ? capacity - currentStudents.length
-      : "∞";
+  if (Array.isArray(bus.students)) {
+    currentStudents = bus.students;
+  } else if (bus.students && typeof bus.students === "object") {
+    currentStudents = Object.values(bus.students);
+  }
 
-  // ================= BUILD GRADE LIST =================
-  const grades = [...new Set(allStudents.map(s =>
-    (s.grade || s.class || s.studentGrade || "").trim()
-  ))].filter(Boolean);
+  const remaining = capacity > 0
+    ? capacity - currentStudents.length
+    : "∞";
+
+  // ================= UNIQUE GRADES =================
+  const grades = [...new Set(
+    allStudents.map(s =>
+      (s.grade || s.class || s.studentGrade || "").trim()
+    )
+  )].filter(Boolean);
 
   const gradeOptions = grades.map(g =>
     `<option value="${g}">${g}</option>`
   ).join("");
 
-  // ================= SWEET ALERT MODAL =================
-  const { value: form } = await Swal.fire({
+  // ================= SWEETALERT =================
+  const { value: selectedStudent } = await Swal.fire({
 
     title: "Assign Learner to Bus",
 
     html: `
-      <div style="text-align:left">
+      <div style="text-align:left;font-size:13px">
 
-        <!-- ================= BUS STATUS ================= -->
-        <div style="margin-bottom:10px;font-size:13px;">
+        <div style="margin-bottom:10px;">
           🚌 Capacity: <b>${capacity || "∞"}</b><br>
           👥 Assigned: <b>${currentStudents.length}</b><br>
-          🚍 Remaining Seats: <b>${remaining}</b>
+          🚍 Remaining: <b>${remaining}</b>
         </div>
 
-        <!-- ================= FULLNESS BAR ================= -->
-        <div style="background:#e5e7eb;border-radius:20px;height:10px;overflow:hidden;">
+        <div style="height:10px;background:#e5e7eb;border-radius:20px;overflow:hidden;">
           <div style="
             width:${capacity > 0 ? (currentStudents.length / capacity) * 100 : 0}%;
+            height:100%;
             background:${capacity > 0 && currentStudents.length >= capacity ? 'red' : '#16a34a'};
-            height:10px;
           "></div>
         </div>
 
         <hr>
 
-        <!-- ================= GRADE FILTER ================= -->
-        <label style="font-size:12px;">Select Grade</label>
+        <label>Grade</label>
         <select id="swalGrade" class="swal2-input" style="width:100%;">
-          <option value="">-- Select Grade --</option>
+          <option value="">Select Grade</option>
           ${gradeOptions}
         </select>
 
-        <!-- ================= STUDENT LIST ================= -->
-        <label style="font-size:12px;margin-top:10px;">Learner</label>
+        <label>Learner</label>
         <select id="swalStudent" class="swal2-input" style="width:100%;">
-          <option value="">-- Select Learner --</option>
+          <option value="">Select Learner</option>
         </select>
 
       </div>
     `,
 
-    focusConfirm: false,
     showCancelButton: true,
     confirmButtonText: "Assign",
     confirmButtonColor: "#16a34a",
@@ -23413,19 +22961,21 @@ window.assignStudentToBus = async function (busId) {
       const gradeSelect = document.getElementById("swalGrade");
       const studentSelect = document.getElementById("swalStudent");
 
-      gradeSelect.addEventListener("change", function () {
+      gradeSelect.addEventListener("change", () => {
 
-        const selectedGrade = this.value;
+        const grade = gradeSelect.value;
 
-        studentSelect.innerHTML = `<option value="">-- Select Learner --</option>`;
+        studentSelect.innerHTML =
+          `<option value="">Select Learner</option>`;
 
         const filtered = allStudents.filter(s =>
-          (s.grade || s.class || s.studentGrade || "").trim() === selectedGrade
+          (s.grade || s.class || s.studentGrade || "").trim() === grade
         );
 
         filtered.forEach(s => {
 
-          const name = (s.name || s.studentName || s.fullName || "").trim();
+          const name =
+            (s.name || s.studentName || s.fullName || "").trim();
 
           if (!name) return;
 
@@ -23438,7 +22988,8 @@ window.assignStudentToBus = async function (busId) {
 
     preConfirm: () => {
 
-      const student = document.getElementById("swalStudent").value;
+      const student =
+        document.getElementById("swalStudent").value;
 
       if (!student) {
         Swal.showValidationMessage("Select a learner");
@@ -23447,37 +22998,31 @@ window.assignStudentToBus = async function (busId) {
 
       return student;
     }
-
   });
 
-  if (!form) return;
+  if (!selectedStudent) return;
 
   // ================= CAPACITY CHECK =================
   if (capacity > 0 && currentStudents.length >= capacity) {
-
-    Swal.fire({
-      icon: "error",
-      title: "Bus Full",
-      text: "Cannot assign more learners. Capacity reached."
-    });
-
+    Swal.fire("Bus Full", "Cannot assign more learners", "error");
     return;
   }
 
   // ================= DUPLICATE CHECK =================
-  if (currentStudents.includes(form)) {
+  const exists = currentStudents.some(s =>
+    (typeof s === "string" ? s : s.name) === selectedStudent
+  );
 
-    Swal.fire({
-      icon: "warning",
-      title: "Already Assigned",
-      text: `${form} is already on this bus`
-    });
-
+  if (exists) {
+    Swal.fire("Warning", "Learner already assigned", "warning");
     return;
   }
 
-  // ================= UPDATE =================
-  currentStudents.push(form);
+  // ================= SAVE (IMPORTANT FIX) =================
+  currentStudents.push({
+    name: selectedStudent,
+    addedAt: Date.now()
+  });
 
   await update(busRef, {
     students: currentStudents,
@@ -23487,26 +23032,39 @@ window.assignStudentToBus = async function (busId) {
   Swal.fire({
     icon: "success",
     title: "Assigned",
-    text: `${form} added to bus`,
+    text: `${selectedStudent} added to bus`,
     timer: 1500,
     showConfirmButton: false
   });
 };
 window.updateBusCapacity = async function (busId) {
 
-  const schoolId = localStorage.getItem("schoolId");
+  const schoolId = window.schoolId;
 
-  const busRef = ref(db, `transport/${schoolId}/${busId}`);
+  if (!schoolId) {
+    Swal.fire("Error", "Missing school session", "error");
+    return;
+  }
 
+  const busRef = ref(db, `schools/${schoolId}/transport/${busId}`);
   const snap = await get(busRef);
 
-  if (!snap.exists()) return;
+  if (!snap.exists()) {
+    Swal.fire("Error", "Bus not found", "error");
+    return;
+  }
 
   const bus = snap.val();
 
+  const currentStudents = Array.isArray(bus.students)
+    ? bus.students
+    : (bus.students && typeof bus.students === "object"
+        ? Object.values(bus.students)
+        : []);
+
   const { value: capacity } = await Swal.fire({
     title: "Set Bus Capacity",
-    text: `Bus: ${bus.busName}`,
+    text: `Bus: ${bus.busName || "Unnamed Bus"}`,
 
     input: "number",
     inputLabel: "Maximum learners allowed",
@@ -23527,40 +23085,61 @@ window.updateBusCapacity = async function (busId) {
   if (!capacity) return;
 
   const newCapacity = Number(capacity);
-  const currentStudents = Array.isArray(bus.students) ? bus.students : [];
 
-  // ⚠️ Warn if new capacity is smaller than current students
+  // ================= SAFETY CHECK =================
   if (newCapacity < currentStudents.length) {
 
     const confirm = await Swal.fire({
       icon: "warning",
       title: "Capacity Too Low",
-      text: `This bus already has ${currentStudents.length} learners`,
+      html: `
+        This bus already has <b>${currentStudents.length}</b> learners<br>
+        Reducing capacity may block assignments.
+      `,
       showCancelButton: true,
-      confirmButtonText: "Force Update"
+      confirmButtonText: "Force Update",
+      confirmButtonColor: "#ef4444"
     });
 
     if (!confirm.isConfirmed) return;
   }
 
-  await update(busRef, {
-    capacity: newCapacity,
-    lastUpdated: Date.now()
-  });
+  try {
 
-  Swal.fire({
-    icon: "success",
-    title: "Updated",
-    text: `Bus capacity set to ${newCapacity}`,
-    timer: 1500,
-    showConfirmButton: false
-  });
+    await update(busRef, {
+      capacity: newCapacity,
+      lastUpdated: Date.now()
+    });
+
+    Swal.fire({
+      icon: "success",
+      title: "Updated",
+      text: `Bus capacity set to ${newCapacity}`,
+      timer: 1500,
+      showConfirmButton: false
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+    Swal.fire({
+      icon: "error",
+      title: "Update Failed",
+      text: "Could not update bus capacity"
+    });
+  }
 };
 window.viewBusStudents = async function (busId) {
 
-  const schoolId = localStorage.getItem("schoolId");
+  const schoolId = window.schoolId;
 
-  const snap = await get(ref(db, `transport/${schoolId}/${busId}`));
+  if (!schoolId) {
+    Swal.fire("Error", "Missing school session", "error");
+    return;
+  }
+
+  const snap = await get(schoolRef(`transport/${busId}`));
 
   if (!snap.exists()) {
     Swal.fire("Error", "Bus not found", "error");
@@ -23568,28 +23147,43 @@ window.viewBusStudents = async function (busId) {
   }
 
   const data = snap.val();
-  const students = data.students || [];
+
+  // ================= NORMALIZE STUDENTS =================
+  const students = Array.isArray(data.students)
+    ? data.students
+    : (data.students && typeof data.students === "object"
+        ? Object.values(data.students)
+        : []);
 
   Swal.fire({
     title: "Bus Learners",
+
     html: `
       <div style="text-align:left;max-height:300px;overflow:auto;">
 
         <div style="margin-bottom:10px;font-size:13px;">
-          🚌 <b>${data.busName}</b><br>
-          👨‍✈️ Driver: ${data.driverName}<br>
-          📍 Route: ${data.route}
+          🚌 <b>${data.busName || "-"}</b><br>
+          👨‍✈️ Driver: ${data.driverName || "-"}<br>
+          📍 Route: ${data.route || "-"}
         </div>
 
         <hr>
 
         ${
           students.length
-            ? students.map((s, i) =>
-                `<div style="padding:6px 0;border-bottom:1px solid #eee;">
-                  ${i + 1}. ${s}
-                </div>`
-              ).join("")
+            ? students.map((s, i) => {
+
+                const name =
+                  typeof s === "string"
+                    ? s
+                    : (s.name || s.studentName || s.fullName || "Unknown");
+
+                return `
+                  <div style="padding:6px 0;border-bottom:1px solid #eee;">
+                    ${i + 1}. ${name}
+                  </div>
+                `;
+              }).join("")
             : `<div style="color:gray;">No learners assigned</div>`
         }
 
@@ -23603,7 +23197,7 @@ window.viewBusStudents = async function (busId) {
 
 window.deleteTransport = async function (id) {
 
-  const schoolId = localStorage.getItem("schoolId");
+  const schoolId = window.schoolId;
 
   const confirmDelete = await Swal.fire({
     title: "Delete Transport?",
@@ -23629,7 +23223,7 @@ window.deleteTransport = async function (id) {
 
 window.updateTransportStatus = async function (id, status) {
 
-  const schoolId = localStorage.getItem("schoolId");
+  const schoolId = window.schoolId;
 
   await update(ref(db, `transport/${schoolId}/${id}`), {
     status,
@@ -23647,7 +23241,7 @@ window.updateTransportStatus = async function (id, status) {
 
 window.viewTripSummary = async function (busId) {
 
-  const schoolId = localStorage.getItem("schoolId");
+  const schoolId = window.schoolId;
 
   const snap = await get(ref(db, `transport/${schoolId}/${busId}`));
 
@@ -23665,14 +23259,14 @@ window.viewTripSummary = async function (busId) {
         🚍 Bus: ${d.busName}<br><br>
         🌅 Morning Trips: ${morning}<br>
         🌙 Evening Trips: ${evening}<br>
-        👨‍🎓 Students: ${(d.students || []).length}
+        👨🎓 Students: ${(d.students || []).length}
       </div>
     `
   });
 };
 window.loadTransportStats = function () {
 
-  const schoolId = localStorage.getItem("schoolId");
+  const schoolId = window.schoolId;
 
   onValue(ref(db, `transport/${schoolId}`), (snap) => {
 
@@ -23703,7 +23297,7 @@ window.loadTransportStats = function () {
 };
 window.viewTransportRevenue = async function () {
 
-  const schoolId = localStorage.getItem("schoolId");
+  const schoolId = window.schoolId;
 
   const snap = await get(ref(db, `transport/${schoolId}`));
 
@@ -23760,7 +23354,7 @@ window.viewTransportRevenue = async function () {
 };
 window.setTransportFee = async function (busId, studentName) {
 
-  const schoolId = localStorage.getItem("schoolId");
+  const schoolId = window.schoolId;
 
   const { value: fee } = await Swal.fire({
 
@@ -23810,9 +23404,9 @@ window.setTransportFee = async function (busId, studentName) {
 };
 window.loadTransportStats = function () {
 
-  const schoolId = localStorage.getItem("schoolId");
+  const schoolId = window.schoolId;
 
-  onValue(ref(db, `transport/${schoolId}`), (snap) => {
+  onValue(ref(db, `schools/${schoolId}/transport`), (snap) => {
 
     let buses = 0;
     let students = 0;
@@ -23960,7 +23554,7 @@ window.addHostel = async function () {
 
   try {
 
-    const schoolId = localStorage.getItem("schoolId");
+    const schoolId = window.schoolId;
 
     if (
       !roomNumber.value ||
@@ -24022,7 +23616,7 @@ window.addHostel = async function () {
 
 window.loadHostel = function () {
 
-  const schoolId = localStorage.getItem("schoolId");
+  const schoolId = window.schoolId;
 
   onValue(ref(db, `hostel/${schoolId}`), (snap) => {
 
@@ -24236,7 +23830,7 @@ window.updateNightAttendance = async function (id, status) {
 
   try {
 
-    const schoolId = localStorage.getItem("schoolId");
+    const schoolId = window.schoolId;
 
     const term = getCurrentTerm();
     const today = getTodayDate();
@@ -24273,7 +23867,7 @@ window.viewGradeAttendanceHistory = async function (grade) {
 
   try {
 
-    const schoolId = localStorage.getItem("schoolId");
+    const schoolId = window.schoolId;
 
     const snap =
       await get(ref(db, `hostel/${schoolId}`));
@@ -24365,7 +23959,7 @@ window.viewGradeAttendanceHistory = async function (grade) {
 
 window.viewAttendanceHistory = async function (id) {
 
-  const schoolId = localStorage.getItem("schoolId");
+  const schoolId = window.schoolId;
 
   const snap =
     await get(ref(db, `hostel/${schoolId}/${id}/nightAttendance`));
@@ -24403,7 +23997,7 @@ window.viewAttendanceHistory = async function (id) {
 
 window.updateDiscipline = async function (id, status) {
 
-  const schoolId = localStorage.getItem("schoolId");
+  const schoolId = window.schoolId;
 
   await update(
     ref(db, `hostel/${schoolId}/${id}`),
@@ -24417,7 +24011,7 @@ window.updateDiscipline = async function (id, status) {
 
 window.deleteHostel = async function (id) {
 
-  const schoolId = localStorage.getItem("schoolId");
+  const schoolId = window.schoolId;
 
   const confirmDelete = await Swal.fire({
     title: "Delete Hostel Allocation?",
@@ -24444,7 +24038,7 @@ window.addDevice = async function () {
 
   try {
 
-    const schoolId = localStorage.getItem("schoolId");
+    const schoolId = window.schoolId;
 
     if (
       !deviceName.value ||
@@ -24493,7 +24087,7 @@ window.addDevice = async function () {
 
 window.loadICT = function () {
 
-  const schoolId = localStorage.getItem("schoolId");
+  const schoolId = window.schoolId;
 
   onValue(ref(db, `ict/${schoolId}`), (snap) => {
 
@@ -24556,7 +24150,7 @@ window.loadICT = function () {
 
 window.deleteICT = async function (id) {
 
-  const schoolId = localStorage.getItem("schoolId");
+  const schoolId = window.schoolId;
 
   const confirmDelete = await Swal.fire({
     title: "Delete Device?",
@@ -24582,7 +24176,7 @@ window.addInventory = async function () {
 
   try {
 
-    const schoolId = localStorage.getItem("schoolId");
+    const schoolId = window.schoolId;
 
     if (!schoolId) {
 
@@ -24690,8 +24284,12 @@ const data = {
 
 window.loadInventoryStats = function(){
 
-  const schoolId =
-    localStorage.getItem("schoolId");
+const schoolId = window.schoolId;
+
+if (!schoolId) {
+  console.warn("schoolId not ready");
+  return;
+}
 
   onValue(
     ref(db,
@@ -24789,7 +24387,7 @@ window.filterInventory = function(){
 
 window.loadInventory = function () {
 
-  const schoolId = localStorage.getItem("schoolId");
+  const schoolId = window.schoolId;
 
   onValue(
     ref(db, `inventory/${schoolId}`),
@@ -25249,7 +24847,7 @@ window.toggleInventoryActions = function(id, event){
 };
 window.returnInventory = async function(id){
 
-  const schoolId = localStorage.getItem("schoolId");
+  const schoolId = window.schoolId;
 
   const itemRef = ref(db, `inventory/${schoolId}/${id}`);
   const snap = await get(itemRef);
@@ -25332,7 +24930,7 @@ window.returnInventory = async function(id){
 
 window.borrowInventory = async function(id) {
 
-  const schoolId = localStorage.getItem("schoolId");
+  const schoolId = window.schoolId;
 
   const { value: formValues } = await Swal.fire({
 
@@ -25510,7 +25108,7 @@ window.borrowInventory = async function(id) {
 
 window.deleteInventory = async function (id) {
 
-  const schoolId = localStorage.getItem("schoolId");
+  const schoolId = window.schoolId;
 
   const confirmDelete = await Swal.fire({
     title: "Delete Inventory Item?",
@@ -25531,8 +25129,12 @@ window.deleteInventory = async function (id) {
 
 window.viewInventoryHistory = async function(id){
 
-  const schoolId =
-    localStorage.getItem("schoolId");
+ const schoolId = window.schoolId;
+
+if (!schoolId) {
+  console.warn("schoolId not ready");
+  return;
+}
 
   const snap =
     await get(
@@ -25597,7 +25199,7 @@ window.viewInventoryHistory = async function(id){
             </div>
 
             <div>
-              👨‍💼 Performed By:
+              👨💼 Performed By:
               <b>${t.by || "System"}</b>
             </div>
 
@@ -25655,8 +25257,12 @@ window.viewInventoryHistory = async function(id){
 
 window.issueInventory = async function(id){
 
-  const schoolId =
-    localStorage.getItem("schoolId");
+const schoolId = window.schoolId;
+
+if (!schoolId) {
+  console.warn("schoolId not ready");
+  return;
+}
 
   const { value } =
     await Swal.fire({
@@ -25728,8 +25334,12 @@ window.issueInventory = async function(id){
 window.viewInventoryReport =
 async function(){
 
-  const schoolId =
-    localStorage.getItem("schoolId");
+const schoolId = window.schoolId;
+
+if (!schoolId) {
+  console.warn("schoolId not ready");
+  return;
+}
 
   const snap =
     await get(
@@ -25803,7 +25413,7 @@ async function(){
 };
 window.editInventory = async function(id){
 
-  const schoolId = localStorage.getItem("schoolId");
+  const schoolId = window.schoolId;
 
   const snap = await get(
     ref(db, `inventory/${schoolId}/${id}`)
@@ -25892,7 +25502,7 @@ window.addEventListener("load", () => {
 
 window.borrowICT = async function(id) {
 
-  const schoolId = localStorage.getItem("schoolId");
+  const schoolId = window.schoolId;
 
   const { value: formValues } = await Swal.fire({
     title: "Borrow ICT Device",
@@ -25986,7 +25596,7 @@ window.borrowICT = async function(id) {
 
 window.returnICT = async function(id) {
 
-  const schoolId = localStorage.getItem("schoolId");
+  const schoolId = window.schoolId;
 
   const confirmReturn = await Swal.fire({
     title: "Return Device?",
@@ -26039,7 +25649,7 @@ window.returnICT = async function(id) {
 
 window.loadICT = function () {
 
-  const schoolId = localStorage.getItem("schoolId");
+  const schoolId = window.schoolId;
 
   onValue(ref(db, `ict/${schoolId}`), (snap) => {
 
@@ -26202,7 +25812,7 @@ window.addBook = async function () {
 
   try {
 
-    const schoolId = localStorage.getItem("schoolId");
+    const schoolId = window.schoolId;
 
     if (
       !bookTitle.value ||
@@ -26273,7 +25883,7 @@ window.addBook = async function () {
 
 window.loadLibrary = function () {
 
-  const schoolId = localStorage.getItem("schoolId");
+  const schoolId = window.schoolId;
 
   onValue(ref(db, `library/${schoolId}`), (snap) => {
 
@@ -26435,7 +26045,7 @@ window.toggleLibraryActions = function(id, event){
 };
 window.deleteBook = async function(id){
 
-  const schoolId = localStorage.getItem("schoolId");
+  const schoolId = window.schoolId;
 
   const confirmDelete = await Swal.fire({
     title: "Delete Book?",
@@ -26472,7 +26082,7 @@ window.borrowBook = async function(bookId) {
 
   try {
 
-    const schoolId = localStorage.getItem("schoolId");
+    const schoolId = window.schoolId;
 
     const { value: formValues } = await Swal.fire({
 
@@ -26630,7 +26240,7 @@ window.borrowBook = async function(bookId) {
 
 window.viewBorrowings = function(bookId) {
 
-  const schoolId = localStorage.getItem("schoolId");
+  const schoolId = window.schoolId;
 
   onValue(
     ref(db, `libraryBorrowings/${schoolId}`),
@@ -26739,7 +26349,7 @@ async function(borrowId, bookId) {
 
   try {
 
-    const schoolId = localStorage.getItem("schoolId");
+    const schoolId = window.schoolId;
 
     openSweetLoader("Returning Book...");
 
@@ -27296,12 +26906,11 @@ window.createCourse = async function () {
     // SCHOOL SESSION
     // =====================================
 
-    const schoolId =
-      window.schoolId ||
-      localStorage.getItem("schoolId") ||
-      localStorage.getItem("currentSchoolId") ||
-      sessionStorage.getItem("schoolId") ||
-      sessionStorage.getItem("currentSchoolId");
+ const schoolId = window.schoolId;
+
+if (!schoolId) {
+  throw new Error("School ID missing. Please login again.");
+}
 
     if (!schoolId) {
 
@@ -27508,13 +27117,11 @@ window.loadCourses = async function () {
     // SCHOOL SESSION
     // =====================================
 
-    const schoolId =
-      window.schoolId ||
-      localStorage.getItem("schoolId") ||
-      localStorage.getItem("currentSchoolId") ||
-      sessionStorage.getItem("schoolId") ||
-      sessionStorage.getItem("currentSchoolId");
+  const schoolId = window.schoolId;
 
+if (!schoolId) {
+  throw new Error("School ID missing. Please login again.");
+}
     if (!schoolId) return;
 
     // =====================================
@@ -27668,7 +27275,7 @@ window.startAssignment = async function (id) {
   const { value: learner } =
     await Swal.fire({
 
-      title: "👨‍🎓 Start Assignment",
+      title: "👨🎓 Start Assignment",
 
       html: `
         <div style="
@@ -28051,7 +27658,7 @@ window.renderCourses = function(){
 
         <!-- TEACHER -->
         <div class="course-meta">
-          👨‍🏫 ${course.teacher}
+          👨🏫 ${course.teacher}
         </div>
 
         <!-- GRADE + SUBJECT -->
@@ -28226,10 +27833,12 @@ async function(id){
 
   try{
 
-    const schoolId =
-      window.schoolId ||
-      localStorage.getItem("schoolId") ||
-      localStorage.getItem("currentSchoolId");
+    const schoolId = window.schoolId;
+
+if (!schoolId) {
+  console.warn("schoolId not ready");
+  return;
+}
 
     const course =
       courses.find(c => c.id === id);
@@ -28382,10 +27991,12 @@ window.editCourse = function(id){
 
       try{
 
-        const schoolId =
-          window.schoolId ||
-          localStorage.getItem("schoolId") ||
-          localStorage.getItem("currentSchoolId");
+       const schoolId = window.schoolId;
+
+if (!schoolId) {
+  console.warn("schoolId not ready");
+  return;
+}
 
         const updatedData = {
 
@@ -28484,10 +28095,12 @@ window.deleteCourse = function(id){
 
       try{
 
-        const schoolId =
-          window.schoolId ||
-          localStorage.getItem("schoolId") ||
-          localStorage.getItem("currentSchoolId");
+        const schoolId = window.schoolId;
+
+if (!schoolId) {
+  console.warn("schoolId not ready");
+  return;
+}
 
         await remove(
 
@@ -28567,12 +28180,11 @@ window.publishAssignment = async function () {
     // SCHOOL SESSION
     // =====================================
 
-    const schoolId =
-      window.schoolId ||
-      localStorage.getItem("schoolId") ||
-      localStorage.getItem("currentSchoolId") ||
-      sessionStorage.getItem("schoolId") ||
-      sessionStorage.getItem("currentSchoolId");
+  const schoolId = window.schoolId;
+
+if (!schoolId) {
+  throw new Error("School ID missing. Please login again.");
+}
 
     if (!schoolId) {
 
@@ -28780,12 +28392,11 @@ window.loadAssignments = async function () {
 
   try {
 
-    const schoolId =
-      window.schoolId ||
-      localStorage.getItem("schoolId") ||
-      localStorage.getItem("currentSchoolId") ||
-      sessionStorage.getItem("schoolId") ||
-      sessionStorage.getItem("currentSchoolId");
+   const schoolId = window.schoolId;
+
+if (!schoolId) {
+  throw new Error("School ID missing. Please login again.");
+}
 
     if (!schoolId) return;
 
@@ -29355,13 +28966,11 @@ window.submitAssignment = async function(id){
     // SCHOOL SESSION
     // =========================================
 
-    const schoolId =
-      window.schoolId ||
-      localStorage.getItem("schoolId") ||
-      localStorage.getItem("currentSchoolId") ||
-      sessionStorage.getItem("schoolId") ||
-      sessionStorage.getItem("currentSchoolId");
+  const schoolId = window.schoolId;
 
+if (!schoolId) {
+  throw new Error("School ID missing. Please login again.");
+}
     if(!schoolId){
 
       return Swal.fire(
@@ -29383,7 +28992,7 @@ window.submitAssignment = async function(id){
 const { value: learner } =
   await Swal.fire({
 
-    title: "👨‍🎓 Learner Verification",
+    title: "👨🎓 Learner Verification",
 
     html: `
 
@@ -29680,7 +29289,7 @@ window.renderSubmissions = function(a){
       ">
 
         <h4>
-          👨‍🎓 ${sub.learner}
+          👨🎓 ${sub.learner}
         </h4>
 
         <p>
@@ -29842,10 +29451,12 @@ async function(
 
   try{
 
-    const schoolId =
-      window.schoolId ||
-      localStorage.getItem("schoolId") ||
-      localStorage.getItem("currentSchoolId");
+   const schoolId = window.schoolId;
+
+if (!schoolId) {
+  console.warn("schoolId not ready");
+  return;
+}
 
     const marks =
       document.getElementById(
@@ -29931,10 +29542,12 @@ function(id){
 
       try{
 
-        const schoolId =
-          window.schoolId ||
-          localStorage.getItem("schoolId") ||
-          localStorage.getItem("currentSchoolId");
+     const schoolId = window.schoolId;
+
+if (!schoolId) {
+  console.warn("schoolId not ready");
+  return;
+}
 
         const assignment =
           assignments.find(
@@ -30007,11 +29620,12 @@ function(id){
 
       try{
 
-        const schoolId =
-          window.schoolId ||
-          localStorage.getItem("schoolId") ||
-          localStorage.getItem("currentSchoolId");
+        const schoolId = window.schoolId;
 
+if (!schoolId) {
+  console.warn("schoolId not ready");
+  return;
+}
         await remove(
 
           ref(
@@ -30173,12 +29787,11 @@ Separate questions using ===
 
       try{
 
-        const schoolId =
-          window.schoolId ||
-          localStorage.getItem("schoolId") ||
-          localStorage.getItem("currentSchoolId") ||
-          sessionStorage.getItem("schoolId") ||
-          sessionStorage.getItem("currentSchoolId");
+       const schoolId = window.schoolId;
+
+if (!schoolId) {
+  throw new Error("School ID missing. Please login again.");
+}
 
         const updatedData = {
 
