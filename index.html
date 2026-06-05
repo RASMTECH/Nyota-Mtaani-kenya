@@ -4803,150 +4803,94 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 
-/* ================= GLOBAL STATE (CLEAN SAAS VERSION) ================= */
+/* =========================================================
+   GLOBAL STATE (CLEAN)
+========================================================= */
 
-// ❌ REMOVE: let schoolId = null;
+window.schoolId = null;
+window.appReady = false;
+
 let editingTeacherId = null;
 let subscriptionData = null;
 
-// ✔ SINGLE SOURCE OF TRUTH
-window.schoolId = null;
+/* =========================================================
+   SCHOOL CONTEXT
+========================================================= */
 
-/* ================= SCHOOL SETTER ================= */
-function setSchool(id) {
+window.setSchool = (id) => {
   window.schoolId = id;
-}
-window.appReady = false;
-/* ================= SAFE HELPERS ================= */
-function schoolRef(path = "") {
+};
 
+window.getSchoolId = () => window.schoolId || null;
+
+/* =========================================================
+   SAFE FIREBASE REFERENCE
+========================================================= */
+
+function schoolRef(path = "") {
   const schoolId = window.getSchoolId();
 
   if (!schoolId) {
-    console.error("❌ Missing schoolId - access blocked");
+    console.error("❌ Missing schoolId");
     throw new Error("School not initialized. Please login again.");
   }
 
   return ref(db, `schools/${schoolId}/${path}`);
 }
-window.getSchoolId = function () {
-  return window.schoolId || null;
-};
-function show(id) {
 
-  // ===============================
-  // 🚨 STRICT GUARD (prevents crash)
-  // ===============================
-  if (typeof id !== "string" || !id.trim()) {
-    console.warn("show() received invalid id:", id);
-    console.trace("Call stack for invalid show()");
-    return;
-  }
+/* =========================================================
+   SECTION NAVIGATION
+========================================================= */
+
+window.show = function (id) {
+
+  if (typeof id !== "string" || !id.trim()) return;
 
   const sections = document.querySelectorAll(".main > div");
 
-  // ===============================
-  // hide all sections
-  // ===============================
-  sections.forEach(sec => {
-    sec.style.display = "none";
-  });
+  sections.forEach(sec => sec.style.display = "none");
 
   const target = document.getElementById(id);
-
-  if (!target) {
-    console.warn("Section not found:", id);
-    return;
-  }
+  if (!target) return;
 
   target.style.display = "block";
 
-  // ==============================
-  // 🔥 MARKS SECTION INITIAL LOAD
-  // ==============================
+  // lazy loaders
   if (id === "recordMarksSection") {
-
     setTimeout(() => {
-      if (typeof loadGradesFromStudents === "function") {
-        loadGradesFromStudents();
-      }
-
-      setTimeout(() => {
-        if (typeof loadLearnersFromStudents === "function") {
-          loadLearnersFromStudents();
-        }
-      }, 300);
-
+      loadGradesFromStudents?.();
+      setTimeout(() => loadLearnersFromStudents?.(), 300);
     }, 300);
   }
 
-  // ==============================
-  // 💰 FEES SECTION INITIAL LOAD
-  // ==============================
   if (id === "fees") {
-
     setTimeout(() => {
-      if (typeof loadFeeGrades === "function") {
-        loadFeeGrades();
-      }
-
-      setTimeout(() => {
-        if (typeof loadFeeLearners === "function") {
-          loadFeeLearners();
-        }
-      }, 300);
-
+      loadFeeGrades?.();
+      setTimeout(() => loadFeeLearners?.(), 300);
     }, 300);
   }
 
-  // ==============================
-  // 📊 SECTION LOGIC TRIGGER
-  // ==============================
-  if (typeof runSectionLogic === "function") {
-    runSectionLogic(id);
-  }
-}
-
+  runSectionLogic?.(id);
+};
 
 /* =========================================================
-   🚀 ULTRA SAFE LOGOUT SYSTEM
-   NO FREEZE • FAST • SECURE • PRODUCTION READY
+   LOGOUT SYSTEM (SAFE + CLEAN)
 ========================================================= */
 
 window.__loggingOut = false;
 
 window.logout = async function () {
 
-  // 🚫 Prevent double clicks
   if (window.__loggingOut) return;
 
   const result = await Swal.fire({
     title: "Logout?",
-    html: `
-      <div style="font-size:14px;color:#64748b;">
-        You will be securely signed out of the system.
-      </div>
-    `,
+    text: "You will be signed out securely.",
     icon: "warning",
     showCancelButton: true,
-    reverseButtons: true,
-    focusCancel: true,
-
-    confirmButtonText: `
-      <i class="fas fa-sign-out-alt"></i>
-      Yes, Logout
-    `,
-
-    cancelButtonText: `
-      <i class="fas fa-times"></i>
-      Cancel
-    `,
-
-    confirmButtonColor: "#ef4444",
-    cancelButtonColor: "#64748b",
-
-    background: "#ffffff",
-    color: "#0f172a"
+    confirmButtonText: "Yes, Logout",
+    cancelButtonText: "Cancel",
+    confirmButtonColor: "#ef4444"
   });
 
   if (!result.isConfirmed) return;
@@ -4955,191 +4899,53 @@ window.logout = async function () {
 
     window.__loggingOut = true;
 
-    // =====================================================
-    // 🔥 SHOW LOADING (DO NOT AWAIT THIS)
-    // =====================================================
     Swal.fire({
-      title: "Signing you out...",
-      html: `
-        <div style="
-          margin-top:10px;
-          font-size:14px;
-          color:#64748b;
-        ">
-          Please wait while we end your session securely...
-        </div>
-      `,
+      title: "Signing out...",
       allowOutsideClick: false,
-      allowEscapeKey: false,
-      showConfirmButton: false,
-
-      didOpen: () => {
-        Swal.showLoading();
-      }
+      didOpen: () => Swal.showLoading()
     });
 
-    // =====================================================
-    // 🔥 FIREBASE SIGNOUT
-    // =====================================================
     await signOut(auth);
 
-    // =====================================================
-    // 🧹 CLEAR STORAGE
-    // =====================================================
-    const keys = [
-      "schoolId",
-      "userUid",
-      "schoolEmail",
-      "schoolName",
-      "subscriptionStatus",
-      "selectedGrade",
-      "selectedExam",
-      "selectedExamPeriod",
-      "lastPage"
-    ];
-
-    keys.forEach(key => {
-      localStorage.removeItem(key);
-      sessionStorage.removeItem(key);
-    });
-
+    // clear storage
+    localStorage.clear();
     sessionStorage.clear();
 
-    // =====================================================
-    // 🧹 CLEAR GLOBALS
-    // =====================================================
-    // ✅ RESTORE SCHOOL SESSION ON PAGE LOAD
-window.schoolId = localStorage.getItem("schoolId");
-
-if (window.schoolId) {
-  console.log("✅ Restored schoolId:", window.schoolId);
-}
+    // clear globals
+    window.schoolId = null;
     window.currentUser = null;
     window.allStudents = [];
     window.allLoadedLearners = [];
-    window.currentFilteredLearners = [];
 
-    // =====================================================
-    // 🔥 CLOSE LOADING POPUP
-    // =====================================================
     Swal.close();
 
-    // =====================================================
-    // 👀 SWITCH UI
-    // =====================================================
-    const app = document.getElementById("app");
-    const authSection = document.getElementById("authSection");
+    document.getElementById("app")?.style.setProperty("display", "none");
+    document.getElementById("authSection")?.style.setProperty("display", "block");
 
-    if (app) {
-      app.style.display = "none";
-    }
-
-    if (authSection) {
-      authSection.style.display = "block";
-      authSection.style.opacity = "1";
-    }
-
-    // =====================================================
-    // ✅ SUCCESS
-    // =====================================================
     await Swal.fire({
       icon: "success",
       title: "Logged Out",
-      text: "You have been signed out successfully.",
-      timer: 1500,
+      timer: 1200,
       showConfirmButton: false
     });
 
-    // =====================================================
-    // 🔥 OPTIONAL HARD REFRESH
-    // =====================================================
     location.reload();
 
   } catch (error) {
 
-    console.error("LOGOUT ERROR:", error);
-
-    Swal.close();
+    console.error(error);
 
     Swal.fire({
       icon: "error",
       title: "Logout Failed",
-      text: error.message || "Something went wrong.",
-      confirmButtonColor: "#ef4444"
+      text: error.message
     });
 
   } finally {
-
     window.__loggingOut = false;
-
   }
 };
-window.show = function (section) {
 
-  const role = window.userRole || "admin";
-
-  const permissions = {
-    admin: "all",
-    teacher: [
-      "dashboard","students","attendanceSection",
-      "recordMarksSection","examResults","eLearningSection"
-    ],
-    parent: [
-      "dashboard","fees","examResults"
-    ]
-  };
-
-  const allowed = permissions[role];
-
-  if (allowed !== "all" && !allowed.includes(section)) {
-    console.warn("🚫 Access denied for role:", role);
-    Swal.fire("Access Denied", "You cannot open this section", "warning");
-    return;
-  }
-
-  const el = document.getElementById(section);
-  if (!el) return;
-
-  document.querySelectorAll(".section").forEach(s => s.style.display = "none");
-  el.style.display = "block";
-};
-
-/* ================= GLOBAL BUTTON FIX ================= */
-
-window.show = show;
-window.logout = logout;
-window.createTeacher = async function (name, email, password) {
-
-  const user = await createUserWithEmailAndPassword(auth, email, password);
-
-  await set(ref(db, "users/" + user.user.uid), {
-    uid: user.user.uid,
-    role: "teacher",
-    schoolId: window.schoolId,
-    name,
-    email,
-    createdAt: Date.now(),
-    active: true
-  });
-
-  Swal.fire("Success", "Teacher created", "success");
-};
-window.createParent = async function (name, email, password) {
-
-  const user = await createUserWithEmailAndPassword(auth, email, password);
-
-  await set(ref(db, "users/" + user.user.uid), {
-    uid: user.user.uid,
-    role: "parent",
-    schoolId: window.schoolId,
-    name,
-    email,
-    createdAt: Date.now(),
-    active: true
-  });
-
-  Swal.fire("Success", "Parent created", "success");
-};
 /* ================= REGISTER (SAAS FINAL CLEAN VERSION) ================= */
 
 window.register = async () => {
@@ -30287,6 +30093,73 @@ window.toggleActionButtons = function(){
     panel.style.display = "none";
 
   }
+
+};
+window.populateHostelGrades = function() {
+
+    const gradeSelect =
+        document.getElementById("hostelGrade") ||
+        document.getElementById("hostelGradeFilter") ||
+        document.getElementById("gradeFilter");
+
+    if (!gradeSelect) return;
+
+    gradeSelect.innerHTML =
+        '<option value="">All Grades</option>';
+
+    const grades = new Set();
+
+    (window.allStudents || []).forEach(student => {
+
+        const grade =
+            student.grade ||
+            student.class ||
+            student.gradeName;
+
+        if (grade) grades.add(grade);
+
+    });
+
+    [...grades]
+        .sort()
+        .forEach(grade => {
+
+            gradeSelect.innerHTML +=
+                `<option value="${grade}">${grade}</option>`;
+
+        });
+
+};
+/* =========================
+   POPULATE HOSTEL LEARNERS
+========================= */
+
+window.populateHostelLearners = function() {
+
+    try {
+
+        console.log("✅ populateHostelLearners() called");
+
+        const tbody =
+            document.getElementById("hostelLearnersBody") ||
+            document.getElementById("hostelStudentsBody") ||
+            document.getElementById("hostelTableBody");
+
+        if (!tbody) {
+            console.warn("⚠️ Hostel learners table not found");
+            return;
+        }
+
+        tbody.innerHTML = "";
+
+    } catch (error) {
+
+        console.error(
+            "❌ populateHostelLearners Error:",
+            error
+        );
+
+    }
 
 };
 </script>
