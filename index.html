@@ -4803,94 +4803,286 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 
-/* =========================================================
-   GLOBAL STATE (CLEAN)
-========================================================= */
 
-window.schoolId = null;
-window.appReady = false;
+
+// ===================================
+// GLOBAL SCHOOL CONTEXT
+// ===================================
+let schoolId =
+  sessionStorage.getItem("schoolId") ||
+  localStorage.getItem("schoolId") ||
+  null;
 
 let editingTeacherId = null;
+
 let subscriptionData = null;
 
-/* =========================================================
-   SCHOOL CONTEXT
-========================================================= */
-
-window.setSchool = (id) => {
-  window.schoolId = id;
-};
-
-window.getSchoolId = () => window.schoolId || null;
-
-/* =========================================================
-   SAFE FIREBASE REFERENCE
-========================================================= */
-
+// ===================================
+// SAFE SCHOOL REFERENCE
+// ===================================
 function schoolRef(path = "") {
-  const schoolId = window.getSchoolId();
 
-  if (!schoolId) {
-    console.error("❌ Missing schoolId");
-    throw new Error("School not initialized. Please login again.");
+  const activeSchoolId =
+
+    window.schoolId ||
+
+    sessionStorage.getItem(
+      "schoolId"
+    ) ||
+
+    localStorage.getItem(
+      "schoolId"
+    );
+
+  if (!activeSchoolId) {
+
+    console.error(
+      "❌ School ID missing"
+    );
+
+    throw new Error(
+      "School context missing. Please login again."
+    );
   }
 
-  return ref(db, `schools/${schoolId}/${path}`);
+  return ref(
+    db,
+
+    path
+      ? `schools/${activeSchoolId}/${path}`
+      : `schools/${activeSchoolId}`
+  );
 }
 
-/* =========================================================
-   SECTION NAVIGATION
-========================================================= */
+// ===================================
+// SCHOOL ID REFRESH HELPER
+// ===================================
+function refreshSchoolContext() {
 
-window.show = function (id) {
+  schoolId =
 
-  if (typeof id !== "string" || !id.trim()) return;
+    window.schoolId ||
 
-  const sections = document.querySelectorAll(".main > div");
+    sessionStorage.getItem(
+      "schoolId"
+    ) ||
 
-  sections.forEach(sec => sec.style.display = "none");
+    localStorage.getItem(
+      "schoolId"
+    ) ||
 
-  const target = document.getElementById(id);
-  if (!target) return;
+    null;
+
+  return schoolId;
+}
+
+// ===================================
+// VERIFY LOGIN STATE
+// ===================================
+function ensureSchoolContext() {
+
+  const sid =
+    refreshSchoolContext();
+
+  if (!sid) {
+
+    Swal.fire({
+      icon: "error",
+      title: "Session Expired",
+      text:
+        "Please login again."
+    });
+
+    throw new Error(
+      "No school context"
+    );
+  }
+
+  return sid;
+}
+
+function show(id) {
+
+  // ===============================
+  // 🚨 STRICT GUARD
+  // ===============================
+  if (typeof id !== "string" || !id.trim()) {
+    console.warn("show() received invalid id:", id);
+    return;
+  }
+
+  // ===============================
+  // 🚫 PREVENT RELOADING SAME PAGE
+  // ==============================
+  if (window.__activeSection === id) {
+    return;
+  }
+
+  window.__activeSection = id;
+
+  const sections =
+    document.querySelectorAll(".main > div");
+
+  // ===============================
+  // HIDE ALL SECTIONS
+  // ===============================
+  sections.forEach(sec => {
+    sec.style.display = "none";
+  });
+
+  const target =
+    document.getElementById(id);
+
+  if (!target) {
+    console.warn("Section not found:", id);
+    return;
+  }
 
   target.style.display = "block";
 
-  // lazy loaders
+  // ===============================
+  // UPDATE CURRENT SECTION
+  // ===============================
+  window.currentSection = id;
+
+  // ===============================
+  // MARKS SECTION
+  // LOAD ONLY ON FIRST OPEN
+  // ===============================
   if (id === "recordMarksSection") {
-    setTimeout(() => {
-      loadGradesFromStudents?.();
-      setTimeout(() => loadLearnersFromStudents?.(), 300);
-    }, 300);
+
+    if (!window.__marksLoaded) {
+
+      window.__marksLoaded = true;
+
+      requestAnimationFrame(() => {
+
+        if (
+          typeof loadGradesFromStudents ===
+          "function"
+        ) {
+          loadGradesFromStudents();
+        }
+
+        setTimeout(() => {
+
+          if (
+            typeof loadLearnersFromStudents ===
+            "function"
+          ) {
+            loadLearnersFromStudents();
+          }
+
+        }, 100);
+
+      });
+    }
   }
 
+  // ===============================
+  // FEES SECTION
+  // LOAD ONLY ON FIRST OPEN
+  // ===============================
   if (id === "fees") {
-    setTimeout(() => {
-      loadFeeGrades?.();
-      setTimeout(() => loadFeeLearners?.(), 300);
-    }, 300);
+
+    if (!window.__feesLoaded) {
+
+      window.__feesLoaded = true;
+
+      requestAnimationFrame(() => {
+
+        if (
+          typeof loadFeeGrades ===
+          "function"
+        ) {
+          loadFeeGrades();
+        }
+
+        setTimeout(() => {
+
+          if (
+            typeof loadFeeLearners ===
+            "function"
+          ) {
+            loadFeeLearners();
+          }
+
+        }, 100);
+
+      });
+    }
   }
 
-  runSectionLogic?.(id);
-};
+  // ===============================
+  // SECTION-SPECIFIC LOGIC
+  // ===============================
+  if (
+    typeof runSectionLogic ===
+    "function"
+  ) {
+
+    try {
+
+      runSectionLogic(id);
+
+    } catch (err) {
+
+      console.error(
+        "runSectionLogic error:",
+        err
+      );
+    }
+  }
+
+  console.log(
+    "📂 Opened Section:",
+    id
+  );
+}
+
+
+
+
 
 /* =========================================================
-   LOGOUT SYSTEM (SAFE + CLEAN)
+   🚀 ULTRA SAFE LOGOUT SYSTEM
+   NO FREEZE • FAST • SECURE • PRODUCTION READY
 ========================================================= */
 
 window.__loggingOut = false;
 
 window.logout = async function () {
 
+  // 🚫 Prevent double clicks
   if (window.__loggingOut) return;
 
   const result = await Swal.fire({
     title: "Logout?",
-    text: "You will be signed out securely.",
+    html: `
+      <div style="font-size:14px;color:#64748b;">
+        You will be securely signed out of the system.
+      </div>
+    `,
     icon: "warning",
     showCancelButton: true,
-    confirmButtonText: "Yes, Logout",
-    cancelButtonText: "Cancel",
-    confirmButtonColor: "#ef4444"
+    reverseButtons: true,
+    focusCancel: true,
+
+    confirmButtonText: `
+      <i class="fas fa-sign-out-alt"></i>
+      Yes, Logout
+    `,
+
+    cancelButtonText: `
+      <i class="fas fa-times"></i>
+      Cancel
+    `,
+
+    confirmButtonColor: "#ef4444",
+    cancelButtonColor: "#64748b",
+
+    background: "#ffffff",
+    color: "#0f172a"
   });
 
   if (!result.isConfirmed) return;
@@ -4899,54 +5091,129 @@ window.logout = async function () {
 
     window.__loggingOut = true;
 
+    // =====================================================
+    // 🔥 SHOW LOADING (DO NOT AWAIT THIS)
+    // =====================================================
     Swal.fire({
-      title: "Signing out...",
+      title: "Signing you out...",
+      html: `
+        <div style="
+          margin-top:10px;
+          font-size:14px;
+          color:#64748b;
+        ">
+          Please wait while we end your session securely...
+        </div>
+      `,
       allowOutsideClick: false,
-      didOpen: () => Swal.showLoading()
+      allowEscapeKey: false,
+      showConfirmButton: false,
+
+      didOpen: () => {
+        Swal.showLoading();
+      }
     });
 
+    // =====================================================
+    // 🔥 FIREBASE SIGNOUT
+    // =====================================================
     await signOut(auth);
 
-    // clear storage
-    localStorage.clear();
+    // =====================================================
+    // 🧹 CLEAR STORAGE
+    // =====================================================
+    const keys = [
+      "schoolId",
+      "userUid",
+      "schoolEmail",
+      "schoolName",
+      "subscriptionStatus",
+      "selectedGrade",
+      "selectedExam",
+      "selectedExamPeriod",
+      "lastPage"
+    ];
+
+    keys.forEach(key => {
+      localStorage.removeItem(key);
+      sessionStorage.removeItem(key);
+    });
+
     sessionStorage.clear();
 
-    // clear globals
+    // =====================================================
+    // 🧹 CLEAR GLOBALS
+    // =====================================================
     window.schoolId = null;
     window.currentUser = null;
     window.allStudents = [];
     window.allLoadedLearners = [];
+    window.currentFilteredLearners = [];
 
+    // =====================================================
+    // 🔥 CLOSE LOADING POPUP
+    // =====================================================
     Swal.close();
 
-    document.getElementById("app")?.style.setProperty("display", "none");
-    document.getElementById("authSection")?.style.setProperty("display", "block");
+    // =====================================================
+    // 👀 SWITCH UI
+    // =====================================================
+    const app = document.getElementById("app");
+    const authSection = document.getElementById("authSection");
 
+    if (app) {
+      app.style.display = "none";
+    }
+
+    if (authSection) {
+      authSection.style.display = "block";
+      authSection.style.opacity = "1";
+    }
+
+    // =====================================================
+    // ✅ SUCCESS
+    // =====================================================
     await Swal.fire({
       icon: "success",
       title: "Logged Out",
-      timer: 1200,
+      text: "You have been signed out successfully.",
+      timer: 1500,
       showConfirmButton: false
     });
 
+    // =====================================================
+    // 🔥 OPTIONAL HARD REFRESH
+    // =====================================================
     location.reload();
 
   } catch (error) {
 
-    console.error(error);
+    console.error("LOGOUT ERROR:", error);
+
+    Swal.close();
 
     Swal.fire({
       icon: "error",
       title: "Logout Failed",
-      text: error.message
+      text: error.message || "Something went wrong.",
+      confirmButtonColor: "#ef4444"
     });
 
   } finally {
+
     window.__loggingOut = false;
+
   }
 };
 
-/* ================= REGISTER (SAAS FINAL CLEAN VERSION) ================= */
+
+/* ================= GLOBAL BUTTON FIX ================= */
+
+window.show = show;
+
+
+
+/* ================= REGISTER (ULTRA UPGRADED + SAAS READY + SECURE) ================= */
 
 window.register = async () => {
 
@@ -4966,6 +5233,7 @@ window.register = async () => {
   // =========================
   // VALIDATION
   // =========================
+
   if (!school || !userEmail || !userPassword) {
     return Swal.fire({
       icon: "warning",
@@ -4984,7 +5252,8 @@ window.register = async () => {
     });
   }
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailRegex =
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   if (!emailRegex.test(userEmail)) {
     return Swal.fire({
@@ -4998,6 +5267,7 @@ window.register = async () => {
   try {
 
     window.__registering = true;
+
     btn.disabled = true;
 
     btn.innerHTML = `
@@ -5010,21 +5280,33 @@ window.register = async () => {
     // =========================
     // CREATE AUTH USER
     // =========================
+
     const userCredential =
-      await createUserWithEmailAndPassword(auth, userEmail, userPassword);
+      await createUserWithEmailAndPassword(
+        auth,
+        userEmail,
+        userPassword
+      );
 
-    const uid = userCredential.user.uid;
+    const uid =
+      userCredential.user.uid;
 
-    const schoolId = "school_" + uid;
-    const now = Date.now();
+    const schoolId =
+      `school_${uid}`;
+
+    const now =
+      Date.now();
 
     // =========================
     // SCHOOL DATA
     // =========================
+
     const schoolData = {
+
       schoolId,
       uid,
       ownerUid: uid,
+
       name: school,
       email: userEmail,
 
@@ -5036,8 +5318,13 @@ window.register = async () => {
       package: "trial",
 
       amountPaid: 0,
+
       trialStartedAt: now,
-   trialEndsAt: now + (5 * 60 * 1000),
+
+      // 14 Day Trial
+      trialEndsAt:
+        now + (14 * 24 * 60 * 60 * 1000),
+
       subscriptionStartedAt: 0,
       subscriptionEndsAt: 0,
 
@@ -5054,174 +5341,259 @@ window.register = async () => {
       learnersCount: 0,
       teachersCount: 0,
       examsCount: 0
+
     };
 
     // =========================
     // USER DATA
     // =========================
+
     const userData = {
+
       uid,
+
       role: "admin",
+
       schoolId,
       schoolName: school,
+
       email: userEmail,
+
       createdAt: now,
+
       active: true,
       deleted: false,
+
       lastLogin: now
+
     };
 
     // =========================
-    // SAVE TO FIREBASE
+    // ATOMIC SAVE
     // =========================
-    await Promise.all([
-      set(ref(db, "schools/" + schoolId), schoolData),
-      set(ref(db, "users/" + uid), userData)
-    ]);
+
+    const updates = {};
+
+    updates[`schools/${schoolId}`] =
+      schoolData;
+
+    updates[`users/${uid}`] =
+      userData;
+
+    await update(
+      ref(db),
+      updates
+    );
 
     // =========================
-    // SET GLOBAL CONTEXT (IMPORTANT FIX)
+    // SAVE CONTEXT
     // =========================
-    window.schoolId = schoolId;
-    window.userUid = uid;
-    window.appReady = true;
+
+    window.schoolId =
+      schoolId;
+
+    window.userUid =
+      uid;
+
+    window.appReady =
+      true;
+
+    localStorage.setItem(
+      "schoolId",
+      schoolId
+    );
+
+    localStorage.setItem(
+      "schoolName",
+      school
+    );
+
+    sessionStorage.setItem(
+      "userUid",
+      uid
+    );
 
     // =========================
-    // SUCCESS UI
+    // UPDATE UI
     // =========================
+
+    const schoolEl =
+      document.getElementById(
+        "schoolNameDisplay"
+      );
+
+    if (schoolEl) {
+      schoolEl.textContent =
+        school;
+    }
+
+    document
+      .getElementById(
+        "authSection"
+      )
+      ?.style.setProperty(
+        "display",
+        "none"
+      );
+
+    const app =
+      document.getElementById(
+        "app"
+      );
+
+    if (app) {
+
+      app.style.display =
+        "block";
+
+      app.style.opacity =
+        "0";
+
+      requestAnimationFrame(() => {
+
+        app.style.transition =
+          "opacity .3s ease";
+
+        app.style.opacity =
+          "1";
+
+      });
+    }
+
+    // =========================
+    // START SYSTEMS
+    // =========================
+
+    startSubscriptionWatcher?.();
+
+    startSubscriptionUI?.();
+
+    // =========================
+    // PRELOAD APP DATA
+    // =========================
+
+    if (
+      typeof loadAll ===
+      "function"
+    ) {
+
+      await loadAll();
+
+    } else {
+
+      console.warn(
+        "⚠️ loadAll not found"
+      );
+    }
+
+    // =========================
+    // SUCCESS MESSAGE
+    // =========================
+
     await Swal.fire({
+
       icon: "success",
-      title: "🎉 School Created Successfully!",
+
+      title:
+        "🎉 School Created Successfully!",
+
       html: `
         <div style="text-align:center;">
-          <div style="font-size:18px;font-weight:700;color:#16a34a;margin-bottom:10px;">
+          <div style="
+            font-size:18px;
+            font-weight:700;
+            color:#16a34a;
+            margin-bottom:10px;
+          ">
             ${school}
           </div>
-          <div style="color:#64748b;font-size:14px;">
+
+          <div style="
+            color:#64748b;
+            font-size:14px;
+          ">
             Your school management system is now ready 🚀
           </div>
         </div>
       `,
-      confirmButtonText: "Continue",
-      confirmButtonColor: "#16a34a",
-      allowOutsideClick: false
+
+      confirmButtonText:
+        "Continue",
+
+      confirmButtonColor:
+        "#16a34a",
+
+      allowOutsideClick:
+        false
     });
-
-    // =========================
-    // OPEN APP
-    // =========================
-    document.getElementById("authSection")?.style.setProperty("display", "none");
-
-    const app = document.getElementById("app");
-
-    if (app) {
-      app.style.display = "block";
-      app.style.opacity = "0";
-
-      setTimeout(() => {
-        app.style.transition = "0.4s ease";
-        app.style.opacity = "1";
-      }, 50);
-    }
-
-    // =========================
-    // UI UPDATE
-    // =========================
-    const schoolEl = document.getElementById("schoolNameDisplay");
-
-    const updateUI = () => {
-      if (schoolEl) schoolEl.textContent = school;
-    };
-
-    updateUI();
-    setTimeout(updateUI, 300);
-    setTimeout(updateUI, 1000);
-
-    // =========================
-    // SAFE SYSTEM START
-    // =========================
-    startSubscriptionWatcher?.();
-    startSubscriptionUI?.();
-
-    // 🔥 FIX: prevent crash if loadAll missing
-    if (typeof loadAll === "function") {
-      loadAll();
-    } else {
-      console.warn("⚠️ loadAll not defined yet - skipped safely");
-    }
 
   } catch (error) {
 
-    console.error("REGISTER ERROR:", error);
+    console.error(
+      "REGISTER ERROR:",
+      error
+    );
 
-    let message = "Something went wrong.";
+    let message =
+      "Something went wrong.";
 
     switch (error.code) {
+
       case "auth/email-already-in-use":
-        message = "This email is already registered.";
+        message =
+          "This email is already registered.";
         break;
+
       case "auth/invalid-email":
-        message = "Invalid email address.";
+        message =
+          "Invalid email address.";
         break;
+
       case "auth/weak-password":
-        message = "Password is too weak.";
+        message =
+          "Password is too weak.";
         break;
+
       case "auth/network-request-failed":
-        message = "Network error. Check internet connection.";
+        message =
+          "Network error. Check internet connection.";
         break;
+
       default:
-        message = error.message || message;
+        message =
+          error.message || message;
     }
 
     Swal.fire({
+
       icon: "error",
-      title: "Registration Failed",
-      text: message,
-      confirmButtonColor: "#ef4444"
+
+      title:
+        "Registration Failed",
+
+      text:
+        message,
+
+      confirmButtonColor:
+        "#ef4444"
     });
 
   } finally {
 
-    window.__registering = false;
-
- 
+    window.__registering =
+      false;
 
     if (btn) {
-      btn.disabled = false;
-      btn.innerHTML = "🏫 Create School";
-      btn.style.background =
-        "linear-gradient(135deg, #FF9800, #F57C00)";
+
+      btn.disabled =
+        false;
+
+      btn.innerHTML =
+        "🏫 Create School";
+
     }
   }
 };
-
-
-/* ================= SPINNER STYLE ================= */
-
-if (!document.getElementById("spinnerStyle")) {
-
-  const style = document.createElement("style");
-
-  style.id = "spinnerStyle";
-
-  style.innerHTML = `
-    .spinner{
-      width:18px;
-      height:18px;
-      border:3px solid rgba(255,255,255,0.3);
-      border-top:3px solid #fff;
-      border-radius:50%;
-      animation:spin .7s linear infinite;
-    }
-
-    @keyframes spin{
-      to{ transform:rotate(360deg); }
-    }
-  `;
-
-  document.head.appendChild(style);
-}
-
 
 
 /* ======================================================
@@ -5233,7 +5605,7 @@ async function checkSubscriptionAccess() {
   try {
 
     const snap = await get(
-      ref(db, `schools/${window.schoolId}`)
+      ref(db, `schools/${getSchoolId()}`)
     );
 
     if (!snap.exists()) {
@@ -5291,7 +5663,7 @@ async function checkSubscriptionAccess() {
     // 🔥 EXPIRED
     // =====================================
     await update(
-      ref(db, `schools/${window.schoolId}`),
+      ref(db, `schools/${getSchoolId()}`),
       {
         subscriptionStatus: "expired"
       }
@@ -5930,13 +6302,13 @@ function startSubscriptionWatcher() {
 
     try {
 
-      const schoolId = window.schoolId;
+      const schoolId = getSchoolId();
 
 if (!schoolId) return;
 
       const snap =
         await get(
-          ref(db, `schools/${window.schoolId}`)
+          ref(db, `schools/${getSchoolId()}`)
         );
 
       if (!snap.exists()) return;
@@ -5976,7 +6348,7 @@ if (!schoolId) return;
         clearInterval(trialTimer);
 
         await update(
-          ref(db, `schools/${window.schoolId}`),
+          ref(db, `schools/${getSchoolId()}`),
           {
             subscriptionStatus:
               "expired"
@@ -6006,7 +6378,7 @@ if (!schoolId) return;
         clearInterval(trialTimer);
 
         await update(
-          ref(db, `schools/${window.schoolId}`),
+          ref(db, `schools/${getSchoolId()}`),
           {
             subscriptionStatus:
               "expired"
@@ -6032,12 +6404,12 @@ if (!schoolId) return;
   }, 1000);
 }
 /* ======================================================
-   🔥 LIVE SUBSCRIPTION UI (SAAS SAFE)
+   🔥 LIVE SUBSCRIPTION UI (FINAL FIX)
 ====================================================== */
 
 let subscriptionUIInterval = null;
 
-window.startSubscriptionUI = function () {
+function startSubscriptionUI() {
 
   clearInterval(subscriptionUIInterval);
 
@@ -6045,14 +6417,12 @@ window.startSubscriptionUI = function () {
 
     try {
 
-      // =========================
-      // WAIT FOR LOGIN
-      // =========================
-      const schoolId = window.schoolId;
+      // =====================================
+      // WAIT FOR SCHOOL ID
+      // =====================================
+const schoolId = getSchoolId();
 
-      if (!schoolId) {
-        return;
-      }
+if (!schoolId) return;
 
       const planEl =
         document.getElementById(
@@ -6064,13 +6434,13 @@ window.startSubscriptionUI = function () {
           "subscriptionCountdown"
         );
 
-      if (!planEl || !countdownEl) {
+      if (!planEl || !countdownEl)
         return;
-      }
 
-      const snap = await get(
-        ref(db, `schools/${schoolId}`)
-      );
+      const snap =
+        await get(
+          ref(db, `schools/${getSchoolId()}`)
+        );
 
       if (!snap.exists()) {
 
@@ -6089,9 +6459,10 @@ window.startSubscriptionUI = function () {
 
       let endTime = 0;
 
-      // =========================
-      // END DATE
-      // =========================
+      // =====================================
+      // DETERMINE END TIME
+      // =====================================
+
       if (
         school.subscriptionStatus ===
         "trial"
@@ -6099,20 +6470,21 @@ window.startSubscriptionUI = function () {
 
         endTime =
           school.trialEndsAt || 0;
+      }
 
-      } else if (
+      if (
         school.subscriptionStatus ===
         "active"
       ) {
 
         endTime =
           school.subscriptionEndsAt || 0;
-
       }
 
-      // =========================
-      // PLAN INFO
-      // =========================
+      // =====================================
+      // PLAN DISPLAY
+      // =====================================
+
       planEl.innerHTML = `
         Plan: ${school.plan || "Free Trial"}
         <br>
@@ -6121,9 +6493,10 @@ window.startSubscriptionUI = function () {
         Amount: KES ${school.amountPaid || 0}
       `;
 
-      // =========================
-      // EXPIRED
-      // =========================
+      // =====================================
+      // NO ACTIVE TIMER
+      // =====================================
+
       if (!endTime) {
 
         countdownEl.innerHTML =
@@ -6132,8 +6505,16 @@ window.startSubscriptionUI = function () {
         return;
       }
 
+      // =====================================
+      // CALCULATE TIME
+      // =====================================
+
       const remaining =
         endTime - now;
+
+      // =====================================
+      // EXPIRED
+      // =====================================
 
       if (remaining <= 0) {
 
@@ -6143,24 +6524,37 @@ window.startSubscriptionUI = function () {
         return;
       }
 
-      const days = Math.floor(
-        remaining / 86400000
-      );
+      const days =
+        Math.floor(
+          remaining /
+          (1000 * 60 * 60 * 24)
+        );
 
-      const hours = Math.floor(
-        (remaining % 86400000) /
-        3600000
-      );
+      const hours =
+        Math.floor(
+          (
+            remaining %
+            (1000 * 60 * 60 * 24)
+          ) /
+          (1000 * 60 * 60)
+        );
 
-      const mins = Math.floor(
-        (remaining % 3600000) /
-        60000
-      );
+      const mins =
+        Math.floor(
+          (
+            remaining %
+            (1000 * 60 * 60)
+          ) /
+          (1000 * 60)
+        );
 
-      const secs = Math.floor(
-        (remaining % 60000) /
-        1000
-      );
+      const secs =
+        Math.floor(
+          (
+            remaining %
+            (1000 * 60)
+          ) / 1000
+        );
 
       countdownEl.innerHTML = `
         Remaining:
@@ -6180,83 +6574,74 @@ window.startSubscriptionUI = function () {
     }
 
   }, 1000);
-
-};
-
-// =========================
-// SAFE SCHOOL CONTEXT CHECK
-// =========================
-window.ensureSchoolContext =
-function () {
-
-  return !!window.schoolId;
-
-};
-
-
-window.getLoginErrorMessage = function(error){
-
-  const code = error?.code || "";
-
-  const messages = {
-
-    "auth/invalid-credential":
-      "Incorrect email or password.",
-
-    "auth/wrong-password":
-      "Incorrect email or password.",
-
-    "auth/user-not-found":
-      "Account not found.",
-
-    "auth/invalid-email":
-      "Invalid email address.",
-
-    "auth/network-request-failed":
-      "Internet connection problem.",
-
-    "auth/too-many-requests":
-      "Too many login attempts. Please try again later."
-  };
-
-  return messages[code] ||
-         "Unable to sign in. Please try again.";
-};
-/* ================= LOGIN (CLEAN SAAS VERSION + ROLE FIX) ================= */
+}
+/* ================= LOGIN (FINAL PRODUCTION VERSION) ================= */
 
 window.login = async () => {
 
+  // 🚫 Prevent multiple login attempts
   if (window.__loggingIn) return;
 
-  const btns = document.querySelectorAll('#authSection button');
-  const loginBtn = document.getElementById("loginBtn");
+  const btns =
+    document.querySelectorAll(
+      '#authSection button'
+    );
 
-  const emailInput = document.getElementById("email");
-  const passwordInput = document.getElementById("password");
+  const loginBtn =
+    document.getElementById(
+      "loginBtn"
+    );
 
-  const userEmail = emailInput?.value.trim();
-  const userPassword = passwordInput?.value.trim();
+  const emailInput =
+    document.getElementById(
+      "email"
+    );
+
+  const passwordInput =
+    document.getElementById(
+      "password"
+    );
+
+  const userEmail =
+    emailInput?.value.trim();
+
+  const userPassword =
+    passwordInput?.value.trim();
 
   // =========================
   // VALIDATION
   // =========================
   if (!userEmail || !userPassword) {
+
     return Swal.fire({
       icon: "warning",
       title: "Missing Fields",
-      text: "Please enter email and password.",
-      confirmButtonColor: "#f59e0b"
+      text:
+        "Please enter email and password.",
+      confirmButtonColor:
+        "#f59e0b",
+      background: "#ffffff",
+      color: "#0f172a"
     });
   }
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  // =========================
+  // EMAIL VALIDATION
+  // =========================
+  const emailRegex =
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   if (!emailRegex.test(userEmail)) {
+
     return Swal.fire({
       icon: "warning",
       title: "Invalid Email",
-      text: "Please enter a valid email address.",
-      confirmButtonColor: "#f59e0b"
+      text:
+        "Please enter a valid email address.",
+      confirmButtonColor:
+        "#f59e0b",
+      background: "#ffffff",
+      color: "#0f172a"
     });
   }
 
@@ -6264,130 +6649,394 @@ window.login = async () => {
 
     window.__loggingIn = true;
 
-    btns.forEach(btn => btn.disabled = true);
+    // =========================
+    // DISABLE BUTTONS
+    // =========================
+    btns.forEach(btn => {
 
+      btn.disabled = true;
+
+    });
+
+    // =========================
+    // LOGIN BUTTON LOADING
+    // =========================
     if (loginBtn) {
+
       loginBtn.innerHTML = `
-        <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
+        <div style="
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          gap:10px;
+        ">
           <div class="spinner"></div>
           <span>Signing In...</span>
         </div>
       `;
     }
 
-    // =========================
-    // LOADER
-    // =========================
-    let loginOverlay = document.getElementById("modernLoginLoader");
+ // =========================
+// MODERN DOT LOADER
+// =========================
+let loginOverlay =
+document.getElementById("modernLoginLoader");
 
-    if (!loginOverlay) {
-      loginOverlay = document.createElement("div");
-      loginOverlay.id = "modernLoginLoader";
-      loginOverlay.innerHTML = `
-        <div class="modern-loader-box">
-          <div class="modern-dots">
-            <span></span><span></span><span></span>
-          </div>
-          <div class="modern-loader-text">
-            Signing you in securely...
-          </div>
-        </div>
-      `;
-      document.body.appendChild(loginOverlay);
+if (!loginOverlay) {
+
+  loginOverlay = document.createElement("div");
+
+  loginOverlay.id = "modernLoginLoader";
+
+  loginOverlay.innerHTML = `
+
+    <div class="modern-loader-box">
+
+      <div class="modern-dots">
+
+        <span></span>
+        <span></span>
+        <span></span>
+
+      </div>
+
+      <div class="modern-loader-text">
+        Signing you in securely...
+      </div>
+
+    </div>
+  `;
+
+  document.body.appendChild(loginOverlay);
+}
+
+// ✅ SHOW
+loginOverlay.style.display = "flex";
+
+    // =========================
+    // SAFE LOGIN WITH TIMEOUT
+    // =========================
+    const userCred =
+      await Promise.race([
+
+        signInWithEmailAndPassword(
+          auth,
+          userEmail,
+          userPassword
+        ),
+
+        new Promise((_, reject) =>
+
+          setTimeout(() =>
+
+            reject(
+              new Error(
+                "Login timeout"
+              )
+            ),
+
+          15000)
+        )
+
+      ]);
+
+    const uid =
+      userCred.user.uid;
+
+    // =========================
+    // SAFE TOKEN REFRESH
+    // =========================
+    try {
+
+      await Promise.race([
+
+        auth.currentUser
+          .getIdToken(true),
+
+        new Promise((_, reject) =>
+
+          setTimeout(() =>
+
+            reject(
+              new Error(
+                "Token refresh timeout"
+              )
+            ),
+
+          10000)
+        )
+
+      ]);
+
+    } catch (e) {
+
+      console.warn(
+        "Token refresh skipped"
+      );
     }
 
-    loginOverlay.style.display = "flex";
-
     // =========================
-    // LOGIN
+    // GET USER PROFILE
     // =========================
-    const userCred = await signInWithEmailAndPassword(
-      auth,
-      userEmail,
-      userPassword
-    );
+    const userSnap =
+      await Promise.race([
 
-    const uid = userCred.user.uid;
+        get(
+          ref(db, `users/${uid}`)
+        ),
 
-    await auth.currentUser?.getIdToken(true).catch(() => {});
+        new Promise((_, reject) =>
 
-    // =========================
-    // USER PROFILE
-    // =========================
-    const userSnap = await get(ref(db, `users/${uid}`));
+          setTimeout(() =>
+
+            reject(
+              new Error(
+                "User profile timeout"
+              )
+            ),
+
+          10000)
+        )
+
+      ]);
 
     if (!userSnap.exists()) {
-      throw new Error("User profile not found.");
+
+      throw new Error(
+        "User profile not found."
+      );
     }
 
-    const userData = userSnap.val();
+    const userData =
+      userSnap.val();
 
     // =========================
-    // ROLE (FIXED & SAFE)
-    // =========================
-    window.userRole = userData.role || "admin";
-    sessionStorage.setItem("userRole", window.userRole);
-applyRolePermissions?.();
-    console.log("👤 Role:", window.userRole);
+
+// =========================
+// STRICT SCHOOL ID
+// =========================
+const schoolId =
+  userData.schoolId;
+
+if (!schoolId) {
+
+  try {
+    await signOut(auth);
+  } catch (e) {}
+
+  localStorage.clear();
+  sessionStorage.clear();
+
+  throw new Error(
+    "No school assigned to this account."
+  );
+}
+
+// =========================
+// CLEAR OLD SESSION
+// =========================
+localStorage.removeItem("schoolId");
+localStorage.removeItem("schoolName");
+
+sessionStorage.removeItem("schoolId");
+sessionStorage.removeItem("schoolName");
+sessionStorage.removeItem("userUid");
+sessionStorage.removeItem("schoolEmail");
+
+// =========================
+// GLOBAL ACCESS
+// =========================
+window.schoolId = schoolId;
+
+// =========================
+// SCHOOL HELPER
+// =========================
+window.schoolRef = function(path = "") {
+
+  const sid =
+    window.schoolId ||
+    sessionStorage.getItem("schoolId");
+
+  if (!sid) {
+
+    throw new Error(
+      "School context missing."
+    );
+  }
+
+  return ref(
+    db,
+    path
+      ? `schools/${sid}/${path}`
+      : `schools/${sid}`
+  );
+};
+
+// =========================
+// SAVE SESSION
+// =========================
+localStorage.setItem(
+  "schoolId",
+  schoolId
+);
+
+sessionStorage.setItem(
+  "schoolId",
+  schoolId
+);
+
+sessionStorage.setItem(
+  "userUid",
+  uid
+);
+
+sessionStorage.setItem(
+  "schoolEmail",
+  userEmail
+);
+
 
     // =========================
-    // SCHOOL ID
+    // GET SCHOOL DATA
     // =========================
-    const schoolId = userData.schoolId;
+    const schoolSnap =
+      await Promise.race([
 
-    if (!schoolId) {
-      throw new Error("School ID missing in user profile.");
-    }
+        get(
+          ref(
+            db,
+            `schools/${schoolId}`
+          )
+        ),
 
-    // =========================
-    // SAVE CONTEXT
-    // =========================
-    window.schoolId = schoolId;
-    window.userUid = uid;
-    window.appReady = true;
+        new Promise((_, reject) =>
 
-    localStorage.setItem("schoolId", schoolId);
+          setTimeout(() =>
 
-    // =========================
-    // SCHOOL DATA
-    // =========================
-    const schoolSnap = await get(ref(db, `schools/${schoolId}`));
+            reject(
+              new Error(
+                "School data timeout"
+              )
+            ),
+
+          10000)
+        )
+
+      ]);
 
     if (!schoolSnap.exists()) {
-      throw new Error("School account not found.");
+
+      throw new Error(
+        "School account not found."
+      );
     }
 
-    const schoolData = schoolSnap.val();
+    const schoolData =
+      schoolSnap.val();
 
-    if (schoolData.deleted)
-      throw new Error("This school was deleted.");
+// =========================
+// SCHOOL OWNERSHIP CHECK
+// =========================
+if (
+  schoolData.ownerUid &&
+  schoolData.ownerUid !== uid
+) {
 
-    if (schoolData.locked)
-      throw new Error("This school is locked.");
+  try {
+    await signOut(auth);
+  } catch (e) {}
 
-    if (!schoolData.active)
-      throw new Error("This school is inactive.");
+  localStorage.clear();
+  sessionStorage.clear();
 
+  throw new Error(
+    "Unauthorized school access."
+  );
+}
+
+    // =========================
+    // ACCOUNT SECURITY CHECKS
+    // =========================
+    if (
+      schoolData.deleted
+    ) {
+
+      throw new Error(
+        "This school account was deleted."
+      );
+    }
+
+    if (
+      schoolData.locked
+    ) {
+
+      throw new Error(
+        "This school account is locked."
+      );
+    }
+
+    if (
+      schoolData.active === false
+    ) {
+
+      throw new Error(
+        "This school account is inactive."
+      );
+    }
+
+    // =========================
+    // SCHOOL NAME
+    // =========================
     const schoolName =
+
       schoolData.name ||
+
+      schoolData.schoolName ||
+
       userData.schoolName ||
+
       "My School";
 
-    window.schoolName = schoolName;
+    window.schoolName =
+      schoolName;
 
     // =========================
-    // SAFE STORAGE
+    // SAVE SCHOOL INFO
     // =========================
-    sessionStorage.setItem("userUid", uid);
-    sessionStorage.setItem("schoolEmail", userEmail);
-    sessionStorage.setItem("schoolName", schoolName);
+    localStorage.setItem(
+      "schoolName",
+      schoolName
+    );
+
+    sessionStorage.setItem(
+      "schoolName",
+      schoolName
+    );
+
+    console.log(
+      "🏫 SCHOOL LOADED:",
+      schoolName
+    );
 
     // =========================
-    // LAST LOGIN
+    // UPDATE LAST LOGIN
     // =========================
-    update(ref(db, `users/${uid}`), {
-      lastLogin: Date.now()
-    }).catch(() => {});
+    try {
+
+      await update(
+        ref(db, `users/${uid}`),
+        {
+          lastLogin:
+            Date.now()
+        }
+      );
+
+    } catch (e) {
+
+      console.warn(
+        "Could not update last login"
+      );
+    }
 
     // =========================
     // SUBSCRIPTION CHECK
@@ -6395,130 +7044,389 @@ applyRolePermissions?.();
     let accessAllowed = true;
 
     try {
-      accessAllowed = await checkSubscriptionAccess();
+
+      accessAllowed =
+        await Promise.race([
+
+          checkSubscriptionAccess(),
+
+          new Promise((_, reject) =>
+
+            setTimeout(() =>
+
+              reject(
+                new Error(
+                  "Subscription timeout"
+                )
+              ),
+
+            10000)
+          )
+
+        ]);
+
     } catch (err) {
+
+      console.error(err);
+
+      Swal.fire({
+        icon: "warning",
+        title:
+          "Subscription Warning",
+        text:
+          "Subscription verification failed. Limited access may apply.",
+        confirmButtonColor:
+          "#f59e0b"
+      });
+
       accessAllowed = false;
     }
 
     if (!accessAllowed) {
 
-      btns.forEach(btn => btn.disabled = false);
+      btns.forEach(btn => {
+        btn.disabled = false;
+      });
 
-      document.getElementById("modernLoginLoader")
-        ?.style.setProperty("display", "none");
+      const loader =
+document.getElementById("modernLoginLoader");
+
+if (loader) {
+  loader.style.display = "none";
+}
 
       return;
     }
 
+    // =========================
+    // CLOSE LOADING ALERT
+    // =========================
     Swal.close();
 
     // =========================
-    // SUCCESS
+    // SUCCESS ALERT
     // =========================
-    await Swal.fire({
-      icon: "success",
-      title: "Login Successful",
-      text: `Welcome back to ${schoolName}`,
-      timer: 1500,
-      showConfirmButton: false
-    });
+  await Swal.fire({
+  icon: "success",
+  title: "Login Successful",
+  text: `Welcome back to ${schoolName}`,
+  timer: 1500,
+  showConfirmButton: false,
+  background: "#ffffff",
+  color: "#0f172a"
+});
 
-    // =========================
-    // OPEN APP
-    // =========================
-    document.getElementById("authSection")
-      ?.style.setProperty("display", "none");
+// 👇 INSERT HERE
 
-    const app = document.getElementById("app");
+// =========================
+// HIDE LOGIN LOADER
+// =========================
+const loader = document.getElementById("modernLoginLoader");
+
+if (loader) {
+  loader.style.display = "none";
+}
+
+// =========================
+// OPEN APP
+// =========================
+const authSection = document.getElementById("authSection");
+    const app =
+      document.getElementById(
+        "app"
+      );
+
+    if (authSection) {
+
+      authSection.style.display =
+        "none";
+    }
 
     if (app) {
-      app.style.display = "block";
+
+      app.style.display =
+        "block";
+
       app.style.opacity = "0";
 
       setTimeout(() => {
-        app.style.transition = "0.4s ease";
+
+        app.style.transition =
+          "0.4s ease";
+
         app.style.opacity = "1";
+
       }, 50);
     }
 
     // =========================
-    // UI UPDATE
+    // SAFE SCHOOL UI UPDATE
     // =========================
-    const el = document.getElementById("schoolNameDisplay");
-    if (el) el.textContent = schoolName;
+    const updateSchoolUI =
+      () => {
+
+        const el =
+          document.getElementById(
+            "schoolNameDisplay"
+          );
+
+        if (el) {
+
+          el.textContent =
+            schoolName;
+
+          console.log(
+            "🏫 UI UPDATED:",
+            schoolName
+          );
+        }
+      };
+
+    updateSchoolUI();
+
+    requestAnimationFrame(
+      updateSchoolUI
+    );
+
+    setTimeout(
+      updateSchoolUI,
+      300
+    );
+
+    setTimeout(
+      updateSchoolUI,
+      1000
+    );
 
     // =========================
     // START SYSTEMS
     // =========================
-    startSubscriptionWatcher?.();
-    startSubscriptionUI?.();
+    if (
+      typeof
+      startSubscriptionWatcher
+      === "function"
+    ) {
 
-    // =========================
-    // LOAD DATA THEN APPLY ROLE
-    // =========================
-    if (typeof loadAll === "function") {
-      await loadAll();
+      startSubscriptionWatcher();
     }
 
-    // 🔥 IMPORTANT: run AFTER everything is ready
-    applyRolePermissions?.();
+    if (
+      typeof
+      startSubscriptionUI
+      === "function"
+    ) {
 
-    console.log("✅ Login completed successfully");
+      startSubscriptionUI();
+    }
+
+    if (
+      typeof loadAll
+      === "function"
+    ) {
+
+      loadAll();
+    }
 
   } catch (error) {
 
-    console.warn("Login Failed:", error?.code || error?.message);
+    console.error(
+      "LOGIN ERROR:",
+      error
+    );
 
+    // 🔥 Close loading popup
     Swal.close();
 
-    let message = "Unable to sign in. Please try again.";
+    // =========================
+    // FRIENDLY ERRORS
+    // =========================
+    let title =
+      "Login Failed";
 
-    switch (error?.code) {
+    let message =
+      "Unable to sign in.";
 
-      case "auth/invalid-credential":
+    let icon =
+      "error";
+
+    switch (error.code) {
+
+      // 🔐 Invalid credentials
+      case "auth/invalid-login-credentials":
       case "auth/wrong-password":
-        message = "Incorrect email or password.";
-        break;
-
       case "auth/user-not-found":
-        message = "Account not found.";
+
+        title =
+          "Invalid Login";
+
+        message =
+          "Incorrect email or password.";
         break;
 
+      // 📧 Invalid email
       case "auth/invalid-email":
-        message = "Invalid email address.";
+
+        title =
+          "Invalid Email";
+
+        message =
+          "Please enter a valid email address.";
+
+        icon =
+          "warning";
         break;
 
-      case "auth/too-many-requests":
-        message = "Too many login attempts. Try again later.";
-        break;
-
+      // 🌐 Network
       case "auth/network-request-failed":
-        message = "Network problem. Check your internet.";
+
+        title =
+          "Connection Error";
+
+        message =
+          "Check your internet connection and try again.";
+
+        icon =
+          "warning";
         break;
 
+      // 🚫 Too many attempts
+      case "auth/too-many-requests":
+
+        title =
+          "Too Many Attempts";
+
+        message =
+          "Too many login attempts. Try again later.";
+
+        icon =
+          "warning";
+        break;
+
+      // ⛔ Disabled
+      case "auth/user-disabled":
+
+        title =
+          "Account Disabled";
+
+        message =
+          "This account has been disabled.";
+        break;
+
+      // ⏳ Timeout
       default:
-        message = error?.message || message;
+
+        if (
+          error.message?.includes(
+            "timeout"
+          )
+        ) {
+
+          title =
+            "Request Timeout";
+
+          message =
+            "The server took too long to respond. Please try again.";
+
+          icon =
+            "warning";
+
+        } else {
+
+          title =
+            "Login Failed";
+
+          message =
+            error.message ||
+            "Something went wrong while signing in.";
+        }
     }
 
     Swal.fire({
-      icon: "error",
-      title: "Login Failed",
+      icon,
+      title,
       text: message,
-      confirmButtonColor: "#ef4444"
+
+      confirmButtonColor:
+        "#ef4444",
+
+      background: "#ffffff",
+      color: "#0f172a",
+
+      customClass: {
+        popup:
+          "rounded-2xl shadow-xl"
+      }
     });
+} finally {
 
-  } finally {
+  // =========================
+  // FORCE HIDE LOADER
+  // =========================
+  const loader =
+    document.getElementById("modernLoginLoader");
 
-    document.getElementById("modernLoginLoader")
-      ?.style.setProperty("display", "none");
-
-    window.__loggingIn = false;
-
-    btns.forEach(btn => btn.disabled = false);
-
-    if (loginBtn) loginBtn.innerHTML = "🔐 Login";
+  if (loader) {
+    loader.style.display = "none";
   }
+
+  // =========================
+  // RESET STATE
+  // =========================
+  window.__loggingIn = false;
+
+  btns.forEach(btn => {
+    btn.disabled = false;
+  });
+
+  // =========================
+  // RESTORE BUTTON
+  // =========================
+  if (loginBtn) {
+    loginBtn.innerHTML = "🔐 Login";
+  }
+}
 };
+
+
+/* ================= SPINNER STYLE ================= */
+
+if (
+  !document.getElementById(
+    "spinnerStyle"
+  )
+) {
+
+  const style =
+    document.createElement(
+      "style"
+    );
+
+  style.id =
+    "spinnerStyle";
+
+  style.innerHTML = `
+
+    .spinner{
+      width:18px;
+      height:18px;
+      border:3px solid rgba(255,255,255,0.3);
+      border-top:3px solid #fff;
+      border-radius:50%;
+      animation:spin .7s linear infinite;
+    }
+
+    @keyframes spin{
+      to{
+        transform:rotate(360deg);
+      }
+    }
+
+  `;
+
+  document.head.appendChild(
+    style
+  );
+}
 /* =========================================================
    🚀 MODERN LOGIN DOT LOADER
 ========================================================= */
@@ -6679,40 +7587,13 @@ if (
     style
   );
 }
-window.applyRolePermissions = function () {
 
-  const role = window.userRole;
 
-  document.querySelectorAll("button").forEach(btn => {
 
-    const txt = (btn.innerText || "").toLowerCase();
 
-    if (role === "parent") {
 
-      if (
-        txt.includes("payroll") ||
-        txt.includes("ict") ||
-        txt.includes("inventory") ||
-        txt.includes("transport") ||
-        txt.includes("hostel") ||
-        txt.includes("support staff")
-      ) {
-        btn.style.display = "none";
-      }
-    }
 
-    if (role === "teacher") {
 
-      if (
-        txt.includes("payroll") ||
-        txt.includes("inventory") ||
-        txt.includes("hostel")
-      ) {
-        btn.style.display = "none";
-      }
-    }
-  });
-};
 window.syncSchoolNameUI = () => {
 
   const name =
@@ -6725,6 +7606,7 @@ window.syncSchoolNameUI = () => {
     el.textContent = name;
   }
 };
+
 
 /* =========================================================
    🔥 SMART AGE + ULTRA FAST ADMISSION GENERATOR
@@ -6876,7 +7758,8 @@ async function generateAdmissionNumber() {
     }
 }
 /* =========================================================
-   🚀 STUDENT REGISTRATION SYSTEM (SAAS SAFE VERSION)
+   🚀 ULTRA ADVANCED STUDENT REGISTRATION SYSTEM
+   FAST • SAFE • BULK OPTIMIZED • ENTERPRISE READY
 ========================================================= */
 
 window.addStudent = async () => {
@@ -6885,15 +7768,6 @@ window.addStudent = async () => {
     window.__addingStudents = true;
 
     try {
-
-        // =========================
-        // SAFETY CHECK (CRITICAL)
-        // =========================
-        if (!window.schoolId) {
-            throw new Error("School ID missing. Access denied.");
-        }
-
-        const studentsRef = ref(db, `schools/${window.schoolId}/students`);
 
         // =====================================================
         // 🔹 GET FORM VALUES
@@ -7008,7 +7882,7 @@ window.addStudent = async () => {
                     updatedAt: Date.now()
                 };
 
-                await push(studentsRef, studentData);
+                await push(schoolRef("students"), studentData);
 
                 Swal.fire({
                     icon: 'success',
@@ -7018,8 +7892,8 @@ window.addStudent = async () => {
                 });
 
                 studentNameField.value = "";
-                ageField && (ageField.value = "");
-                photoInput && (photoInput.value = "");
+                if (ageField) ageField.value = "";
+                if (photoInput) photoInput.value = "";
 
                 return;
 
@@ -7034,7 +7908,7 @@ window.addStudent = async () => {
         }
 
         // =====================================================
-        // ⚡ BULK ENGINE (SAFE)
+        // ⚡ ENTERPRISE BULK ENGINE (FAST + PARALLEL + SAFE)
         // =====================================================
 
         const progressBox = document.createElement("div");
@@ -7048,6 +7922,7 @@ window.addStudent = async () => {
             border-radius:10px;
             z-index:99999;
             font-size:13px;
+            box-shadow:0 10px 20px rgba(0,0,0,0.3);
         `;
         document.body.appendChild(progressBox);
 
@@ -7057,6 +7932,8 @@ window.addStudent = async () => {
             allowOutsideClick: false,
             didOpen: () => Swal.showLoading()
         });
+
+        const studentsRef = schoolRef("students");
 
         const batchSize = 25;
         const concurrency = 4;
@@ -7098,7 +7975,9 @@ window.addStudent = async () => {
             try {
                 await update(studentsRef, updates);
             } catch (err) {
-                if (attempt < maxRetries) return safeWrite(updates, attempt + 1);
+                if (attempt < maxRetries) {
+                    return safeWrite(updates, attempt + 1);
+                }
                 failed += Object.keys(updates).length;
             }
         };
@@ -7106,6 +7985,7 @@ window.addStudent = async () => {
         const queue = [...batches];
 
         const worker = async () => {
+
             while (queue.length) {
 
                 const batch = queue.shift();
@@ -7114,6 +7994,7 @@ window.addStudent = async () => {
                 const updates = {};
 
                 for (const name of batch) {
+
                     const key = push(studentsRef).key;
                     updates[key] = buildStudent(name);
                     processed++;
@@ -7123,16 +8004,18 @@ window.addStudent = async () => {
 
                 progressBox.innerHTML = `
                     <b>Uploading...</b><br>
-                    ${processed}/${total}<br>
+                    ${processed}/${total} learners<br>
                     ${failed ? `Failed: ${failed}` : ""}
                 `;
             }
         };
 
-        await Promise.all(Array(concurrency).fill(0).map(worker));
+        const workers = Array(concurrency).fill(0).map(worker);
+
+        await Promise.all(workers);
 
         // =====================================================
-        // 🔥 REFRESH
+        // 🔥 FINAL REFRESH
         // =====================================================
 
         requestAnimationFrame(async () => {
@@ -7150,8 +8033,8 @@ window.addStudent = async () => {
         progressBox.remove();
 
         studentNameField.value = "";
-        ageField && (ageField.value = "");
-        photoInput && (photoInput.value = "");
+        if (ageField) ageField.value = "";
+        if (photoInput) photoInput.value = "";
 
     } catch (error) {
 
@@ -7358,137 +8241,10 @@ function () {
     });
 };
 
-/* =========================================================
-   🚀 LOAD ALL SCHOOL DATA
-========================================================= */
 
-window.loadAll = async function () {
 
-  if (!window.schoolId) {
-    console.warn("⏳ loadAll waiting for schoolId");
-    return;
-  }
 
-  try {
 
-    console.log(
-      "🚀 Loading school data for:",
-      window.schoolId
-    );
-
-    // =========================
-    // SCHOOL PROFILE
-    // =========================
-    if (typeof loadSchoolProfile === "function") {
-      await loadSchoolProfile();
-    }
-
-    // =========================
-    // STUDENTS
-    // =========================
-    if (typeof loadStudents === "function") {
-      await loadStudents();
-    }
-
-    // =========================
-    // TEACHERS
-    // =========================
-    if (typeof loadTeachers === "function") {
-      await loadTeachers();
-    }
-
-    // =========================
-    // SUPPORT STAFF
-    // =========================
-    if (typeof loadSupportStaff === "function") {
-      await loadSupportStaff();
-    }
-
-    // =========================
-    // FEES
-    // =========================
-    if (typeof loadFees === "function") {
-      await loadFees();
-    }
-
-    // =========================
-    // FINANCE SUMMARY
-    // =========================
-    if (typeof loadFinanceSummary === "function") {
-      await loadFinanceSummary();
-    }
-
-    // =========================
-    // TRANSPORT
-    // =========================
-    if (typeof loadTransport === "function") {
-      console.log("🚌 Loading Transport...");
-      await loadTransport();
-    } else {
-      console.warn("⚠️ loadTransport not found");
-    }
-
-    // =========================
-    // INVENTORY
-    // =========================
-    if (typeof loadInventory === "function") {
-      console.log("📦 Loading Inventory...");
-      await loadInventory();
-    } else {
-      console.warn("⚠️ loadInventory not found");
-    }
-
-    // =========================
-    // ICT
-    // =========================
-    if (typeof loadICT === "function") {
-      console.log("💻 Loading ICT...");
-      await loadICT();
-    } else {
-      console.warn("⚠️ loadICT not found");
-    }
-
-    // =========================
-    // LIBRARY
-    // =========================
-    if (typeof loadLibrary === "function") {
-      console.log("📚 Loading Library...");
-      await loadLibrary();
-    } else {
-      console.warn("⚠️ loadLibrary not found");
-    }
-
-    // =========================
-    // HOSTEL
-    // =========================
-    if (typeof loadHostel === "function") {
-      console.log("🏠 Loading Hostel...");
-      await loadHostel();
-    } else {
-      console.warn("⚠️ loadHostel not found");
-    }
-
-    // =========================
-    // DASHBOARD CHARTS
-    // =========================
-    if (typeof loadDashboardCharts === "function") {
-      await loadDashboardCharts();
-    }
-
-    console.log(
-      "✅ All school data loaded successfully"
-    );
-
-  } catch (err) {
-
-    console.error(
-      "❌ loadAll Error:",
-      err
-    );
-
-  }
-
-};
 window.addTeacher = async () => {
 
   const teacherData = {
@@ -7643,7 +8399,7 @@ function loadTeachers() {
 
     document.getElementById("totalTeachers").innerText = count;
 
-    console.log("👩🏫 Teachers loaded:", count);
+    console.log("👩‍🏫 Teachers loaded:", count);
 
   });
 }
@@ -7762,7 +8518,7 @@ window.viewTeacherAttendance = async function (date) {
     if (!container) return;
 
     let html = `
-      <h3>👩🏫 Teacher Attendance (${targetDate})</h3>
+      <h3>👩‍🏫 Teacher Attendance (${targetDate})</h3>
 
       <table style="width:100%; border-collapse:collapse;">
 
@@ -7851,7 +8607,7 @@ window.viewTeacherMonthlyAttendance = async function () {
       document.getElementById("teacherAttendanceOutput");
 
     let html = `
-      <h3>👩🏫 Teacher Monthly Attendance (${month})</h3>
+      <h3>👩‍🏫 Teacher Monthly Attendance (${month})</h3>
 
       <table style="width:100%; border-collapse:collapse;">
 
@@ -7917,71 +8673,23 @@ window.viewTeacherMonthlyAttendance = async function () {
     Swal.fire("Error", error.message, "error");
   }
 };
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
 
-  const bootApp = async () => {
+  loadTeachers();
 
-    try {
+  await loadFeeYears();
 
-      // =========================
-      // WAIT FOR LOGIN SESSION
-      // =========================
-      if (!window.schoolId) {
-        console.log("⏳ Waiting for login session...");
-        return;
-      }
+  loadFeeFormYears();
 
-      // =========================
-      // PREVENT DOUBLE BOOT
-      // =========================
-      if (window.appReady) return;
+  loadFeeFilterGrades();
 
-      window.appReady = true;
+  loadFees();
 
-      console.log("🚀 APP STARTING FOR SCHOOL:", window.schoolId);
+  loadFinanceSummary();
 
-      // =========================
-      // SAFE LOAD ORDER
-      // =========================
-      await loadSchoolProfile?.();
+  loadStudents();
 
-      loadTeachers?.();
-
-      await loadFeeYears?.();
-      loadFeeFormYears?.();
-      loadFeeFilterGrades?.();
-
-      loadStudents?.();
-
-      loadFees?.();
-      loadFinanceSummary?.();
-
-      loadDashboardCharts?.();
-
-      // =========================
-      // GLOBAL SYSTEMS
-      // =========================
-      startSubscriptionUI?.();
-      startSubscriptionWatcher?.();
-
-      console.log("✅ APP READY");
-
-    } catch (err) {
-      console.error("❌ BOOT ERROR:", err);
-    }
-  };
-
-  // =========================
-  // WAIT LOOP (LOGIN SAFE)
-  // =========================
-  const interval = setInterval(() => {
-
-    if (window.schoolId && !window.appReady) {
-      clearInterval(interval);
-      bootApp();
-    }
-
-  }, 200);
+  loadDashboardCharts(); // 🔥 ADD THIS
 
 });
 let filtersReady = false;
@@ -8009,8 +8717,7 @@ function loadStudents() {
       loadFeeFilterGrades();
       loadGradesFromStudents();
       loadAttendanceGrades();
-populateHostelGrades();
-populateHostelLearners();
+
       updateDashboardFromStudents();
 
       return;
@@ -8242,43 +8949,24 @@ window.addFee = async () => {
   loadFinanceSummary();
 };
 
+
 window.loadFinanceSummary = async () => {
 
   try {
+const selectedYear =
+  document.getElementById("filterFeeYear")?.value
+  || "2026";
 
-    // =========================
-    // VERIFY SCHOOL SESSION
-    // =========================
-    const schoolId = window.schoolId;
-
-    if (!schoolId) {
-      console.warn("⏳ Finance summary skipped: schoolId not ready");
-      return;
-    }
-
-    // =========================
-    // YEAR
-    // =========================
-    const selectedYear =
-      document.getElementById("filterFeeYear")?.value ||
-      new Date().getFullYear().toString();
-
-    // =========================
-    // LOAD DATA
-    // =========================
-    const snapshot = await get(
-      ref(db, `schools/${schoolId}/fees/${selectedYear}`)
-    );
-
+const snapshot = await get(
+  schoolRef(`fees/${selectedYear}`)
+);
     const data = snapshot.val() || {};
 
     let totalPaid = 0;
     let totalBalance = 0;
     let expected = 0;
 
-    // =========================
-    // PAYMENT METHODS
-    // =========================
+    // ================= PAYMENT METHODS =================
     let cashTotal = 0;
     let mpesaTotal = 0;
     let bankTotal = 0;
@@ -8287,68 +8975,78 @@ window.loadFinanceSummary = async () => {
 
       const feesObj = fee.fees || {};
 
+      // ================= LOOP ALL CATEGORIES =================
       Object.values(feesObj).forEach(list => {
 
-        if (!Array.isArray(list)) return;
+        if (Array.isArray(list)) {
 
-        list.forEach(item => {
+          list.forEach(item => {
 
-          const amount = Number(item.amount || 0);
+            const amount =
+              Number(item.amount || 0);
 
-          totalPaid += amount;
+            totalPaid += amount;
 
-          const method =
-            (item.paymentMethod || "Cash").trim();
+            // ================= METHOD TOTALS =================
+            const method =
+              item.paymentMethod || "Cash";
 
-          if (method === "Cash") {
-            cashTotal += amount;
-          }
+            if (method === "Cash") {
+              cashTotal += amount;
+            }
 
-          else if (
-            method === "M-Pesa" ||
-            method === "Mpesa"
-          ) {
-            mpesaTotal += amount;
-          }
+            else if (method === "M-Pesa") {
+              mpesaTotal += amount;
+            }
 
-          else if (method === "Bank") {
-            bankTotal += amount;
-          }
+            else if (method === "Bank") {
+              bankTotal += amount;
+            }
 
-        });
-
+          });
+        }
       });
 
+      // ================= BALANCE =================
       totalBalance += Number(
         fee.balance || 0
       );
 
+      // ================= EXPECTED =================
       expected += Number(
         fee.expectedTotal || 0
       );
 
     });
 
-    // =========================
-    // UPDATE UI SAFELY
-    // =========================
-    const setText = (id, value) => {
-      const el = document.getElementById(id);
-      if (el) {
-        el.textContent = Number(value).toLocaleString();
-      }
-    };
+    // ================= MAIN TOTALS =================
+    document.getElementById("totalPaid")
+      .textContent =
+      totalPaid.toLocaleString();
 
-    setText("totalPaid", totalPaid);
-    setText("totalBalance", totalBalance);
-    setText("totalExpected", expected);
+    document.getElementById("totalBalance")
+      .textContent =
+      totalBalance.toLocaleString();
 
-    setText("cashTotal", cashTotal);
-    setText("mpesaTotal", mpesaTotal);
-    setText("bankTotal", bankTotal);
+    document.getElementById("totalExpected")
+      .textContent =
+      expected.toLocaleString();
+
+    // ================= METHOD TOTALS =================
+    document.getElementById("cashTotal")
+      .textContent =
+      cashTotal.toLocaleString();
+
+    document.getElementById("mpesaTotal")
+      .textContent =
+      mpesaTotal.toLocaleString();
+
+    document.getElementById("bankTotal")
+      .textContent =
+      bankTotal.toLocaleString();
 
     console.log(
-      `✅ Finance summary loaded for ${schoolId}`
+      "✅ Finance summary updated"
     );
 
   } catch (err) {
@@ -8357,43 +9055,21 @@ window.loadFinanceSummary = async () => {
       "Finance summary error:",
       err
     );
-
   }
-
 };
-
-/* ================= LOAD FEES (SAAS SAFE VERSION) ================= */
 
 window.loadFees = async () => {
 
-  // =========================
-  // SAFETY CHECK (CRITICAL)
-  // =========================
-if (!schoolId) {
-  console.error("❌ Missing schoolId - access blocked");
+const selectedYear =
+  document.getElementById("filterFeeYear")?.value
+  || new Date().getFullYear().toString();
 
-  Swal.fire({
-    icon: "error",
-    title: "Session expired",
-    text: "Please login again"
-  });
-
-  document.getElementById("authSection").style.display = "flex";
-  document.getElementById("app").style.display = "none";
-
-  return null;
-}
-  const selectedYear =
-    document.getElementById("filterFeeYear")?.value ||
-    new Date().getFullYear().toString();
-
-  const selectedGrade =
-    document.getElementById("filterFeeGrade")?.value || "";
-
-  const snapshot = await get(
-    ref(db, `schools/${window.schoolId}/fees/${selectedYear}`)
-  );
-
+const selectedGrade =
+  document.getElementById("filterFeeGrade")?.value
+  || "";
+const snapshot = await get(
+  schoolRef(`fees/${selectedYear}`)
+);
   const data = snapshot.val() || {};
 
   const table = document.getElementById("feesTable");
@@ -8401,6 +9077,7 @@ if (!schoolId) {
 
   const thead = table.querySelector("thead");
   const tbody = table.querySelector("tbody");
+
 
   tbody.innerHTML = "";
 
@@ -8424,7 +9101,9 @@ if (!schoolId) {
       <th>No</th>
       <th>Learner</th>
       <th>Grade</th>
+
       ${feeTypes.map(type => `<th>${type}</th>`).join("")}
+
       <th>Total Paid</th>
       <th>Balance</th>
       <th>Status</th>
@@ -8434,18 +9113,18 @@ if (!schoolId) {
   `;
 
   // ===============================
-  // HELPERS
+  // SAFE HELPERS
   // ===============================
-  const sumFee = (list) => {
+  function sumFee(list) {
     if (!Array.isArray(list)) return Number(list) || 0;
     return list.reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
-  };
+  }
 
-  const totalAllFees = (feesObj = {}) => {
-    return Object.values(feesObj).reduce((sum, list) => {
+  function totalAllFees(feesObj) {
+    return Object.values(feesObj || {}).reduce((sum, list) => {
       return sum + sumFee(list);
     }, 0);
-  };
+  }
 
   // ===============================
   // TOTALS
@@ -8455,34 +9134,38 @@ if (!schoolId) {
 
   let count = 0;
 
-  Object.entries(data).forEach(([feeId, fee]) => {
+Object.entries(data).forEach(([feeId, fee]) => {
 
-    // ================= FILTER =================
-    if (selectedGrade && fee.grade !== selectedGrade) return;
+  // ================= FILTER BY GRADE =================
+  if (selectedGrade && fee.grade !== selectedGrade) return;
 
-    count++;
+  count++;
 
-    const feesObj = fee.fees || {};
-
+  const feesObj = fee.fees || {};
     feeTypes.forEach(type => {
       categoryTotals[type] += sumFee(feesObj[type]);
     });
 
-    // SAFE STUDENT LOOKUP
-    const student = (window.allStudents || []).find(
-      s => s.id === fee.studentId
-    );
+    const student = allStudents.find(s => s.id === fee.studentId);
 
     const displayName = student
       ? `${student.name} / ${student.parentPhone || ""}`
       : fee.studentName || "-";
 
-    // ================= STATUS =================
+    // ===============================
+    // STATUS
+    // ===============================
     let status = "OWING";
     if ((fee.balance || 0) <= 0) status = "PAID";
     else if ((fee.totalPaid || 0) > 0) status = "PARTIAL";
 
-    // ================= ROW =================
+    const statusColor =
+      status === "PAID" ? "green" :
+      status === "PARTIAL" ? "orange" : "red";
+
+    // ===============================
+    // ROW
+    // ===============================
     tbody.innerHTML += `
       <tr>
         <td>${count}</td>
@@ -8496,16 +9179,11 @@ if (!schoolId) {
         <td>${totalAllFees(feesObj)}</td>
         <td>${fee.balance || 0}</td>
 
-        <td class="${
-          status === 'PAID'
-            ? 'status-paid'
-            : status === 'PARTIAL'
-              ? 'status-partial'
-              : 'status-owing'
-        }">
+        <td class="${status === 'PAID' ? 'status-paid' : status === 'PARTIAL' ? 'status-partial' : 'status-owing'}">
           ${status}
         </td>
 
+        <!-- HISTORY BUTTON -->
         <td>
           <button onclick='openFeeHistory(${JSON.stringify(fee)})'
             style="background:#111827;color:white;padding:6px 10px;border-radius:6px;width:100%;">
@@ -8513,37 +9191,38 @@ if (!schoolId) {
           </button>
         </td>
 
-        <td>
-          <div class="dropdown-actions">
+        <!-- ACTIONS (CLEAN STACK LIKE YOUR FRIEND) -->
+   <td>
+  <div class="dropdown-actions">
 
-            <button class="action-toggle">⚙ Actions</button>
+    <button class="action-toggle">
+      ⚙ Actions
+    </button>
 
-            <div class="dropdown-menu">
+    <div class="dropdown-menu">
 
-              <button onclick='openEditFeeModal("${selectedYear}", "${feeId}")'>
-                ✏️ Edit
-              </button>
+      <button onclick='openEditFeeModal("${selectedYear}", "${feeId}")'>
+        ✏️ Edit
+      </button>
 
-              <button onclick='generateReceipt(${JSON.stringify(fee)})'>
-                🧾 Receipt
-              </button>
+      <button onclick='generateReceipt(${JSON.stringify(fee)})'>
+        🧾 Receipt
+      </button>
 
-              <button onclick="sendSingleSMS('${selectedYear}', '${fee.studentId}')">
-                📩 SMS
-              </button>
+    <button onclick="sendSingleSMS('${selectedYear}', '${fee.studentId}')">
+        📩 SMS
+      </button>
 
-              <button onclick='openRefundModal("${selectedYear}", "${feeId}")'>
-                💸 Refund
-              </button>
+ <button onclick='openRefundModal("${selectedYear}", "${feeId}")'>
+        💸 Refund
+      </button>
 
-              <button onclick="deleteLearnerFee('${selectedYear}', '${feeId}', '${fee.studentName}')">
-                🗑 Delete
-              </button>
+     <button onclick="deleteLearnerFee('${selectedYear}', '${feeId}', '${fee.studentName}')">   🗑 Delete
+      </button>
 
-            </div>
-          </div>
-        </td>
-
+    </div>
+  </div>
+</td>
       </tr>
     `;
   });
@@ -8560,11 +9239,14 @@ if (!schoolId) {
     footerRow += `<td>${categoryTotals[type] || 0}</td>`;
   });
 
-  footerRow += `<td colspan="5"></td></tr>`;
+  footerRow += `
+      <td colspan="5"></td>
+    </tr>
+  `;
 
   tbody.innerHTML += footerRow;
 
-  console.log("✅ Fees loaded (SAAS SAFE - school isolated)");
+  console.log("✅ Fees loaded (clean structured buttons version)");
 };
 window.sendSingleSMS = async (year, studentId) => {
 
@@ -9101,7 +9783,10 @@ window.loadFeeFormYears = function () {
 
   console.log("✅ Fee form years loaded:", years);
 };
-
+// ================= INIT =================
+document.addEventListener("DOMContentLoaded", () => {
+  loadFees();
+});
 window.openEditFeeModal = async (year, feeId) => {
 
   try {
@@ -9898,7 +10583,9 @@ const feeBreakdown = Object.entries(feesObj)
   };
 };
 
-
+document.addEventListener("DOMContentLoaded", () => {
+  loadFinanceSummary();
+});
 
 window.loadFeeYears = async function () {
 
@@ -10167,12 +10854,7 @@ window.loadFeeGrades = async function () {
     console.error("Error loading fee grades:", err);
   }
 };
-function getSchoolId() {
-  if (!window.schoolId) {
-    throw new Error("School not initialized. Please login again.");
-  }
-  return window.schoolId;
-}
+
 // ==============================
 // 💰 LOAD FEE LEARNERS
 // ==============================
@@ -10269,13 +10951,25 @@ async function loadLearnersFromStudents() {
 
   try {
 
-  const schoolId = window.schoolId;
+    const schoolId =
+      window.schoolId ||
+      localStorage.getItem("schoolId") ||
+      localStorage.getItem("currentSchoolId") ||
+      sessionStorage.getItem("schoolId") ||
+      sessionStorage.getItem("currentSchoolId");
 
-if (!schoolId) {
-  throw new Error("School ID missing. Please login again.");
-}
+    let studentsRef;
 
-const studentsRef = ref(db, `schools/${schoolId}/students`);
+    if (schoolId) {
+
+      studentsRef =
+        ref(db, `schools/${schoolId}/students`);
+
+    } else {
+
+      studentsRef =
+        ref(db, "students");
+    }
 
     const snapshot =
       await get(studentsRef);
@@ -10750,11 +11444,13 @@ async function autoSaveMarks() {
 
   if (window.__savingMarks) return;
 
- const schoolId = window.schoolId;
+  const schoolId =
+    window.schoolId ||
+    localStorage.getItem("schoolId") ||
+    localStorage.getItem("currentSchoolId") ||
+    sessionStorage.getItem("schoolId") ||
+    sessionStorage.getItem("currentSchoolId");
 
-if (!schoolId) {
-  throw new Error("School ID missing. Please login again.");
-}
   const examPeriod =
     document.getElementById("examPeriod")?.value;
 
@@ -10840,11 +11536,13 @@ document.getElementById("saveMarksButton")
 
   try {
 
- const schoolId = window.schoolId;
+    const schoolId =
+      window.schoolId ||
+      localStorage.getItem("schoolId") ||
+      localStorage.getItem("currentSchoolId") ||
+      sessionStorage.getItem("schoolId") ||
+      sessionStorage.getItem("currentSchoolId");
 
-if (!schoolId) {
-  throw new Error("School ID missing. Please login again.");
-}
     const examPeriod =
       document.getElementById("examPeriod")?.value;
 
@@ -11021,11 +11719,11 @@ async function loadMarksUnifiedClean() {
     return Swal.fire("Not Logged In", "Please login first", "error");
   }
 
- const schoolId = window.schoolId;
+  const schoolId =
+    window.schoolId ||
+    localStorage.getItem("schoolId") ||
+    sessionStorage.getItem("schoolId");
 
-if (!schoolId) {
-  throw new Error("School ID missing. Please login again.");
-}
   if (!schoolId) {
     return Swal.fire("School Error", "School ID missing (login again)", "error");
   }
@@ -11614,6 +12312,7 @@ async function deleteSelectedLearnersMarks() {
     Swal.fire("Error deleting marks", "", "error");
   }
 }
+
 
 window.deleteLearnerMarks = deleteLearnerMarks;
 window.deleteSelectedLearnersMarks = deleteSelectedLearnersMarks;
@@ -12545,7 +13244,7 @@ function generateTopStudents() {
       // 📊 RENDER CARDS
       // ==========================
       container.innerHTML = `
-        <h2>👨🎓 TOP 5 STUDENTS PERFORMANCE</h2>
+        <h2>👨‍🎓 TOP 5 STUDENTS PERFORMANCE</h2>
 
         <div style="
           display:grid;
@@ -16898,7 +17597,7 @@ function updateTeachersCount() {
       el.innerText = total;
     }
 
-    console.log("👩🏫 Teachers count updated:", total);
+    console.log("👩‍🏫 Teachers count updated:", total);
 
   });
 }
@@ -21671,8 +22370,20 @@ window.loadSchoolProfile = async function () {
 
   try {
 
-    const schoolId = window.schoolId;
+    let schoolId = window.schoolId;
 
+    // 🔥 Restore from localStorage if missing
+    if (!schoolId) {
+
+      schoolId = localStorage.getItem("schoolId");
+
+      if (schoolId) {
+        window.schoolId = schoolId;
+      }
+
+    }
+
+    // Still not available
     if (!schoolId) {
       console.warn("⏳ School profile skipped: schoolId not ready");
       return;
@@ -22450,6 +23161,25 @@ window.addEventListener("load", async function () {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+/* =========================================================
+   TRANSPORT MANAGEMENT (FULL ERP UPGRADE)
+========================================================= */
+
+/* ================= ADD TRANSPORT ================= */
+
+
 /* =========================================================
    🚀 TRANSPORT + HOSTEL + ICT + INVENTORY MODULES
    ✅ Organized Tables
@@ -22519,10 +23249,8 @@ const deleteBtnStyle = `
 `;
 
 /* =========================================================
-   TRANSPORT MANAGEMENT (FULL ERP UPGRADE)
+   TRANSPORT MANAGEMENT
 ========================================================= */
-
-/* ================= ADD TRANSPORT ================= */
 
 window.addTransport = async function () {
 
@@ -30162,9 +30890,130 @@ window.populateHostelLearners = function() {
     }
 
 };
-</script>
+
+window.addEventListener("load", async () => {
+
+  const schoolId =
+    localStorage.getItem("schoolId");
+
+  if (!schoolId) return;
+
+  window.schoolId = schoolId;
+
+  await loadSchoolProfile();
+  await loadAll();
+
+});
+
+window.loadAll = async function () {
+
+  if (!window.schoolId) {
+    console.warn("⏳ loadAll waiting for schoolId");
+    return;
+  }
+
+  console.time("loadAll");
+
+  try {
+
+    console.log(
+      "🚀 Loading school data for:",
+      window.schoolId
+    );
+
+    const loaders = [
+
+      typeof loadSchoolProfile === "function"
+        ? loadSchoolProfile()
+        : Promise.resolve(),
+
+      typeof loadStudents === "function"
+        ? loadStudents()
+        : Promise.resolve(),
+
+      typeof loadTeachers === "function"
+        ? loadTeachers()
+        : Promise.resolve(),
+
+      typeof loadSupportStaff === "function"
+        ? loadSupportStaff()
+        : Promise.resolve(),
+
+      typeof loadFees === "function"
+        ? loadFees()
+        : Promise.resolve(),
+
+      typeof loadFinanceSummary === "function"
+        ? loadFinanceSummary()
+        : Promise.resolve(),
+
+      typeof loadTransport === "function"
+        ? loadTransport()
+        : Promise.resolve(),
+
+      typeof loadInventory === "function"
+        ? loadInventory()
+        : Promise.resolve(),
+
+      typeof loadICT === "function"
+        ? loadICT()
+        : Promise.resolve(),
+
+      typeof loadLibrary === "function"
+        ? loadLibrary()
+        : Promise.resolve(),
+
+      typeof loadHostel === "function"
+        ? loadHostel()
+        : Promise.resolve()
+    ];
+
+    const results =
+      await Promise.allSettled(loaders);
+
+    results.forEach((result, index) => {
+
+      if (result.status === "rejected") {
+
+        console.error(
+          `❌ Loader ${index} failed:`,
+          result.reason
+        );
+      }
+    });
+
+    if (
+      typeof loadDashboardCharts ===
+      "function"
+    ) {
+      await loadDashboardCharts();
+    }
+
+    console.log(
+      "✅ All school data loaded"
+    );
+
+  } catch (err) {
+
+    console.error(
+      "❌ loadAll Error:",
+      err
+    );
+
+  } finally {
+
+    console.timeEnd("loadAll");
+
+  }
+};
+
+
+
+
 
 </script>
+
+
 
 </body>
 </html>
