@@ -1599,6 +1599,31 @@ button.primary{
   width:100%;
   text-align:left;
 }
+
+/* Hidden on screen */
+.print-only{
+  display:none;
+}
+
+/* Visible only when printing */
+@media print{
+
+  .print-only{
+    display:block !important;
+  }
+
+  .school-stamp{
+    display:block !important;
+    border:3px solid #0056b3 !important;
+    color:#0056b3 !important;
+    background:white !important;
+    page-break-inside:avoid;
+
+    /* Ensures blue prints in Chrome/Edge */
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
 </style>
 </head>
 
@@ -3519,7 +3544,7 @@ Peter Kimani"
 
 <!-- CORE REPORTS -->
 <div id="subjectChampions" class="section" style="display:none; padding:20px;">
-  <h2>🏆 Subject Champions Report</h2>
+  <h2>🏆 </h2>
   <div id="subjectChampionsContent"></div>
 </div>
 
@@ -3530,50 +3555,50 @@ Peter Kimani"
 
 
 <div id="subjectPerformance" class="section" style="display:none; padding:20px;">
-  <h2>📈 Subject Performance</h2>
+  <h2>📈 </h2>
   <div id="subjectPerformanceContent"></div>
 </div>
 
 
 <div id="genderPerformance" class="section" style="display:none; padding:20px;">
-  <h2>⚧ Gender Performance</h2>
+  <h2>⚧ </h2>
   <div id="genderPerformanceContent"></div>
 </div>
 
 
 <div id="levelSummary" class="section" style="display:none; padding:20px;">
-  <h2>📚 Level Summary</h2>
+  <h2>📚 </h2>
   <div id="levelSummaryContent"></div>
 </div>
 
 
 <div id="combineMarksByGrade" class="section" style="display:none; padding:20px;">
-  <h2>🧮 Combine Marks Per Grade</h2>
+  <h2>👨👨</h2>
   <div id="combineMarksByGradeContent"></div>
 </div>
 
 
 <div id="generateAssessmentReports" class="section" style="display:none; padding:20px;">
-  <h2>📄 Assessment Reports</h2>
+  <h2>📄 </h2>
   <div id="assessmentReportsContent"></div>
 </div>
 
 
 <div id="subjectRankingReport" class="section" style="display:none; padding:20px;">
-  <h2>📊 Subject Ranking Report</h2>
+  <h2>📊 </h2>
   <div id="subjectRankingReportContent"></div>
 </div>
 
 
 
 <div id="generateBlankMerit" class="section" style="display:none; padding:20px;">
-  <h2>📄 Blank Merit Lists</h2>
+  <h2>📄 </h2>
   <div id="blankMeritContent"></div>
 </div>
 
 
 <div id="generateSubjectRank" class="section" style="display:none; padding:20px;">
-  <h2>📋 Subject Tracker Analysis</h2>
+  <h2>📋 </h2>
   <div id="reportOutput"></div>
 </div>
 
@@ -3584,7 +3609,7 @@ Peter Kimani"
 
 
 <div id="marksStatus" class="section" style="display:none; padding:20px;">
-  <h2>👁️ Marks Recording Status</h2>
+  <h2>👁️ </h2>
   <div id="marksStatusContent"></div>
 </div>
 
@@ -3615,11 +3640,11 @@ Peter Kimani"
 </div>
 
 <div id="groupByPathways" class="section" style="display:none; padding:20px;">
-  <h2>🧭 Group Learners Per Pathways</h2>
+ 
   <div id="groupByPathwaysContent"></div>
 </div>
 <div id="marksStatus" class="section" style="display:none; padding:20px;">
-  <h2>👁️ Marks Recording Status Dashboard</h2>
+  <h2>👁️ </h2>
 
   <div id="marksStatusContent"></div>
 
@@ -3700,7 +3725,7 @@ Peter Kimani"
     <input id="kiswahiliTeacher" placeholder="Kiswahili Teacher" style="width:50%;margin:4px 0;padding:6px;">
     <input id="scienceTeacher" placeholder="Science Teacher" style="width:50%;margin:4px 0;padding:6px;">
     <input id="socialTeacher" placeholder="Social Studies Teacher" style="width:50%;margin:4px 0;padding:6px;">
-    <input id="creTeacher" placeholder="CRE Teacher" style="width:100%;margin:4px 0;padding:6px;">
+    <input id="creTeacher" placeholder="CRE Teacher" style="width:50%;margin:4px 0;padding:6px;">
     <input id="agricultureTeacher" placeholder="Agriculture Teacher" style="width:50%;margin:4px 0;padding:6px;">
     <input id="preTechTeacher" placeholder="Pre-Technical Teacher" style="width:50%;margin:4px 0;padding:6px;">
     <input id="creativeArtTeacher" placeholder="Creative Arts Teacher" style="width:50%;margin:4px 0;padding:6px;">
@@ -6531,9 +6556,11 @@ function startSubscriptionWatcher() {
 
   }, 10000); // check every 10 seconds
 }
+/* ======================================================
+   🔥 LIVE SUBSCRIPTION UI (FINAL FIX)
+====================================================== */
+
 let subscriptionUIInterval = null;
-let subscriptionUICache = null;
-let subscriptionLastFetch = 0;
 
 function startSubscriptionUI() {
 
@@ -6544,12 +6571,11 @@ function startSubscriptionUI() {
     try {
 
       // =====================================
-      // ACTIVE SCHOOL
+      // WAIT FOR SCHOOL ID
       // =====================================
-      const schoolId =
-        getSchoolId();
+const schoolId = getSchoolId();
 
-      if (!schoolId) return;
+if (!schoolId) return;
 
       const planEl =
         document.getElementById(
@@ -6561,72 +6587,34 @@ function startSubscriptionUI() {
           "subscriptionCountdown"
         );
 
-      if (
-        !planEl ||
-        !countdownEl
-      ) return;
+      if (!planEl || !countdownEl)
+        return;
 
-      const now =
-        Date.now();
+      const snap =
+        await get(
+          ref(db, `schools/${getSchoolId()}`)
+        );
 
-      // =====================================
-      // REFRESH FIREBASE EVERY 60 SECONDS
-      // =====================================
-      if (
-        !subscriptionUICache ||
+      if (!snap.exists()) {
 
-        now -
-        subscriptionLastFetch >
-        60000
-      ) {
+        planEl.innerHTML =
+          "Plan: Not Found";
 
-        const snap =
-          await get(
-            ref(
-              db,
-              `schools/${schoolId}`
-            )
-          );
+        countdownEl.innerHTML =
+          "Remaining: -";
 
-        if (!snap.exists()) {
-
-          planEl.innerHTML =
-            "Plan: Not Found";
-
-          countdownEl.innerHTML =
-            "Remaining: -";
-
-          return;
-        }
-
-        subscriptionUICache =
-          snap.val();
-
-        subscriptionLastFetch =
-          now;
+        return;
       }
 
-      const school =
-        subscriptionUICache;
+      const school = snap.val();
 
-      // =====================================
-      // PLAN INFO
-      // =====================================
-      planEl.innerHTML = `
-        Plan:
-        ${school.plan || "Free Trial"}
-        <br>
-        Status:
-        ${school.subscriptionStatus || "-"}
-        <br>
-        Amount:
-        KES ${school.amountPaid || 0}
-      `;
+      const now = Date.now();
 
-      // =====================================
-      // END DATE
-      // =====================================
       let endTime = 0;
+
+      // =====================================
+      // DETERMINE END TIME
+      // =====================================
 
       if (
         school.subscriptionStatus ===
@@ -6634,9 +6622,7 @@ function startSubscriptionUI() {
       ) {
 
         endTime =
-          Number(
-            school.trialEndsAt || 0
-          );
+          school.trialEndsAt || 0;
       }
 
       if (
@@ -6645,14 +6631,25 @@ function startSubscriptionUI() {
       ) {
 
         endTime =
-          Number(
-            school.subscriptionEndsAt || 0
-          );
+          school.subscriptionEndsAt || 0;
       }
 
       // =====================================
-      // EXPIRED / NO TIMER
+      // PLAN DISPLAY
       // =====================================
+
+      planEl.innerHTML = `
+        Plan: ${school.plan || "Free Trial"}
+        <br>
+        Status: ${school.subscriptionStatus || "-"}
+        <br>
+        Amount: KES ${school.amountPaid || 0}
+      `;
+
+      // =====================================
+      // NO ACTIVE TIMER
+      // =====================================
+
       if (!endTime) {
 
         countdownEl.innerHTML =
@@ -6661,8 +6658,16 @@ function startSubscriptionUI() {
         return;
       }
 
+      // =====================================
+      // CALCULATE TIME
+      // =====================================
+
       const remaining =
-        endTime - Date.now();
+        endTime - now;
+
+      // =====================================
+      // EXPIRED
+      // =====================================
 
       if (remaining <= 0) {
 
@@ -6672,38 +6677,35 @@ function startSubscriptionUI() {
         return;
       }
 
-      // =====================================
-      // COUNTDOWN
-      // =====================================
       const days =
         Math.floor(
           remaining /
-          86400000
+          (1000 * 60 * 60 * 24)
         );
 
       const hours =
         Math.floor(
           (
             remaining %
-            86400000
+            (1000 * 60 * 60 * 24)
           ) /
-          3600000
+          (1000 * 60 * 60)
         );
 
       const mins =
         Math.floor(
           (
             remaining %
-            3600000
+            (1000 * 60 * 60)
           ) /
-          60000
+          (1000 * 60)
         );
 
       const secs =
         Math.floor(
           (
             remaining %
-            60000
+            (1000 * 60)
           ) / 1000
         );
 
@@ -6726,8 +6728,6 @@ function startSubscriptionUI() {
 
   }, 1000);
 }
-
-
 
 /* ================= LOGIN (FINAL PRODUCTION VERSION) ================= */
 
@@ -14518,35 +14518,40 @@ async function generateLevelSummary(selectedGrade, selectedExamPeriod) {
   `;
 
   // ===============================
-  // 🔹 STAMP
-  // ===============================
+// ===============================
+// 🔹 STAMP
+// ===============================
 html += `
 
-  <div
-    class="stamp print-only"
-    style="
-      margin-top:40px;
-      text-align:center;
-    "
-  >
+<div
+  class="school-stamp print-only"
+  style="
+    margin-top:40px;
+    width:320px;
+    margin-left:auto;
+    margin-right:auto;
+    text-align:center;
+    border:3px solid #0056b3;
+    color:#0056b3;
+    padding:15px;
+    font-weight:bold;
+    line-height:1.6;
+    font-size:13px;
+    background:white;
+  "
+>
 
-    ${
-      window.currentSchool?.name ||
-      "School Name"
-    }<br>
+  ${window.currentSchool?.name || "School Name"}<br>
 
-    ${
-      window.currentSchool?.address || ""
-    }<br>
+  ${window.currentSchool?.address || ""}<br>
 
-    Exam Department<br>
+  EXAM DEPARTMENT<br>
 
-    Date: ${printDate}
+  Date: ${printDate}
 
-  </div>
+</div>
 
-
-  `;
+`;
 
   updateProgress(90, "Finalizing...");
   await new Promise(r => setTimeout(r, 400));
@@ -15557,12 +15562,10 @@ window.generateMarksRecordingSummary = async function (selectedExamPeriod) {
     return;
   }
 
-  // ===============================
-  // 🔥 START LOADER
-  // ===============================
   showLoader();
+
   updateProgress(10, "Loading student records...");
-  await new Promise(r => setTimeout(r, 400));
+  await new Promise(r => setTimeout(r, 300));
 
   if (!allStudents || allStudents.length === 0) {
     hideLoader();
@@ -15570,9 +15573,6 @@ window.generateMarksRecordingSummary = async function (selectedExamPeriod) {
     return;
   }
 
-  // ===============================
-  // 🎯 SAFE CONTEXT (FIXED LIKE OTHER REPORTS)
-  // ===============================
   const gradeFromUI =
     (
       window.reportContext?.grade ??
@@ -15592,53 +15592,76 @@ window.generateMarksRecordingSummary = async function (selectedExamPeriod) {
       .toString()
       .trim();
 
-  updateProgress(30, "Filtering grade and exam period...");
-  await new Promise(r => setTimeout(r, 400));
+  updateProgress(30, "Filtering learners...");
+  await new Promise(r => setTimeout(r, 300));
 
-  const subjects = ['Eng', 'Math', 'Pre-Tech', 'Kisw', 'Scie', 'Sst', 'Agric', 'Cre', 'C/A'];
+  // ACTUAL SUBJECT KEYS USED BY MARK ENTRY
+  const subjects = [
+    "eng",
+    "math",
+    "preTech",
+    "kiswahili",
+    "science",
+    "social",
+    "agriculture",
+    "cre",
+    "creativeArt"
+  ];
 
-  // ===============================
-  // 🎯 FILTER STUDENTS (ROBUST)
-  // ===============================
-  const filteredStudents = (allStudents || []).filter(s => {
+  const filteredStudents = (allStudents || []).filter(student => {
 
-    const studentGrade = (s.grade || "").toString().trim();
+    const studentGrade =
+      (student.grade || "")
+        .toString()
+        .trim();
 
-    const gradeMatch =
-      !gradeFromUI ||
+    return (
       gradeFromUI === "All Grades" ||
-      studentGrade === gradeFromUI;
+      !gradeFromUI ||
+      studentGrade === gradeFromUI
+    );
 
-    return gradeMatch;
   });
 
   const grouped = {};
 
-  filteredStudents.forEach(s => {
-    const grade = s.grade || "Unknown";
-    if (!grouped[grade]) grouped[grade] = [];
-    grouped[grade].push(s);
+  filteredStudents.forEach(student => {
+
+    const grade =
+      student.grade || "Unknown";
+
+    if (!grouped[grade]) {
+      grouped[grade] = [];
+    }
+
+    grouped[grade].push(student);
+
   });
 
-  updateProgress(55, "Checking recording completeness...");
-  await new Promise(r => setTimeout(r, 400));
+  updateProgress(55, "Analyzing marks...");
+  await new Promise(r => setTimeout(r, 300));
 
-  // ===============================
-  // 📄 HEADER
-  // ===============================
   let html = `
-    <div style="text-align:center; margin-bottom:15px;">
-      <h2 style="margin:0;">📊 Marks Recording Status Report</h2>
-      <p style="margin:2px 0;"><b>Grade:</b> ${gradeFromUI}</p>
-      <p style="margin:2px 0;"><b>Exam Period:</b> ${examPeriod}</p>
+    <div style="text-align:center;margin-bottom:15px;">
+      <h2 style="margin:0;">
+        📊 Marks Recording Status Report
+      </h2>
+
+      <p style="margin:2px 0;">
+        <b>Grade:</b> ${gradeFromUI}
+      </p>
+
+      <p style="margin:2px 0;">
+        <b>Exam Period:</b> ${examPeriod}
+      </p>
     </div>
+
     <hr>
   `;
 
   const grades = Object.keys(grouped);
-  let processed = 0;
 
-  for (let grade of grades) {
+  for (const grade of grades) {
 
     const learners = grouped[grade];
 
@@ -15646,50 +15669,106 @@ window.generateMarksRecordingSummary = async function (selectedExamPeriod) {
     let partiallyRecorded = 0;
     let notRecorded = 0;
 
-    let missingLearners = [];
+    const missingLearners = [];
 
-    learners.forEach(s => {
+    learners.forEach(student => {
 
       let recordedCount = 0;
 
-      subjects.forEach(sub => {
-        const key = sub.toLowerCase();
+      const marks =
+        student?.marks?.[examPeriod] || {};
 
-        const value =
-          s?.marks?.[examPeriod]?.[key] ??
-          s?.marks?.[key] ??
-          0;
+      subjects.forEach(subject => {
 
-        if (value !== undefined && value !== null && value !== "") {
+        const value = marks[subject];
+
+        const hasMark =
+          value !== undefined &&
+          value !== null &&
+          value !== "";
+
+        if (hasMark) {
           recordedCount++;
         }
+
       });
 
       if (recordedCount === subjects.length) {
+
         fullyRecorded++;
-      } else if (recordedCount > 0) {
-        partiallyRecorded++;
-        missingLearners.push(`🟡 ${s.name || "Unnamed"} (Partial)`);
-      } else {
-        notRecorded++;
-        missingLearners.push(`🔴 ${s.name || "Unnamed"} (Not Recorded)`);
+
       }
+      else if (recordedCount > 0) {
+
+        partiallyRecorded++;
+
+        missingLearners.push(
+          `🟡 ${student.name || "Unnamed"} (${recordedCount}/${subjects.length} subjects)`
+        );
+
+      }
+      else {
+
+        notRecorded++;
+
+        missingLearners.push(
+          `🔴 ${student.name || "Unnamed"}`
+        );
+
+      }
+
     });
 
     const total = learners.length;
-    const percent = total === 0 ? 0 : Math.round((fullyRecorded / total) * 100);
+
+    const percent =
+      total > 0
+        ? Math.round(
+            (fullyRecorded / total) * 100
+          )
+        : 0;
 
     html += `
-      <div style="margin-bottom:25px; padding:12px; border:1px solid #ddd; border-radius:8px;">
+      <div
+        style="
+          margin-bottom:25px;
+          padding:12px;
+          border:1px solid #ddd;
+          border-radius:8px;
+        "
+      >
+
         <h3>📘 Grade ${grade}</h3>
 
         <p><b>Total Learners:</b> ${total}</p>
-        <p style="color:green;"><b>Fully Recorded:</b> ${fullyRecorded}</p>
-        <p style="color:orange;"><b>Partially Recorded:</b> ${partiallyRecorded}</p>
-        <p style="color:red;"><b>Not Recorded:</b> ${notRecorded}</p>
 
-        <div style="background:#e5e7eb; height:18px; border-radius:10px; overflow:hidden;">
-          <div style="width:${percent}%; background:#16a34a; height:100%;"></div>
+        <p style="color:green;">
+          <b>Fully Recorded:</b> ${fullyRecorded}
+        </p>
+
+        <p style="color:orange;">
+          <b>Partially Recorded:</b> ${partiallyRecorded}
+        </p>
+
+        <p style="color:red;">
+          <b>Not Recorded:</b> ${notRecorded}
+        </p>
+
+        <div
+          style="
+            background:#e5e7eb;
+            height:18px;
+            border-radius:10px;
+            overflow:hidden;
+          "
+        >
+          <div
+            style="
+              width:${percent}%;
+              background:#16a34a;
+              height:100%;
+            "
+          ></div>
         </div>
 
         <small>${percent}% complete</small>
@@ -15697,13 +15776,29 @@ window.generateMarksRecordingSummary = async function (selectedExamPeriod) {
         <hr style="margin:10px 0;">
 
         <h4>📋 Learners with Missing Marks</h4>
-        <div style="max-height:200px; overflow:auto; background:#f9fafb; padding:8px; border-radius:6px;">
+
+        <div
+          style="
+            max-height:250px;
+            overflow:auto;
+            background:#f9fafb;
+            padding:8px;
+            border-radius:6px;
+          "
+        >
           ${
-            missingLearners.length > 0
-              ? missingLearners.map(n => `<div>${n}</div>`).join("")
-              : "<div style='color:green;'>✔ All learners fully recorded</div>"
+            missingLearners.length
+              ? missingLearners
+                  .map(item => `<div>${item}</div>`)
+                  .join("")
+              : `
+                <div style="color:green;">
+                  ✔ All learners fully recorded
+                </div>
+              `
           }
         </div>
+
       </div>
     `;
   }
@@ -15717,7 +15812,10 @@ window.generateMarksRecordingSummary = async function (selectedExamPeriod) {
     container.classList.add("show");
   }, 100);
 
-  container.scrollIntoView({ behavior: "smooth" });
+  container.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
 
   updateProgress(100, "Complete ✅");
   await new Promise(r => setTimeout(r, 300));
@@ -15725,20 +15823,17 @@ window.generateMarksRecordingSummary = async function (selectedExamPeriod) {
   hideLoader();
 };
 
-// ===============================
-// 🔥 BACKWARD COMPATIBILITY
-// ===============================
+// =====================================
+// BACKWARD COMPATIBILITY
+// =====================================
 window.generateMarksStatus = function (
   selectedGrade,
   selectedExamPeriod
 ) {
-
   return window.generateMarksRecordingSummary(
-    selectedGrade,
     selectedExamPeriod
   );
 };
-
 
 window.generateGenderPerformance = async function (selectedGrade, selectedExamPeriod) {
 
@@ -16206,85 +16301,140 @@ window.generateSubjectRanking = async function (grade, subjectKey, period) {
     return "BE 2";
   }
 
-  const ranked = learners
-    .map(l => ({
-      name: l.name || "Unnamed",
-      score: Number(l.marks?.[subjectKey] || 0),
-      level: getLevel(Number(l.marks?.[subjectKey] || 0))
-    }))
-    .sort((a, b) => b.score - a.score);
+const ranked = learners
+  .map(l => {
 
+    const score = Number(
+      l.marks?.[subjectKey] ??
+      l[subjectKey] ??
+      0
+    );
+
+    return {
+      name: l.name || "Unnamed",
+      score,
+      level: getLevel(score)
+    };
+
+  })
+  .sort((a, b) => b.score - a.score);
   const year = new Date().getFullYear();
 
   // ===============================
   // 🔥 FINAL HEADER (FIXED)
   // ===============================
-  let html = `
+ let html = `
 
-  ${window.getSchoolPrintHeader(
-    "SUBJECT RANKING REPORT"
-  )}
+${window.getSchoolPrintHeader(
+  "SUBJECT RANKING REPORT"
+)}
 
-  <div style="
-    text-align:center;
-    margin-bottom:20px;
-    font-size:14px;
-  ">
+<div style="
+  text-align:center;
+  margin-bottom:20px;
+  font-size:14px;
+">
 
-    <p>
-      <strong>Subject:</strong>
-      ${subjectName}
-    </p>
+  <p>
+    <strong>Subject:</strong>
+    ${subjectName}
+  </p>
 
-    <p>
-      <strong>Year:</strong>
-      ${year}
-    </p>
+  <p>
+    <strong>Year:</strong>
+    ${year}
+  </p>
 
-    <p>
-      <strong>Grade:</strong>
-      ${gradeFromUI || "All Grades"}
-    </p>
+  <p>
+    <strong>Grade:</strong>
+    ${gradeFromUI || "All Grades"}
+  </p>
 
-    <p>
-      <strong>Exam Period:</strong>
-      ${periodFromUI || "All Periods"}
-    </p>
+  <p>
+    <strong>Exam Period:</strong>
+    ${periodFromUI || "All Periods"}
+  </p>
 
-  </div>
+</div>
 
+<table style="
+  width:100%;
+  border-collapse:collapse;
+  background:white;
+  color:black;
+  font-size:16px;
+">
+  <thead>
+    <tr style="background:#000;color:#fff;">
+      <th style="border:2px solid black;padding:10px;">Rank</th>
+      <th style="border:2px solid black;padding:10px;">Name</th>
+      <th style="border:2px solid black;padding:10px;">Score</th>
+      <th style="border:2px solid black;padding:10px;">Performance Level</th>
+    </tr>
+  </thead>
+  <tbody>
+`;
 
-    <table style="width:100%;border-collapse:collapse;background:white;color:black;font-size:16px;">
-      <thead>
-        <tr style="background:#000;color:#fff;">
-          <th style="border:2px solid black;padding:10px;">Rank</th>
-          <th style="border:2px solid black;padding:10px;">Name</th>
-          <th style="border:2px solid black;padding:10px;">Score</th>
-          <th style="border:2px solid black;padding:10px;">Level</th>
-        </tr>
-      </thead>
-      <tbody>
+ranked.forEach((l, i) => {
+
+  let levelColor = "#dc2626";
+
+  if (l.level.startsWith("EE")) {
+    levelColor = "#15803d";
+  }
+  else if (l.level.startsWith("ME")) {
+    levelColor = "#2563eb";
+  }
+  else if (l.level.startsWith("AE")) {
+    levelColor = "#ca8a04";
+  }
+
+  html += `
+    <tr ${i < 3 ? 'style="background:#FFD700;font-weight:bold;"' : ''}>
+
+      <td style="border:2px solid black;padding:10px;">
+        ${i + 1}
+      </td>
+
+      <td style="border:2px solid black;padding:10px;">
+        ${l.name}
+      </td>
+
+      <td style="border:2px solid black;padding:10px;text-align:center;">
+        ${l.score}
+      </td>
+
+      <td style="
+        border:2px solid black;
+        padding:10px;
+        text-align:center;
+        font-weight:bold;
+        color:${levelColor};
+      ">
+        ${l.level}
+      </td>
+
+    </tr>
   `;
+});
 
-  ranked.forEach((l, i) => {
-    html += `
-      <tr ${i < 3 ? 'style="background:#FFD700;font-weight:bold;"' : ''}>
-        <td style="border:2px solid black;padding:10px;">${i + 1}</td>
-        <td style="border:2px solid black;padding:10px;">${l.name}</td>
-        <td style="border:2px solid black;padding:10px;">${l.score}</td>
-        <td style="border:2px solid black;padding:10px;">${l.level}</td>
-      </tr>
-    `;
-  });
 
-  html += `</tbody></table>`;
 
-  container.innerHTML = html;
+html += `
+  </tbody>
+</table>
+`;
 
-  hideLoader();
-  container.scrollIntoView({ behavior: "smooth", block: "start" });
+container.innerHTML = html;
 
-  updateProgress(100, "Complete ✅");
+hideLoader();
+
+container.scrollIntoView({
+  behavior: "smooth",
+  block: "start"
+});
+
+updateProgress(100, "Complete ✅");
 };
 window.generatePathwayGrouping = async function (selectedGrade, selectedExamPeriod) {
 
@@ -16401,7 +16551,40 @@ window.generatePathwayGrouping = async function (selectedGrade, selectedExamPeri
         await new Promise(r => setTimeout(r, 300));
 
         const year = new Date().getFullYear();
+// ===============================
+// 🔥 DETERMINE ACTUAL GRADE LOADED
+// ===============================
+let gradeDisplay = "All Grades";
 
+if (learners.length > 0) {
+
+    const grades = [
+        ...new Set(
+            learners.map(l =>
+                (l.grade || "")
+                    .toString()
+                    .trim()
+            )
+        )
+    ];
+
+    if (grades.length === 1) {
+        gradeDisplay = grades[0];
+    }
+    else if (grades.length > 1) {
+        gradeDisplay = grades.join(", ");
+    }
+}
+
+const periodDisplay =
+(
+    selectedExamPeriod ??
+    window.reportContext?.examPeriod ??
+    document.getElementById("examPeriodSelect")?.value ??
+    "All Periods"
+)
+.toString()
+.trim();
         // ===============================
         // 🔥 UI KEPT EXACTLY SAME
         // ===============================
@@ -16417,28 +16600,15 @@ window.generatePathwayGrouping = async function (selectedGrade, selectedExamPeri
     font-size:14px;
   ">
 
-    <p>
-      <strong>Year:</strong>
-      ${year}
-    </p>
+ <p>
+  <strong>Grade:</strong>
+  ${gradeDisplay}
+</p>
 
-    <p>
-      <strong>Grade:</strong>
-      ${
-        selectedGrade ||
-        window.reportContext?.grade ||
-        "All Grades"
-      }
-    </p>
-
-    <p>
-      <strong>Exam Period:</strong>
-      ${
-        selectedExamPeriod ||
-        window.reportContext?.examPeriod ||
-        "All Periods"
-      }
-    </p>
+<p>
+  <strong>Exam Period:</strong>
+  ${periodDisplay}
+</p>
 
   </div>
 
@@ -16455,9 +16625,11 @@ window.generatePathwayGrouping = async function (selectedGrade, selectedExamPeri
                 <th colspan="7" style="background:#1e88e5;">STEM</th>
                 <th colspan="5" style="background:#43a047;">SOCIAL</th>
                 <th colspan="4" style="background:#fb8c00;">SPORTS</th>
-                <th rowspan="2" style="background:#6d4c41;">Best</th>
-            </tr>
+              <th rowspan="2" style="background:#6d4c41;">Best Pathway</th>
 
+<th rowspan="2" style="background:#2e7d32;">
+    Suggested Careers
+</th>
             <tr style="background:#ddd;">
                 <th>Eng</th><th>Math</th><th>PreT</th><th>Kisw</th><th>Sci</th><th>Agric</th><th>Avg</th>
                 <th>Kisw</th><th>Eng</th><th>SST</th><th>CRE</th><th>Avg</th>
@@ -16466,13 +16638,43 @@ window.generatePathwayGrouping = async function (selectedGrade, selectedExamPeri
         </thead>
         <tbody>
         `;
+const pathwayCareers = {
 
+    STEM: [
+        "Engineer",
+        "Doctor",
+        "Software Developer",
+        "Architect",
+        "Pilot"
+    ],
+
+    "Social Sciences": [
+        "Lawyer",
+        "Teacher",
+        "Journalist",
+        "Diplomat",
+        "Social Worker"
+    ],
+
+    "Sports Science": [
+        "Athlete",
+        "Coach",
+        "Sports Analyst",
+        "Fitness Trainer",
+        "Sports Manager"
+    ]
+
+};
         learners.forEach((l, i) => {
 
             const stem = l.stemScores || [];
             const social = l.socialScores || [];
             const sports = l.sportsScores || [];
+const careers =
+    pathwayCareers[l.bestPathway] || [];
 
+const careerText =
+    careers.slice(0, 3).join(", ");
             html += `
             <tr>
                 <td>${i + 1}</td>
@@ -16498,7 +16700,25 @@ window.generatePathwayGrouping = async function (selectedGrade, selectedExamPeri
                 <td>${sports[2] ?? 0}</td>
                 <td><b>${l.sportsAvg}</b></td>
 
-                <td><b>${l.bestPathway}</b></td>
+                <td>
+    <b>${l.bestPathway}</b>
+</td>
+
+<td>
+  <button
+    onclick="showCareerSuggestions('${l.bestPathway}','${l.name}')"
+    style="
+      background:#2e7d32;
+      color:white;
+      border:none;
+      padding:5px 10px;
+      border-radius:5px;
+      cursor:pointer;
+      font-size:12px;
+    ">
+    View Careers
+  </button>
+</td>
             </tr>
             `;
         });
@@ -16559,7 +16779,59 @@ function generateGroupByPathways(selectedGrade, selectedExamPeriod) {
     generatePathwayGrouping(selectedGrade, selectedExamPeriod);
 }
 
+window.showCareerSuggestions = function(pathway, learnerName) {
+const careers = {
 
+    STEM: [
+        "⚙️ Engineer",
+        "🩺 Doctor",
+        "💻 Software Developer",
+        "🏗️ Architect",
+        "✈️ Pilot",
+        "📊 Data Scientist",
+        "⚡ Electrician",
+        "📐 Surveyor"
+    ],
+
+    "Social Sciences": [
+        "⚖️ Lawyer",
+        "👨‍🏫 Teacher",
+        "📰 Journalist",
+        "🌍 Diplomat",
+        "🤝 Social Worker",
+        "🧠 Psychologist",
+        "🏛️ Public Administrator"
+    ],
+
+    "Sports Science": [
+        "🏃 Athlete",
+        "🏅 Coach",
+        "📈 Sports Analyst",
+        "💪 Fitness Trainer",
+        "🏟️ Sports Manager",
+        "🩹 Physiotherapist"
+    ]
+
+};
+
+  Swal.fire({
+    title: `${learnerName}'s Career Suggestions`,
+    html: careers[pathway]
+        .map(c => `
+            <div style="
+                text-align:left;
+                padding:6px;
+                border-bottom:1px solid #eee;
+            ">
+                ${c}
+            </div>
+        `)
+        .join(""),
+    width: 650,
+    icon: "info"
+});
+
+};
 document.addEventListener("DOMContentLoaded", () => {
 
   const btn = document.getElementById("generateMeritBtn");
@@ -19592,15 +19864,26 @@ async function generateSubjectRankingReport(selectedGrade, selectedExamPeriod) {
   // ===============================
   // 🔹 HEADER (FIXED DISPLAY)
   // ===============================
-  const gradeDisplay =
-    (selectedGrade ?? window.reportContext?.grade ?? "All Grades")
-      .toString()
-      .trim();
+const gradeDisplay =
+(
+  selectedGrade ??
+  window.reportContext?.grade ??
+  document.getElementById("gradeFilter")?.value ??
+  document.getElementById("gradeSelect")?.value ??
+  "All Grades"
+)
+.toString()
+.trim();
 
-  const periodDisplay =
-    (selectedExamPeriod ?? window.reportContext?.examPeriod ?? "All Periods")
-      .toString()
-      .trim();
+const periodDisplay =
+(
+  selectedExamPeriod ??
+  window.reportContext?.examPeriod ??
+  document.getElementById("examPeriodSelect")?.value ??
+  "All Periods"
+)
+.toString()
+.trim();
 
   let html = `
     <div style="text-align:center;margin-bottom:20px;">
