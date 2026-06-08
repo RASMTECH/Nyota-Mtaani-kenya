@@ -4804,7 +4804,6 @@ const auth = getAuth(app);
 const db = getDatabase(app);
 
 
-
 // ===================================
 // GLOBAL SCHOOL CONTEXT
 // ===================================
@@ -4900,6 +4899,7 @@ function ensureSchoolContext() {
 
   return sid;
 }
+
 
 function show(id) {
 
@@ -5039,7 +5039,6 @@ function show(id) {
     id
   );
 }
-
 
 
 
@@ -5596,6 +5595,7 @@ window.register = async () => {
 };
 
 
+
 /* ======================================================
    SUBSCRIPTION SYSTEM
 ====================================================== */
@@ -5604,8 +5604,41 @@ async function checkSubscriptionAccess() {
 
   try {
 
+    // =====================================
+    // GET ACTIVE SCHOOL ID
+    // =====================================
+    const activeSchoolId =
+
+      window.schoolId ||
+
+      sessionStorage.getItem(
+        "schoolId"
+      ) ||
+
+      localStorage.getItem(
+        "schoolId"
+      );
+
+    if (!activeSchoolId) {
+
+      Swal.fire({
+        icon: "error",
+        title: "Session Expired",
+        text:
+          "Please login again."
+      });
+
+      return false;
+    }
+
+    // =====================================
+    // LOAD SCHOOL
+    // =====================================
     const snap = await get(
-      ref(db, `schools/${getSchoolId()}`)
+      ref(
+        db,
+        `schools/${activeSchoolId}`
+      )
     );
 
     if (!snap.exists()) {
@@ -5618,16 +5651,21 @@ async function checkSubscriptionAccess() {
       return false;
     }
 
-    const school = snap.val();
+    const school =
+      snap.val();
 
-    subscriptionData = school;
+    subscriptionData =
+      school;
 
-    const now = Date.now();
+    const now =
+      Date.now();
 
     // =====================================
-    // 🔥 MANUAL LOCK
+    // MANUAL LOCK
     // =====================================
-    if (school.locked === true) {
+    if (
+      school.locked === true
+    ) {
 
       lockEntireSystem(
         "System Locked",
@@ -5638,34 +5676,46 @@ async function checkSubscriptionAccess() {
     }
 
     // =====================================
-    // 🔥 ACTIVE PAID SUBSCRIPTION
+    // ACTIVE PAID SUBSCRIPTION
     // =====================================
     if (
-      school.subscriptionStatus === "active" &&
-      school.subscriptionEndsAt > now
+      school.subscriptionStatus ===
+        "active" &&
+
+      Number(
+        school.subscriptionEndsAt || 0
+      ) > now
     ) {
 
       return true;
     }
 
     // =====================================
-    // 🔥 ACTIVE FREE TRIAL
+    // ACTIVE FREE TRIAL
     // =====================================
     if (
-      school.subscriptionStatus === "trial" &&
-      school.trialEndsAt > now
+      school.subscriptionStatus ===
+        "trial" &&
+
+      Number(
+        school.trialEndsAt || 0
+      ) > now
     ) {
 
       return true;
     }
 
     // =====================================
-    // 🔥 EXPIRED
+    // EXPIRED
     // =====================================
     await update(
-      ref(db, `schools/${getSchoolId()}`),
+      ref(
+        db,
+        `schools/${activeSchoolId}`
+      ),
       {
-        subscriptionStatus: "expired"
+        subscriptionStatus:
+          "expired"
       }
     );
 
@@ -5678,17 +5728,25 @@ async function checkSubscriptionAccess() {
 
   } catch (err) {
 
-    console.error(err);
+    console.error(
+      "Subscription Error:",
+      err
+    );
 
     Swal.fire({
       icon: "error",
-      title: "Subscription Error",
-      text: err.message
+      title:
+        "Subscription Error",
+      text:
+        err.message ||
+        "Unable to verify subscription."
     });
 
     return false;
   }
 }
+
+
 
 /* ======================================================
    GLOBAL ACCESS CONTROL
@@ -6289,7 +6347,7 @@ async function secureAccessCheck() {
 }
 
 /* ======================================================
-   🔥 LIVE SUBSCRIPTION WATCHER (FINAL FIX)
+   🔥 LIVE SUBSCRIPTION WATCHER (OPTIMIZED)
 ====================================================== */
 
 let trialTimer = null;
@@ -6298,32 +6356,59 @@ function startSubscriptionWatcher() {
 
   clearInterval(trialTimer);
 
+  let cachedSchool = null;
+  let lastFetch = 0;
+
   trialTimer = setInterval(async () => {
 
     try {
 
-      const schoolId = getSchoolId();
+      const schoolId =
+        getSchoolId();
 
-if (!schoolId) return;
-
-      const snap =
-        await get(
-          ref(db, `schools/${getSchoolId()}`)
-        );
-
-      if (!snap.exists()) return;
-
-      const school =
-        snap.val();
+      if (!schoolId) return;
 
       const now =
         Date.now();
 
       // =====================================
+      // REFRESH FROM FIREBASE EVERY 60 SECONDS
+      // =====================================
+      if (
+        !cachedSchool ||
+        now - lastFetch > 60000
+      ) {
+
+        const snap =
+          await get(
+            ref(
+              db,
+              `schools/${schoolId}`
+            )
+          );
+
+        if (!snap.exists()) {
+
+          clearInterval(trialTimer);
+          return;
+        }
+
+        cachedSchool =
+          snap.val();
+
+        lastFetch =
+          now;
+      }
+
+      const school =
+        cachedSchool;
+
+      // =====================================
       // MANUAL LOCK
       // =====================================
-
-      if (school.locked === true) {
+      if (
+        school.locked === true
+      ) {
 
         clearInterval(trialTimer);
 
@@ -6336,78 +6421,119 @@ if (!schoolId) return;
       }
 
       // =====================================
-      // TRIAL EXPIRED
+      // ACTIVE TRIAL
       // =====================================
-
       if (
         school.subscriptionStatus ===
-          "trial" &&
-        now >= school.trialEndsAt
+        "trial"
       ) {
 
-        clearInterval(trialTimer);
+        const trialEndsAt =
+          Number(
+            school.trialEndsAt || 0
+          );
 
-        await update(
-          ref(db, `schools/${getSchoolId()}`),
-          {
-            subscriptionStatus:
-              "expired"
+        if (
+          trialEndsAt > 0 &&
+          now >= trialEndsAt
+        ) {
+
+          clearInterval(trialTimer);
+
+          try {
+
+            await update(
+              ref(
+                db,
+                `schools/${schoolId}`
+              ),
+              {
+                subscriptionStatus:
+                  "expired"
+              }
+            );
+
+          } catch (e) {
+
+            console.warn(
+              "Could not update expired trial:",
+              e
+            );
           }
-        );
 
-        lockEntireSystem(
-          "Trial Expired",
-          "Please subscribe to continue."
-        );
+          lockEntireSystem(
+            "Trial Expired",
+            "Please subscribe to continue."
+          );
 
-        return;
+          return;
+        }
       }
 
       // =====================================
-      // SUBSCRIPTION EXPIRED
+      // ACTIVE SUBSCRIPTION
       // =====================================
-
       if (
         school.subscriptionStatus ===
-          "active" &&
-        school.subscriptionEndsAt &&
-        now >=
-          school.subscriptionEndsAt
+        "active"
       ) {
 
-        clearInterval(trialTimer);
+        const subscriptionEndsAt =
+          Number(
+            school.subscriptionEndsAt || 0
+          );
 
-        await update(
-          ref(db, `schools/${getSchoolId()}`),
-          {
-            subscriptionStatus:
-              "expired"
+        if (
+          subscriptionEndsAt > 0 &&
+          now >= subscriptionEndsAt
+        ) {
+
+          clearInterval(trialTimer);
+
+          try {
+
+            await update(
+              ref(
+                db,
+                `schools/${schoolId}`
+              ),
+              {
+                subscriptionStatus:
+                  "expired"
+              }
+            );
+
+          } catch (e) {
+
+            console.warn(
+              "Could not update expired subscription:",
+              e
+            );
           }
-        );
 
-        lockEntireSystem(
-          "Subscription Expired",
-          "Please renew subscription."
-        );
+          lockEntireSystem(
+            "Subscription Expired",
+            "Please renew your subscription."
+          );
 
+          return;
+        }
       }
 
     } catch (err) {
 
       console.error(
-        "Watcher Error:",
+        "Subscription Watcher Error:",
         err
       );
 
     }
 
-  }, 1000);
+  }, 10000); // check every 10 seconds
 }
-/* ======================================================
-   🔥 LIVE SUBSCRIPTION UI (FINAL FIX)
-====================================================== */
-
 let subscriptionUIInterval = null;
+let subscriptionUICache = null;
+let subscriptionLastFetch = 0;
 
 function startSubscriptionUI() {
 
@@ -6418,11 +6544,12 @@ function startSubscriptionUI() {
     try {
 
       // =====================================
-      // WAIT FOR SCHOOL ID
+      // ACTIVE SCHOOL
       // =====================================
-const schoolId = getSchoolId();
+      const schoolId =
+        getSchoolId();
 
-if (!schoolId) return;
+      if (!schoolId) return;
 
       const planEl =
         document.getElementById(
@@ -6434,34 +6561,72 @@ if (!schoolId) return;
           "subscriptionCountdown"
         );
 
-      if (!planEl || !countdownEl)
-        return;
+      if (
+        !planEl ||
+        !countdownEl
+      ) return;
 
-      const snap =
-        await get(
-          ref(db, `schools/${getSchoolId()}`)
-        );
+      const now =
+        Date.now();
 
-      if (!snap.exists()) {
+      // =====================================
+      // REFRESH FIREBASE EVERY 60 SECONDS
+      // =====================================
+      if (
+        !subscriptionUICache ||
 
-        planEl.innerHTML =
-          "Plan: Not Found";
+        now -
+        subscriptionLastFetch >
+        60000
+      ) {
 
-        countdownEl.innerHTML =
-          "Remaining: -";
+        const snap =
+          await get(
+            ref(
+              db,
+              `schools/${schoolId}`
+            )
+          );
 
-        return;
+        if (!snap.exists()) {
+
+          planEl.innerHTML =
+            "Plan: Not Found";
+
+          countdownEl.innerHTML =
+            "Remaining: -";
+
+          return;
+        }
+
+        subscriptionUICache =
+          snap.val();
+
+        subscriptionLastFetch =
+          now;
       }
 
-      const school = snap.val();
+      const school =
+        subscriptionUICache;
 
-      const now = Date.now();
+      // =====================================
+      // PLAN INFO
+      // =====================================
+      planEl.innerHTML = `
+        Plan:
+        ${school.plan || "Free Trial"}
+        <br>
+        Status:
+        ${school.subscriptionStatus || "-"}
+        <br>
+        Amount:
+        KES ${school.amountPaid || 0}
+      `;
 
+      // =====================================
+      // END DATE
+      // =====================================
       let endTime = 0;
-
-      // =====================================
-      // DETERMINE END TIME
-      // =====================================
 
       if (
         school.subscriptionStatus ===
@@ -6469,7 +6634,9 @@ if (!schoolId) return;
       ) {
 
         endTime =
-          school.trialEndsAt || 0;
+          Number(
+            school.trialEndsAt || 0
+          );
       }
 
       if (
@@ -6478,25 +6645,14 @@ if (!schoolId) return;
       ) {
 
         endTime =
-          school.subscriptionEndsAt || 0;
+          Number(
+            school.subscriptionEndsAt || 0
+          );
       }
 
       // =====================================
-      // PLAN DISPLAY
+      // EXPIRED / NO TIMER
       // =====================================
-
-      planEl.innerHTML = `
-        Plan: ${school.plan || "Free Trial"}
-        <br>
-        Status: ${school.subscriptionStatus || "-"}
-        <br>
-        Amount: KES ${school.amountPaid || 0}
-      `;
-
-      // =====================================
-      // NO ACTIVE TIMER
-      // =====================================
-
       if (!endTime) {
 
         countdownEl.innerHTML =
@@ -6505,16 +6661,8 @@ if (!schoolId) return;
         return;
       }
 
-      // =====================================
-      // CALCULATE TIME
-      // =====================================
-
       const remaining =
-        endTime - now;
-
-      // =====================================
-      // EXPIRED
-      // =====================================
+        endTime - Date.now();
 
       if (remaining <= 0) {
 
@@ -6524,35 +6672,38 @@ if (!schoolId) return;
         return;
       }
 
+      // =====================================
+      // COUNTDOWN
+      // =====================================
       const days =
         Math.floor(
           remaining /
-          (1000 * 60 * 60 * 24)
+          86400000
         );
 
       const hours =
         Math.floor(
           (
             remaining %
-            (1000 * 60 * 60 * 24)
+            86400000
           ) /
-          (1000 * 60 * 60)
+          3600000
         );
 
       const mins =
         Math.floor(
           (
             remaining %
-            (1000 * 60 * 60)
+            3600000
           ) /
-          (1000 * 60)
+          60000
         );
 
       const secs =
         Math.floor(
           (
             remaining %
-            (1000 * 60)
+            60000
           ) / 1000
         );
 
@@ -6575,6 +6726,9 @@ if (!schoolId) return;
 
   }, 1000);
 }
+
+
+
 /* ================= LOGIN (FINAL PRODUCTION VERSION) ================= */
 
 window.login = async () => {
@@ -8689,7 +8843,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   loadStudents();
 
-  loadDashboardCharts(); // 🔥 ADD THIS
+
 
 });
 let filtersReady = false;
@@ -10016,25 +10170,18 @@ window.openEditFeeModal = async (year, feeId) => {
       showConfirmButton: false
     });
 
-    // ================= RELOAD =================
-    await loadFees();
+ // ================= RELOAD REMOVED =================
 
-    await loadFinanceSummary();
+} catch (err) {
 
-    if (typeof loadDashboardCharts === "function") {
-      await loadDashboardCharts();
-    }
+  console.error("Edit fee error:", err);
 
-  } catch (err) {
-
-    console.error("Edit fee error:", err);
-
-    Swal.fire(
-      "Error",
-      err.message || "Failed to edit fee",
-      "error"
-    );
-  }
+  Swal.fire(
+    "Error",
+    err.message || "Failed to edit fee",
+    "error"
+  );
+}
 };
 window.openRefundModal = async (year, feeId) => {
 
@@ -10309,25 +10456,16 @@ window.openRefundModal = async (year, feeId) => {
       showConfirmButton: false
     });
 
-    // ================= RELOAD =================
-    await loadFees();
+    } catch (err) {
 
-    await loadFinanceSummary();
+  console.error("Refund error:", err);
 
-    if (typeof loadDashboardCharts === "function") {
-      await loadDashboardCharts();
-    }
-
-  } catch (err) {
-
-    console.error("Refund error:", err);
-
-    Swal.fire(
-      "Error",
-      err.message || "Refund failed",
-      "error"
-    );
-  }
+  Swal.fire(
+    "Error",
+    err.message || "Refund failed",
+    "error"
+  );
+}
 };
 window.saveEditedFee = async () => {
 
