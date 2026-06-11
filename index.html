@@ -1624,6 +1624,54 @@ button.primary{
     print-color-adjust: exact;
   }
 }
+
+.primary-btn,
+.secondary-btn{
+  width:100%;
+  margin-bottom:10px;
+}
+
+.secondary-btn{
+  background:#2563eb;
+  color:white;
+}
+
+.primary-btn{
+  background:#16a34a;
+  color:white;
+}
+
+.modal-box {
+  position: relative;
+}
+
+/* CLOSE BUTTON FIX */
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  width: 32px;
+  height: 32px;
+
+  border-radius: 50%;
+  border: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #ef4444;
+  color: white;
+
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.close-btn:hover {
+  background: #dc2626;
+}
 </style>
 </head>
 
@@ -1634,8 +1682,11 @@ button.primary{
 
   <div class="auth-card">
 
-    <h2>RASM 360</h2>
-    <p class="subtitle">Smart School ERP System</p>
+    <!-- HEADER -->
+    <h2>🏫 RASM 360</h2>
+    <p class="subtitle">
+      Smart School ERP System
+    </p>
 
     <!-- ROLE -->
     <select id="role">
@@ -1644,45 +1695,117 @@ button.primary{
       <option value="parent">👨👩👧 Parent</option>
     </select>
 
-    <input id="schoolName" placeholder="🏫 School Name">
-    <input id="email" placeholder="📧 Email">
+    <!-- SCHOOL -->
+    <input
+      id="schoolName"
+      placeholder="🏫 School Name">
+
+    <!-- EMAIL -->
+    <input
+      id="email"
+      type="email"
+      placeholder="📧 Email Address">
 
     <!-- PASSWORD -->
     <div class="password-box">
-      <input id="password" type="password" placeholder="🔒 Password">
-      <span onclick="togglePassword()">👁️</span>
+
+      <input
+        id="password"
+        type="password"
+        placeholder="🔒 Password">
+
+      <span
+        onclick="togglePassword()"
+        style="cursor:pointer;">
+
+        👁️
+
+      </span>
+
     </div>
 
-    <!-- ================= REGISTER ================= -->
-    <button id="registerBtn" onclick="register()" class="primary-btn">
-      Create School (Start Free Trial)
+    <!-- LINKS -->
+    <div style="
+      display:flex;
+      justify-content:space-between;
+      margin-top:-6px;
+      margin-bottom:15px;
+      font-size:13px;
+    ">
+
+      <a href="#"
+         onclick="resetPassword();return false;"
+         style="
+           color:#2563eb;
+           text-decoration:none;
+           font-weight:600;
+         ">
+
+         Forgot Password?
+
+      </a>
+
+      <a href="#"
+         onclick="openPasswordModal();return false;"
+         style="
+           color:#16a34a;
+           text-decoration:none;
+           font-weight:600;
+         ">
+
+         Change Password
+
+      </a>
+
+    </div>
+
+    <!-- LOGIN -->
+    <button
+      onclick="login()"
+      class="secondary-btn">
+
+      🔓 Login
+
     </button>
 
-    <!-- ================= LOGIN ================= -->
-    <button onclick="login()" class="secondary-btn">
-      Login
+    <!-- REGISTER -->
+    <button
+      id="registerBtn"
+      onclick="register()"
+      class="primary-btn">
+
+      🚀 Create School
+      (Start Free Trial)
+
     </button>
 
-    <hr style="margin:15px 0;">
+    <hr style="
+      margin:18px 0;
+      border:none;
+      border-top:1px solid #e5e7eb;
+    ">
 
-<!-- ================= INFO PANEL ================= -->
-<div style="
-  font-size:13px;
-  color:#16a34a;
-  text-align:center;
-  font-weight:700;
-  line-height:1.8;
-">
+    <!-- INFO PANEL -->
+    <div style="
+      font-size:13px;
+      color:#16a34a;
+      text-align:center;
+      font-weight:700;
+      line-height:1.8;
+    ">
 
-  ✔ 2 Months  Free Trial<br>
+      ✔ 2 Months Free Trial<br>
 
-  ✔ Auto Subscription Activation<br>
-  ✔ Full School ERP System Access
+      ✔ Auto Subscription Activation<br>
 
+      ✔ Full School ERP Access<br>
+
+      ✔ Results, Fees, CBC & Reports
 
     </div>
 
   </div>
+
 </div>
 
 
@@ -1730,7 +1853,7 @@ button.primary{
     <!-- SCROLLABLE MENU -->
     <div class="sidebar-scroll">
 
- <!-- MAIN MENU -->
+
 <!-- MAIN MENU -->
 <div class="menu-section" id="mainMenu">
 
@@ -1797,13 +1920,25 @@ button.primary{
     onclick="show('eLearningSection')">
     🎓 E-Learning
   </button>
+<button id="menuChangePassword"
+    onclick="openPasswordModal()"
+    style="color:#16a34a;">
+    🔒 Change Password
+</button>
 
+<button id="menuUsers"
+        onclick="show('adminUsersPanel')">
+  👥 Create Users
+</button>
 </div>
+
 
 
 <!-- EXAMS -->
 <!-- MAIN MENU -->
-<div class="menu-section" id="mainMenu">
+<!-- EXAMS -->
+<div class="menu-section" id="examsMenu">
+
 
   <button
     id="menuExams"
@@ -1816,7 +1951,8 @@ button.primary{
 
   <div id="examsSubmenu" class="submenu">
 
-    <button id="menuRecordMarks"
+   
+ <button id="menuRecordMarks"
       onclick="show('recordMarksSection')">
       📝 Enter Marks
     </button>
@@ -2024,6 +2160,41 @@ button.primary{
         </button>
 
       </div>
+<div id="passwordModal"
+     class="modal-backdrop"
+     onclick="closePasswordModal()">
+
+  <div class="modal-box"
+       onclick="event.stopPropagation()">
+
+    <button
+      onclick="closePasswordModal()"
+      class="close-btn">
+      ✖
+    </button>
+
+    <h3>🔐 Change Password</h3>
+
+    <input id="currentPassword"
+           type="password"
+           placeholder="Current Password">
+
+    <input id="newPassword"
+           type="password"
+           placeholder="New Password">
+
+    <input id="confirmPassword"
+           type="password"
+           placeholder="Confirm Password">
+
+    <button onclick="changePassword()"
+            class="save-btn">
+      💾 Update Password
+    </button>
+
+  </div>
+
+</div>
 
       <!-- SUBSCRIPTION -->
       <div class="menu-section">
@@ -2068,7 +2239,14 @@ button.primary{
 <!-- ================= SCHOOL PROFILE MODAL ================= -->
 <div id="schoolProfileModal" class="modal-backdrop">
 
-  <div class="modal-box">
+  <div class="modal-box" style="
+      background:
+        linear-gradient(rgba(255,255,255,0.92), rgba(255,255,255,0.92)),
+        url('https://i.imgur.com/AKxlwWo.jpeg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+  ">
 
     <button onclick="closeSchoolProfileForm()" class="close-btn">
       ✖
@@ -2285,20 +2463,21 @@ button.primary{
   </div>
 
 <!-- =========================================
-       CREATE COURSE (WITH BACKGROUND)
+     CREATE COURSE
 ========================================= -->
-<div style="
-  background-image: url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f');
-  background-size: cover;
-  background-position: center;
-  padding:20px;
-  border-radius:16px;
-  margin-top:25px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.15);
-  position:relative;
-  overflow:hidden;
-">
 
+<div id="courseCreatorPanel"
+     class="teacher-admin-only"
+     style="
+       background-image:url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f');
+background-size:cover;
+       background-position:center;
+       padding:20px;
+       border-radius:16px;
+       margin-top:25px;
+       box-shadow:0 4px 12px rgba(0,0,0,0.15);
+       position:relative;
+    overflow:hidden;">
   <!-- DARK OVERLAY -->
   <div style="
     position:absolute;
@@ -2412,109 +2591,154 @@ button.primary{
 
   </div>
 
-  <!-- =========================================
-       ASSIGNMENTS
-  ========================================= -->
-  <div style="
+
+
+<!-- =========================================
+     ASSIGNMENT PUBLISHER
+========================================= -->
+<div id="assignmentPublisherPanel"
+     class="teacher-admin-only"
+     style="
+       margin-top:25px;
+       background:white;
+       padding:20px;
+       border-radius:16px;
+       box-shadow:0 4px 12px rgba(0,0,0,0.08);
+     ">
+
+  <h2 style="margin-bottom:15px;">
+    🚀 Publish Assignment
+  </h2>
+
+  <!-- ASSIGNMENT TITLE -->
+  <input
+    type="text"
+    id="assignmentTitle"
+    placeholder="Assignment Title"
+    style="
+      width:100%;
+      padding:12px;
+      border:1px solid #ccc;
+      border-radius:10px;
+      margin-bottom:10px;
+    "
+  >
+
+  <!-- DEADLINE -->
+  <input
+    type="date"
+    id="assignmentDeadline"
+    style="
+      width:100%;
+      padding:12px;
+      border:1px solid #ccc;
+      border-radius:10px;
+      margin-bottom:10px;
+    "
+  >
+
+  <!-- DURATION -->
+  <input
+    type="number"
+    id="assignmentDuration"
+    placeholder="Assignment Duration (Minutes)"
+    style="
+      width:100%;
+      padding:12px;
+      border:1px solid #ccc;
+      border-radius:10px;
+      margin-bottom:10px;
+    "
+  >
+
+  <!-- TARGET GRADE -->
+  <select
+    id="assignmentGrade"
+    style="
+      width:100%;
+      padding:12px;
+      border-radius:10px;
+      border:1px solid #ccc;
+      margin-bottom:10px;
+    "
+  >
+
+    <option value="">
+      Select Target Grade
+    </option>
+
+    <option>Grade 1</option>
+    <option>Grade 2</option>
+    <option>Grade 3</option>
+    <option>Grade 4</option>
+    <option>Grade 5</option>
+    <option>Grade 6</option>
+    <option>Grade 7</option>
+    <option>Grade 8</option>
+    <option>Grade 9</option>
+
+  </select>
+
+  <!-- QUESTIONS -->
+
+  <textarea
+    id="assignmentInstructions"
+    placeholder="Paste all questions here. Separate each question using ==="
+    style="
+      width:100%;
+      min-height:150px;
+      padding:12px;
+      border:1px solid #ccc;
+      border-radius:10px;
+      margin-bottom:15px;
+    "
+  ></textarea>
+
+  <!-- PUBLISH BUTTON -->
+
+  <button
+    onclick="publishAssignment()"
+    style="
+      background:linear-gradient(135deg,#22c55e,#16a34a);
+      color:white;
+      padding:12px 18px;
+      border:none;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:600;
+      width:100%;
+    "
+  >
+    🚀 Publish Assignment
+  </button>
+
+</div>
+
+
+<!-- =========================================
+     AVAILABLE ASSIGNMENTS
+     (EVERYONE CAN SEE)
+========================================= -->
+
+<div
+  style="
     margin-top:25px;
     background:white;
     padding:20px;
     border-radius:16px;
     box-shadow:0 4px 12px rgba(0,0,0,0.08);
-  ">
-
-    <h2 style="margin-bottom:15px;">
-      📝 Assignments
-    </h2>
-<!-- ASSIGNMENT TITLE -->
-<input
-  type="text"
-  id="assignmentTitle"
-  placeholder="Assignment Title"
->
-
-<!-- DEADLINE -->
-<input
-  type="date"
-  id="assignmentDeadline"
->
-
-<!-- DURATION -->
-<input
-  type="number"
-  id="assignmentDuration"
-  placeholder="Assignment Duration (Minutes)"
->
-
-<!-- TARGET GRADE -->
-<select
-  id="assignmentGrade"
-
-  style="
-    width:100%;
-    padding:12px;
-    border-radius:10px;
-    border:1px solid #ccc;
-    margin-top:10px;
   "
 >
 
-  <option value="">
-    Select Target Grade
-  </option>
+  <h2 style="margin-bottom:15px;">
+    📚 Available Assignments
+  </h2>
 
-  <option>Grade 1</option>
-  <option>Grade 2</option>
-  <option>Grade 3</option>
-  <option>Grade 4</option>
-  <option>Grade 5</option>
-  <option>Grade 6</option>
-  <option>Grade 7</option>
-  <option>Grade 8</option>
-  <option>Grade 9</option>
-
-</select>
-
-<!-- QUESTIONS -->
-<textarea
-  id="assignmentInstructions"
-
-  placeholder="
-Paste all questions here.
-
-Separate each question using ===
-  "
-></textarea>
-
-<!-- PUBLISH -->
-<button
-  onclick="publishAssignment()"
-  style="
-    background:linear-gradient(135deg,#22c55e,#16a34a);
-    color:white;
-    padding:10px 16px;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-    font-weight:600;
-    display:flex;
-    align-items:center;
-    gap:8px;
-    transition:0.2s ease;
-    box-shadow:0 3px 10px rgba(0,0,0,0.15);
-  "
-  onmouseover="this.style.transform='translateY(-1px)'"
-  onmouseout="this.style.transform='translateY(0)'"
->
-  🚀 Publish Assignment
-</button>
-
-    <div id="assignmentContainer"
-      style="margin-top:20px;">
-    </div>
-
+  <div
+    id="assignmentContainer"
+    style="margin-top:15px;">
   </div>
-
+</div>
 </div>
   <!-- ================= STUDENTS ================= -->
 <div id="students" style="display:none;">
@@ -3348,17 +3572,19 @@ Peter Kimani"
 <!-- ===================== -->
 <div id="examResults" class="section" style="display:none; padding:20px;">
 
-<h2 style="
-  background:linear-gradient(135deg,#b91c1c,#ef4444);
-  color:white;
-  padding:15px 20px;
-  border-radius:12px;
-  margin-bottom:15px;
-  box-shadow:0 6px 15px rgba(239,68,68,0.35);
-">
-  📄 Exam Results ......Powered By Rasm 360 Tech Kenya
-</h2>
-
+<div style="text-align:center;">
+  <h2 style="
+    display:inline-block;
+    background:linear-gradient(135deg,#b91c1c,#ef4444);
+    color:white;
+    padding:15px 20px;
+    border-radius:12px;
+    margin-bottom:15px;
+    box-shadow:0 6px 15px rgba(239,68,68,0.35);
+  ">
+    📄 Exam Results ......Powered By Rasm 360 Tech Kenya
+  </h2>
+</div>
 <!-- ================= FILTER GUIDE ================= -->
 
 <div style="
@@ -4806,29 +5032,235 @@ background:rgba(0,0,0,0.5);justify-content:center;align-items:center;">
   </div>
 
 </div>
+<!-- =========================================
+     USER MANAGEMENT PANEL
+========================================= -->
 
+<div id="adminUsersPanel"
+     style="
+       margin-top:20px;
+       background-image:url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f');
+       background-size:cover;
+       background-position:center;
+       border-radius:20px;
+       overflow:hidden;
+       position:relative;
+       box-shadow:0 10px 30px rgba(0,0,0,0.15);
+     ">
 
+  <!-- DARK OVERLAY -->
+  <div style="
+       position:absolute;
+       top:0;
+       left:0;
+       width:100%;
+       height:100%;
+       background:rgba(0,0,0,0.60);
+     ">
+  </div>
+
+  <!-- CONTENT -->
+  <div style="
+       position:relative;
+       z-index:2;
+       padding:30px;
+       color:white;
+     ">
+
+    <h2 style="
+         margin-bottom:8px;
+         font-size:28px;
+       ">
+      👥 User Management
+    </h2>
+
+    <p style="
+         opacity:.9;
+         margin-bottom:25px;
+       ">
+      Create teacher and parent accounts for your school.
+    </p>
+
+    <!-- FORM CARD -->
+    <div style="
+         background:rgba(255,255,255,0.12);
+         backdrop-filter:blur(10px);
+         padding:20px;
+         border-radius:16px;
+         border:1px solid rgba(255,255,255,0.2);
+       ">
+
+      <!-- NAME -->
+      <input
+        id="newUserName"
+        placeholder="👤 Full Name"
+        style="
+          width:100%;
+          padding:14px;
+          border:none;
+          border-radius:12px;
+          margin-bottom:12px;
+          font-size:15px;
+        "
+      >
+
+      <!-- EMAIL -->
+      <input
+        id="newUserEmail"
+        type="email"
+        placeholder="📧 Email Address"
+        style="
+          width:100%;
+          padding:14px;
+          border:none;
+          border-radius:12px;
+          margin-bottom:12px;
+          font-size:15px;
+        "
+      >
+
+      <!-- PASSWORD -->
+      <input
+        id="newUserPassword"
+        type="password"
+        placeholder="🔐 Temporary Password"
+        style="
+          width:100%;
+          padding:14px;
+          border:none;
+          border-radius:12px;
+          margin-bottom:12px;
+          font-size:15px;
+        "
+      >
+
+      <!-- ROLE -->
+      <select
+        id="newUserRole"
+        style="
+          width:100%;
+          padding:14px;
+          border:none;
+          border-radius:12px;
+          margin-bottom:18px;
+          font-size:15px;
+        "
+      >
+        <option value="teacher">👨‍🏫 Teacher</option>
+        <option value="parent">👨‍👩‍👧 Parent</option>
+      </select>
+
+      <!-- BUTTON -->
+      <button
+        onclick="createUserAccount()"
+        style="
+          width:100%;
+          padding:14px;
+          border:none;
+          border-radius:12px;
+          cursor:pointer;
+          font-size:16px;
+          font-weight:700;
+          color:white;
+          background:linear-gradient(135deg,#22c55e,#16a34a);
+          box-shadow:0 5px 15px rgba(0,0,0,0.25);
+          transition:0.3s;
+        "
+        onmouseover="this.style.transform='translateY(-2px)'"
+        onmouseout="this.style.transform='translateY(0)'"
+      >
+        ➕ Create User Account
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
-import { getDatabase, ref, set, push, onValue, get, remove, update } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+
+import {
+
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut,
+
+  sendPasswordResetEmail,
+  updatePassword,
+  reauthenticateWithCredential,
+  EmailAuthProvider
+
+} from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
+
+import {
+
+  getDatabase,
+  ref,
+  set,
+  push,
+  onValue,
+  get,
+  remove,
+  update
+
+} from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
 
 /* ================= FIREBASE ================= */
+
 const firebaseConfig = {
+
   apiKey: "AIzaSyBgYEyV7iTEJYn7BbONTTGS2vpuhN1HepM",
-  authDomain: "wape-302f5.firebaseapp.com",
-  databaseURL: "https://wape-302f5-default-rtdb.firebaseio.com",
-  projectId: "wape-302f5",
-  storageBucket: "wape-302f5.firebasestorage.app",
-  messagingSenderId: "769934501138",
-  appId: "1:769934501138:web:d2fcde2dccd561e4f1ffcb"
+
+  authDomain:
+    "wape-302f5.firebaseapp.com",
+
+  databaseURL:
+    "https://wape-302f5-default-rtdb.firebaseio.com",
+
+  projectId:
+    "wape-302f5",
+
+  storageBucket:
+    "wape-302f5.firebasestorage.app",
+
+  messagingSenderId:
+    "769934501138",
+
+  appId:
+    "1:769934501138:web:d2fcde2dccd561e4f1ffcb"
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getDatabase(app);
+/* ================= PRIMARY APP ================= */
 
+const app =
+  initializeApp(firebaseConfig);
 
+const auth =
+  getAuth(app);
+
+const db =
+  getDatabase(app);
+
+/* ================= SECONDARY APP =================
+   Used for creating Teacher/Parent accounts
+   without logging out the Admin.
+================================================= */
+
+const secondaryApp =
+  initializeApp(
+    firebaseConfig,
+    "SecondaryApp"
+  );
+
+const secondaryAuth =
+  getAuth(secondaryApp);
+window.secondaryAuth =
+  secondaryAuth;
 // ===================================
 // GLOBAL SCHOOL CONTEXT
 // ===================================
@@ -5233,8 +5665,6 @@ window.logout = async function () {
 
 /* ================= GLOBAL BUTTON FIX ================= */
 
-window.show = show;
-
 
 
 /* ================= REGISTER (ULTRA UPGRADED + SAAS READY + SECURE) ================= */
@@ -5305,12 +5735,12 @@ window.register = async () => {
     // CREATE AUTH USER
     // =========================
 
-    const userCredential =
-      await createUserWithEmailAndPassword(
-        auth,
-        userEmail,
-        userPassword
-      );
+      const userCredential =
+     await createUserWithEmailAndPassword(
+  secondaryAuth,
+  email,
+  password
+);
 
     const uid =
       userCredential.user.uid;
@@ -6965,7 +7395,12 @@ loginOverlay.style.display = "flex";
       userSnap.val();
 
     // =========================
-
+window.setCurrentUser({
+  uid,
+  role: userData.role,
+  schoolId: userData.schoolId,
+  email: userData.email
+});
 // =========================
 // STRICT SCHOOL ID
 // =========================
@@ -7089,54 +7524,47 @@ sessionStorage.setItem(
       schoolSnap.val();
 
 // =========================
-// SCHOOL OWNERSHIP CHECK
+// USER MUST BELONG TO SCHOOL
 // =========================
-if (
-  schoolData.ownerUid &&
-  schoolData.ownerUid !== uid
-) {
 
-  try {
-    await signOut(auth);
-  } catch (e) {}
+// =========================
+// GET USER PROFILE
+// =========================
+const userSnapRef = await get(ref(db, `users/${uid}`));
 
-  localStorage.clear();
-  sessionStorage.clear();
-
-  throw new Error(
-    "Unauthorized school access."
-  );
+if (!userSnapRef.exists()) {
+  throw new Error("User profile not found.");
 }
 
-    // =========================
-    // ACCOUNT SECURITY CHECKS
-    // =========================
-    if (
-      schoolData.deleted
-    ) {
 
-      throw new Error(
-        "This school account was deleted."
-      );
-    }
+// =========================
+// SCHOOL ASSIGNMENT CHECK
+// =========================
+if (!userData.schoolId) {
+  throw new Error("No school assigned to this user.");
+}
 
-    if (
-      schoolData.locked
-    ) {
+// =========================
+// SCHOOL MATCH CHECK (ISOLATION)
+// =========================
+if (userData.schoolId !== schoolId) {
+  throw new Error("User does not belong to this school.");
+}
 
-      throw new Error(
-        "This school account is locked."
-      );
-    }
+// =========================
+// ACCOUNT SECURITY CHECKS
+// =========================
+if (schoolData.deleted) {
+  throw new Error("This school account was deleted.");
+}
 
-    if (
-      schoolData.active === false
-    ) {
+if (schoolData.locked) {
+  throw new Error("This school account is locked.");
+}
 
-      throw new Error(
-        "This school account is inactive."
-      );
-    }
+if (schoolData.active === false) {
+  throw new Error("This school account is inactive.");
+}
 
     // =========================
     // SCHOOL NAME
@@ -7741,6 +8169,8 @@ if (
     style
   );
 }
+
+
 
 
 
@@ -22966,9 +23396,6 @@ window.saveSchoolProfile = async function () {
 
 };
 
-// =====================================
-// OPEN SCHOOL PROFILE FORM
-// =====================================
 window.openSchoolProfileForm = async function () {
 
   const modal =
@@ -22978,10 +23405,8 @@ window.openSchoolProfileForm = async function () {
 
   if (!modal) return;
 
-  modal.style.display =
-    modal.style.display === "none"
-      ? "block"
-      : "none";
+  // Always open
+  modal.style.display = "block";
 
   const schoolId = window.schoolId;
 
@@ -22992,7 +23417,6 @@ window.openSchoolProfileForm = async function () {
     );
 
     return;
-
   }
 
   try {
@@ -23007,23 +23431,19 @@ window.openSchoolProfileForm = async function () {
 
     document.getElementById(
       "profileSchoolName"
-    ).value =
-      data.name || "";
+    ).value = data.name || "";
 
     document.getElementById(
       "schoolMotto"
-    ).value =
-      data.motto || "";
+    ).value = data.motto || "";
 
     document.getElementById(
       "schoolAddress"
-    ).value =
-      data.address || "";
+    ).value = data.address || "";
 
     document.getElementById(
       "schoolLogo"
-    ).value =
-      data.logo || "";
+    ).value = data.logo || "";
 
   } catch (err) {
 
@@ -23035,7 +23455,6 @@ window.openSchoolProfileForm = async function () {
   }
 
 };
-
 // =====================================
 // ❌ CLOSE SCHOOL PROFILE FORM
 // =====================================
@@ -28132,8 +28551,20 @@ window.createCourse = async function () {
     // SCHOOL SESSION
     // =====================================
 
- const schoolId = window.schoolId;
+const schoolId =
+  window.schoolId ||
+  localStorage.getItem("schoolId");
+if (
+  window.currentUserRole === "parent"
+) {
 
+  return Swal.fire(
+    "Access Denied",
+    "Parents can only view learning materials.",
+    "warning"
+  );
+
+}
 if (!schoolId) {
   throw new Error("School ID missing. Please login again.");
 }
@@ -28343,10 +28774,14 @@ window.loadCourses = async function () {
     // SCHOOL SESSION
     // =====================================
 
-  const schoolId = window.schoolId;
+const schoolId =
+  window.schoolId ||
+  localStorage.getItem("schoolId");
 
 if (!schoolId) {
-  throw new Error("School ID missing. Please login again.");
+  throw new Error(
+    "School ID missing. Please login again."
+  );
 }
     if (!schoolId) return;
 
@@ -28818,6 +29253,15 @@ window.renderCourses = function(){
 
   container.innerHTML = "";
 
+  // USER ROLE
+  const currentUserRole =
+(window.currentUserRole || "")
+      .toLowerCase();
+
+  const isTeacher =
+    ["teacher","admin"]
+      .includes(currentUserRole);
+
   // EMPTY STATE
   if(courses.length === 0){
 
@@ -28932,56 +29376,24 @@ window.renderCourses = function(){
         ">
 
           <!-- OPEN -->
-         <!-- OPEN -->
-<button
-
-  onclick="
-    ${course.locked
-      ? `Swal.fire(
-          'Locked',
-          'This course is locked by the teacher',
-          'warning'
-        )`
-      : `openCourse('${course.id}')`
-    }
-  "
-
-  style="
-    background:
-      ${course.locked
-        ? '#94a3b8'
-        : '#2563eb'};
-
-    color:white;
-
-    border:none;
-
-    padding:10px 14px;
-
-    border-radius:8px;
-
-    cursor:pointer;
-
-    font-weight:600;
-  "
->
-
-  ${course.locked
-    ? '🔒 Locked'
-    : '📖 Open Course'}
-
-</button>
-
-          <!-- LOCK / UNLOCK -->
           <button
 
-          onclick="toggleCourseLock('${course.id}')"
+            onclick="
+              ${course.locked
+                ? `Swal.fire(
+                    'Locked',
+                    'This course is locked by the teacher',
+                    'warning'
+                  )`
+                : `openCourse('${course.id}')`
+              }
+            "
 
             style="
               background:
                 ${course.locked
-                  ? '#16a34a'
-                  : '#f59e0b'};
+                  ? '#94a3b8'
+                  : '#2563eb'};
 
               color:white;
 
@@ -28998,49 +29410,85 @@ window.renderCourses = function(){
           >
 
             ${course.locked
-              ? '🔓 Unlock'
-              : '🔒 Lock'}
+              ? '🔒 Locked'
+              : '📖 Open Course'}
 
           </button>
 
-          <!-- EDIT -->
-          <button
+          ${isTeacher ? `
 
-          onclick="editCourse('${course.id}')"
-            style="
-              background:#2563eb;
-              color:white;
-              border:none;
-              padding:10px 14px;
-              border-radius:8px;
-              cursor:pointer;
-              font-weight:600;
-            "
-          >
+            <!-- LOCK / UNLOCK -->
+            <button
 
-            ✏ Edit
+              onclick="toggleCourseLock('${course.id}')"
 
-          </button>
+              style="
+                background:
+                  ${course.locked
+                    ? '#16a34a'
+                    : '#f59e0b'};
 
-          <!-- DELETE -->
-          <button
+                color:white;
 
-      onclick="deleteCourse('${course.id}')"
+                border:none;
 
-            style="
-              background:#dc2626;
-              color:white;
-              border:none;
-              padding:10px 14px;
-              border-radius:8px;
-              cursor:pointer;
-              font-weight:600;
-            "
-          >
+                padding:10px 14px;
 
-            🗑 Delete
+                border-radius:8px;
 
-          </button>
+                cursor:pointer;
+
+                font-weight:600;
+              "
+            >
+
+              ${course.locked
+                ? '🔓 Unlock'
+                : '🔒 Lock'}
+
+            </button>
+
+            <!-- EDIT -->
+            <button
+
+              onclick="editCourse('${course.id}')"
+
+              style="
+                background:#2563eb;
+                color:white;
+                border:none;
+                padding:10px 14px;
+                border-radius:8px;
+                cursor:pointer;
+                font-weight:600;
+              "
+            >
+
+              ✏ Edit
+
+            </button>
+
+            <!-- DELETE -->
+            <button
+
+              onclick="deleteCourse('${course.id}')"
+
+              style="
+                background:#dc2626;
+                color:white;
+                border:none;
+                padding:10px 14px;
+                border-radius:8px;
+                cursor:pointer;
+                font-weight:600;
+              "
+            >
+
+              🗑 Delete
+
+            </button>
+
+          ` : ""}
 
         </div>
 
@@ -29048,23 +29496,49 @@ window.renderCourses = function(){
 
     `;
   });
-};
 
+};
 // =========================================
-// TOGGLE COURSE LOCK
+// TOGGLE COURSE LOCK (SECURED)
 // =========================================
 
 window.toggleCourseLock =
 async function(id){
 
+  const role =
+(window.currentUserRole || "")
+      .toLowerCase();
+
+  const isTeacher =
+    ["teacher","admin"].includes(role);
+
+  const isParent =
+    role === "parent";
+
+  // =========================
+  // ROLE PROTECTION
+  // =========================
+  if(!isTeacher){
+
+    Swal.fire(
+      "Access Denied",
+      isParent
+        ? "Parents cannot lock or unlock courses."
+        : "You are not allowed to perform this action.",
+      "error"
+    );
+
+    return;
+  }
+
   try{
 
     const schoolId = window.schoolId;
 
-if (!schoolId) {
-  console.warn("schoolId not ready");
-  return;
-}
+    if (!schoolId) {
+      console.warn("schoolId not ready");
+      return;
+    }
 
     const course =
       courses.find(c => c.id === id);
@@ -29075,14 +29549,12 @@ if (!schoolId) {
       !course.locked;
 
     await update(
-
       ref(
         db,
         `schools/${schoolId}/courses/${course.id}`
       ),
-
       {
-        locked:course.locked
+        locked: course.locked
       }
     );
 
@@ -29165,6 +29637,32 @@ window.openCourse = function(id){
 
 window.editCourse = function(id){
 
+  const role =
+ (window.currentUserRole || "")
+      .toLowerCase();
+
+  const isTeacher =
+    ["teacher","admin"].includes(role);
+
+  const isParent =
+    role === "parent";
+
+  // =========================
+  // ROLE PROTECTION
+  // =========================
+  if(!isTeacher){
+
+    Swal.fire(
+      "Access Denied",
+      isParent
+        ? "Parents cannot edit courses."
+        : "You are not allowed to edit courses.",
+      "error"
+    );
+
+    return;
+  }
+
   const course =
     courses.find(c => c.id === id);
 
@@ -29172,9 +29670,9 @@ window.editCourse = function(id){
 
   Swal.fire({
 
-    title:"Edit Course",
+    title: "Edit Course",
 
-    html:`
+    html: `
 
       <input
         id="editCourseTitle"
@@ -29207,9 +29705,9 @@ window.editCourse = function(id){
 
     `,
 
-    showCancelButton:true,
+    showCancelButton: true,
 
-    confirmButtonText:"Save"
+    confirmButtonText: "Save"
 
   }).then(async(result)=>{
 
@@ -29217,55 +29715,40 @@ window.editCourse = function(id){
 
       try{
 
-       const schoolId = window.schoolId;
+        const schoolId = window.schoolId;
 
-if (!schoolId) {
-  console.warn("schoolId not ready");
-  return;
-}
+        if (!schoolId) {
+          console.warn("schoolId not ready");
+          return;
+        }
 
         const updatedData = {
 
           title:
-            document.getElementById(
-              "editCourseTitle"
-            ).value,
+            document.getElementById("editCourseTitle").value,
 
           teacher:
-            document.getElementById(
-              "editCourseTeacher"
-            ).value,
+            document.getElementById("editCourseTeacher").value,
 
           grade:
-            document.getElementById(
-              "editCourseGrade"
-            ).value,
+            document.getElementById("editCourseGrade").value,
 
           subject:
-            document.getElementById(
-              "editCourseSubject"
-            ).value,
+            document.getElementById("editCourseSubject").value,
 
           description:
-            document.getElementById(
-              "editCourseDescription"
-            ).value
+            document.getElementById("editCourseDescription").value
         };
 
         await update(
-
           ref(
             db,
             `schools/${schoolId}/courses/${id}`
           ),
-
           updatedData
         );
 
-        Object.assign(
-          course,
-          updatedData
-        );
+        Object.assign(course, updatedData);
 
         window.renderCourses();
 
@@ -29301,19 +29784,45 @@ if (!schoolId) {
 
 window.deleteCourse = function(id){
 
+  const role =
+(window.currentUserRole || "")
+      .toLowerCase();
+
+  const isTeacher =
+    ["teacher","admin"].includes(role);
+
+  const isParent =
+    role === "parent";
+
+  // =========================
+  // ROLE PROTECTION
+  // =========================
+  if(!isTeacher){
+
+    Swal.fire(
+      "Access Denied",
+      isParent
+        ? "Parents cannot delete courses."
+        : "You are not allowed to delete courses.",
+      "error"
+    );
+
+    return;
+  }
+
   Swal.fire({
 
-    title:"Delete Course?",
+    title: "Delete Course?",
 
-    text:"This action cannot be undone.",
+    text: "This action cannot be undone.",
 
-    icon:"warning",
+    icon: "warning",
 
-    showCancelButton:true,
+    showCancelButton: true,
 
-    confirmButtonColor:"#dc2626",
+    confirmButtonColor: "#dc2626",
 
-    confirmButtonText:"Delete"
+    confirmButtonText: "Delete"
 
   }).then(async(result) => {
 
@@ -29323,13 +29832,12 @@ window.deleteCourse = function(id){
 
         const schoolId = window.schoolId;
 
-if (!schoolId) {
-  console.warn("schoolId not ready");
-  return;
-}
+        if (!schoolId) {
+          console.warn("schoolId not ready");
+          return;
+        }
 
         await remove(
-
           ref(
             db,
             `schools/${schoolId}/courses/${id}`
@@ -29363,8 +29871,7 @@ if (!schoolId) {
 
   });
 
-};// =========================================
-// CLEAR COURSE FORM
+};// CLEAR COURSE FORM
 // =========================================
 
 window.clearCourseForm = function(){
@@ -29407,7 +29914,17 @@ window.publishAssignment = async function () {
     // =====================================
 
   const schoolId = window.schoolId;
+if (
+  window.currentUserRole === "parent"
+) {
 
+  return Swal.fire(
+    "Access Denied",
+    "Parents cannot publish assignments.",
+    "warning"
+  );
+
+}
 if (!schoolId) {
   throw new Error("School ID missing. Please login again.");
 }
@@ -29684,18 +30201,25 @@ if (!schoolId) {
 window.renderAssignments = function () {
 
   const container =
-    document.getElementById(
-      "assignmentContainer"
-    );
+    document.getElementById("assignmentContainer");
 
   if (!container) return;
 
   container.innerHTML = "";
 
-  // =========================================
-  // EMPTY STATE
-  // =========================================
+  // =========================
+  // USER ROLE
+  // =========================
+  const currentUserRole =
+ (window.currentUserRole || "")
 
+  const isTeacher =
+    ["teacher", "admin"].includes(currentUserRole);
+
+  const isParent =
+    currentUserRole === "parent";
+
+  // EMPTY STATE
   if (assignments.length === 0) {
 
     container.innerHTML = `
@@ -29711,38 +30235,23 @@ window.renderAssignments = function () {
     return;
   }
 
-  // =========================================
   // LOOP ASSIGNMENTS
-  // =========================================
-
   assignments.forEach(a => {
 
-    const dueDate =
-      new Date(a.deadline);
+    const dueDate = new Date(a.deadline);
+    const now = new Date();
+    const expired = now > dueDate;
 
-    const now =
-      new Date();
-
-    const expired =
-      now > dueDate;
-
-    // =========================================
     // QUESTIONS DISPLAY
-    // =========================================
-
     const questionsHTML =
       a.questions.map((q, index) => `
-
         <div style="
           margin-bottom:15px;
           padding:14px;
           background:#f8fafc;
           border-radius:10px;
         ">
-
-          <b>
-            Question ${index + 1}
-          </b>
+          <b>Question ${index + 1}</b>
 
           <div style="
             margin-top:8px;
@@ -29750,77 +30259,43 @@ window.renderAssignments = function () {
           ">
             ${q}
           </div>
-
         </div>
-
       `).join("");
 
-    // =========================================
-    // DYNAMIC QUESTION FLOW
-    // =========================================
-
+    // DYNAMIC FLOW
     const dynamicAnswersHTML = `
-
-      <div
-        id="questionContainer-${a.id}"
-      >
-
+      <div id="questionContainer-${a.id}">
         ${a.questions.map((q,index)=>`
-
           <div
-
             id="questionBlock-${a.id}-${index}"
-
             style="
               margin-top:18px;
-
-              display:
-                ${index === 0
-                  ? 'block'
-                  : 'none'};
+              display:${index === 0 ? 'block' : 'none'};
             "
-
           >
 
-            <!-- QUESTION -->
             <div style="
               background:#f8fafc;
               padding:14px;
               border-radius:10px;
               margin-bottom:10px;
             ">
-
-              <b>
-                Question ${index + 1}
-              </b>
-
-              <div style="
-                margin-top:8px;
-                line-height:1.7;
-              ">
+              <b>Question ${index + 1}</b>
+              <div style="margin-top:8px; line-height:1.7;">
                 ${q}
               </div>
-
             </div>
 
-            <!-- ANSWER -->
-       <textarea
-  id="answer-${a.id}-${index}"
-  ${index !== 0 ? "disabled" : ""}
-  oninput="unlockNextQuestion('${a.id}', ${index})"
-></textarea>
+            <textarea
+              id="answer-${a.id}-${index}"
+              ${index !== 0 ? "disabled" : ""}
+              oninput="unlockNextQuestion('${a.id}', ${index})"
+            ></textarea>
 
           </div>
-
         `).join("")}
-
       </div>
-
     `;
-
-    // =========================================
-    // MAIN CARD
-    // =========================================
 
     container.innerHTML += `
 
@@ -29837,112 +30312,66 @@ window.renderAssignments = function () {
         <div style="
           display:flex;
           justify-content:space-between;
-          align-items:flex-start;
           flex-wrap:wrap;
           gap:10px;
         ">
 
-          <h2 style="
-            margin:0;
-            color:#0f172a;
-          ">
+          <h2 style="margin:0;color:#0f172a;">
             📝 ${a.title}
           </h2>
 
           <div style="
-            background:
-              ${expired
-                ? '#dc2626'
-                : '#16a34a'};
-
+            background:${expired ? '#dc2626' : '#16a34a'};
             color:white;
-
             padding:6px 12px;
-
             border-radius:20px;
-
             font-size:12px;
-
             font-weight:bold;
           ">
-
-            ${expired
-              ? '⛔ Closed'
-              : '✅ Active'}
-
+            ${expired ? '⛔ Closed' : '✅ Active'}
           </div>
 
         </div>
 
-        <!-- DEADLINE -->
-        <p style="
-          color:#dc2626;
-          font-weight:bold;
-          margin-top:12px;
-        ">
-          ⏰ Deadline:
-          ${a.deadline}
+        <!-- META -->
+        <p style="color:#dc2626;font-weight:bold;">
+          ⏰ Deadline: ${a.deadline}
         </p>
-<br>
 
-🎓 Target Grade:
-${a.grade}
-        <!-- DURATION -->
-        <p style="
-          color:#2563eb;
-          font-weight:bold;
-        ">
-          ⏱ Duration:
-          ${a.duration} Minutes
+        🎓 Target Grade: ${a.grade}
+
+        <p style="color:#2563eb;font-weight:bold;">
+          ⏱ Duration: ${a.duration} Minutes
         </p>
 
         <!-- QUESTIONS -->
-        <div style="
-          margin-top:15px;
-          line-height:1.7;
-          color:#334155;
-        ">
-
+        <div style="margin-top:15px;color:#334155;">
           ${questionsHTML}
-
         </div>
 
-        <!-- SUBMISSION STATS -->
+        <!-- STATS (HIDDEN FROM PARENTS) -->
+        ${isTeacher ? `
         <div style="
           margin-top:15px;
           font-size:14px;
           color:#64748b;
         ">
-
-          📥 Submissions:
-          ${(a.submissions || []).length}
-
+          📥 Submissions: ${(a.submissions || []).length}
           <br>
-
-          📚 Total Questions:
-          ${a.questions.length}
-
+          📚 Total Questions: ${a.questions.length}
         </div>
+        ` : ""}
 
-        <!-- STUDENT SUBMISSION -->
-        <div
+        <!-- STUDENT AREA -->
+        <div id="submissionArea-${a.id}" style="
+          margin-top:18px;
+          padding-top:18px;
+          border-top:1px solid #e2e8f0;
+        ">
 
-          id="submissionArea-${a.id}"
-
-          style="
-            margin-top:18px;
-            padding-top:18px;
-            border-top:1px solid #e2e8f0;
-          "
-        >
-
-          <!-- LEARNER NAME -->
           <input
-
             id="studentName-${a.id}"
-
             placeholder="Learner Name"
-
             style="
               width:100%;
               padding:12px;
@@ -29950,124 +30379,76 @@ ${a.grade}
               border:1px solid #ccc;
               margin-bottom:10px;
             "
-
           >
 
-          <!-- DYNAMIC ANSWERS -->
           ${dynamicAnswersHTML}
-<!-- PROGRESS -->
-<div
 
-  id="progress-${a.id}"
+          <!-- PROGRESS -->
+          <div id="progress-${a.id}" style="
+            margin-top:15px;
+            padding:12px;
+            background:#eff6ff;
+            border:1px solid #bfdbfe;
+            border-radius:10px;
+            color:#1e3a8a;
+            font-weight:bold;
+            text-align:center;
+          ">
+            📘 Progress: 0 / ${a.questions.length} Questions Answered
+          </div>
 
-  style="
-    margin-top:15px;
-    padding:12px;
-    background:#eff6ff;
-    border:1px solid #bfdbfe;
-    border-radius:10px;
-    color:#1e3a8a;
-    font-weight:bold;
-    text-align:center;
-  "
->
-
-  📘 Progress:
-  0 / ${a.questions.length}
-  Questions Answered
-
-</div>
           <!-- TIMER -->
-          <div
+          <div id="timer-${a.id}" style="
+            margin-top:15px;
+            margin-bottom:12px;
+            font-weight:bold;
+            color:#dc2626;
+            font-size:15px;
+          "></div>
 
-            id="timer-${a.id}"
-
-            style="
-              margin-top:15px;
-              margin-bottom:12px;
-              font-weight:bold;
-              color:#dc2626;
-              font-size:15px;
-            "
-
-          ></div>
-
-          <!-- START BUTTON -->
+          <!-- START -->
           <button
-
-          onclick="startAssignment('${a.id}')"
-
-            ${expired ? 'disabled' : ''}
-
+            onclick="startAssignment('${a.id}')"
+            ${expired ? "disabled" : ""}
             style="
               margin-top:12px;
-
-              background:
-                ${expired
-                  ? '#94a3b8'
-                  : '#2563eb'};
-
+              background:${expired ? '#94a3b8' : '#2563eb'};
               color:white;
-
               border:none;
-
               padding:12px 18px;
-
               border-radius:10px;
-
               cursor:pointer;
-
-              font-weight:bold;
-
               width:100%;
+              font-weight:bold;
             "
-
           >
-
-            ${expired
-              ? '⛔ Assignment Closed'
-              : '▶ Start Assignment'}
-
+            ${expired ? '⛔ Assignment Closed' : '▶ Start Assignment'}
           </button>
 
-          <!-- SUBMIT BUTTON -->
+          <!-- SUBMIT -->
           <button
-
-          onclick="submitAssignment('${a.id}')"
-
+            onclick="submitAssignment('${a.id}')"
             id="submitBtn-${a.id}"
-
             style="
               margin-top:10px;
-
               background:#16a34a;
-
               color:white;
-
               border:none;
-
               padding:12px 18px;
-
               border-radius:10px;
-
               cursor:pointer;
-
-              font-weight:bold;
-
               width:100%;
-
               display:none;
+              font-weight:bold;
             "
-
           >
-
             📤 Submit Answers
-
           </button>
 
         </div>
 
-        <!-- TEACHER ACTIONS -->
+        <!-- TEACHER ONLY ACTIONS -->
+        ${isTeacher ? `
         <div style="
           margin-top:20px;
           display:flex;
@@ -30075,91 +30456,45 @@ ${a.grade}
           flex-wrap:wrap;
         ">
 
-          <!-- EDIT -->
-          <button
-
-         onclick="editAssignment('${a.id}')"
-
-            style="
-              background:#2563eb;
-              color:white;
-              border:none;
-              padding:10px 14px;
-              border-radius:8px;
-              cursor:pointer;
-            "
-
-          >
-
-            ✏ Edit Assignment
-
+          <button onclick="editAssignment('${a.id}')"
+            style="background:#2563eb;color:white;padding:10px 14px;border:none;border-radius:8px;">
+            ✏ Edit
           </button>
 
-          <!-- EXTEND -->
-          <button
-
-           onclick="extendDeadline('${a.id}')"
-
-            style="
-              background:#f59e0b;
-              color:white;
-              border:none;
-              padding:10px 14px;
-              border-radius:8px;
-              cursor:pointer;
-            "
-
-          >
-
-            ⏳ Extend Deadline
-
+          <button onclick="extendDeadline('${a.id}')"
+            style="background:#f59e0b;color:white;padding:10px 14px;border:none;border-radius:8px;">
+            ⏳ Extend
           </button>
 
-          <!-- DELETE -->
-          <button
-
-        onclick="deleteAssignment('${a.id}')"
-            style="
-              background:#dc2626;
-              color:white;
-              border:none;
-              padding:10px 14px;
-              border-radius:8px;
-              cursor:pointer;
-            "
-
-          >
-
+          <button onclick="deleteAssignment('${a.id}')"
+            style="background:#dc2626;color:white;padding:10px 14px;border:none;border-radius:8px;">
             🗑 Delete
-
           </button>
 
         </div>
+        ` : ""}
 
-        <!-- SUBMISSIONS -->
+        <!-- SUBMISSIONS (TEACHER ONLY) -->
+        ${isTeacher ? `
         <div style="
           margin-top:25px;
           padding-top:20px;
           border-top:1px solid #e2e8f0;
         ">
-
-          <h3>
-            📚 Learner Submissions
-          </h3>
+          <h3>📚 Learner Submissions</h3>
 
           ${renderSubmissions({
-  ...a,
-  submissions: a.submissions || []
-})}
-
+            ...a,
+            submissions: a.submissions || []
+          })}
         </div>
+        ` : ""}
 
       </div>
 
     `;
   });
-};
-// =========================================
+};// =========================================
 // SUBMIT ASSIGNMENT
 // FIREBASE COMPLIANT
 // =========================================
@@ -31386,7 +31721,20 @@ window.loadAll = async function () {
 
       typeof loadHostel === "function"
         ? loadHostel()
+        : Promise.resolve(),
+
+      // =====================================
+      // E-LEARNING
+      // =====================================
+
+      typeof loadCourses === "function"
+        ? loadCourses()
+        : Promise.resolve(),
+
+      typeof loadAssignments === "function"
+        ? loadAssignments()
         : Promise.resolve()
+
     ];
 
     const results =
@@ -31400,14 +31748,31 @@ window.loadAll = async function () {
           `❌ Loader ${index} failed:`,
           result.reason
         );
+
       }
+
     });
 
     if (
       typeof loadDashboardCharts ===
       "function"
     ) {
+
       await loadDashboardCharts();
+
+    }
+
+    // =====================================
+    // APPLY E-LEARNING VISIBILITY
+    // =====================================
+
+    if (
+      typeof configureELearningPermissions ===
+      "function"
+    ) {
+
+      configureELearningPermissions();
+
     }
 
     console.log(
@@ -31426,11 +31791,797 @@ window.loadAll = async function () {
     console.timeEnd("loadAll");
 
   }
+
 };
 
+window.resetPassword = async function () {
 
+  const email =
+    document.getElementById("email")
+    ?.value
+    ?.trim();
 
+  if (!email) {
 
+    Swal.fire(
+      "Email Required",
+      "Enter your email address first.",
+      "warning"
+    );
+
+    return;
+  }
+
+  try {
+
+    await sendPasswordResetEmail(
+      auth,
+      email
+    );
+
+    Swal.fire(
+      "Success",
+      "Password reset link sent.",
+      "success"
+    );
+
+  } catch (err) {
+
+    console.error(err);
+
+    Swal.fire(
+      "Error",
+      err.message,
+      "error"
+    );
+
+  }
+
+};
+
+window.openPasswordModal = function () {
+
+  const modal =
+    document.getElementById(
+      "passwordModal"
+    );
+
+  if (!modal) {
+
+    console.error(
+      "❌ passwordModal not found"
+    );
+
+    return;
+  }
+
+  modal.style.display = "flex";
+
+};
+window.closePasswordModal = function () {
+
+  const modal =
+    document.getElementById(
+      "passwordModal"
+    );
+
+  if (!modal) return;
+
+  modal.style.display = "none";
+
+};
+
+/* ================= CHANGE PASSWORD ================= */
+
+window.changePassword = async function () {
+
+  const user = auth.currentUser;
+
+  if (!user) {
+
+    Swal.fire(
+      "Session Expired",
+      "Please login again.",
+      "error"
+    );
+
+    return;
+  }
+
+  const currentPassword =
+    document.getElementById(
+      "currentPassword"
+    )?.value?.trim();
+
+  const newPassword =
+    document.getElementById(
+      "newPassword"
+    )?.value?.trim();
+
+  const confirmPassword =
+    document.getElementById(
+      "confirmPassword"
+    )?.value?.trim();
+
+  if (
+    !currentPassword ||
+    !newPassword ||
+    !confirmPassword
+  ) {
+
+    Swal.fire(
+      "Missing Information",
+      "Fill all fields.",
+      "warning"
+    );
+
+    return;
+  }
+
+  if (newPassword.length < 6) {
+
+    Swal.fire(
+      "Weak Password",
+      "Password must be at least 6 characters.",
+      "warning"
+    );
+
+    return;
+  }
+
+  if (newPassword !== confirmPassword) {
+
+    Swal.fire(
+      "Mismatch",
+      "Passwords do not match.",
+      "error"
+    );
+
+    return;
+  }
+
+  if (currentPassword === newPassword) {
+
+    Swal.fire(
+      "Invalid Password",
+      "New password must be different from current password.",
+      "warning"
+    );
+
+    return;
+  }
+
+  try {
+
+    Swal.fire({
+      title: "Updating Password...",
+      text: "Please wait",
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
+
+    const credential =
+      EmailAuthProvider.credential(
+        user.email,
+        currentPassword
+      );
+
+    await reauthenticateWithCredential(
+      user,
+      credential
+    );
+
+    await updatePassword(
+      user,
+      newPassword
+    );
+
+    Swal.close();
+
+    Swal.fire(
+      "Success",
+      "Password updated successfully.",
+      "success"
+    );
+
+    document.getElementById(
+      "currentPassword"
+    ).value = "";
+
+    document.getElementById(
+      "newPassword"
+    ).value = "";
+
+    document.getElementById(
+      "confirmPassword"
+    ).value = "";
+
+    if (typeof closePasswordModal === "function") {
+      closePasswordModal();
+    }
+
+  } catch (err) {
+
+    console.error(
+      "Password Change Error:",
+      err
+    );
+
+    Swal.close();
+
+    let msg =
+      err.message ||
+      "Failed to update password.";
+
+    if (
+      err.code ===
+      "auth/wrong-password"
+    ) {
+      msg =
+        "Current password is incorrect.";
+    }
+
+    if (
+      err.code ===
+      "auth/too-many-requests"
+    ) {
+      msg =
+        "Too many attempts. Please try again later.";
+    }
+
+    if (
+      err.code ===
+      "auth/requires-recent-login"
+    ) {
+      msg =
+        "Please logout and login again before changing your password.";
+    }
+
+    Swal.fire(
+      "Error",
+      msg,
+      "error"
+    );
+
+  }
+
+};
+
+// =====================================================
+// 🔐 ROLE-BASED ACCESS CONTROL SYSTEM (FINAL WORKING)
+// =====================================================
+
+window.currentUser = null;
+window.currentUserRole = null;
+
+// =====================================================
+// ROLE PERMISSIONS
+// =====================================================
+
+const ROLE_PERMISSIONS = {
+
+ admin: [
+  "dashboard",
+  "students",
+  "teachers",
+  "attendanceSection",
+  "fees",
+  "supportStaff",
+  "transport",
+  "hostel",
+  "ict",
+  "inventory",
+  "library",
+  "adminUsersPanel",
+  "examManagement",
+
+  "eLearningSection"
+],
+
+  teacher: [
+    "dashboard",
+    "students",
+    "attendanceSection",
+    "examManagement",
+    "eLearningSection"
+  ],
+
+  parent: [
+    "dashboard",
+    "fees",
+    "eLearningSection"
+  ]
+};
+
+// =====================================================
+// ALL EXAM PAGES
+// =====================================================
+const EXAM_SECTIONS = [
+
+  "recordMarksSection",
+  "examResults",
+  "subjectChampions",
+  "meritListSection",
+  "subjectPerformance",
+  "genderPerformance",
+  "levelSummary",
+  "groupByPathways",
+  "combineMarksByGrade",
+  "generateAssessmentReports",
+  "subjectRankingReport",
+  "generateBlankMerit",
+  "marksStatus"
+
+];
+
+// =====================================================
+// LOGIN SESSION
+// =====================================================
+
+window.setCurrentUser = function(user) {
+
+  window.currentUser = user;
+
+  window.currentUserRole =
+    (user.role || "")
+      .trim()
+      .toLowerCase();
+
+  localStorage.setItem(
+    "currentUser",
+    JSON.stringify(user)
+  );
+
+  console.log(
+    "✅ USER LOGIN ROLE:",
+    window.currentUserRole
+  );
+
+  window.applyRolePermissions();
+setTimeout(() => {
+
+  if (
+    typeof applyELearningPermissions ===
+    "function"
+  ) {
+
+    applyELearningPermissions();
+
+  }
+
+}, 300);
+};
+
+// =====================================================
+// LOAD SESSION
+// =====================================================
+
+window.loadCurrentUser = function() {
+
+  const saved =
+    localStorage.getItem("currentUser");
+
+  if (!saved) return;
+
+  try {
+
+    const user =
+      JSON.parse(saved);
+
+    window.setCurrentUser(user);
+
+  } catch (e) {
+
+    console.error(
+      "Session load failed:",
+      e
+    );
+
+  }
+};
+
+// =====================================================
+// CHECK ACCESS
+// =====================================================
+
+window.checkAccess = function(section) {
+
+  const role =
+    window.currentUserRole;
+
+  if (!role) return false;
+
+  const allowed =
+    ROLE_PERMISSIONS[role] || [];
+
+  return allowed.includes(section);
+};
+
+// =====================================================
+// SHOW SECTION
+// =====================================================
+window.show = function(section) {
+
+  const isExamSection =
+    EXAM_SECTIONS.includes(section);
+
+  // Exams permission
+  if (
+    isExamSection &&
+    !window.checkAccess("examManagement")
+  ) {
+
+    alert("⛔ Access denied");
+    return;
+  }
+
+  // Normal permissions
+  if (
+    !isExamSection &&
+    !window.checkAccess(section)
+  ) {
+
+    alert("⛔ Access denied");
+    return;
+  }
+
+  // ===================================
+  // CALL ORIGINAL SHOW FUNCTION
+  // ===================================
+
+  const sections =
+    document.querySelectorAll(".main > div");
+
+  sections.forEach(sec => {
+    sec.style.display = "none";
+  });
+
+  const target =
+    document.getElementById(section);
+
+  if (!target) {
+
+    console.warn(
+      "❌ Missing section:",
+      section
+    );
+
+    return;
+  }
+
+target.style.display = "block";
+
+if (
+  section === "eLearningSection" &&
+  typeof configureELearningPermissions === "function"
+) {
+  configureELearningPermissions();
+}
+
+  window.currentSection = section;
+
+  // ===================================
+  // RUN REPORT LOGIC
+  // ===================================
+
+  if (
+    typeof runSectionLogic ===
+    "function"
+  ) {
+
+    try {
+
+      runSectionLogic(section);
+
+    } catch (err) {
+
+      console.error(
+        "runSectionLogic error:",
+        err
+      );
+
+    }
+
+  }
+
+  console.log(
+    "📂 Opened Section:",
+    section
+  );
+
+};
+// =====================================================
+// APPLY ROLE PERMISSIONS
+// =====================================================
+
+window.applyRolePermissions = function() {
+
+  const role =
+    window.currentUserRole;
+
+  if (!role) return;
+
+  const allowed =
+    ROLE_PERMISSIONS[role] || [];
+
+  // Hide all pages
+
+  document
+    .querySelectorAll(".main > div[id]")
+    .forEach(sec => {
+      sec.style.display = "none";
+    });
+
+  // Sidebar permissions
+
+  document
+    .querySelectorAll(".sidebar button")
+    .forEach(btn => {
+
+      const onclick =
+        btn.getAttribute("onclick") || "";
+
+      let allowedBtn = false;
+
+      // Exams menu + submenu buttons
+
+      if (
+        btn.closest("#examsMenu") &&
+        allowed.includes("examManagement")
+      ) {
+        allowedBtn = true;
+      }
+
+      // Standard buttons
+
+      allowed.forEach(section => {
+
+        if (
+          onclick.includes(`'${section}'`) ||
+          onclick.includes(`"${section}"`)
+        ) {
+          allowedBtn = true;
+        }
+
+      });
+
+      // Utility buttons
+
+      if (
+        onclick.includes("logout") ||
+        onclick.includes("openSchoolProfileForm") ||
+        onclick.includes("openPasswordModal")
+      ) {
+        allowedBtn = true;
+      }
+
+      btn.style.display =
+        allowedBtn
+          ? "block"
+          : "none";
+
+    });
+
+  // Dashboard visible on login
+
+  const dashboard =
+    document.getElementById("dashboard");
+
+  if (
+    dashboard &&
+    allowed.includes("dashboard")
+  ) {
+    dashboard.style.display = "block";
+  }
+
+  // Close exams submenu initially
+
+  document
+    .getElementById("mainMenu")
+    ?.classList.remove("open");
+};
+
+// =====================================================
+// INIT
+// =====================================================
+
+window.addEventListener(
+  "load",
+  () => {
+    loadCurrentUser();
+  }
+);
+window.createUserAccount = async function() {
+
+  try {
+
+    const name =
+      document.getElementById("newUserName")
+      ?.value.trim();
+
+    const email =
+      document.getElementById("newUserEmail")
+      ?.value.trim();
+
+    const password =
+      document.getElementById("newUserPassword")
+      ?.value.trim();
+
+    const role =
+      document.getElementById("newUserRole")
+      ?.value;
+
+    if (
+      !name ||
+      !email ||
+      !password ||
+      !role
+    ) {
+
+      return Swal.fire({
+        icon: "warning",
+        title: "Missing Information",
+        text: "Fill all fields."
+      });
+    }
+
+    const cred =
+    await createUserWithEmailAndPassword(
+  secondaryAuth,
+  email,
+  password
+);
+
+    const uid =
+      cred.user.uid;
+
+    const schoolId =
+      window.schoolId ||
+      localStorage.getItem("schoolId");
+
+    const schoolName =
+      localStorage.getItem("schoolName");
+
+    await set(
+      ref(db, `users/${uid}`),
+      {
+        uid,
+        fullName: name,
+        email,
+        role,
+        schoolId,
+        schoolName,
+        active: true,
+        deleted: false,
+        createdAt: Date.now(),
+        lastLogin: 0
+      }
+    );
+
+    Swal.fire({
+      icon: "success",
+      title: "User Created",
+      text: `${role} account created successfully`
+    });
+
+    document.getElementById("newUserName").value = "";
+    document.getElementById("newUserEmail").value = "";
+    document.getElementById("newUserPassword").value = "";
+
+  } catch (error) {
+
+    console.error(error);
+
+    Swal.fire({
+      icon: "error",
+      title: "Creation Failed",
+      text: error.message
+    });
+  }
+};
+
+// =========================================
+// E-LEARNING ROLE PERMISSIONS
+// =========================================
+
+window.configureELearningPermissions = function () {
+
+  const role =
+    (window.currentUserRole || "")
+      .toLowerCase()
+      .trim();
+
+  const isParent =
+    role === "parent";
+
+  // =====================================
+  // CREATE COURSE PANEL
+  // =====================================
+
+  const creatorPanel =
+    document.getElementById(
+      "courseCreatorPanel"
+    );
+
+  if (creatorPanel) {
+
+    creatorPanel.style.display =
+      isParent
+        ? "none"
+        : "block";
+  }
+
+  // =====================================
+  // ASSIGNMENT PUBLISHER PANEL
+  // =====================================
+
+  const assignmentPublisher =
+    document.getElementById(
+      "assignmentPublisherPanel"
+    );
+
+  if (assignmentPublisher) {
+
+    assignmentPublisher.style.display =
+      isParent
+        ? "none"
+        : "block";
+  }
+
+  // =====================================
+  // EVERYONE CAN SEE COURSES
+  // =====================================
+
+  const coursesContainer =
+    document.getElementById(
+      "coursesContainer"
+    );
+
+  if (coursesContainer) {
+
+    coursesContainer.style.display =
+      "grid";
+  }
+
+  // =====================================
+  // EVERYONE CAN SEE ASSIGNMENTS
+  // =====================================
+
+  const assignmentContainer =
+    document.getElementById(
+      "assignmentContainer"
+    );
+
+  if (assignmentContainer) {
+
+    assignmentContainer.style.display =
+      "block";
+  }
+
+  console.log(
+    "🎓 E-Learning Permissions Applied:",
+    role
+  );
+
+};
+window.isAdmin = () =>
+  window.currentUserRole === "admin";
+
+window.isTeacher = () =>
+  window.currentUserRole === "teacher";
+
+window.isParent = () =>
+  window.currentUserRole === "parent";
+
+window.canManageCourses = () =>
+  ["admin","teacher"].includes(
+    window.currentUserRole
+  );
+
+window.canManageAssignments = () =>
+  ["admin","teacher"].includes(
+    window.currentUserRole
+  );
 
 </script>
 
