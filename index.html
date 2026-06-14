@@ -5592,40 +5592,165 @@ background:rgba(0,0,0,0.5);justify-content:center;align-items:center;">
   </div>
 
 </div>
-<!-- ===================== ASSIGNMENT HELP MARKET ===================== -->
-<div id="assignmentHelpSection" style="display:none; padding:20px;">
+<!-- ===================== ASSIGNMENT HELP MARKETPLACE ===================== -->
 
-  <h2>🧠 Assignment Help Marketplace</h2>
+<div id="assignmentHelpSection" style="display:none;padding:20px;">
 
-  <!-- POST ASSIGNMENT HELP -->
-  <div style="background:#f8fafc; padding:20px; border-radius:12px; margin-bottom:20px;">
+  <div style="
+    background:
+      linear-gradient(rgba(255,255,255,.95),rgba(255,255,255,.95)),
+      url('https://images.unsplash.com/photo-1509062522246-3755977927d7');
+    background-size:cover;
+    background-position:center;
+    border-radius:18px;
+    padding:25px;
+    margin-bottom:20px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+  ">
 
-    <h3>📌 Post a Question (Paid Help)</h3>
 
-    <input id="helpTitle" placeholder="Title (e.g Math Homework)" class="swal2-input">
+<h2 style="
+  margin:0;
+  color:#0f172a;
+  font-size:28px;
+  font-weight:700;
+">
+  🧠 Assignment Help Marketplace
+</h2>
 
-    <input id="helpSubject" placeholder="Subject" class="swal2-input">
+<p style="
+  margin-top:10px;
+  color:#64748b;
+  line-height:1.6;
+">
+  Submit your assignment and receive professional assistance from approved teachers.
+  Jobs become visible after deposit confirmation and admin approval.
+</p>
 
-    <input id="helpGrade" placeholder="Grade" class="swal2-input">
-
-    <textarea id="helpQuestion"
-      placeholder="Write your assignment question here..."
-      style="width:100%; min-height:120px; padding:12px; border-radius:10px; border:1px solid #ccc;">
-    </textarea>
-
-    <input id="helpPrice" type="number" placeholder="Set price (KES)" class="swal2-input">
-
-    <button onclick="postAssignmentHelp()"
-      style="background:#16a34a; color:white; padding:12px 18px; border:none; border-radius:8px; width:100%;">
-      💰 Post & Pay to Boost
-    </button>
 
   </div>
 
-  <!-- LIST OF HELP POSTS -->
+  <!-- ================= POST ASSIGNMENT ================= -->
+
+  <div style="
+    background:white;
+    padding:25px;
+    border-radius:18px;
+    box-shadow:0 5px 20px rgba(0,0,0,.06);
+    margin-bottom:25px;
+  ">
+
+
+<h3 style="
+  margin-top:0;
+  color:#1e293b;
+">
+  📌 Submit Assignment
+</h3>
+
+<div style="
+  background:#eff6ff;
+  border-left:5px solid #2563eb;
+  padding:12px;
+  border-radius:8px;
+  margin-bottom:15px;
+  color:#1e40af;
+  font-size:14px;
+">
+  💡 Separate multiple questions using <b>===</b><br>
+  Example:<br>
+  Question 1 === Question 2 === Question 3
+</div>
+
+<input
+  id="helpTitle"
+  class="swal2-input"
+  placeholder="Assignment Title"
+>
+
+<input
+  id="helpSubject"
+  class="swal2-input"
+  placeholder="Subject (Maths, English, Science...)"
+>
+
+<input
+  id="helpGrade"
+  class="swal2-input"
+  placeholder="Grade / Class"
+>
+
+<textarea
+  id="helpQuestion"
+  placeholder="Type your assignment questions here..."
+  style="
+    width:100%;
+    min-height:180px;
+    padding:15px;
+    border:1px solid #cbd5e1;
+    border-radius:12px;
+    resize:vertical;
+    font-size:15px;
+  ">
+</textarea>
+
+<!-- AUTO PRICE DISPLAY -->
+<div id="assignmentPricingPreview"
+  style="
+    margin-top:15px;
+    background:#f8fafc;
+    border:1px dashed #94a3b8;
+    padding:15px;
+    border-radius:12px;
+  ">
+
+  <h4 style="margin:0 0 10px 0;">
+    💰 Pricing Information
+  </h4>
+
+  <p style="margin:5px 0;">
+    Total Cost:
+    <b id="previewTotal">KES 0</b>
+  </p>
+
+  <p style="margin:5px 0;">
+    Deposit Required (50%):
+    <b id="previewDeposit">KES 0</b>
+  </p>
+
+  <p style="margin:5px 0;">
+    Balance After Completion:
+    <b id="previewBalance">KES 0</b>
+  </p>
+
+</div>
+
+<button
+  onclick="postAssignmentHelp()"
+  style="
+    width:100%;
+    margin-top:20px;
+    background:#16a34a;
+    color:white;
+    border:none;
+    border-radius:12px;
+    padding:14px;
+    font-size:16px;
+    font-weight:600;
+    cursor:pointer;
+  ">
+  🚀 Submit Assignment Request
+</button>
+
+
+  </div>
+
+  <!-- ================= JOBS ================= -->
+
   <div id="helpPostsContainer"></div>
 
 </div>
+
 <script type="module">
 import {
   initializeApp
@@ -28624,7 +28749,7 @@ setInterval(() => {
 // GLOBAL DATA
 // =========================================
 
-
+let courses = [];
 let assignments = [];
 window.courses = window.courses || [];
 window.assignments = window.assignments || [];
@@ -33626,72 +33751,226 @@ window.showResultsSection = function () {
 
   loadExamPeriods?.();
 };
-// =====================================================
-// ASSIGNMENT HELP MARKETPLACE + ESCROW + CHAT (FIVERR STYLE)
-// =====================================================
 
-// =========================
-// POST JOB (ESCROW INIT)
-// =========================
+// POST JOB
+// =====================================================
 window.postAssignmentHelp = async function () {
 
   const schoolId = window.schoolId;
   const uid = window.currentUser?.uid;
 
   if (!schoolId || !uid) {
-    return Swal.fire("Error", "Login required", "error");
+    return Swal.fire(
+      "Error",
+      "Login required",
+      "error"
+    );
   }
 
-  const title = document.getElementById("helpTitle").value.trim();
-  const subject = document.getElementById("helpSubject").value.trim();
-  const grade = document.getElementById("helpGrade").value.trim();
-  const questionRaw = document.getElementById("helpQuestion").value.trim();
-  let price = Number(document.getElementById("helpPrice").value || 0);
+  const title =
+    document.getElementById("helpTitle")
+    .value.trim();
 
-  if (!title || !subject || !grade || !questionRaw) {
-    return Swal.fire("Missing Fields", "Fill all fields", "warning");
+  const subject =
+    document.getElementById("helpSubject")
+    .value.trim();
+
+  const grade =
+    document.getElementById("helpGrade")
+    .value.trim();
+const phoneNumber =
+  window.currentUser?.phone ||
+  window.currentUser?.phoneNumber ||
+  "";
+
+const posterName =
+  window.currentUser?.fullName ||
+  window.currentUser?.name ||
+  window.currentUser?.username ||
+  "User";
+  const questionRaw =
+    document.getElementById("helpQuestion")
+    .value.trim();
+
+  if (
+    !title ||
+    !subject ||
+    !grade ||
+    !questionRaw
+  ) {
+    return Swal.fire(
+      "Missing Fields",
+      "Fill all fields",
+      "warning"
+    );
   }
 
-  const questions = questionRaw.split("===")
+  const questions = questionRaw
+    .split("===")
     .map(q => q.trim())
     .filter(q => q);
 
   const questionCount = questions.length;
 
-  let basePrice = 300;
-  if (questionCount > 3) basePrice += (questionCount - 3) * 150;
-  price = Math.max(price, basePrice);
+  // =====================================================
+  // AUTO PRICING
+  // =====================================================
 
-  const jobId = "JOB-" + Date.now();
+  let price = 300;
 
-  const job = {
-    id: jobId,
-    uid,
-    schoolId,
-    title,
-    subject,
-    grade,
-    questions,
-    questionCount,
-    price,
-    status: "open", // open | in_progress | delivered | completed
-    acceptedBy: null,
-    escrow: {
-      funded: true,
-      released: false,
-      amount: price
-    },
-    createdAt: Date.now()
-  };
+  if (questionCount === 2) {
+    price = 500;
+  }
+  else if (questionCount === 3) {
+    price = 700;
+  }
+  else if (questionCount === 4) {
+    price = 900;
+  }
+  else if (questionCount === 5) {
+    price = 1100;
+  }
+  else if (questionCount > 5) {
+    price =
+      1100 +
+      ((questionCount - 5) * 200);
+  }
 
-  await set(ref(db, `schools/${schoolId}/jobs/${jobId}`), job);
+  const depositAmount =
+    Math.ceil(price * 0.5);
 
-  Swal.fire("Posted", `Job created with escrow KES ${price}`, "success");
+  const balanceAmount =
+    price - depositAmount;
+
+  const jobId =
+    "JOB-" + Date.now();
+
+const job = {
+  id: jobId,
+  uid,
+  schoolId,
+
+  posterName,
+  phoneNumber,
+
+  title,
+  subject,
+  grade,
+
+  questions,
+  questionCount,
+
+  price,
+  depositAmount,
+  balanceAmount,
+
+  progress: 0, // ✅ ADD THIS HERE
+
+  depositPaid: false,
+  approvalStatus: "pending",
+  status: "draft",
+
+  acceptedBy: null,
+
+  escrow: {
+    funded: false,
+    released: false,
+    amount: price
+  },
+
+  createdAt: Date.now()
+};
+
+  await set(
+    ref(
+      db,
+      `schools/${schoolId}/jobs/${jobId}`
+    ),
+    job
+  );
+
+  Swal.fire({
+    icon: "info",
+    title: "Deposit Required",
+    html: `
+      Total Cost:
+      <b>KES ${price}</b><br><br>
+
+      Deposit Required:
+      <b>KES ${depositAmount}</b><br><br>
+
+      Remaining Balance:
+      <b>KES ${balanceAmount}</b><br><br>
+
+      After payment,
+      admin will approve
+      the assignment.
+    `
+  });
+
+  window.loadAssignmentHelp();
+};
+window.rejectJob = async function(jobId){
+
+  const schoolId = window.schoolId;
+
+  await update(
+    ref(db, `schools/${schoolId}/jobs/${jobId}`),
+    {
+      approvalStatus: "rejected",
+      status: "rejected"
+    }
+  );
+
+  Swal.fire(
+    "Rejected",
+    "Job rejected",
+    "info"
+  );
+
+  window.loadAssignmentHelp();
+};
+window.confirmDepositPaid = async function(jobId){
+
+  const schoolId = window.schoolId;
+
+  await update(
+    ref(db, `schools/${schoolId}/jobs/${jobId}`),
+    {
+      depositPaid: true,
+      status: "pending_admin_approval"
+    }
+  );
+
+  Swal.fire(
+    "Received",
+    "Waiting for admin approval",
+    "success"
+  );
 
   window.loadAssignmentHelp();
 };
 
+window.approveJob = async function(jobId){
 
+  const schoolId = window.schoolId;
+
+  await update(
+    ref(db, `schools/${schoolId}/jobs/${jobId}`),
+    {
+      approvalStatus: "approved",
+      status: "open"
+    }
+  );
+
+  Swal.fire(
+    "Approved",
+    "Job visible to helpers",
+    "success"
+  );
+
+  window.loadAssignmentHelp();
+};
 // =========================
 // ACCEPT JOB (LOCK HELPER)
 // =========================
@@ -33700,12 +33979,16 @@ window.acceptJob = async function(jobId) {
   const uid = window.currentUser?.uid;
   const schoolId = window.schoolId;
 
-  if (!uid) return Swal.fire("Login required", "", "error");
+  if (!uid) {
+    return Swal.fire("Login required", "", "error");
+  }
 
   const refJob = ref(db, `schools/${schoolId}/jobs/${jobId}`);
   const snap = await get(refJob);
 
-  if (!snap.exists()) return;
+  if (!snap.exists()) {
+    return Swal.fire("Error", "Job not found", "error");
+  }
 
   const job = snap.val();
 
@@ -33713,12 +33996,22 @@ window.acceptJob = async function(jobId) {
     return Swal.fire("Taken", "Job already taken", "info");
   }
 
+  // =========================
+  // FIVERR-STYLE UPDATE
+  // =========================
   await update(refJob, {
     status: "in_progress",
-    acceptedBy: uid
+    acceptedBy: uid,
+
+    // 🔥 PROGRESS STARTS HERE
+    progress: 25
   });
 
-  Swal.fire("Accepted", "You are now working on this job", "success");
+  Swal.fire(
+    "Accepted",
+    "You are now working on this job",
+    "success"
+  );
 
   window.loadAssignmentHelp();
 };
@@ -33750,14 +34043,17 @@ window.submitHelpSolution = async function(jobId) {
     createdAt: Date.now()
   });
 
-  await update(ref(db, `schools/${schoolId}/jobs/${jobId}`), {
-    status: "delivered"
-  });
+await update(ref(db, `schools/${schoolId}/jobs/${jobId}`), {
+  status: "delivered",
+  progress: 80
+});
 
   Swal.fire("Delivered", "Waiting for client approval", "success");
 };
 
 
+// =========================
+// RELEASE ESCROW (CLIENT)
 // =========================
 // RELEASE ESCROW (CLIENT)
 // =========================
@@ -33768,71 +34064,135 @@ window.releasePayment = async function(jobId) {
   const jobRef = ref(db, `schools/${schoolId}/jobs/${jobId}`);
   const snap = await get(jobRef);
 
-  if (!snap.exists()) return;
+  if (!snap.exists()) {
+    return Swal.fire("Error", "Job not found", "error");
+  }
 
   const job = snap.val();
 
+  if (job.status !== "delivered") {
+    return Swal.fire(
+      "Error",
+      "Job must be delivered first",
+      "error"
+    );
+  }
+
   await update(jobRef, {
     status: "completed",
-    "escrow.released": true
+    "escrow.released": true,
+    completedAt: Date.now(),
+
+    // 🔥 FIVERR-STYLE FINAL PROGRESS
+    progress: 100
   });
 
-  Swal.fire("Paid", "Escrow released to worker", "success");
+  Swal.fire(
+    "Success",
+    "Payment released successfully",
+    "success"
+  );
+
+  window.loadAssignmentHelp();
 };
+window.rateWorker = async function(jobId, rating) {
 
+  const schoolId = window.schoolId;
+  const jobRef = ref(db, `schools/${schoolId}/jobs/${jobId}`);
 
+  const snap = await get(jobRef);
+  const job = snap.val();
+
+  await set(ref(db, `schools/${schoolId}/ratings/${job.acceptedBy}/${jobId}`), {
+    rating,
+    from: job.uid,
+    createdAt: Date.now()
+  });
+
+};
 // =====================================================
 // CHAT SYSTEM (JOB BASED)
 // =====================================================
 
+// =====================================================
 // SEND MESSAGE
+// =====================================================
 window.sendJobMessage = async function(jobId, message) {
 
   const uid = window.currentUser?.uid;
   const schoolId = window.schoolId;
 
-  if (!message.trim()) return;
+  if (!uid) return;
+  if (!message || !message.trim()) return;
+
+  const senderName =
+    window.currentUser?.fullName ||
+    window.currentUser?.name ||
+    window.currentUser?.username ||
+    window.currentUser?.email ||
+    "User";
 
   const msgId = "MSG-" + Date.now();
 
-  await set(ref(db, `schools/${schoolId}/jobChats/${jobId}/${msgId}`), {
-    uid,
-    message,
-    createdAt: Date.now()
-  });
+  await set(
+    ref(db, `schools/${schoolId}/jobChats/${jobId}/${msgId}`),
+    {
+      uid,
+      senderName,
+      message: message.trim(),
+      createdAt: Date.now()
+    }
+  );
+
+  const input = document.getElementById(`msg-${jobId}`);
+  if (input) input.value = "";
+
+  window.loadJobChat(jobId);
 };
 
 
+// =====================================================
 // LOAD CHAT
+// =====================================================
 window.loadJobChat = async function(jobId) {
 
   const schoolId = window.schoolId;
 
-  const snap = await get(ref(db, `schools/${schoolId}/jobChats/${jobId}`));
+  const snap = await get(
+    ref(db, `schools/${schoolId}/jobChats/${jobId}`)
+  );
 
   const box = document.getElementById(`chat-${jobId}`);
+
   if (!box) return;
 
   box.innerHTML = "";
 
   if (!snap.exists()) {
-    box.innerHTML = "<p>No messages yet</p>";
+    box.innerHTML =
+      "<div style='color:#64748b'>No messages yet</div>";
     return;
   }
 
   snap.forEach(c => {
+
     const m = c.val();
+
     box.innerHTML += `
-      <div style="padding:6px;border-bottom:1px solid #eee">
-        <b>${m.uid}</b>: ${m.message}
+      <div style="
+        padding:8px;
+        border-bottom:1px solid #e2e8f0;
+      ">
+        <b>${m.senderName || "User"}</b><br>
+        ${m.message}
       </div>
     `;
   });
+
+  box.scrollTop = box.scrollHeight;
 };
-
-
 // =====================================================
-// LOAD JOBS (FIVERR UI)
+// PRO MARKETPLACE UI - LOAD JOBS
 // =====================================================
 window.loadAssignmentHelp = async function () {
 
@@ -33840,74 +34200,377 @@ window.loadAssignmentHelp = async function () {
   const uid = window.currentUser?.uid;
   const role = window.currentUserRole;
 
-  const snap = await get(ref(db, `schools/${schoolId}/jobs`));
+  if (!schoolId) return;
+
+  const snap = await get(
+    ref(db, `schools/${schoolId}/jobs`)
+  );
 
   const container = document.getElementById("helpPostsContainer");
   container.innerHTML = "";
 
   if (!snap.exists()) {
-    container.innerHTML = "<p>No jobs available</p>";
+    container.innerHTML = `
+      <div style="
+        padding:40px;
+        text-align:center;
+        background:#f8fafc;
+        border:1px dashed #cbd5e1;
+        border-radius:14px;
+        color:#64748b;
+      ">
+        <h3>📭 No Jobs Available</h3>
+        <p>Create your first assignment to get started</p>
+      </div>
+    `;
     return;
   }
 
-  snap.forEach(child => {
+  const jobs = [];
+  snap.forEach(child => jobs.push(child.val()));
 
-    const p = child.val();
-    const isWorker = p.acceptedBy === uid;
+  jobs.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+  jobs.forEach(p => {
+
+    const isOwner = p.uid === uid;
+    const isAssignedTeacher = p.acceptedBy === uid;
+
+    const canAccept =
+      (role === "teacher" || role === "admin") &&
+      p.approvalStatus === "approved" &&
+      p.status === "open";
+
+    const canDeliver =
+      isAssignedTeacher && p.status === "in_progress";
+
+    const canRelease =
+      (isOwner || role === "admin") &&
+      p.status === "delivered";
+
+    const canChat =
+      isOwner || isAssignedTeacher || role === "admin";
+
+    const statusColor =
+      p.status === "open" ? "#16a34a" :
+      p.status === "in_progress" ? "#2563eb" :
+      p.status === "delivered" ? "#f59e0b" :
+      p.status === "completed" ? "#059669" :
+      "#64748b";
+
+    const statusIcon =
+      p.status === "open" ? "🟢" :
+      p.status === "in_progress" ? "🔵" :
+      p.status === "delivered" ? "🟡" :
+      p.status === "completed" ? "🟣" :
+      "⚪";
 
     container.innerHTML += `
-      <div style="background:#fff;padding:16px;margin-bottom:12px;border-radius:10px;border:1px solid #ddd">
+      <div style="
+        background:#fff;
+        border:1px solid #e2e8f0;
+        border-left:6px solid ${statusColor};
+        border-radius:16px;
+        padding:18px;
+        margin-bottom:16px;
+        box-shadow:0 3px 10px rgba(0,0,0,0.05);
+        transition:0.2s;
+      "
+      onmouseover="this.style.transform='translateY(-3px)'"
+      onmouseout="this.style.transform='translateY(0)'">
 
-        <h3>📌 ${p.title}</h3>
+        <!-- HEADER -->
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h3 style="margin:0; font-size:18px;">
+            📌 ${p.title}
+          </h3>
 
-        <p>${p.subject} | Grade ${p.grade}</p>
+          <span style="
+            background:${statusColor};
+            color:white;
+            padding:5px 10px;
+            border-radius:20px;
+            font-size:12px;
+            font-weight:bold;
+          ">
+            ${statusIcon} ${p.status}
+          </span>
+        </div>
 
-        <p>🧠 Questions: ${p.questionCount}</p>
+        <p style="margin:6px 0; color:#475569;">
+          <b>${p.subject}</b> • Grade ${p.grade}
+        </p>
+<!-- PROGRESS BAR -->
+<div style="margin:10px 0;">
+  <div style="
+    background:#e2e8f0;
+    height:6px;
+    border-radius:10px;
+    overflow:hidden;
+  ">
+    <div style="
+      width:${p.progress || 0}%;
+      height:6px;
+      background:#2563eb;
+      border-radius:10px;
+      transition:0.3s ease;
+    "></div>
+  </div>
 
-        <p><b>💰 Escrow: KES ${p.price}</b></p>
+  <small style="color:#64748b;">
+    Progress: ${p.progress || 0}%
+  </small>
+</div>
+        <!-- PRICE CARD -->
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          background:#f8fafc;
+          padding:10px;
+          border-radius:12px;
+          margin:10px 0;
+          font-size:13px;
+        ">
+          <div>🧠 Qs: <b>${p.questionCount}</b></div>
+          <div>💰 Total: <b>KES ${p.price}</b></div>
+          <div>💳 Deposit: <b>${p.depositAmount}</b></div>
+          <div>💰 Balance: <b>${p.balanceAmount}</b></div>
+        </div>
 
-        <p>Status: <b>${p.status}</b></p>
+        <!-- CLIENT INFO -->
+        <div style="
+          background:#f1f5f9;
+          padding:10px;
+          border-radius:12px;
+          font-size:13px;
+          margin-bottom:10px;
+        ">
+          👤 <b>${p.posterName || "User"}</b>
+          • 📱 ${p.phoneNumber || "N/A"}<br>
+          📅 ${p.createdAt ? new Date(p.createdAt).toLocaleString() : "-"}
+        </div>
 
-        ${role === "helper" && p.status === "open" ? `
-          <button onclick="acceptJob('${p.id}')"
-            style="background:#2563eb;color:#fff;padding:8px;border:none;border-radius:6px;">
-            🚀 Accept Job
-          </button>
-        ` : ""}
+        <!-- STATUS LINE -->
+        <div style="font-size:13px; margin-bottom:10px;">
+          Approval:
+          <b style="color:#111827;">
+            ${p.approvalStatus || "pending"}
+          </b>
+        </div>
 
-        ${isWorker ? `
-          <button onclick="submitHelpSolution('${p.id}')"
-            style="background:#16a34a;color:#fff;padding:8px;border:none;border-radius:6px;">
-            📤 Deliver
-          </button>
-        ` : ""}
+        <!-- ACTION ZONES -->
+        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
 
-        <button onclick="loadJobChat('${p.id}')"
-          style="background:#111;color:#fff;padding:8px;border:none;border-radius:6px;margin-left:6px;">
-          💬 Chat
-        </button>
+          ${
+            isOwner && !p.depositPaid
+              ? `<button onclick="confirmDepositPaid('${p.id}')"
+                  style="background:#f59e0b;color:white;padding:8px 12px;border:none;border-radius:10px;">
+                  💳 Deposit Paid
+                </button>`
+              : ""
+          }
 
-        <div id="chat-${p.id}" style="margin-top:10px;max-height:200px;overflow:auto;"></div>
+          ${
+            role === "admin" && p.status === "pending_admin_approval"
+              ? `
+                <button onclick="approveJob('${p.id}')"
+                  style="background:#16a34a;color:white;padding:8px 12px;border:none;border-radius:10px;">
+                  ✅ Approve
+                </button>
 
-        <input id="msg-${p.id}" placeholder="Type message..."
-          style="width:70%;padding:6px;margin-top:6px;">
+                <button onclick="rejectJob('${p.id}')"
+                  style="background:#dc2626;color:white;padding:8px 12px;border:none;border-radius:10px;">
+                  ❌ Reject
+                </button>
+              `
+              : ""
+          }
 
-        <button onclick="sendJobMessage('${p.id}', document.getElementById('msg-${p.id}').value)"
-          style="padding:6px;">
-          Send
-        </button>
+          ${
+            canAccept
+              ? `<button onclick="acceptJob('${p.id}')"
+                  style="background:#2563eb;color:white;padding:8px 12px;border:none;border-radius:10px;">
+                  🚀 Accept Job
+                </button>`
+              : ""
+          }
 
-        ${p.status === "delivered" ? `
-          <button onclick="releasePayment('${p.id}')"
-            style="background:gold;color:#000;padding:8px;border:none;border-radius:6px;margin-top:8px;">
-            💰 Release Payment
-          </button>
-        ` : ""}
+          ${
+            canDeliver
+              ? `<button onclick="submitHelpSolution('${p.id}')"
+                  style="background:#16a34a;color:white;padding:8px 12px;border:none;border-radius:10px;">
+                  📤 Deliver
+                </button>`
+              : ""
+          }
+
+          ${
+            canRelease
+              ? `<button onclick="releasePayment('${p.id}')"
+                  style="background:gold;color:black;padding:8px 12px;border:none;border-radius:10px;">
+                  💰 Release
+                </button>`
+              : ""
+          }
+
+        </div>
+
+        <!-- CHAT -->
+        ${
+          canChat
+            ? `
+              <div style="margin-top:10px;">
+                <div id="chat-${p.id}" style="
+                  max-height:180px;
+                  overflow-y:auto;
+                  background:#f8fafc;
+                  padding:10px;
+                  border-radius:10px;
+                  font-size:13px;
+                "></div>
+
+                <div style="display:flex; gap:6px; margin-top:8px;">
+                  <input id="msg-${p.id}"
+                    placeholder="Type message..."
+                    style="flex:1;padding:8px;border:1px solid #cbd5e1;border-radius:8px;">
+
+                  <button onclick="sendJobMessage('${p.id}', document.getElementById('msg-${p.id}').value)"
+                    style="background:#0f172a;color:white;padding:8px 12px;border:none;border-radius:8px;">
+                    Send
+                  </button>
+                </div>
+              </div>
+            `
+            : ""
+        }
 
       </div>
     `;
+
+    if (canChat) {
+      setTimeout(() => window.loadJobChat(p.id), 120);
+    }
+
   });
 };
+
+function canTransition(from, to, role) {
+  const allowed = {
+    draft: ["pending_admin_approval"],
+    pending_admin_approval: ["open", "rejected"],
+    open: ["in_progress"],
+    in_progress: ["delivered", "disputed"],
+    delivered: ["completed", "disputed"],
+    disputed: ["completed"]
+  };
+
+  return allowed[from]?.includes(to);
+}
+
+window.listenJobChat = function(jobId) {
+  const schoolId = window.schoolId;
+
+  const chatRef = ref(db, `schools/${schoolId}/jobChats/${jobId}`);
+
+  onValue(chatRef, snap => {
+    const box = document.getElementById(`chat-${jobId}`);
+    if (!box) return;
+
+    box.innerHTML = "";
+
+    if (!snap.exists()) {
+      box.innerHTML = "<div style='color:#64748b'>No messages yet</div>";
+      return;
+    }
+
+    snap.forEach(c => {
+      const m = c.val();
+
+      box.innerHTML += `
+        <div style="
+          margin-bottom:6px;
+          padding:6px;
+          border-radius:8px;
+          background:#f1f5f9;
+        ">
+          <b>${m.senderName}</b><br>
+          <span>${m.message}</span>
+        </div>
+      `;
+    });
+
+    box.scrollTop = box.scrollHeight;
+  });
+};
+window.updateJobProgress = async function(jobId, progress) {
+
+  const schoolId = window.schoolId;
+
+  await update(ref(db, `schools/${schoolId}/jobs/${jobId}`), {
+    progress
+  });
+
+};
+window.uploadJobFile = async function(jobId, file) {
+
+  const schoolId = window.schoolId;
+  const uid = window.currentUser?.uid;
+
+  if (!file) return;
+
+  const fileId = "FILE-" + Date.now();
+
+  const storageRef = ref(storage, `jobFiles/${schoolId}/${jobId}/${fileId}`);
+
+  await uploadBytes(storageRef, file);
+
+  const url = await getDownloadURL(storageRef);
+
+  await set(ref(db, `schools/${schoolId}/jobFiles/${jobId}/${fileId}`), {
+    url,
+    uploadedBy: uid,
+    createdAt: Date.now(),
+    type: file.type,
+    name: file.name
+  });
+
+  Swal.fire("Uploaded", "File added to job", "success");
+};
+document.addEventListener("input", function(e){
+
+  if(e.target.id !== "helpQuestion") return;
+
+  const questions = e.target.value
+    .split("===")
+    .map(q => q.trim())
+    .filter(Boolean);
+
+  const count = questions.length;
+
+  let total = 300;
+
+  if(count === 2) total = 500;
+  else if(count === 3) total = 700;
+  else if(count === 4) total = 900;
+  else if(count === 5) total = 1100;
+  else if(count > 5){
+    total = 1100 + ((count - 5) * 200);
+  }
+
+  const deposit = Math.ceil(total * 0.5);
+  const balance = total - deposit;
+
+  document.getElementById("previewTotal").textContent =
+    `KES ${total}`;
+
+  document.getElementById("previewDeposit").textContent =
+    `KES ${deposit}`;
+
+  document.getElementById("previewBalance").textContent =
+    `KES ${balance}`;
+});
+
+
 
 </script>
 
