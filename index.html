@@ -1885,6 +1885,10 @@ button.primary{
   </button>
 
 
+<button onclick="show('feeBalanceSection')">
+  💰 Fee Balance
+</button>
+
 
   <button id="menuSupportStaff"
     onclick="show('supportStaff')">
@@ -1906,29 +1910,40 @@ button.primary{
     💻 ICT
   </button>
 
-  <button id="menuInventory"
-    onclick="show('inventory')">
-    📦 Inventory
-  </button>
+ <button id="menuInventory"
+  onclick="show('inventory')">
+  📦 Inventory
+</button>
 
-  <button id="menuLibrary"
-    onclick="show('library')">
-    📚 Library
-  </button>
+<button id="menuLibrary"
+  onclick="show('library')">
+  📚 Library
+</button>
 
-  <button id="menuELearning"
-    onclick="show('eLearningSection')">
-    🎓 E-Learning
-  </button>
-<button id="menuChangePassword"
-    onclick="openPasswordModal()"
-    style="color:#16a34a;">
-    🔒 Change Password
+<button id="menuELearning"
+  onclick="show('eLearningSection')">
+  🎓 E-Learning
+</button>
+
+<!-- FIXED BUTTON (was missing closing tag) -->
+<button id="passwordBtn"
+  onclick="openPasswordModal()">
+  🔐 Change Password
+</button>
+
+<button id="checkResultsBtn"
+  onclick="show('checkResultsSection')">
+  📊 Check Results
 </button>
 
 <button id="menuUsers"
-        onclick="show('adminUsersPanel')">
+  onclick="show('adminUsersPanel')">
   👥 Create Users
+</button>
+
+<button id="menuAssignmentHelp"
+  onclick="show('assignmentHelpSection')">
+  🧠 Assignment Help
 </button>
 </div>
 
@@ -2463,21 +2478,22 @@ button.primary{
   </div>
 
 <!-- =========================================
-     CREATE COURSE
+     CREATE COURSE (MONETISED VERSION)
 ========================================= -->
 
 <div id="courseCreatorPanel"
      class="teacher-admin-only"
      style="
        background-image:url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f');
-background-size:cover;
+       background-size:cover;
        background-position:center;
        padding:20px;
        border-radius:16px;
        margin-top:25px;
        box-shadow:0 4px 12px rgba(0,0,0,0.15);
        position:relative;
-    overflow:hidden;">
+       overflow:hidden;">
+
   <!-- DARK OVERLAY -->
   <div style="
     position:absolute;
@@ -2485,31 +2501,78 @@ background-size:cover;
     left:0;
     width:100%;
     height:100%;
-    background:rgba(0,0,0,0.55);
+    background:rgba(0,0,0,0.65);
   "></div>
 
-  <!-- CONTENT WRAPPER -->
-  <div style="position:relative; z-index:2; color:white;">
+  <!-- CONTENT -->
+  <div style="position:relative;z-index:2;color:white;">
 
-    <h2 style="margin-bottom:15px; color:white;">
+    <h2 style="
+      margin-bottom:5px;
+      color:white;
+    ">
       📘 Create Learning Content
     </h2>
 
-    <input id="courseTitle"
+    <div style="
+      margin-bottom:18px;
+      color:#e5e7eb;
+      font-size:13px;
+    ">
+      Create free or paid courses and earn revenue from learners.
+    </div>
+
+    <!-- TITLE -->
+    <input
+      id="courseTitle"
       placeholder="Course Title"
-      style="width:100%;padding:10px;margin-bottom:8px;border:none;border-radius:8px;"><br>
+      style="
+        width:100%;
+        padding:12px;
+        margin-bottom:10px;
+        border:none;
+        border-radius:10px;
+      "
+    >
 
-    <input id="courseTeacher"
+    <!-- TEACHER -->
+    <input
+      id="courseTeacher"
       placeholder="Teacher Name"
-      style="width:100%;padding:10px;margin-bottom:8px;border:none;border-radius:8px;"><br>
+      style="
+        width:100%;
+        padding:12px;
+        margin-bottom:10px;
+        border:none;
+        border-radius:10px;
+      "
+    >
 
-    <select id="courseGrade"
-      style="width:100%;padding:10px;margin-bottom:8px;border:none;border-radius:8px;">
+    <!-- GRADE -->
+    <select
+      id="courseGrade"
+      style="
+        width:100%;
+        padding:12px;
+        margin-bottom:10px;
+        border:none;
+        border-radius:10px;
+      "
+    >
       <option value="">Select Grade</option>
-    </select><br>
+    </select>
 
-    <select id="courseSubject"
-      style="width:100%;padding:10px;margin-bottom:8px;border:none;border-radius:8px;">
+    <!-- SUBJECT -->
+    <select
+      id="courseSubject"
+      style="
+        width:100%;
+        padding:12px;
+        margin-bottom:10px;
+        border:none;
+        border-radius:10px;
+      "
+    >
       <option value="">Select Subject</option>
       <option>Mathematics</option>
       <option>English</option>
@@ -2522,47 +2585,153 @@ background-size:cover;
       <option>Pre-Technical</option>
     </select>
 
-    <textarea id="courseDescription"
-      placeholder="Course Description"
+    <!-- COURSE TYPE -->
+    <select
+      id="courseType"
+      onchange="toggleCoursePrice()"
       style="
         width:100%;
-        min-height:120px;
-        margin-top:10px;
         padding:12px;
+        margin-bottom:10px;
         border:none;
         border-radius:10px;
-      "></textarea>
+      "
+    >
+      <option value="free">
+        📖 Free Course
+      </option>
 
-    <!-- FILE -->
-    <div style="margin-top:15px;">
+      <option value="paid">
+        💰 Paid Course
+      </option>
+    </select>
 
-      <label style="font-weight:bold; color:white;">
-        📎 Upload Notes / PDF / Video
-      </label>
+    <!-- PRICE BOX -->
+    <div
+      id="coursePriceBox"
+      style="
+        display:none;
+        margin-bottom:10px;
+      "
+    >
 
-      <input type="file"
-        id="courseFile"
-        multiple
-        style="margin-top:8px; width:100%;">
+      <input
+        type="number"
+        id="coursePrice"
+        min="0"
+        value="0"
+        placeholder="Course Price (KES)"
+        style="
+          width:100%;
+          padding:12px;
+          border:none;
+          border-radius:10px;
+        "
+      >
+
+      <div style="
+        margin-top:5px;
+        color:#d1fae5;
+        font-size:12px;
+      ">
+        Example: 100, 200, 500, 1000
+      </div>
 
     </div>
 
-    <button onclick="createCourse()"
+    <!-- DESCRIPTION -->
+    <textarea
+      id="courseDescription"
+      placeholder="Course Description"
+      style="
+        width:100%;
+        min-height:130px;
+        margin-top:5px;
+        padding:12px;
+        border:none;
+        border-radius:10px;
+      "
+    ></textarea>
+
+    <!-- FILES -->
+    <div style="margin-top:15px;">
+
+      <label style="
+        font-weight:bold;
+        color:white;
+      ">
+        📎 Upload Notes / PDF / Video
+      </label>
+
+      <input
+        type="file"
+        id="courseFile"
+        multiple
+        style="
+          margin-top:8px;
+          width:100%;
+          color:white;
+        "
+      >
+
+    </div>
+
+    <!-- REVENUE INFO -->
+    <div style="
+      margin-top:15px;
+      background:rgba(255,255,255,0.12);
+      padding:12px;
+      border-radius:10px;
+      font-size:13px;
+      color:#d1fae5;
+      line-height:1.7;
+    ">
+
+      💡 Monetisation Tips
+
+      <br>
+
+      ✔ Revision Packages
+
+      <br>
+
+      ✔ KCPE/KPSEA Preparation
+
+      <br>
+
+      ✔ CBC Assessment Training
+
+      <br>
+
+      ✔ Teacher Professional Courses
+
+      <br>
+
+      ✔ Holiday Tuition Content
+
+    </div>
+
+    <!-- PUBLISH -->
+    <button
+      onclick="createCourse()"
       style="
         margin-top:18px;
-        background:linear-gradient(135deg,#2563eb,#1e40af);
+        background:linear-gradient(135deg,#16a34a,#15803d);
         color:white;
         border:none;
-        padding:12px 18px;
+        padding:14px;
         border-radius:10px;
         cursor:pointer;
         font-weight:bold;
         width:100%;
-      ">
+        font-size:15px;
+      "
+    >
       🚀 Publish Course
     </button>
 
   </div>
+
 </div>
 
   <!-- =========================================
@@ -5005,27 +5174,56 @@ background:rgba(0,0,0,0.5);justify-content:center;align-items:center;">
 
 <div id="filteredLearnersContent" style="display:none;"></div>
 <div id="genderGroupedContent" style="display:none;"></div>
-<!-- =========================================
-<!-- =========================================
-     FLOATING ACTIVE SCHOOLS COUNTER
-========================================= -->
-<div id="floatingSchoolsCounter">
+<!-- FLOATING ACTIVE SCHOOLS COUNTER -->
+<div id="floatingSchoolsCounter"
+     style="
+       position: fixed;
+       bottom: 25px;
+       right: 25px;
+       z-index: 99999;
+       display: flex;
+       align-items: center;
+       gap: 12px;
+       background: rgba(255,255,255,0.95);
+       padding: 12px 16px;
+       border-radius: 14px;
+       box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+       backdrop-filter: blur(8px);
+     ">
 
-  <div class="schools-counter-icon">
+  <div class="schools-counter-icon"
+       style="
+         font-size: 22px;
+       ">
     🏫
   </div>
 
   <div class="schools-counter-content">
 
-    <div class="schools-counter-title">
+    <div class="schools-counter-title"
+         style="
+           font-size: 12px;
+           font-weight: 600;
+           color: #64748b;
+         ">
       Schools Connected
     </div>
 
-    <div class="schools-counter-number">
+    <div class="schools-counter-number"
+         style="
+           font-size: 18px;
+           font-weight: 800;
+           color: #0f172a;
+         ">
       <span id="schoolsCounter">127</span>+
     </div>
 
-    <div class="schools-counter-status">
+    <div class="schools-counter-status"
+         style="
+           font-size: 11px;
+           color: #22c55e;
+           font-weight: 600;
+         ">
       ● Active Network
     </div>
 
@@ -5177,6 +5375,257 @@ background:rgba(0,0,0,0.5);justify-content:center;align-items:center;">
   </div>
 
 </div>
+
+<div id="feeBalanceSection"
+     class="section"
+     style="display:none;">
+
+  <div style="
+    background:linear-gradient(135deg,#059669,#047857);
+    color:white;
+    padding:25px;
+    border-radius:18px;
+    margin-bottom:20px;
+  ">
+    <h2>💰 Fee Balance Checker</h2>
+    <p>View learner fee balances and payment status.</p>
+  </div>
+
+  <div style="
+    background:white;
+    padding:20px;
+    border-radius:16px;
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+  ">
+
+    <!-- 👨‍👩‍👧 PARENT PHONE INPUT (NEW CORE FEATURE) -->
+    <input id="feeParentPhone"
+           placeholder="Enter parent phone (e.g. 07xxxxxxxx)"
+           style="
+             width:100%;
+             padding:12px;
+             border:1px solid #ccc;
+             border-radius:10px;
+             margin-bottom:12px;
+           " />
+
+    <small style="color:#666; display:block; margin-bottom:12px;">
+      👆 Required for parents. Admins can ignore this field.
+    </small>
+
+    <!-- YEAR -->
+    <select id="feeBalanceYear"
+      style="
+        width:100%;
+        padding:12px;
+        border:1px solid #ccc;
+        border-radius:10px;
+        margin-bottom:12px;
+      ">
+    </select>
+
+    <!-- GRADE -->
+    <select id="feeBalanceGrade"
+      style="
+        width:100%;
+        padding:12px;
+        border:1px solid #ccc;
+        border-radius:10px;
+        margin-bottom:12px;
+      ">
+      <option value="">All Grades</option>
+    </select>
+
+    <!-- LEARNER -->
+    <select id="feeBalanceStudent"
+      style="
+        width:100%;
+        padding:12px;
+        border:1px solid #ccc;
+        border-radius:10px;
+        margin-bottom:15px;
+      ">
+      <option value="">Select Learner</option>
+    </select>
+
+    <!-- CHECK BUTTON -->
+    <button
+      onclick="checkFeeBalance()"
+      style="
+        background:#059669;
+        color:white;
+        border:none;
+        padding:12px 18px;
+        border-radius:10px;
+        cursor:pointer;
+        width:100%;
+        font-weight:bold;
+      ">
+      🔍 Check Balance
+    </button>
+
+    <!-- RESULT -->
+    <div id="feeBalanceResult"
+         style="margin-top:20px;">
+    </div>
+
+  </div>
+
+</div>
+<!-- ===================================================== -->
+<!-- 📊 CHECK RESULTS SECTION -->
+<!-- ===================================================== -->
+
+<div id="checkResultsSection"
+     class="section"
+     style="display:none;">
+
+  <!-- HEADER -->
+  <div style="
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    color:white;
+    padding:25px;
+    border-radius:18px;
+    margin-bottom:20px;
+  ">
+    <h2>📊 Check Learner Results</h2>
+    <p>
+      View learner examination results by Grade,
+      Exam Period and Learner.
+    </p>
+  </div>
+
+  <!-- CONTENT CARD -->
+  <div style="
+    background:white;
+    padding:20px;
+    border-radius:16px;
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+  ">
+
+    <!-- GRADE -->
+    <label style="
+      display:block;
+      margin-bottom:6px;
+      font-weight:600;
+    ">
+      🎓 Select Grade
+    </label>
+
+    <select id="checkResultsGrade"
+      style="
+        width:100%;
+        padding:12px;
+        border:1px solid #ccc;
+        border-radius:10px;
+        margin-bottom:12px;
+      ">
+      <option value="">
+        Select Grade
+      </option>
+    </select>
+
+    <!-- EXAM PERIOD -->
+    <label style="
+      display:block;
+      margin-bottom:6px;
+      font-weight:600;
+    ">
+      📅 Select Exam Period
+    </label>
+
+    <select id="checkResultsExamPeriod"
+      style="
+        width:100%;
+        padding:12px;
+        border:1px solid #ccc;
+        border-radius:10px;
+        margin-bottom:12px;
+      ">
+      <option value="">
+        Select Exam Period
+      </option>
+    </select>
+
+    <!-- LEARNER -->
+    <label style="
+      display:block;
+      margin-bottom:6px;
+      font-weight:600;
+    ">
+      👨‍🎓 Select Learner
+    </label>
+
+    <select id="checkResultsStudent"
+      style="
+        width:100%;
+        padding:12px;
+        border:1px solid #ccc;
+        border-radius:10px;
+        margin-bottom:15px;
+      ">
+      <option value="">
+        Select Learner
+      </option>
+    </select>
+
+    <!-- BUTTON -->
+    <button
+      onclick="handleCheckResults()"
+      style="
+        background:#2563eb;
+        color:white;
+        border:none;
+        padding:12px 18px;
+        border-radius:10px;
+        cursor:pointer;
+        width:100%;
+      ">
+      📊 View Results
+    </button>
+
+    <!-- RESULTS OUTPUT -->
+    <div id="resultsContainer"
+         style="margin-top:20px;">
+    </div>
+
+  </div>
+
+</div>
+<!-- ===================== ASSIGNMENT HELP MARKET ===================== -->
+<div id="assignmentHelpSection" style="display:none; padding:20px;">
+
+  <h2>🧠 Assignment Help Marketplace</h2>
+
+  <!-- POST ASSIGNMENT HELP -->
+  <div style="background:#f8fafc; padding:20px; border-radius:12px; margin-bottom:20px;">
+
+    <h3>📌 Post a Question (Paid Help)</h3>
+
+    <input id="helpTitle" placeholder="Title (e.g Math Homework)" class="swal2-input">
+
+    <input id="helpSubject" placeholder="Subject" class="swal2-input">
+
+    <input id="helpGrade" placeholder="Grade" class="swal2-input">
+
+    <textarea id="helpQuestion"
+      placeholder="Write your assignment question here..."
+      style="width:100%; min-height:120px; padding:12px; border-radius:10px; border:1px solid #ccc;">
+    </textarea>
+
+    <input id="helpPrice" type="number" placeholder="Set price (KES)" class="swal2-input">
+
+    <button onclick="postAssignmentHelp()"
+      style="background:#16a34a; color:white; padding:12px 18px; border:none; border-radius:8px; width:100%;">
+      💰 Post & Pay to Boost
+    </button>
+
+  </div>
+
+  <!-- LIST OF HELP POSTS -->
+  <div id="helpPostsContainer"></div>
+
+</div>
 <script type="module">
 import {
   initializeApp
@@ -5235,160 +5684,112 @@ const firebaseConfig = {
     "1:769934501138:web:d2fcde2dccd561e4f1ffcb"
 };
 
+
+
 /* ================= PRIMARY APP ================= */
 
-const app =
-  initializeApp(firebaseConfig);
-
-const auth =
-  getAuth(app);
-
-const db =
-  getDatabase(app);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
 
 /* ================= SECONDARY APP =================
    Used for creating Teacher/Parent accounts
    without logging out the Admin.
 ================================================= */
 
-const secondaryApp =
-  initializeApp(
-    firebaseConfig,
-    "SecondaryApp"
-  );
+const secondaryApp = initializeApp(firebaseConfig, "SecondaryApp");
+const secondaryAuth = getAuth(secondaryApp);
+window.secondaryAuth = secondaryAuth;
 
-const secondaryAuth =
-  getAuth(secondaryApp);
-window.secondaryAuth =
-  secondaryAuth;
-// ===================================
-// GLOBAL SCHOOL CONTEXT
-// ===================================
-let schoolId =
+
+/* ===================================
+   GLOBAL SCHOOL CONTEXT (CLEAN)
+=================================== */
+
+window.schoolId =
+  window.schoolId ||
   sessionStorage.getItem("schoolId") ||
   localStorage.getItem("schoolId") ||
   null;
 
 let editingTeacherId = null;
-
 let subscriptionData = null;
 
-// ===================================
-// SAFE SCHOOL REFERENCE
-// ===================================
+
+/* ===================================
+   SAFE SCHOOL REFERENCE (CLEAN)
+=================================== */
+
 function schoolRef(path = "") {
 
   const activeSchoolId =
-
     window.schoolId ||
-
-    sessionStorage.getItem(
-      "schoolId"
-    ) ||
-
-    localStorage.getItem(
-      "schoolId"
-    );
+    sessionStorage.getItem("schoolId") ||
+    localStorage.getItem("schoolId");
 
   if (!activeSchoolId) {
-
-    console.error(
-      "❌ School ID missing"
-    );
-
-    throw new Error(
-      "School context missing. Please login again."
-    );
+    console.error("❌ School ID missing");
+    throw new Error("School context missing. Please login again.");
   }
 
   return ref(
     db,
-
     path
       ? `schools/${activeSchoolId}/${path}`
       : `schools/${activeSchoolId}`
   );
 }
 
-// ===================================
-// SCHOOL ID REFRESH HELPER
-// ===================================
-function refreshSchoolContext() {
 
-  schoolId =
+/* ===================================
+   VERIFY LOGIN STATE
+=================================== */
 
-    window.schoolId ||
-
-    sessionStorage.getItem(
-      "schoolId"
-    ) ||
-
-    localStorage.getItem(
-      "schoolId"
-    ) ||
-
-    null;
-
-  return schoolId;
-}
-
-// ===================================
-// VERIFY LOGIN STATE
-// ===================================
 function ensureSchoolContext() {
 
   const sid =
-    refreshSchoolContext();
+    window.schoolId ||
+    sessionStorage.getItem("schoolId") ||
+    localStorage.getItem("schoolId");
 
   if (!sid) {
-
     Swal.fire({
       icon: "error",
       title: "Session Expired",
-      text:
-        "Please login again."
+      text: "Please login again."
     });
 
-    throw new Error(
-      "No school context"
-    );
+    throw new Error("No school context");
   }
 
   return sid;
 }
 
 
+/* ===================================
+   PAGE NAVIGATION (SHOW FUNCTION)
+=================================== */
+
 function show(id) {
 
-  // ===============================
-  // 🚨 STRICT GUARD
-  // ===============================
   if (typeof id !== "string" || !id.trim()) {
     console.warn("show() received invalid id:", id);
     return;
   }
 
-  // ===============================
-  // 🚫 PREVENT RELOADING SAME PAGE
-  // ==============================
-  if (window.__activeSection === id) {
-    return;
-  }
+  if (window.__activeSection === id) return;
 
   window.__activeSection = id;
+  window.currentSection = id;
 
-  const sections =
-    document.querySelectorAll(".main > div");
+  const sections = document.querySelectorAll(".main > div");
 
-  // ===============================
-  // HIDE ALL SECTIONS
-  // ===============================
+  // hide all sections
   sections.forEach(sec => {
     sec.style.display = "none";
   });
 
-  const target =
-    document.getElementById(id);
+  const target = document.getElementById(id);
 
   if (!target) {
     console.warn("Section not found:", id);
@@ -5397,119 +5798,58 @@ function show(id) {
 
   target.style.display = "block";
 
-  // ===============================
-  // UPDATE CURRENT SECTION
-  // ===============================
-  window.currentSection = id;
+  /* ===============================
+     LAZY LOAD: MARKS
+  =============================== */
+  if (id === "recordMarksSection" && !window.__marksLoaded) {
+    window.__marksLoaded = true;
 
-  // ===============================
-  // MARKS SECTION
-  // LOAD ONLY ON FIRST OPEN
-  // ===============================
-  if (id === "recordMarksSection") {
+    requestAnimationFrame(() => {
+      loadGradesFromStudents?.();
 
-    if (!window.__marksLoaded) {
-
-      window.__marksLoaded = true;
-
-      requestAnimationFrame(() => {
-
-        if (
-          typeof loadGradesFromStudents ===
-          "function"
-        ) {
-          loadGradesFromStudents();
-        }
-
-        setTimeout(() => {
-
-          if (
-            typeof loadLearnersFromStudents ===
-            "function"
-          ) {
-            loadLearnersFromStudents();
-          }
-
-        }, 100);
-
-      });
-    }
+      setTimeout(() => {
+        loadLearnersFromStudents?.();
+      }, 100);
+    });
   }
 
-  // ===============================
-  // FEES SECTION
-  // LOAD ONLY ON FIRST OPEN
-  // ===============================
-  if (id === "fees") {
+  /* ===============================
+     LAZY LOAD: FEES
+  =============================== */
+  if (id === "fees" && !window.__feesLoaded) {
+    window.__feesLoaded = true;
 
-    if (!window.__feesLoaded) {
+    requestAnimationFrame(() => {
+      loadFeeGrades?.();
 
-      window.__feesLoaded = true;
-
-      requestAnimationFrame(() => {
-
-        if (
-          typeof loadFeeGrades ===
-          "function"
-        ) {
-          loadFeeGrades();
-        }
-
-        setTimeout(() => {
-
-          if (
-            typeof loadFeeLearners ===
-            "function"
-          ) {
-            loadFeeLearners();
-          }
-
-        }, 100);
-
-      });
-    }
+      setTimeout(() => {
+        loadFeeLearners?.();
+      }, 100);
+    });
   }
 
-  // ===============================
-  // SECTION-SPECIFIC LOGIC
-  // ===============================
-  if (
-    typeof runSectionLogic ===
-    "function"
-  ) {
-
-    try {
-
-      runSectionLogic(id);
-
-    } catch (err) {
-
-      console.error(
-        "runSectionLogic error:",
-        err
-      );
-    }
+  /* ===============================
+     CUSTOM SECTION LOGIC
+  =============================== */
+  try {
+    runSectionLogic?.(id);
+  } catch (err) {
+    console.error("runSectionLogic error:", err);
   }
 
-  console.log(
-    "📂 Opened Section:",
-    id
-  );
+  console.log("📂 Opened Section:", id);
 }
 
 
 
-
 /* =========================================================
-   🚀 ULTRA SAFE LOGOUT SYSTEM
-   NO FREEZE • FAST • SECURE • PRODUCTION READY
+   🚀 CLEAN PRODUCTION LOGOUT SYSTEM
 ========================================================= */
 
 window.__loggingOut = false;
 
 window.logout = async function () {
 
-  // 🚫 Prevent double clicks
   if (window.__loggingOut) return;
 
   const result = await Swal.fire({
@@ -5523,123 +5863,92 @@ window.logout = async function () {
     showCancelButton: true,
     reverseButtons: true,
     focusCancel: true,
-
-    confirmButtonText: `
-      <i class="fas fa-sign-out-alt"></i>
-      Yes, Logout
-    `,
-
-    cancelButtonText: `
-      <i class="fas fa-times"></i>
-      Cancel
-    `,
-
+    confirmButtonText: `<i class="fas fa-sign-out-alt"></i> Yes, Logout`,
+    cancelButtonText: `<i class="fas fa-times"></i> Cancel`,
     confirmButtonColor: "#ef4444",
-    cancelButtonColor: "#64748b",
-
-    background: "#ffffff",
-    color: "#0f172a"
+    cancelButtonColor: "#64748b"
   });
 
   if (!result.isConfirmed) return;
 
+  window.__loggingOut = true;
+
   try {
 
-    window.__loggingOut = true;
-
-    // =====================================================
-    // 🔥 SHOW LOADING (DO NOT AWAIT THIS)
-    // =====================================================
+    // =========================
+    // LOADING STATE
+    // =========================
     Swal.fire({
       title: "Signing you out...",
       html: `
-        <div style="
-          margin-top:10px;
-          font-size:14px;
-          color:#64748b;
-        ">
+        <div style="margin-top:10px;font-size:14px;color:#64748b;">
           Please wait while we end your session securely...
         </div>
       `,
       allowOutsideClick: false,
       allowEscapeKey: false,
       showConfirmButton: false,
-
-      didOpen: () => {
-        Swal.showLoading();
-      }
+      didOpen: () => Swal.showLoading()
     });
 
-    // =====================================================
-    // 🔥 FIREBASE SIGNOUT
-    // =====================================================
-    await signOut(auth);
+    // =========================
+    // FIREBASE SIGN OUT
+    // =========================
+    try {
+      await signOut(auth);
+    } catch (e) {
+      console.warn("Signout warning:", e);
+    }
 
-    // =====================================================
-    // 🧹 CLEAR STORAGE
-    // =====================================================
-    const keys = [
-      "schoolId",
-      "userUid",
-      "schoolEmail",
-      "schoolName",
-      "subscriptionStatus",
-      "selectedGrade",
-      "selectedExam",
-      "selectedExamPeriod",
-      "lastPage"
-    ];
-
-    keys.forEach(key => {
-      localStorage.removeItem(key);
-      sessionStorage.removeItem(key);
-    });
-
+    // =========================
+    // CLEAR STORAGE (SAFE RESET)
+    // =========================
+    localStorage.clear();
     sessionStorage.clear();
 
-    // =====================================================
-    // 🧹 CLEAR GLOBALS
-    // =====================================================
+    // =========================
+    // RESET GLOBAL STATE
+    // =========================
     window.schoolId = null;
     window.currentUser = null;
+
     window.allStudents = [];
     window.allLoadedLearners = [];
     window.currentFilteredLearners = [];
 
-    // =====================================================
-    // 🔥 CLOSE LOADING POPUP
-    // =====================================================
-    Swal.close();
+    window.__activeSection = null;
+    window.currentSection = null;
 
-    // =====================================================
-    // 👀 SWITCH UI
-    // =====================================================
-    const app = document.getElementById("app");
+    // =========================
+    // UI SWITCH
+    // =========================
+    document.getElementById("app")?.style && (
+      document.getElementById("app").style.display = "none"
+    );
+
     const authSection = document.getElementById("authSection");
-
-    if (app) {
-      app.style.display = "none";
-    }
 
     if (authSection) {
       authSection.style.display = "block";
       authSection.style.opacity = "1";
     }
 
-    // =====================================================
-    // ✅ SUCCESS
-    // =====================================================
+    Swal.close();
+
+    // =========================
+    // SUCCESS MESSAGE
+    // =========================
     await Swal.fire({
       icon: "success",
       title: "Logged Out",
       text: "You have been signed out successfully.",
-      timer: 1500,
+      timer: 1200,
       showConfirmButton: false
     });
 
-    // =====================================================
-    // 🔥 OPTIONAL HARD REFRESH
-    // =====================================================
+    // =========================
+    // FINAL RESET
+    // =========================
     location.reload();
 
   } catch (error) {
@@ -5656,18 +5965,17 @@ window.logout = async function () {
     });
 
   } finally {
-
     window.__loggingOut = false;
-
   }
 };
-
 
 /* ================= GLOBAL BUTTON FIX ================= */
 
 
 
 /* ================= REGISTER (ULTRA UPGRADED + SAAS READY + SECURE) ================= */
+
+/* ================= REGISTER (CLEAN + SAAS READY + SECURE) ================= */
 
 window.register = async () => {
 
@@ -5687,7 +5995,6 @@ window.register = async () => {
   // =========================
   // VALIDATION
   // =========================
-
   if (!school || !userEmail || !userPassword) {
     return Swal.fire({
       icon: "warning",
@@ -5706,8 +6013,7 @@ window.register = async () => {
     });
   }
 
-  const emailRegex =
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   if (!emailRegex.test(userEmail)) {
     return Swal.fire({
@@ -5723,7 +6029,6 @@ window.register = async () => {
     window.__registering = true;
 
     btn.disabled = true;
-
     btn.innerHTML = `
       <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
         <div class="spinner"></div>
@@ -5732,34 +6037,37 @@ window.register = async () => {
     `;
 
     // =========================
-    // CREATE AUTH USER
-    // =========================
+ // =========================
+// =========================
+// CREATE AUTH USER (SECONDARY APP)
+// =========================
+const userCredential =
+  await createUserWithEmailAndPassword(
+    secondaryAuth,
+    userEmail,
+    userPassword
+  );
 
-      const userCredential =
-     await createUserWithEmailAndPassword(
-  secondaryAuth,
-  email,
-  password
+const uid = userCredential.user.uid;
+const schoolId = `school_${uid}`;
+const now = Date.now();
+
+// =========================
+// 🔥 IMPORTANT FIX: SYNC PRIMARY AUTH FOR DB RULES
+// =========================
+await signInWithEmailAndPassword(
+  auth,
+  userEmail,
+  userPassword
 );
 
-    const uid =
-      userCredential.user.uid;
-
-    const schoolId =
-      `school_${uid}`;
-
-    const now =
-      Date.now();
-
-    // =========================
-    // SCHOOL DATA
-    // =========================
-
-    const schoolData = {
-
-      schoolId,
-      uid,
-      ownerUid: uid,
+// =========================
+// SCHOOL DATA
+// =========================
+const schoolData = {
+  schoolId,
+  uid,
+  ownerUid: uid,
 
       name: school,
       email: userEmail,
@@ -5772,12 +6080,8 @@ window.register = async () => {
       package: "trial",
 
       amountPaid: 0,
-
       trialStartedAt: now,
-
-      // 14 Day Trial
-      trialEndsAt:
-        now + (14 * 24 * 60 * 60 * 1000),
+      trialEndsAt: now + (0 * 24 * 60 * 60 * 1000),
 
       subscriptionStartedAt: 0,
       subscriptionEndsAt: 0,
@@ -5795,264 +6099,143 @@ window.register = async () => {
       learnersCount: 0,
       teachersCount: 0,
       examsCount: 0
-
     };
 
     // =========================
     // USER DATA
     // =========================
-
     const userData = {
-
       uid,
-
       role: "admin",
-
       schoolId,
       schoolName: school,
-
       email: userEmail,
-
       createdAt: now,
-
+      lastLogin: now,
       active: true,
-      deleted: false,
-
-      lastLogin: now
-
+      deleted: false
     };
 
     // =========================
     // ATOMIC SAVE
     // =========================
-
-    const updates = {};
-
-    updates[`schools/${schoolId}`] =
-      schoolData;
-
-    updates[`users/${uid}`] =
-      userData;
-
-    await update(
-      ref(db),
-      updates
-    );
+ await Promise.all([
+  set(ref(db, `schools/${schoolId}`), schoolData),
+  set(ref(db, `users/${uid}`), userData)
+]);
 
     // =========================
     // SAVE CONTEXT
     // =========================
+    window.schoolId = schoolId;
+    window.userUid = uid;
+    window.appReady = true;
 
-    window.schoolId =
-      schoolId;
+    localStorage.setItem("schoolId", schoolId);
+    localStorage.setItem("schoolName", school);
 
-    window.userUid =
-      uid;
-
-    window.appReady =
-      true;
-
-    localStorage.setItem(
-      "schoolId",
-      schoolId
-    );
-
-    localStorage.setItem(
-      "schoolName",
-      school
-    );
-
-    sessionStorage.setItem(
-      "userUid",
-      uid
-    );
+    sessionStorage.setItem("userUid", uid);
 
     // =========================
     // UPDATE UI
     // =========================
+    const schoolEl = document.getElementById("schoolNameDisplay");
+    if (schoolEl) schoolEl.textContent = school;
 
-    const schoolEl =
-      document.getElementById(
-        "schoolNameDisplay"
-      );
+    document.getElementById("authSection")
+      ?.style.setProperty("display", "none");
 
-    if (schoolEl) {
-      schoolEl.textContent =
-        school;
-    }
-
-    document
-      .getElementById(
-        "authSection"
-      )
-      ?.style.setProperty(
-        "display",
-        "none"
-      );
-
-    const app =
-      document.getElementById(
-        "app"
-      );
+    const app = document.getElementById("app");
 
     if (app) {
-
-      app.style.display =
-        "block";
-
-      app.style.opacity =
-        "0";
+      app.style.display = "block";
+      app.style.opacity = "0";
 
       requestAnimationFrame(() => {
-
-        app.style.transition =
-          "opacity .3s ease";
-
-        app.style.opacity =
-          "1";
-
+        app.style.transition = "opacity .3s ease";
+        app.style.opacity = "1";
       });
     }
 
     // =========================
     // START SYSTEMS
     // =========================
-
     startSubscriptionWatcher?.();
-
     startSubscriptionUI?.();
 
-    // =========================
-    // PRELOAD APP DATA
-    // =========================
-
-    if (
-      typeof loadAll ===
-      "function"
-    ) {
-
+    if (typeof loadAll === "function") {
       await loadAll();
-
-    } else {
-
-      console.warn(
-        "⚠️ loadAll not found"
-      );
     }
 
     // =========================
-    // SUCCESS MESSAGE
+    // SUCCESS
     // =========================
-
     await Swal.fire({
-
       icon: "success",
-
-      title:
-        "🎉 School Created Successfully!",
-
+      title: "🎉 School Created Successfully!",
       html: `
         <div style="text-align:center;">
-          <div style="
-            font-size:18px;
-            font-weight:700;
-            color:#16a34a;
-            margin-bottom:10px;
-          ">
+          <div style="font-size:18px;font-weight:700;color:#16a34a;margin-bottom:10px;">
             ${school}
           </div>
-
-          <div style="
-            color:#64748b;
-            font-size:14px;
-          ">
-            Your school management system is now ready 🚀
+          <div style="color:#64748b;font-size:14px;">
+            Your system is ready 🚀
           </div>
         </div>
       `,
-
-      confirmButtonText:
-        "Continue",
-
-      confirmButtonColor:
-        "#16a34a",
-
-      allowOutsideClick:
-        false
+      confirmButtonText: "Continue",
+      confirmButtonColor: "#16a34a",
+      allowOutsideClick: false
     });
 
   } catch (error) {
 
-    console.error(
-      "REGISTER ERROR:",
-      error
-    );
+    console.error("REGISTER ERROR:", error);
 
-    let message =
-      "Something went wrong.";
+    let message = "Something went wrong.";
 
     switch (error.code) {
 
       case "auth/email-already-in-use":
-        message =
-          "This email is already registered.";
+        message = "This email is already registered.";
         break;
 
       case "auth/invalid-email":
-        message =
-          "Invalid email address.";
+        message = "Invalid email address.";
         break;
 
       case "auth/weak-password":
-        message =
-          "Password is too weak.";
+        message = "Password is too weak.";
         break;
 
       case "auth/network-request-failed":
-        message =
-          "Network error. Check internet connection.";
+        message = "Network error. Check internet connection.";
         break;
 
       default:
-        message =
-          error.message || message;
+        message = error.message || message;
     }
 
     Swal.fire({
-
       icon: "error",
-
-      title:
-        "Registration Failed",
-
-      text:
-        message,
-
-      confirmButtonColor:
-        "#ef4444"
+      title: "Registration Failed",
+      text: message,
+      confirmButtonColor: "#ef4444"
     });
 
   } finally {
 
-    window.__registering =
-      false;
+    window.__registering = false;
 
     if (btn) {
-
-      btn.disabled =
-        false;
-
-      btn.innerHTML =
-        "🏫 Create School";
-
+      btn.disabled = false;
+      btn.innerHTML = "🏫 Create School";
     }
   }
 };
 
-
-
 /* ======================================================
-   SUBSCRIPTION SYSTEM
+   SUBSCRIPTION SYSTEM (CLEAN + PRODUCTION READY)
 ====================================================== */
 
 async function checkSubscriptionAccess() {
@@ -6060,27 +6243,18 @@ async function checkSubscriptionAccess() {
   try {
 
     // =====================================
-    // GET ACTIVE SCHOOL ID
+    // GET ACTIVE SCHOOL ID (SAFE)
     // =====================================
     const activeSchoolId =
-
       window.schoolId ||
-
-      sessionStorage.getItem(
-        "schoolId"
-      ) ||
-
-      localStorage.getItem(
-        "schoolId"
-      );
+      sessionStorage.getItem("schoolId") ||
+      localStorage.getItem("schoolId");
 
     if (!activeSchoolId) {
-
-      Swal.fire({
+      await Swal.fire({
         icon: "error",
         title: "Session Expired",
-        text:
-          "Please login again."
+        text: "Please login again."
       });
 
       return false;
@@ -6090,15 +6264,11 @@ async function checkSubscriptionAccess() {
     // LOAD SCHOOL
     // =====================================
     const snap = await get(
-      ref(
-        db,
-        `schools/${activeSchoolId}`
-      )
+      ref(db, `schools/${activeSchoolId}`)
     );
 
     if (!snap.exists()) {
-
-      Swal.fire({
+      await Swal.fire({
         icon: "error",
         title: "School Not Found"
       });
@@ -6106,21 +6276,15 @@ async function checkSubscriptionAccess() {
       return false;
     }
 
-    const school =
-      snap.val();
+    const school = snap.val();
+    subscriptionData = school;
 
-    subscriptionData =
-      school;
-
-    const now =
-      Date.now();
+    const now = Date.now();
 
     // =====================================
     // MANUAL LOCK
     // =====================================
-    if (
-      school.locked === true
-    ) {
+    if (school.locked === true) {
 
       lockEntireSystem(
         "System Locked",
@@ -6131,78 +6295,135 @@ async function checkSubscriptionAccess() {
     }
 
     // =====================================
-    // ACTIVE PAID SUBSCRIPTION
+    // ACTIVE SUBSCRIPTION CHECK
     // =====================================
-    if (
-      school.subscriptionStatus ===
-        "active" &&
+    const isActive =
+      school.subscriptionStatus === "active" &&
+      Number(school.subscriptionEndsAt || 0) > now;
 
-      Number(
-        school.subscriptionEndsAt || 0
-      ) > now
-    ) {
+    if (isActive) return true;
 
-      return true;
+    // =====================================
+    // ACTIVE TRIAL CHECK
+    // =====================================
+    const isTrial =
+      school.subscriptionStatus === "trial" &&
+      Number(school.trialEndsAt || 0) > now;
+
+    if (isTrial) return true;
+
+    // =====================================
+    // EXPIRED → UPDATE STATUS ONCE
+    // =====================================
+    try {
+      await update(
+        ref(db, `schools/${activeSchoolId}`),
+        { subscriptionStatus: "expired" }
+      );
+    } catch (e) {
+      console.warn("Failed to update expired status:", e);
     }
 
     // =====================================
-    // ACTIVE FREE TRIAL
+    // LOCK SYSTEM
     // =====================================
-    if (
-      school.subscriptionStatus ===
-        "trial" &&
-
-      Number(
-        school.trialEndsAt || 0
-      ) > now
-    ) {
-
-      return true;
-    }
-
-    // =====================================
-    // EXPIRED
-    // =====================================
-    await update(
-      ref(
-        db,
-        `schools/${activeSchoolId}`
-      ),
-      {
-        subscriptionStatus:
-          "expired"
-      }
-    );
-
     lockEntireSystem(
-      "Trial Expired",
-      "Please subscribe to continue using RASM 360."
+      "Subscription Expired",
+      "Please subscribe to continue using the system."
     );
 
     return false;
 
   } catch (err) {
 
-    console.error(
-      "Subscription Error:",
-      err
-    );
+    console.error("Subscription Error:", err);
 
-    Swal.fire({
+    await Swal.fire({
       icon: "error",
-      title:
-        "Subscription Error",
-      text:
-        err.message ||
-        "Unable to verify subscription."
+      title: "Subscription Error",
+      text: err.message || "Unable to verify subscription."
     });
 
     return false;
   }
 }
+window.openRasmActivation = function () {
 
+  // 🔥 GET CURRENT SWEETALERT POPUP
+  const popup = Swal.getPopup();
 
+  if (!popup) return;
 
+  const select = popup.querySelector("#packageSelect");
+  const infoBox = popup.querySelector("#packageInfo");
+
+  if (!select || !infoBox) return;
+
+  // ✅ UPDATE INFO ONLY (NO Swal.close!)
+
+infoBox.innerHTML = `
+  <b>📌 RASM Activation Mode</b><br><br>
+
+  ✔ Select a package below<br>
+  ✔ Pay via M-Pesa number below<br>
+  ✔ After payment, send details for activation<br><br>
+
+  <b>📞 PAYBILL / TILL / NUMBER</b><br>
+  0712 000 000<br><br>
+
+  <b>📲 WhatsApp Activation</b><br>
+  Send message to activate your account:<br><br>
+
+  👉 <a href="https://wa.me/254712000000" target="_blank"
+     style="color:#16a34a;font-weight:bold;">
+     Click to Chat RASM Support
+  </a><br><br>
+
+  <b>📩 Send these details:</b><br>
+  • School Email<br>
+  • School Username / Name<br>
+  • M-Pesa Message Screenshot<br>
+  • Selected Package
+`;
+  // ✅ ENSURE EVENT IS ONLY ATTACHED ONCE
+  if (!select.__attached) {
+
+    select.addEventListener("change", () => {
+
+      const val = select.value;
+
+      const box = popup.querySelector("#packageInfo");
+      if (!box) return;
+
+      if (val === "hourly") {
+        box.innerHTML = "⚡ 1 Hour Access — Quick usage";
+      }
+
+      if (val === "daily") {
+        box.innerHTML = "🟡 24 Hours Access — Daily package";
+      }
+
+      if (val === "weekly") {
+        box.innerHTML = "🔵 7 Days Access — Weekly plan";
+      }
+
+      if (val === "starter") {
+        box.innerHTML = "🟢 30 Days Access — Starter plan";
+      }
+
+      if (val === "standard") {
+        box.innerHTML = "🔷 90 Days Access — Standard plan";
+      }
+
+      if (val === "premium") {
+        box.innerHTML = "🟣 365 Days Access — Premium plan";
+      }
+
+    });
+
+    select.__attached = true;
+  }
+};
 /* ======================================================
    GLOBAL ACCESS CONTROL
 ====================================================== */
@@ -6256,7 +6477,23 @@ function lockEntireSystem(title, message) {
           ">
             💳 PAY VIA M-PESA
           </h2>
-
+<button
+  onclick="openRasmActivation()"
+  style="
+    width:100%;
+    margin-top:12px;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:#111827;
+    color:white;
+    font-size:14px;
+    font-weight:700;
+    cursor:pointer;
+  "
+>
+  🚀 Get Activated by RASM
+</button>
           <p style="
             color:#6b7280;
             margin-top:8px;
@@ -6532,7 +6769,7 @@ function lockEntireSystem(title, message) {
 }
 
 /* ======================================================
-   M-PESA SUBSCRIPTION ACTIVATION
+   M-PESA SUBSCRIPTION ACTIVATION (FIXED + RASM READY)
 ====================================================== */
 
 window.activateSubscription = async function () {
@@ -6543,109 +6780,88 @@ window.activateSubscription = async function () {
   const selectedPackage =
     document.getElementById("packageSelect").value;
 
+  // ================================
+  // PACKAGE LABELS
+  // ================================
+  const packageLabels = {
+    hourly: "Quick Access (1 Hour)",
+    daily: "Daily Package (24 Hours)",
+    weekly: "Weekly Package (7 Days)",
+    starter: "Starter (30 Days)",
+    standard: "Standard (90 Days)",
+    premium: "Premium (365 Days)"
+  };
+
+  const packageName =
+    packageLabels[selectedPackage] || selectedPackage;
+
   // =====================================
   // VALIDATE PACKAGE
   // =====================================
-
   if (!selectedPackage) {
-
-    Swal.fire({
-
+    return Swal.fire({
       icon: "warning",
-
       title: "Package Required",
-
       text: "Please select a subscription package.",
-
       confirmButtonColor: "#f59e0b"
-
     });
-
-    return;
   }
 
   // =====================================
   // VALIDATE PHONE
   // =====================================
-
   if (!phone) {
-
-    Swal.fire({
-
+    return Swal.fire({
       icon: "warning",
-
       title: "Phone Required",
-
       text: "Enter M-Pesa phone number.",
-
       confirmButtonColor: "#f59e0b"
-
     });
-
-    return;
   }
 
   // =====================================
   // PACKAGE PRICING
   // =====================================
-
   let amount = 0;
   let duration = 0;
 
   if (selectedPackage === "hourly") {
-
     amount = 300;
     duration = 1 * 60 * 60 * 1000;
-
   }
 
   if (selectedPackage === "daily") {
-
     amount = 500;
     duration = 24 * 60 * 60 * 1000;
-
   }
 
   if (selectedPackage === "weekly") {
-
     amount = 1200;
     duration = 7 * 24 * 60 * 60 * 1000;
-
   }
 
   if (selectedPackage === "starter") {
-
     amount = 3000;
     duration = 30 * 24 * 60 * 60 * 1000;
-
   }
 
   if (selectedPackage === "standard") {
-
     amount = 5000;
     duration = 90 * 24 * 60 * 60 * 1000;
-
   }
 
   if (selectedPackage === "premium") {
-
     amount = 15000;
     duration = 365 * 24 * 60 * 60 * 1000;
-
   }
 
   // =====================================
-  // PROCESS PAYMENT
+  // PROCESS LOADING UI
   // =====================================
-
   Swal.fire({
-
     title: "Processing Payment",
-
     html: `
-
       <div style="padding:10px;">
-
         <div style="
           width:60px;
           height:60px;
@@ -6656,13 +6872,9 @@ window.activateSubscription = async function () {
           animation: spin 1s linear infinite;
         "></div>
 
-        <p style="
-          margin-top:15px;
-          color:#6b7280;
-        ">
+        <p style="margin-top:15px;color:#6b7280;">
           Sending M-Pesa STK Push...
         </p>
-
       </div>
 
       <style>
@@ -6671,57 +6883,88 @@ window.activateSubscription = async function () {
           100%{transform:rotate(360deg);}
         }
       </style>
-
     `,
-
     allowOutsideClick: false,
     showConfirmButton: false
-
   });
 
+  // =====================================
+  // 📩 FIREBASE NOTIFICATIONS (ADMIN)
+  // =====================================
+  try {
+
+    await set(
+      ref(db, `adminNotifications/${Date.now()}`),
+      {
+        type: "SUBSCRIPTION_REQUEST",
+        schoolId,
+        phone,
+        package: selectedPackage,
+        packageName,
+        amount,
+        status: "pending",
+        message: `Payment request for ${packageName}`,
+        createdAt: Date.now()
+      }
+    );
+
+  } catch (e) {
+    console.warn("Admin notification failed:", e);
+  }
+
+  // =====================================
+  // 📩 FIREBASE NOTIFICATIONS (SUPERADMIN)
+  // =====================================
+  try {
+
+    await set(
+      ref(db, `superadminNotifications/${Date.now()}`),
+      {
+        type: "RASM_ACTIVATION_REQUEST",
+        schoolId,
+        phone,
+        package: selectedPackage,
+        packageName,
+        amount,
+        status: "pending",
+        message: "New subscription activation request",
+        createdAt: Date.now()
+      }
+    );
+
+  } catch (e) {
+    console.warn("Superadmin notification failed:", e);
+  }
+
+  // =====================================
+  // 💳 STK PUSH REQUEST
+  // =====================================
   try {
 
     await fetch("https://YOUR_DOMAIN.com/pay", {
-
       method: "POST",
-
       headers: {
         "Content-Type": "application/json"
       },
-
       body: JSON.stringify({
-
         phone,
         amount,
         duration,
         schoolId,
-        packageName: selectedPackage
-
+        packageName
       })
-
     });
 
     Swal.fire({
-
       icon: "info",
-
       title: "📲 Complete Payment",
-
       html: `
-
         <div style="text-align:center;">
-
-          <p style="
-            color:#374151;
-            margin-bottom:15px;
-          ">
+          <p style="color:#374151;margin-bottom:15px;">
             An M-Pesa prompt has been sent to:
           </p>
 
-          <h2 style="
-            color:#16a34a;
-            margin:0;
-          ">
+          <h2 style="color:#16a34a;margin:0;">
             ${phone}
           </h2>
 
@@ -6734,13 +6977,9 @@ window.activateSubscription = async function () {
           ">
             Waiting for payment confirmation...
           </div>
-
         </div>
-
       `,
-
       confirmButtonColor: "#16a34a"
-
     });
 
   } catch (err) {
@@ -6748,15 +6987,10 @@ window.activateSubscription = async function () {
     console.error(err);
 
     Swal.fire({
-
       icon: "error",
-
       title: "Payment Failed",
-
       html: `
-
         <div style="text-align:center;">
-
           <p style="color:#dc2626;">
             Failed to start M-Pesa payment.
           </p>
@@ -6771,15 +7005,10 @@ window.activateSubscription = async function () {
           ">
             ${err.message}
           </div>
-
         </div>
-
       `,
-
       confirmButtonColor: "#dc2626"
-
     });
-
   }
 };
 
@@ -6802,7 +7031,7 @@ async function secureAccessCheck() {
 }
 
 /* ======================================================
-   🔥 LIVE SUBSCRIPTION WATCHER (OPTIMIZED)
+   🔥 LIVE SUBSCRIPTION WATCHER (CLEAN + STABLE)
 ====================================================== */
 
 let trialTimer = null;
@@ -6818,53 +7047,47 @@ function startSubscriptionWatcher() {
 
     try {
 
+      // =====================================
+      // SAFE SCHOOL ID (NO getSchoolId)
+      // =====================================
       const schoolId =
-        getSchoolId();
+        window.schoolId ||
+        sessionStorage.getItem("schoolId") ||
+        localStorage.getItem("schoolId");
 
       if (!schoolId) return;
 
-      const now =
-        Date.now();
+      const now = Date.now();
 
       // =====================================
-      // REFRESH FROM FIREBASE EVERY 60 SECONDS
+      // SMART CACHE (REDUCES FIREBASE LOAD)
       // =====================================
-      if (
-        !cachedSchool ||
-        now - lastFetch > 60000
-      ) {
+      if (!cachedSchool || now - lastFetch > 60000) {
 
-        const snap =
-          await get(
-            ref(
-              db,
-              `schools/${schoolId}`
-            )
-          );
+        const snap = await get(ref(db, `schools/${schoolId}`));
 
         if (!snap.exists()) {
-
           clearInterval(trialTimer);
           return;
         }
 
-        cachedSchool =
-          snap.val();
-
-        lastFetch =
-          now;
+        cachedSchool = snap.val();
+        lastFetch = now;
       }
 
-      const school =
-        cachedSchool;
+      const school = cachedSchool;
+
+      // =====================================
+      // PREVENT MULTIPLE EXECUTIONS
+      // =====================================
+      if (window.__subscriptionLocked) return;
 
       // =====================================
       // MANUAL LOCK
       // =====================================
-      if (
-        school.locked === true
-      ) {
+      if (school.locked === true) {
 
+        window.__subscriptionLocked = true;
         clearInterval(trialTimer);
 
         lockEntireSystem(
@@ -6876,44 +7099,23 @@ function startSubscriptionWatcher() {
       }
 
       // =====================================
-      // ACTIVE TRIAL
+      // TRIAL CHECK
       // =====================================
-      if (
-        school.subscriptionStatus ===
-        "trial"
-      ) {
+      if (school.subscriptionStatus === "trial") {
 
-        const trialEndsAt =
-          Number(
-            school.trialEndsAt || 0
-          );
+        const trialEndsAt = Number(school.trialEndsAt || 0);
 
-        if (
-          trialEndsAt > 0 &&
-          now >= trialEndsAt
-        ) {
+        if (trialEndsAt && now >= trialEndsAt) {
 
+          window.__subscriptionLocked = true;
           clearInterval(trialTimer);
 
           try {
-
-            await update(
-              ref(
-                db,
-                `schools/${schoolId}`
-              ),
-              {
-                subscriptionStatus:
-                  "expired"
-              }
-            );
-
+            await update(ref(db, `schools/${schoolId}`), {
+              subscriptionStatus: "expired"
+            });
           } catch (e) {
-
-            console.warn(
-              "Could not update expired trial:",
-              e
-            );
+            console.warn("Trial expiry update failed:", e);
           }
 
           lockEntireSystem(
@@ -6926,44 +7128,23 @@ function startSubscriptionWatcher() {
       }
 
       // =====================================
-      // ACTIVE SUBSCRIPTION
+      // ACTIVE SUBSCRIPTION CHECK
       // =====================================
-      if (
-        school.subscriptionStatus ===
-        "active"
-      ) {
+      if (school.subscriptionStatus === "active") {
 
-        const subscriptionEndsAt =
-          Number(
-            school.subscriptionEndsAt || 0
-          );
+        const subscriptionEndsAt = Number(school.subscriptionEndsAt || 0);
 
-        if (
-          subscriptionEndsAt > 0 &&
-          now >= subscriptionEndsAt
-        ) {
+        if (subscriptionEndsAt && now >= subscriptionEndsAt) {
 
+          window.__subscriptionLocked = true;
           clearInterval(trialTimer);
 
           try {
-
-            await update(
-              ref(
-                db,
-                `schools/${schoolId}`
-              ),
-              {
-                subscriptionStatus:
-                  "expired"
-              }
-            );
-
+            await update(ref(db, `schools/${schoolId}`), {
+              subscriptionStatus: "expired"
+            });
           } catch (e) {
-
-            console.warn(
-              "Could not update expired subscription:",
-              e
-            );
+            console.warn("Subscription expiry update failed:", e);
           }
 
           lockEntireSystem(
@@ -6976,18 +7157,13 @@ function startSubscriptionWatcher() {
       }
 
     } catch (err) {
-
-      console.error(
-        "Subscription Watcher Error:",
-        err
-      );
-
+      console.error("Subscription Watcher Error:", err);
     }
 
-  }, 10000); // check every 10 seconds
+  }, 10000); // 10 seconds (safe balance)
 }
 /* ======================================================
-   🔥 LIVE SUBSCRIPTION UI (FINAL FIX)
+   🔥 LIVE SUBSCRIPTION UI (OPTIMIZED + CLEAN)
 ====================================================== */
 
 let subscriptionUIInterval = null;
@@ -6996,169 +7172,105 @@ function startSubscriptionUI() {
 
   clearInterval(subscriptionUIInterval);
 
+  let cachedSchool = null;
+  let lastFetch = 0;
+
   subscriptionUIInterval = setInterval(async () => {
 
     try {
 
       // =====================================
-      // WAIT FOR SCHOOL ID
+      // SAFE SCHOOL ID (CLEAN SYSTEM)
       // =====================================
-const schoolId = getSchoolId();
+      const schoolId =
+        window.schoolId ||
+        sessionStorage.getItem("schoolId") ||
+        localStorage.getItem("schoolId");
 
-if (!schoolId) return;
+      if (!schoolId) return;
 
-      const planEl =
-        document.getElementById(
-          "subscriptionPlan"
-        );
+      const planEl = document.getElementById("subscriptionPlan");
+      const countdownEl = document.getElementById("subscriptionCountdown");
 
-      const countdownEl =
-        document.getElementById(
-          "subscriptionCountdown"
-        );
-
-      if (!planEl || !countdownEl)
-        return;
-
-      const snap =
-        await get(
-          ref(db, `schools/${getSchoolId()}`)
-        );
-
-      if (!snap.exists()) {
-
-        planEl.innerHTML =
-          "Plan: Not Found";
-
-        countdownEl.innerHTML =
-          "Remaining: -";
-
-        return;
-      }
-
-      const school = snap.val();
+      if (!planEl || !countdownEl) return;
 
       const now = Date.now();
 
-      let endTime = 0;
+      // =====================================
+      // CACHE FIREBASE DATA (IMPORTANT FIX)
+      // avoids 1s DB spam
+      // =====================================
+      if (!cachedSchool || now - lastFetch > 60000) {
+
+        const snap = await get(ref(db, `schools/${schoolId}`));
+
+        if (!snap.exists()) {
+          planEl.innerHTML = "Plan: Not Found";
+          countdownEl.innerHTML = "Remaining: -";
+          return;
+        }
+
+        cachedSchool = snap.val();
+        lastFetch = now;
+      }
+
+      const school = cachedSchool;
 
       // =====================================
       // DETERMINE END TIME
       // =====================================
+      let endTime = 0;
 
-      if (
-        school.subscriptionStatus ===
-        "trial"
-      ) {
-
-        endTime =
-          school.trialEndsAt || 0;
+      if (school.subscriptionStatus === "trial") {
+        endTime = Number(school.trialEndsAt || 0);
       }
 
-      if (
-        school.subscriptionStatus ===
-        "active"
-      ) {
-
-        endTime =
-          school.subscriptionEndsAt || 0;
+      if (school.subscriptionStatus === "active") {
+        endTime = Number(school.subscriptionEndsAt || 0);
       }
 
       // =====================================
-      // PLAN DISPLAY
+      // PLAN DISPLAY (FAST UI RENDER)
       // =====================================
-
       planEl.innerHTML = `
-        Plan: ${school.plan || "Free Trial"}
-        <br>
-        Status: ${school.subscriptionStatus || "-"}
-        <br>
+        Plan: ${school.plan || "Free Trial"}<br>
+        Status: ${school.subscriptionStatus || "-"}<br>
         Amount: KES ${school.amountPaid || 0}
       `;
 
       // =====================================
-      // NO ACTIVE TIMER
+      // NO ACTIVE SUBSCRIPTION
       // =====================================
-
       if (!endTime) {
-
-        countdownEl.innerHTML =
-          "Remaining: Expired";
-
+        countdownEl.innerHTML = "Remaining: Expired";
         return;
       }
 
       // =====================================
-      // CALCULATE TIME
+      // TIME CALCULATION
       // =====================================
-
-      const remaining =
-        endTime - now;
-
-      // =====================================
-      // EXPIRED
-      // =====================================
+      const remaining = endTime - now;
 
       if (remaining <= 0) {
-
-        countdownEl.innerHTML =
-          "Remaining: Expired";
-
+        countdownEl.innerHTML = "Remaining: Expired";
         return;
       }
 
-      const days =
-        Math.floor(
-          remaining /
-          (1000 * 60 * 60 * 24)
-        );
-
-      const hours =
-        Math.floor(
-          (
-            remaining %
-            (1000 * 60 * 60 * 24)
-          ) /
-          (1000 * 60 * 60)
-        );
-
-      const mins =
-        Math.floor(
-          (
-            remaining %
-            (1000 * 60 * 60)
-          ) /
-          (1000 * 60)
-        );
-
-      const secs =
-        Math.floor(
-          (
-            remaining %
-            (1000 * 60)
-          ) / 1000
-        );
+      const days = Math.floor(remaining / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((remaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const mins = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+      const secs = Math.floor((remaining % (1000 * 60)) / 1000);
 
       countdownEl.innerHTML = `
-        Remaining:
-        ${days}d
-        ${hours}h
-        ${mins}m
-        ${secs}s
+        Remaining: ${days}d ${hours}h ${mins}m ${secs}s
       `;
 
     } catch (err) {
-
-      console.error(
-        "Subscription UI Error:",
-        err
-      );
-
+      console.error("Subscription UI Error:", err);
     }
 
   }, 1000);
 }
-
 /* ================= LOGIN (FINAL PRODUCTION VERSION) ================= */
 
 window.login = async () => {
@@ -8171,25 +8283,6 @@ if (
 }
 
 
-
-
-
-
-
-
-
-window.syncSchoolNameUI = () => {
-
-  const name =
-    localStorage.getItem("schoolName");
-
-  const el =
-    document.getElementById("schoolNameDisplay");
-
-  if (el && name) {
-    el.textContent = name;
-  }
-};
 
 
 /* =========================================================
@@ -28531,18 +28624,12 @@ setInterval(() => {
 // GLOBAL DATA
 // =========================================
 
-let courses = [];
+
 let assignments = [];
-// =========================================
-// ACTIVE EXAM SESSIONS
-// =========================================
+window.courses = window.courses || [];
+window.assignments = window.assignments || [];
 
 let activeSessions = {};
-// =========================================
-// CREATE COURSE
-// FIREBASE REALTIME DATABASE VERSION
-// =========================================
-
 window.createCourse = async function () {
 
   try {
@@ -28551,30 +28638,23 @@ window.createCourse = async function () {
     // SCHOOL SESSION
     // =====================================
 
-const schoolId =
-  window.schoolId ||
-  localStorage.getItem("schoolId");
-if (
-  window.currentUserRole === "parent"
-) {
+    const schoolId =
+      window.schoolId ||
+      localStorage.getItem("schoolId");
 
-  return Swal.fire(
-    "Access Denied",
-    "Parents can only view learning materials.",
-    "warning"
-  );
-
-}
-if (!schoolId) {
-  throw new Error("School ID missing. Please login again.");
-}
-
-    if (!schoolId) {
-
+    if (
+      window.currentUserRole === "parent"
+    ) {
       return Swal.fire(
         "Access Denied",
-        "School session not found",
-        "error"
+        "Parents can only view learning materials.",
+        "warning"
+      );
+    }
+
+    if (!schoolId) {
+      throw new Error(
+        "School ID missing. Please login again."
       );
     }
 
@@ -28585,32 +28665,38 @@ if (!schoolId) {
     const title =
       document.getElementById(
         "courseTitle"
-      )?.value
-        ?.trim();
+      )?.value?.trim();
 
     const teacher =
       document.getElementById(
         "courseTeacher"
-      )?.value
-        ?.trim();
+      )?.value?.trim();
 
     const grade =
       document.getElementById(
         "courseGrade"
-      )?.value
-        ?.trim();
+      )?.value?.trim();
 
     const subject =
       document.getElementById(
         "courseSubject"
-      )?.value
-        ?.trim();
+      )?.value?.trim();
 
     const description =
       document.getElementById(
         "courseDescription"
-      )?.value
-        ?.trim();
+      )?.value?.trim();
+
+    // NEW PRICE FIELD
+  const courseType =
+  document.getElementById("courseType")?.value || "free";
+
+const price =
+  courseType === "paid"
+    ? parseInt(
+        document.getElementById("coursePrice")?.value || 0
+      )
+    : 0;
 
     // =====================================
     // VALIDATION
@@ -28623,18 +28709,17 @@ if (!schoolId) {
       !subject ||
       !description
     ) {
-
-      console.log({
-        title,
-        teacher,
-        grade,
-        subject,
-        description
-      });
-
       return Swal.fire(
         "Missing Fields",
         "Please fill all course fields",
+        "warning"
+      );
+    }
+
+    if (price < 0) {
+      return Swal.fire(
+        "Invalid Price",
+        "Course price cannot be negative",
         "warning"
       );
     }
@@ -28646,8 +28731,7 @@ if (!schoolId) {
     const courseId =
       "COURSE-" + Date.now();
 
-    const now =
-      new Date();
+    const now = new Date();
 
     // =====================================
     // COURSE DATA
@@ -28669,6 +28753,12 @@ if (!schoolId) {
 
       description,
 
+      // MONETISATION
+      price,
+
+      isPaid:
+        price > 0,
+
       postedDate:
         now.toLocaleDateString(),
 
@@ -28676,6 +28766,10 @@ if (!schoolId) {
         now.toLocaleTimeString(),
 
       locked: false,
+
+      totalPurchases: 0,
+
+      totalRevenue: 0,
 
       createdAt:
         Date.now()
@@ -28686,61 +28780,78 @@ if (!schoolId) {
     // =====================================
 
     await set(
-
       ref(
         db,
         `schools/${schoolId}/courses/${courseId}`
       ),
-
       course
     );
 
     // =====================================
-    // LOCAL ARRAY UPDATE
+    // LOCAL UPDATE
     // =====================================
 
     courses.push(course);
 
     // =====================================
-    // SUCCESS
+    // SUCCESS MESSAGE
     // =====================================
 
-    Swal.fire(
-      "Success",
-      "Course Published Successfully",
-      "success"
-    );
+    Swal.fire({
+      icon: "success",
+      title: "Course Published",
+      html: `
+        <div style="text-align:left">
+
+          <b>Title:</b>
+          ${title}
+
+          <br><br>
+
+          <b>Price:</b>
+          ${
+            price > 0
+              ? `KES ${price}`
+              : "FREE"
+          }
+
+          <br><br>
+
+          ${
+            price > 0
+              ? "💰 Students will be required to pay before accessing this course."
+              : "📖 This course is freely accessible."
+          }
+
+        </div>
+      `
+    });
 
     // =====================================
     // CLEAR FORM
     // =====================================
 
-    document.getElementById(
-      "courseTitle"
-    ).value = "";
+    [
+      "courseTitle",
+      "courseTeacher",
+      "courseGrade",
+      "courseSubject",
+      "courseDescription",
+      "coursePrice"
+    ].forEach(id => {
 
-    document.getElementById(
-      "courseTeacher"
-    ).value = "";
+      const el =
+        document.getElementById(id);
 
-    document.getElementById(
-      "courseGrade"
-    ).value = "";
+      if (el) el.value = "";
 
-    document.getElementById(
-      "courseSubject"
-    ).value = "";
-
-    document.getElementById(
-      "courseDescription"
-    ).value = "";
+    });
 
     // =====================================
-    // REFRESH
+    // RELOAD
     // =====================================
 
     if (window.loadCourses) {
-
       window.loadCourses();
     }
 
@@ -28759,8 +28870,37 @@ if (!schoolId) {
     );
   }
 };
+// =========================================
+// SHOW / HIDE COURSE PRICE
+// =========================================
 
+window.toggleCoursePrice = function () {
 
+  const type =
+    document.getElementById("courseType")?.value;
+
+  const box =
+    document.getElementById("coursePriceBox");
+
+  if (!box) return;
+
+  box.style.display =
+    type === "paid"
+      ? "block"
+      : "none";
+
+  if (type === "free") {
+
+    const price =
+      document.getElementById("coursePrice");
+
+    if (price) {
+      price.value = 0;
+    }
+
+  }
+
+};
 // =========================================
 // LOAD COURSES
 // FIREBASE REALTIME DATABASE VERSION
@@ -28774,68 +28914,123 @@ window.loadCourses = async function () {
     // SCHOOL SESSION
     // =====================================
 
-const schoolId =
-  window.schoolId ||
-  localStorage.getItem("schoolId");
+    const schoolId =
+      window.schoolId ||
+      localStorage.getItem("schoolId");
 
-if (!schoolId) {
-  throw new Error(
-    "School ID missing. Please login again."
-  );
-}
-    if (!schoolId) return;
+    if (!schoolId) {
+
+      console.log(
+        "Skipping loadCourses: no schoolId yet."
+      );
+
+      return;
+    }
 
     // =====================================
     // LOAD COURSES
     // =====================================
 
-    const snapshot =
-      await get(
+    const snapshot = await get(
+      ref(
+        db,
+        `schools/${schoolId}/courses`
+      )
+    );
 
-        ref(
-          db,
-          `schools/${schoolId}/courses`
-        )
-      );
-
-    courses = [];
+    window.courses = [];
 
     if (snapshot.exists()) {
 
       snapshot.forEach(child => {
 
-        courses.push({
+        const data =
+          child.val() || {};
 
-          firebaseId:
+        window.courses.push({
+
+          // Firebase key
+          firebaseId: child.key,
+
+          // Keep compatibility
+          id:
+            data.id ||
             child.key,
 
-          ...child.val()
+          // Course Details
+          title:
+            data.title || "",
+
+          teacher:
+            data.teacher || "",
+
+          grade:
+            data.grade || "",
+
+          subject:
+            data.subject || "",
+
+          description:
+            data.description || "",
+
+          // Monetization
+          price:
+            Number(
+              data.price || 0
+            ),
+
+          // Lock System
+          locked:
+            data.locked === true,
+
+          // Dates
+          createdAt:
+            data.createdAt || 0,
+
+          postedDate:
+            data.postedDate ||
+            "",
+
+          postedTime:
+            data.postedTime ||
+            "",
+
+          // Optional future fields
+          thumbnail:
+            data.thumbnail || "",
+
+          videoUrl:
+            data.videoUrl || "",
+
+          notesUrl:
+            data.notesUrl || "",
+
+          downloads:
+            data.downloads || 0,
+
+          studentsEnrolled:
+            data.studentsEnrolled || 0,
+
+          ...data
+
         });
 
       });
+
     }
 
     // =====================================
     // SORT NEWEST FIRST
     // =====================================
 
-    courses.sort(
+  window.courses.sort(
       (a, b) =>
         (b.createdAt || 0) -
         (a.createdAt || 0)
     );
 
     // =====================================
-    // RENDER
-    // =====================================
-
-    if (window.renderCourses) {
-
-      window.renderCourses();
-    }
-
-    // =====================================
-    // UPDATE COUNTER
+    // UPDATE COUNTERS
     // =====================================
 
     const totalCourses =
@@ -28845,9 +29040,51 @@ if (!schoolId) {
 
     if (totalCourses) {
 
-      totalCourses.textContent =
-        courses.length;
+totalCourses.textContent =
+  window.courses.length;
     }
+
+    const paidCourses =
+      document.getElementById(
+        "paidCoursesCount"
+      );
+
+    if (paidCourses) {
+
+      paidCourses.textContent =
+        window.courses.filter(
+          c => Number(c.price || 0) > 0
+        ).length;
+    }
+
+    const freeCourses =
+      document.getElementById(
+        "freeCoursesCount"
+      );
+
+    if (freeCourses) {
+
+      freeCourses.textContent =
+        courses.filter(
+          c => Number(c.price || 0) === 0
+        ).length;
+    }
+
+    // =====================================
+    // RENDER COURSES
+    // =====================================
+
+    if (
+      typeof window.renderCourses ===
+      "function"
+    ) {
+
+      window.renderCourses();
+    }
+
+ console.log(
+  `Loaded ${window.courses.length} courses`
+);
 
   } catch (error) {
 
@@ -28861,8 +29098,800 @@ if (!schoolId) {
       "Failed to load courses",
       "error"
     );
+
   }
+
 };
+// =========================================
+// RENDER COURSES
+// =========================================
+
+window.renderCourses = function () {
+
+  const container =
+    document.getElementById("coursesContainer");
+
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  const role =
+    (window.currentUserRole || "")
+      .toLowerCase();
+
+  const isTeacher =
+    ["teacher","admin"].includes(role);
+
+  if (!window.courses || window.courses.length === 0) {
+
+    container.innerHTML = `
+      <div style="
+        padding:20px;
+        text-align:center;
+        color:#64748b;
+      ">
+        No courses available.
+      </div>
+    `;
+
+    return;
+  }
+
+  window.courses.forEach(course => {
+
+    const price =
+      Number(course.price || 0);
+
+    container.innerHTML += `
+
+      <div class="course-card">
+
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+          flex-wrap:wrap;
+          gap:10px;
+          margin-bottom:12px;
+        ">
+
+          <div class="course-title">
+            📚 ${course.title}
+          </div>
+
+          <div style="
+            background:
+              ${course.locked
+                ? "#dc2626"
+                : "#16a34a"};
+            color:white;
+            padding:6px 10px;
+            border-radius:20px;
+            font-size:12px;
+            font-weight:bold;
+          ">
+            ${course.locked
+              ? "🔒 Locked"
+              : "🔓 Open"}
+          </div>
+
+        </div>
+
+        <div style="
+          background:#ecfdf5;
+          color:#166534;
+          padding:8px 12px;
+          border-radius:8px;
+          margin-bottom:10px;
+          font-weight:700;
+        ">
+          ${
+            price > 0
+              ? `💰 Paid Course - KES ${price}`
+              : `🆓 Free Course`
+          }
+        </div>
+
+        <div class="course-meta">
+          👨🏫 ${course.teacher}
+        </div>
+
+        <div class="course-meta">
+          🎓 ${course.grade}
+          •
+          📚 ${course.subject}
+        </div>
+
+        <div class="course-description">
+          ${course.description}
+        </div>
+
+        <div style="
+          margin-top:12px;
+          font-size:13px;
+          color:#64748b;
+        ">
+          📅 ${course.postedDate || ""}
+          <br>
+          🕒 ${course.postedTime || ""}
+        </div>
+
+        <div style="
+          margin-top:18px;
+          display:flex;
+          gap:10px;
+          flex-wrap:wrap;
+        ">
+
+          <button
+            onclick="checkCourseAccess('${course.id}', ${price})"
+            style="
+              background:
+                ${price > 0
+                  ? '#16a34a'
+                  : '#2563eb'};
+              color:white;
+              border:none;
+              padding:10px 14px;
+              border-radius:8px;
+              cursor:pointer;
+              font-weight:600;
+            "
+          >
+            ${
+              price > 0
+                ? `💳 Unlock Course`
+                : `📖 Open Course`
+            }
+          </button>
+
+          ${isTeacher ? `
+
+            <button
+              onclick="toggleCourseLock('${course.id}')"
+              style="
+                background:
+                  ${course.locked
+                    ? '#16a34a'
+                    : '#f59e0b'};
+                color:white;
+                border:none;
+                padding:10px 14px;
+                border-radius:8px;
+                cursor:pointer;
+                font-weight:600;
+              "
+            >
+              ${
+                course.locked
+                  ? '🔓 Unlock'
+                  : '🔒 Lock'
+              }
+            </button>
+
+            <button
+              onclick="editCourse('${course.id}')"
+              style="
+                background:#2563eb;
+                color:white;
+                border:none;
+                padding:10px 14px;
+                border-radius:8px;
+              "
+            >
+              ✏ Edit
+            </button>
+
+            <button
+              onclick="deleteCourse('${course.id}')"
+              style="
+                background:#dc2626;
+                color:white;
+                border:none;
+                padding:10px 14px;
+                border-radius:8px;
+              "
+            >
+              🗑 Delete
+            </button>
+
+          ` : ""}
+
+        </div>
+
+      </div>
+
+    `;
+  });
+
+};
+window.checkCourseAccess =
+async function(courseId, price){
+
+  const uid =
+    window.currentUser?.uid;
+
+  if(!uid){
+
+    return Swal.fire(
+      "Login Required",
+      "Please login first",
+      "warning"
+    );
+  }
+
+  if(price <= 0){
+
+    return openCourse(courseId);
+  }
+
+  const paymentSnap =
+    await get(
+      ref(
+        db,
+        `coursePayments/${uid}/${courseId}`
+      )
+    );
+
+  if(paymentSnap.exists()){
+
+    return openCourse(courseId);
+  }
+
+  Swal.fire({
+
+    title: "Unlock Course",
+
+    html: `
+
+      <div style="text-align:center;">
+
+        <h3>
+          Pay KES ${price}
+        </h3>
+
+        <p>
+          Enter M-Pesa Number
+        </p>
+
+        <input
+          id="coursePhone"
+          placeholder="2547XXXXXXXX"
+          class="swal2-input"
+        >
+
+      </div>
+
+    `,
+
+    showCancelButton:true,
+
+    confirmButtonText:"Pay Now"
+
+  }).then(async(result)=>{
+
+    if(!result.isConfirmed) return;
+
+    const phone =
+      document
+      .getElementById(
+        "coursePhone"
+      )
+      .value
+      .trim();
+
+    if(!phone){
+
+      return Swal.fire(
+        "Error",
+        "Phone required",
+        "error"
+      );
+    }
+
+    await requestCoursePayment(
+      courseId,
+      price,
+      phone
+    );
+
+  });
+
+};
+
+
+window.requestCoursePayment =
+async function(
+  courseId,
+  amount,
+  phone
+){
+
+  const uid =
+    window.currentUser?.uid;
+
+  const schoolId =
+    window.schoolId;
+
+  const paymentId =
+    "PAY_" + Date.now();
+
+  await set(
+
+    ref(
+      db,
+      `coursePaymentRequests/${paymentId}`
+    ),
+
+    {
+      paymentId,
+      uid,
+      schoolId,
+      courseId,
+      phone,
+      amount,
+      status:"pending",
+      createdAt:Date.now()
+    }
+
+  );
+
+  await set(
+
+    ref(
+      db,
+      `superadminNotifications/${paymentId}`
+    ),
+
+    {
+      type:"COURSE_PAYMENT",
+      schoolId,
+      courseId,
+      phone,
+      amount,
+      status:"pending",
+      createdAt:Date.now()
+    }
+
+  );
+
+  Swal.fire({
+
+    icon:"success",
+
+    title:"Payment Request Sent",
+
+    html:`
+
+      <div style="text-align:center;">
+
+        <p>
+          Pay via M-Pesa then wait
+          for approval.
+        </p>
+
+        <b>
+          Course Fee:
+          KES ${amount}
+        </b>
+
+      </div>
+
+    `
+
+  });
+
+};
+window.checkCourseAccess = async function(courseId, price){
+
+  try {
+
+    const uid = window.currentUser?.uid;
+
+    if(!uid){
+      return Swal.fire(
+        "Login Required",
+        "Please login first",
+        "warning"
+      );
+    }
+
+    if(price <= 0){
+      return window.openCourse(courseId);
+    }
+
+    console.log("Checking payment...");
+    console.log("UID:", uid);
+    console.log("Course:", courseId);
+
+    const snap = await get(
+      ref(
+        db,
+        `coursePayments/${uid}/${courseId}`
+      )
+    );
+
+    console.log("Payment Exists:", snap.exists());
+
+    if(snap.exists()){
+      return window.openCourse(courseId);
+    }
+
+    Swal.fire({
+      title: "Unlock Course",
+      html: `
+        <input
+          id="coursePhone"
+          class="swal2-input"
+          placeholder="2547XXXXXXXX"
+        >
+      `,
+      showCancelButton:true,
+      confirmButtonText:"Pay Now"
+    }).then(async(result)=>{
+
+      if(!result.isConfirmed) return;
+
+      const phone =
+        document.getElementById("coursePhone")
+        ?.value
+        ?.trim();
+
+      if(!phone){
+        return Swal.fire(
+          "Error",
+          "Phone required",
+          "error"
+        );
+      }
+
+      await window.requestCoursePayment(
+        courseId,
+        price,
+        phone
+      );
+
+    });
+
+  } catch(err){
+
+    console.error(
+      "COURSE ACCESS ERROR:",
+      err
+    );
+
+    Swal.fire(
+      "Error",
+      err.message || "Unable to check course access",
+      "error"
+    );
+
+  }
+
+};
+
+
+
+// =========================================
+// OPEN COURSE
+// =========================================
+
+window.openCourse = function(id){
+
+ const course =
+window.courses.find(
+      c => c.id === id
+    );
+
+  if(!course) return;
+
+  Swal.fire({
+
+    title:course.title,
+
+    html:`
+
+      <div style="
+        text-align:left;
+        line-height:1.8;
+      ">
+
+        <b>Teacher:</b>
+        ${course.teacher}
+
+        <br>
+
+        <b>Grade:</b>
+        ${course.grade}
+
+        <br>
+
+        <b>Subject:</b>
+        ${course.subject}
+
+        <hr>
+
+        ${course.description}
+
+      </div>
+
+    `,
+
+    width:600
+
+  });
+
+};
+
+// =========================================
+// EDIT COURSE
+// =========================================
+
+window.editCourse = function(id){
+
+  const role =
+ (window.currentUserRole || "")
+      .toLowerCase();
+
+  const isTeacher =
+    ["teacher","admin"].includes(role);
+
+  const isParent =
+    role === "parent";
+
+  // =========================
+  // ROLE PROTECTION
+  // =========================
+  if(!isTeacher){
+
+    Swal.fire(
+      "Access Denied",
+      isParent
+        ? "Parents cannot edit courses."
+        : "You are not allowed to edit courses.",
+      "error"
+    );
+
+    return;
+  }
+
+const course =
+window.courses.find(c => c.id === id);
+  if(!course) return;
+
+  Swal.fire({
+
+    title: "Edit Course",
+
+    html: `
+
+      <input
+        id="editCourseTitle"
+        class="swal2-input"
+        value="${course.title}"
+      >
+
+      <input
+        id="editCourseTeacher"
+        class="swal2-input"
+        value="${course.teacher}"
+      >
+
+      <input
+        id="editCourseGrade"
+        class="swal2-input"
+        value="${course.grade}"
+      >
+
+      <input
+        id="editCourseSubject"
+        class="swal2-input"
+        value="${course.subject}"
+      >
+
+      <textarea
+        id="editCourseDescription"
+        class="swal2-textarea"
+      >${course.description}</textarea>
+
+    `,
+
+    showCancelButton: true,
+
+    confirmButtonText: "Save"
+
+  }).then(async(result)=>{
+
+    if(result.isConfirmed){
+
+      try{
+
+        const schoolId = window.schoolId;
+
+        if (!schoolId) {
+          console.warn("schoolId not ready");
+          return;
+        }
+
+        const updatedData = {
+
+          title:
+            document.getElementById("editCourseTitle").value,
+
+          teacher:
+            document.getElementById("editCourseTeacher").value,
+
+          grade:
+            document.getElementById("editCourseGrade").value,
+
+          subject:
+            document.getElementById("editCourseSubject").value,
+
+          description:
+            document.getElementById("editCourseDescription").value
+        };
+
+        await update(
+          ref(
+            db,
+            `schools/${schoolId}/courses/${id}`
+          ),
+          updatedData
+        );
+
+        Object.assign(course, updatedData);
+
+        window.renderCourses();
+
+        Swal.fire(
+          "Updated",
+          "Course updated successfully",
+          "success"
+        );
+
+      }catch(err){
+
+        console.error(err);
+
+        Swal.fire(
+          "Error",
+          "Failed to update course",
+          "error"
+        );
+      }
+    }
+
+  });
+};
+
+
+
+
+
+
+// =========================================
+// DELETE COURSE
+// =========================================
+
+window.deleteCourse = function(id){
+
+  const role =
+(window.currentUserRole || "")
+      .toLowerCase();
+
+  const isTeacher =
+    ["teacher","admin"].includes(role);
+
+  const isParent =
+    role === "parent";
+
+  // =========================
+  // ROLE PROTECTION
+  // =========================
+  if(!isTeacher){
+
+    Swal.fire(
+      "Access Denied",
+      isParent
+        ? "Parents cannot delete courses."
+        : "You are not allowed to delete courses.",
+      "error"
+    );
+
+    return;
+  }
+
+  Swal.fire({
+
+    title: "Delete Course?",
+
+    text: "This action cannot be undone.",
+
+    icon: "warning",
+
+    showCancelButton: true,
+
+    confirmButtonColor: "#dc2626",
+
+    confirmButtonText: "Delete"
+
+  }).then(async(result) => {
+
+    if(result.isConfirmed){
+
+      try{
+
+        const schoolId = window.schoolId;
+
+        if (!schoolId) {
+          console.warn("schoolId not ready");
+          return;
+        }
+
+        await remove(
+          ref(
+            db,
+            `schools/${schoolId}/courses/${id}`
+          )
+        );
+
+      courses =
+courses.filter(
+            c => c.id !== id
+          );
+
+        window.renderCourses();
+
+        Swal.fire(
+          "Deleted",
+          "Course removed successfully",
+          "success"
+        );
+
+      }catch(err){
+
+        console.error(err);
+
+        Swal.fire(
+          "Error",
+          "Failed to delete course",
+          "error"
+        );
+      }
+    }
+
+  });
+
+};// CLEAR COURSE FORM
+// =========================================
+
+window.clearCourseForm = function(){
+
+  const ids = [
+
+    "courseTitle",
+
+    "courseTeacher",
+
+    "courseGrade",
+
+    "courseSubject",
+
+    "courseDescription"
+  ];
+
+  ids.forEach(id => {
+
+    const el =
+      document.getElementById(id);
+
+    if(el){
+
+      el.value = "";
+    }
+  });
+};
+
 
 
 window.enableExamMode = function(){
@@ -28892,14 +29921,7 @@ window.enableExamMode = function(){
   });
 
 };
-// =========================================
-// START ASSIGNMENT
-// SWEET ALERT LEARNER INPUT VERSION
-// =========================================
 
-// =========================================
-// START ASSIGNMENT (UPGRADED)
-// =========================================
 // =========================================
 // START ASSIGNMENT (FINAL VERSION)
 // =========================================
@@ -29238,668 +30260,6 @@ window.enableExamSecurity = function(
   );
 };
 
-// =========================================
-// RENDER COURSES
-// =========================================
-
-window.renderCourses = function(){
-
-  const container =
-    document.getElementById(
-      "coursesContainer"
-    );
-
-  if(!container) return;
-
-  container.innerHTML = "";
-
-  // USER ROLE
-  const currentUserRole =
-(window.currentUserRole || "")
-      .toLowerCase();
-
-  const isTeacher =
-    ["teacher","admin"]
-      .includes(currentUserRole);
-
-  // EMPTY STATE
-  if(courses.length === 0){
-
-    container.innerHTML = `
-      <div style="
-        padding:20px;
-        text-align:center;
-        color:#64748b;
-      ">
-        No courses available.
-      </div>
-    `;
-
-    return;
-  }
-
-  // LOOP
-  courses.forEach(course => {
-
-    container.innerHTML += `
-
-      <div class="course-card">
-
-        <!-- HEADER -->
-        <div style="
-          display:flex;
-          justify-content:space-between;
-          align-items:center;
-          margin-bottom:12px;
-          gap:10px;
-          flex-wrap:wrap;
-        ">
-
-          <!-- TITLE -->
-          <div class="course-title">
-            📚 ${course.title}
-          </div>
-
-          <!-- LOCK STATUS -->
-          <div style="
-            background:
-              ${course.locked
-                ? '#dc2626'
-                : '#16a34a'};
-
-            color:white;
-
-            padding:6px 10px;
-
-            border-radius:20px;
-
-            font-size:12px;
-
-            font-weight:bold;
-          ">
-
-            ${course.locked
-              ? '🔒 Locked'
-              : '🔓 Open'}
-
-          </div>
-
-        </div>
-
-        <!-- TEACHER -->
-        <div class="course-meta">
-          👨🏫 ${course.teacher}
-        </div>
-
-        <!-- GRADE + SUBJECT -->
-        <div class="course-meta">
-          🎓 ${course.grade}
-          •
-          📚 ${course.subject}
-        </div>
-
-        <!-- DESCRIPTION -->
-        <div class="course-description">
-          ${course.description}
-        </div>
-
-        <!-- DATE -->
-        <div style="
-          margin-top:12px;
-          font-size:13px;
-          color:#64748b;
-          line-height:1.6;
-        ">
-
-          📅 Posted:
-          ${
-            course.postedDate ||
-            new Date().toLocaleDateString()
-          }
-
-          <br>
-
-          🕒 Time:
-          ${
-            course.postedTime ||
-            new Date().toLocaleTimeString()
-          }
-
-        </div>
-
-        <!-- ACTIONS -->
-        <div style="
-          margin-top:18px;
-          display:flex;
-          gap:10px;
-          flex-wrap:wrap;
-        ">
-
-          <!-- OPEN -->
-          <button
-
-            onclick="
-              ${course.locked
-                ? `Swal.fire(
-                    'Locked',
-                    'This course is locked by the teacher',
-                    'warning'
-                  )`
-                : `openCourse('${course.id}')`
-              }
-            "
-
-            style="
-              background:
-                ${course.locked
-                  ? '#94a3b8'
-                  : '#2563eb'};
-
-              color:white;
-
-              border:none;
-
-              padding:10px 14px;
-
-              border-radius:8px;
-
-              cursor:pointer;
-
-              font-weight:600;
-            "
-          >
-
-            ${course.locked
-              ? '🔒 Locked'
-              : '📖 Open Course'}
-
-          </button>
-
-          ${isTeacher ? `
-
-            <!-- LOCK / UNLOCK -->
-            <button
-
-              onclick="toggleCourseLock('${course.id}')"
-
-              style="
-                background:
-                  ${course.locked
-                    ? '#16a34a'
-                    : '#f59e0b'};
-
-                color:white;
-
-                border:none;
-
-                padding:10px 14px;
-
-                border-radius:8px;
-
-                cursor:pointer;
-
-                font-weight:600;
-              "
-            >
-
-              ${course.locked
-                ? '🔓 Unlock'
-                : '🔒 Lock'}
-
-            </button>
-
-            <!-- EDIT -->
-            <button
-
-              onclick="editCourse('${course.id}')"
-
-              style="
-                background:#2563eb;
-                color:white;
-                border:none;
-                padding:10px 14px;
-                border-radius:8px;
-                cursor:pointer;
-                font-weight:600;
-              "
-            >
-
-              ✏ Edit
-
-            </button>
-
-            <!-- DELETE -->
-            <button
-
-              onclick="deleteCourse('${course.id}')"
-
-              style="
-                background:#dc2626;
-                color:white;
-                border:none;
-                padding:10px 14px;
-                border-radius:8px;
-                cursor:pointer;
-                font-weight:600;
-              "
-            >
-
-              🗑 Delete
-
-            </button>
-
-          ` : ""}
-
-        </div>
-
-      </div>
-
-    `;
-  });
-
-};
-// =========================================
-// TOGGLE COURSE LOCK (SECURED)
-// =========================================
-
-window.toggleCourseLock =
-async function(id){
-
-  const role =
-(window.currentUserRole || "")
-      .toLowerCase();
-
-  const isTeacher =
-    ["teacher","admin"].includes(role);
-
-  const isParent =
-    role === "parent";
-
-  // =========================
-  // ROLE PROTECTION
-  // =========================
-  if(!isTeacher){
-
-    Swal.fire(
-      "Access Denied",
-      isParent
-        ? "Parents cannot lock or unlock courses."
-        : "You are not allowed to perform this action.",
-      "error"
-    );
-
-    return;
-  }
-
-  try{
-
-    const schoolId = window.schoolId;
-
-    if (!schoolId) {
-      console.warn("schoolId not ready");
-      return;
-    }
-
-    const course =
-      courses.find(c => c.id === id);
-
-    if(!course) return;
-
-    course.locked =
-      !course.locked;
-
-    await update(
-      ref(
-        db,
-        `schools/${schoolId}/courses/${course.id}`
-      ),
-      {
-        locked: course.locked
-      }
-    );
-
-    window.renderCourses();
-
-    Swal.fire(
-      "Updated",
-      course.locked
-        ? "Course Locked"
-        : "Course Unlocked",
-      "success"
-    );
-
-  }catch(err){
-
-    console.error(err);
-
-    Swal.fire(
-      "Error",
-      "Failed to update course",
-      "error"
-    );
-  }
-};
-
-// =========================================
-// OPEN COURSE
-// =========================================
-
-window.openCourse = function(id){
-
-  const course =
-    courses.find(
-      c => c.id === id
-    );
-
-  if(!course) return;
-
-  Swal.fire({
-
-    title:course.title,
-
-    html:`
-
-      <div style="
-        text-align:left;
-        line-height:1.8;
-      ">
-
-        <b>Teacher:</b>
-        ${course.teacher}
-
-        <br>
-
-        <b>Grade:</b>
-        ${course.grade}
-
-        <br>
-
-        <b>Subject:</b>
-        ${course.subject}
-
-        <hr>
-
-        ${course.description}
-
-      </div>
-
-    `,
-
-    width:600
-
-  });
-
-};
-
-// =========================================
-// EDIT COURSE
-// =========================================
-
-window.editCourse = function(id){
-
-  const role =
- (window.currentUserRole || "")
-      .toLowerCase();
-
-  const isTeacher =
-    ["teacher","admin"].includes(role);
-
-  const isParent =
-    role === "parent";
-
-  // =========================
-  // ROLE PROTECTION
-  // =========================
-  if(!isTeacher){
-
-    Swal.fire(
-      "Access Denied",
-      isParent
-        ? "Parents cannot edit courses."
-        : "You are not allowed to edit courses.",
-      "error"
-    );
-
-    return;
-  }
-
-  const course =
-    courses.find(c => c.id === id);
-
-  if(!course) return;
-
-  Swal.fire({
-
-    title: "Edit Course",
-
-    html: `
-
-      <input
-        id="editCourseTitle"
-        class="swal2-input"
-        value="${course.title}"
-      >
-
-      <input
-        id="editCourseTeacher"
-        class="swal2-input"
-        value="${course.teacher}"
-      >
-
-      <input
-        id="editCourseGrade"
-        class="swal2-input"
-        value="${course.grade}"
-      >
-
-      <input
-        id="editCourseSubject"
-        class="swal2-input"
-        value="${course.subject}"
-      >
-
-      <textarea
-        id="editCourseDescription"
-        class="swal2-textarea"
-      >${course.description}</textarea>
-
-    `,
-
-    showCancelButton: true,
-
-    confirmButtonText: "Save"
-
-  }).then(async(result)=>{
-
-    if(result.isConfirmed){
-
-      try{
-
-        const schoolId = window.schoolId;
-
-        if (!schoolId) {
-          console.warn("schoolId not ready");
-          return;
-        }
-
-        const updatedData = {
-
-          title:
-            document.getElementById("editCourseTitle").value,
-
-          teacher:
-            document.getElementById("editCourseTeacher").value,
-
-          grade:
-            document.getElementById("editCourseGrade").value,
-
-          subject:
-            document.getElementById("editCourseSubject").value,
-
-          description:
-            document.getElementById("editCourseDescription").value
-        };
-
-        await update(
-          ref(
-            db,
-            `schools/${schoolId}/courses/${id}`
-          ),
-          updatedData
-        );
-
-        Object.assign(course, updatedData);
-
-        window.renderCourses();
-
-        Swal.fire(
-          "Updated",
-          "Course updated successfully",
-          "success"
-        );
-
-      }catch(err){
-
-        console.error(err);
-
-        Swal.fire(
-          "Error",
-          "Failed to update course",
-          "error"
-        );
-      }
-    }
-
-  });
-};
-
-
-
-
-
-
-// =========================================
-// DELETE COURSE
-// =========================================
-
-window.deleteCourse = function(id){
-
-  const role =
-(window.currentUserRole || "")
-      .toLowerCase();
-
-  const isTeacher =
-    ["teacher","admin"].includes(role);
-
-  const isParent =
-    role === "parent";
-
-  // =========================
-  // ROLE PROTECTION
-  // =========================
-  if(!isTeacher){
-
-    Swal.fire(
-      "Access Denied",
-      isParent
-        ? "Parents cannot delete courses."
-        : "You are not allowed to delete courses.",
-      "error"
-    );
-
-    return;
-  }
-
-  Swal.fire({
-
-    title: "Delete Course?",
-
-    text: "This action cannot be undone.",
-
-    icon: "warning",
-
-    showCancelButton: true,
-
-    confirmButtonColor: "#dc2626",
-
-    confirmButtonText: "Delete"
-
-  }).then(async(result) => {
-
-    if(result.isConfirmed){
-
-      try{
-
-        const schoolId = window.schoolId;
-
-        if (!schoolId) {
-          console.warn("schoolId not ready");
-          return;
-        }
-
-        await remove(
-          ref(
-            db,
-            `schools/${schoolId}/courses/${id}`
-          )
-        );
-
-        courses =
-          courses.filter(
-            c => c.id !== id
-          );
-
-        window.renderCourses();
-
-        Swal.fire(
-          "Deleted",
-          "Course removed successfully",
-          "success"
-        );
-
-      }catch(err){
-
-        console.error(err);
-
-        Swal.fire(
-          "Error",
-          "Failed to delete course",
-          "error"
-        );
-      }
-    }
-
-  });
-
-};// CLEAR COURSE FORM
-// =========================================
-
-window.clearCourseForm = function(){
-
-  const ids = [
-
-    "courseTitle",
-
-    "courseTeacher",
-
-    "courseGrade",
-
-    "courseSubject",
-
-    "courseDescription"
-  ];
-
-  ids.forEach(id => {
-
-    const el =
-      document.getElementById(id);
-
-    if(el){
-
-      el.value = "";
-    }
-  });
-};
 // =========================================
 // PUBLISH ASSIGNMENT
 // FIREBASE COMPLIANT
@@ -30286,11 +30646,36 @@ window.renderAssignments = function () {
               </div>
             </div>
 
-            <textarea
-              id="answer-${a.id}-${index}"
-              ${index !== 0 ? "disabled" : ""}
-              oninput="unlockNextQuestion('${a.id}', ${index})"
-            ></textarea>
+        <textarea
+  id="answer-${a.id}-${index}"
+  ${index !== 0 ? "disabled" : ""}
+  rows="6"
+  style="
+    width:100%;
+    min-height:140px;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #cbd5e1;
+    resize:vertical;
+    box-sizing:border-box;
+  "
+></textarea>
+
+<button
+  type="button"
+  onclick="unlockNextQuestion('${a.id}', ${index})"
+  style="
+    margin-top:10px;
+    background:#2563eb;
+    color:white;
+    border:none;
+    padding:10px 16px;
+    border-radius:8px;
+    cursor:pointer;
+  "
+>
+  Next Question →
+</button>
 
           </div>
         `).join("")}
@@ -31427,13 +31812,6 @@ if (!schoolId) {
 // UNLOCK NEXT QUESTION
 // =========================================
 
-// =========================================
-// UNLOCK NEXT QUESTION (AUTO FLOW)
-// =========================================
-// =========================================
-// UNLOCK NEXT QUESTION + PROGRESS
-// =========================================
-
 window.unlockNextQuestion = function(
   assignmentId,
   currentIndex
@@ -31446,16 +31824,21 @@ window.unlockNextQuestion = function(
 
   if(!current) return;
 
-  // REMOVE EXTRA SPACES
-  const value =
+  const answer =
     current.value.trim();
 
-  if(value === "") return;
+  if(answer.length < 5){
 
-  // =========================================
-  // COUNT ANSWERED QUESTIONS
-  // =========================================
+    Swal.fire(
+      "Incomplete Answer",
+      "Please answer the question before proceeding.",
+      "warning"
+    );
 
+    return;
+  }
+
+  // UPDATE PROGRESS
   const allAnswers =
     document.querySelectorAll(
       `[id^="answer-${assignmentId}-"]`
@@ -31466,14 +31849,10 @@ window.unlockNextQuestion = function(
   allAnswers.forEach(area => {
 
     if(area.value.trim() !== ""){
-
       answered++;
     }
-  });
 
-  // =========================================
-  // UPDATE PROGRESS DISPLAY
-  // =========================================
+  });
 
   const progress =
     document.getElementById(
@@ -31484,34 +31863,12 @@ window.unlockNextQuestion = function(
 
     progress.innerHTML = `
       📘 Progress:
-      ${answered} /
-      ${allAnswers.length}
+      ${answered}/${allAnswers.length}
       Questions Answered
     `;
-
-    // COMPLETE STATE
-    if(answered === allAnswers.length){
-
-      progress.style.background =
-        "#dcfce7";
-
-      progress.style.border =
-        "1px solid #86efac";
-
-      progress.style.color =
-        "#166534";
-
-      progress.innerHTML = `
-        ✅ All Questions Answered
-        (${answered}/${allAnswers.length})
-      `;
-    }
   }
 
-  // =========================================
-  // NEXT QUESTION
-  // =========================================
-
+  // OPEN NEXT QUESTION
   const nextIndex =
     currentIndex + 1;
 
@@ -31525,32 +31882,38 @@ window.unlockNextQuestion = function(
       `answer-${assignmentId}-${nextIndex}`
     );
 
-  // SHOW NEXT QUESTION
   if(nextBlock && nextAnswer){
 
-    nextBlock.style.display =
-      "block";
+    nextBlock.style.display = "block";
 
     nextAnswer.disabled = false;
 
-    nextAnswer.style.background =
-      "#ffffff";
+    nextAnswer.focus();
 
-    // AUTO MOVE
-    setTimeout(() => {
+    nextBlock.scrollIntoView({
+      behavior:"smooth",
+      block:"center"
+    });
 
-      nextAnswer.focus();
+  } else {
 
-      nextBlock.scrollIntoView({
+    // LAST QUESTION
+    if(progress){
 
-        behavior:"smooth",
+      progress.innerHTML = `
+        ✅ All Questions Completed
+        (${answered}/${allAnswers.length})
+      `;
 
-        block:"center"
+      progress.style.background =
+        "#dcfce7";
 
-      });
+      progress.style.color =
+        "#166534";
+    }
 
-    },150);
   }
+
 };
 // =========================================
 // TOGGLE ACTION BUTTONS
@@ -32048,7 +32411,7 @@ window.changePassword = async function () {
 };
 
 // =====================================================
-// 🔐 ROLE-BASED ACCESS CONTROL SYSTEM (FINAL WORKING)
+// 🔐 ROLE-BASED ACCESS CONTROL SYSTEM (FINAL CLEAN)
 // =====================================================
 
 window.currentUser = null;
@@ -32060,44 +32423,54 @@ window.currentUserRole = null;
 
 const ROLE_PERMISSIONS = {
 
- admin: [
-  "dashboard",
-  "students",
-  "teachers",
-  "attendanceSection",
-  "fees",
-  "supportStaff",
-  "transport",
-  "hostel",
-  "ict",
-  "inventory",
-  "library",
-  "adminUsersPanel",
-  "examManagement",
-
-  "eLearningSection"
-],
+  admin: [
+    "dashboard",
+    "students",
+    "teachers",
+    "attendanceSection",
+    "fees",
+    "feeBalanceSection",
+    "supportStaff",
+    "transport",
+    "hostel",
+    "ict",
+ "assignmentHelpSection",
+    "inventory",
+    "library",
+    "adminUsersPanel",
+    "examManagement",
+    "eLearningSection",
+    "reportsSection",
+    "settingsSection",
+    "resultsSection",
+"checkResultsSection"
+  ],
 
   teacher: [
     "dashboard",
     "students",
     "attendanceSection",
     "examManagement",
-    "eLearningSection"
+"resultsSection",
+ "assignmentHelpSection",
+    "eLearningSection",
+    "reportsSection"
   ],
 
   parent: [
     "dashboard",
-    "fees",
-    "eLearningSection"
+    "eLearningSection",
+ "assignmentHelpSection",
+"resultsSection",
+    "feeBalanceSection"
   ]
 };
 
 // =====================================================
-// ALL EXAM PAGES
+// EXAM SECTIONS
 // =====================================================
-const EXAM_SECTIONS = [
 
+const EXAM_SECTIONS = [
   "recordMarksSection",
   "examResults",
   "subjectChampions",
@@ -32111,11 +32484,41 @@ const EXAM_SECTIONS = [
   "subjectRankingReport",
   "generateBlankMerit",
   "marksStatus"
-
 ];
 
 // =====================================================
-// LOGIN SESSION
+// REPORT SECTIONS
+// =====================================================
+
+const REPORT_SECTIONS = [
+  "subjectChampionsContent",
+  "reportOutput",
+  "subjectPerformanceContent",
+  "genderPerformanceContent",
+  "levelSummaryContent",
+  "groupByPathwaysContent",
+  "combineMarksByGradeContent",
+  "assessmentReportsContent",
+  "subjectRankingReportContent",
+  "blankMeritContent",
+  "printAssessmentContent",
+  "marksStatusContent",
+  "filteredLearnersContent",
+  "teacherList",
+  "supportStaffContent",
+  "feesTable",
+  "defaultersContent",
+  "generatedOutput",
+  "genderGroupedContent",
+  "libraryContent",
+  "inventoryContent",
+  "transportContent",
+  "hostelContent",
+  "ictContent"
+];
+
+// =====================================================
+// LOGIN SESSION (MASTER HOOK)
 // =====================================================
 
 window.setCurrentUser = function(user) {
@@ -32123,33 +32526,40 @@ window.setCurrentUser = function(user) {
   window.currentUser = user;
 
   window.currentUserRole =
-    (user.role || "")
-      .trim()
-      .toLowerCase();
+    (user.role || "").toLowerCase().trim();
+
+  window.currentUserPhone = user.phone || "";
 
   localStorage.setItem(
     "currentUser",
     JSON.stringify(user)
   );
 
-  console.log(
-    "✅ USER LOGIN ROLE:",
-    window.currentUserRole
-  );
-
+  // APPLY CORE PERMISSIONS
   window.applyRolePermissions();
-setTimeout(() => {
 
-  if (
-    typeof applyELearningPermissions ===
-    "function"
-  ) {
+  // DEFER UI LAYERS
+  setTimeout(() => {
 
-    applyELearningPermissions();
+    if (typeof configureELearningPermissions === "function") {
+      configureELearningPermissions();
+    }
 
-  }
+    if (typeof applyReportPermissions === "function") {
+      applyReportPermissions();
+    }
+if (typeof applyPasswordModalPermissions === "function") {
+  applyPasswordModalPermissions();
+}
 
-}, 300);
+if (typeof applyPasswordButtonPermissions === "function") {
+  applyPasswordButtonPermissions();
+}
+    if (typeof applySettingsPermissions === "function") {
+      applySettingsPermissions();
+    }
+
+  }, 300);
 };
 
 // =====================================================
@@ -32158,81 +32568,248 @@ setTimeout(() => {
 
 window.loadCurrentUser = function() {
 
-  const saved =
-    localStorage.getItem("currentUser");
+  const saved = localStorage.getItem("currentUser");
 
   if (!saved) return;
 
   try {
-
-    const user =
-      JSON.parse(saved);
-
+    const user = JSON.parse(saved);
     window.setCurrentUser(user);
-
   } catch (e) {
-
-    console.error(
-      "Session load failed:",
-      e
-    );
-
+    console.error("Session load failed:", e);
   }
 };
 
 // =====================================================
-// CHECK ACCESS
+// CHECK ACCESS (SECURE CORE)
 // =====================================================
 
 window.checkAccess = function(section) {
 
   const role =
-    window.currentUserRole;
+    (window.currentUserRole || "").toLowerCase();
 
   if (!role) return false;
 
   const allowed =
     ROLE_PERMISSIONS[role] || [];
 
-  return allowed.includes(section);
+  let isAllowed = allowed.includes(section);
+
+  // ==========================
+  // HARD BLOCK FOR PARENTS
+  // ==========================
+  if (role === "parent") {
+
+    const blocked = [
+      ...REPORT_SECTIONS,
+      ...EXAM_SECTIONS,
+      "settingsSection",
+      "subscriptionSection",
+      "passwordModal",
+      "teacherList",
+      "supportStaffContent",
+      "feesTable",
+      "defaultersContent",
+      "inventoryContent",
+      "transportContent",
+      "hostelContent",
+      "ictContent"
+    ];
+
+    if (blocked.includes(section)) {
+      return false;
+    }
+  }
+
+  return isAllowed;
 };
 
 // =====================================================
-// SHOW SECTION
+// REPORT VISIBILITY
 // =====================================================
+
+window.applyReportPermissions = function () {
+
+  const role =
+    (window.currentUserRole || "").toLowerCase();
+
+  const reportSelector =
+    document.getElementById("reportSelector");
+
+  if (!reportSelector) return;
+
+  const section =
+    reportSelector.closest(".menu-section");
+
+  if (role === "parent") {
+    if (section) section.style.display = "none";
+  } else {
+    if (section) section.style.display = "block";
+  }
+};
+
+// =====================================================
+// SETTINGS VISIBILITY (NEW)
+// =====================================================
+
+window.applySettingsPermissions = function () {
+
+  const role =
+    (window.currentUserRole || "").toLowerCase();
+
+  const isParent = role === "parent";
+
+  document.querySelectorAll(".menu-section").forEach(sec => {
+
+    const title =
+      sec.querySelector("h4")?.innerText?.toLowerCase() || "";
+
+    if (isParent) {
+
+      if (
+        title.includes("settings") ||
+        title.includes("subscription")
+      ) {
+        sec.style.display = "none";
+      }
+    }
+  });
+
+  const modal =
+    document.getElementById("passwordModal");
+
+  if (modal && isParent) {
+    modal.style.display = "none";
+  }
+};
+
+// =====================================================
+// APPLY ROLE PERMISSIONS (SIDEBAR + UI) - FIXED VERSION
+// =====================================================
+
+window.applyRolePermissions = function () {
+
+  const role =
+    (window.currentUserRole || "").toLowerCase();
+
+  const allowed =
+    ROLE_PERMISSIONS[role] || [];
+
+  // =====================================
+  // HIDE ALL MAIN SECTIONS
+  // =====================================
+  document.querySelectorAll(".main > div[id]").forEach(sec => {
+    sec.style.display = "none";
+  });
+
+  // =====================================
+  // SIDEBAR BUTTON CONTROL
+  // =====================================
+  document.querySelectorAll(".sidebar button").forEach(btn => {
+
+    const onclick =
+      btn.getAttribute("onclick") || "";
+
+    const id =
+      btn.id || "";
+
+    let allowedBtn = false;
+
+    // =====================================
+    // 1. EXAMS MENU RULE
+    // =====================================
+    if (
+      btn.closest("#examsMenu") &&
+      allowed.includes("examManagement")
+    ) {
+      allowedBtn = true;
+    }
+
+    // =====================================
+    // 2. SECTION-BASED PERMISSIONS
+    // =====================================
+    allowed.forEach(section => {
+
+      if (
+        onclick.includes(`'${section}'`) ||
+        onclick.includes(`"${section}"`) ||
+        id.includes(section)
+      ) {
+        allowedBtn = true;
+      }
+
+    });
+
+    // =====================================
+    // 3. SPECIAL GLOBAL BUTTONS
+    // =====================================
+    if (
+      onclick.includes("logout") ||
+      onclick.includes("openSchoolProfileForm") ||
+      onclick.includes("openPasswordModal") ||
+      onclick.includes("handleCheckResults") // ✅ FIX FOR YOUR BUTTON
+    ) {
+      allowedBtn = true;
+    }
+
+    // =====================================
+    // APPLY VISIBILITY
+    // =====================================
+    btn.style.display = allowedBtn ? "block" : "none";
+
+  });
+
+  // =====================================
+  // DASHBOARD AUTO SHOW
+  // =====================================
+  const dashboard =
+    document.getElementById("dashboard");
+
+  if (dashboard && allowed.includes("dashboard")) {
+    dashboard.style.display = "block";
+  }
+
+  // =====================================
+  // CLOSE MENU
+  // =====================================
+  document.getElementById("mainMenu")?.classList.remove("open");
+};
+
 window.show = function(section) {
+
+  console.log("🔵 Switching to section:", section);
 
   const isExamSection =
     EXAM_SECTIONS.includes(section);
 
-  // Exams permission
   if (
     isExamSection &&
     !window.checkAccess("examManagement")
   ) {
-
     alert("⛔ Access denied");
     return;
   }
 
-  // Normal permissions
+  if (
+    section === "checkResultsSection" &&
+    typeof loadResultsFilters === "function"
+  ) {
+    setTimeout(() => {
+      loadResultsFilters();
+    }, 50);
+  }
+
   if (
     !isExamSection &&
     !window.checkAccess(section)
   ) {
-
     alert("⛔ Access denied");
     return;
   }
 
-  // ===================================
-  // CALL ORIGINAL SHOW FUNCTION
-  // ===================================
-
-  const sections =
-    document.querySelectorAll(".main > div");
-
-  sections.forEach(sec => {
+  // Hide all sections
+  document.querySelectorAll(".main > div[id]").forEach(sec => {
     sec.style.display = "none";
   });
 
@@ -32240,157 +32817,51 @@ window.show = function(section) {
     document.getElementById(section);
 
   if (!target) {
-
-    console.warn(
-      "❌ Missing section:",
-      section
-    );
-
+    console.warn("⚠️ Section not found in DOM:", section);
     return;
   }
 
-target.style.display = "block";
+  target.style.display = "block";
 
-if (
-  section === "eLearningSection" &&
-  typeof configureELearningPermissions === "function"
-) {
-  configureELearningPermissions();
-}
+  requestAnimationFrame(() => {
 
-  window.currentSection = section;
-
-  // ===================================
-  // RUN REPORT LOGIC
-  // ===================================
-
-  if (
-    typeof runSectionLogic ===
-    "function"
-  ) {
-
-    try {
-
-      runSectionLogic(section);
-
-    } catch (err) {
-
-      console.error(
-        "runSectionLogic error:",
-        err
-      );
-
+    if (
+      section === "eLearningSection" &&
+      typeof configureELearningPermissions === "function"
+    ) {
+      configureELearningPermissions();
     }
 
-  }
+    if (
+      section === "feeBalanceSection" &&
+      typeof loadFeeBalanceStudents === "function"
+    ) {
+      setTimeout(() => loadFeeBalanceStudents(), 50);
+    }
 
-  console.log(
-    "📂 Opened Section:",
-    section
-  );
+    // ✅ ADD YOUR NEW SECTION HOOK HERE (IMPORTANT)
+    if (
+      section === "assignmentHelpSection" &&
+      typeof window.loadAssignmentHelp === "function"
+    ) {
+      setTimeout(() => window.loadAssignmentHelp(), 50);
+    }
 
+    if (typeof runSectionLogic === "function") {
+      runSectionLogic(section);
+    }
+
+  });
+
+  window.currentSection = section;
 };
-// =====================================================
-// APPLY ROLE PERMISSIONS
-// =====================================================
-
-window.applyRolePermissions = function() {
-
-  const role =
-    window.currentUserRole;
-
-  if (!role) return;
-
-  const allowed =
-    ROLE_PERMISSIONS[role] || [];
-
-  // Hide all pages
-
-  document
-    .querySelectorAll(".main > div[id]")
-    .forEach(sec => {
-      sec.style.display = "none";
-    });
-
-  // Sidebar permissions
-
-  document
-    .querySelectorAll(".sidebar button")
-    .forEach(btn => {
-
-      const onclick =
-        btn.getAttribute("onclick") || "";
-
-      let allowedBtn = false;
-
-      // Exams menu + submenu buttons
-
-      if (
-        btn.closest("#examsMenu") &&
-        allowed.includes("examManagement")
-      ) {
-        allowedBtn = true;
-      }
-
-      // Standard buttons
-
-      allowed.forEach(section => {
-
-        if (
-          onclick.includes(`'${section}'`) ||
-          onclick.includes(`"${section}"`)
-        ) {
-          allowedBtn = true;
-        }
-
-      });
-
-      // Utility buttons
-
-      if (
-        onclick.includes("logout") ||
-        onclick.includes("openSchoolProfileForm") ||
-        onclick.includes("openPasswordModal")
-      ) {
-        allowedBtn = true;
-      }
-
-      btn.style.display =
-        allowedBtn
-          ? "block"
-          : "none";
-
-    });
-
-  // Dashboard visible on login
-
-  const dashboard =
-    document.getElementById("dashboard");
-
-  if (
-    dashboard &&
-    allowed.includes("dashboard")
-  ) {
-    dashboard.style.display = "block";
-  }
-
-  // Close exams submenu initially
-
-  document
-    .getElementById("mainMenu")
-    ?.classList.remove("open");
-};
-
 // =====================================================
 // INIT
 // =====================================================
 
-window.addEventListener(
-  "load",
-  () => {
-    loadCurrentUser();
-  }
-);
+window.addEventListener("load", () => {
+  loadCurrentUser();
+});
 window.createUserAccount = async function() {
 
   try {
@@ -32582,6 +33053,861 @@ window.canManageAssignments = () =>
   ["admin","teacher"].includes(
     window.currentUserRole
   );
+function cleanPhone(phone) {
+  return (phone || "")
+    .replace(/\s+/g, "")
+    .replace("+", "")
+    .trim();
+}
+
+window.loadFeeBalanceStudents = function () {
+
+  const role =
+    (window.currentUserRole || "")
+      .toLowerCase();
+
+  const yearSelect =
+    document.getElementById("feeBalanceYear");
+
+  const gradeSelect =
+    document.getElementById("feeBalanceGrade");
+
+  const studentSelect =
+    document.getElementById("feeBalanceStudent");
+
+  const phoneInput =
+    document.getElementById("feeParentPhone");
+
+  if (!yearSelect || !gradeSelect || !studentSelect) return;
+
+  // ==========================
+  // YEARS
+  // ==========================
+  const currentYear = new Date().getFullYear();
+
+  let yearsHTML = "";
+  for (let y = currentYear + 1; y >= currentYear - 5; y--) {
+    yearsHTML += `<option value="${y}">${y}</option>`;
+  }
+  yearSelect.innerHTML = yearsHTML;
+
+  // ==========================
+  // SAFE RENDER
+  // ==========================
+  function renderStudents() {
+
+    if (!Array.isArray(allStudents) || allStudents.length === 0) {
+      console.warn("allStudents not ready yet");
+      return;
+    }
+
+    const selectedGrade = gradeSelect.value;
+
+    const parentPhone =
+      cleanPhone(phoneInput?.value || window.currentUser?.phone);
+
+    let learners = [...allStudents];
+
+    // ==========================
+    // PARENT FILTER
+    // ==========================
+    if (role === "parent") {
+
+      if (!parentPhone) {
+        studentSelect.innerHTML =
+          `<option value="">Enter parent phone first</option>`;
+        gradeSelect.innerHTML =
+          `<option value="">All Grades</option>`;
+        return;
+      }
+
+      learners = allStudents.filter(
+        s => cleanPhone(s.parentPhone) === parentPhone
+      );
+
+      gradeSelect.disabled = true;
+    }
+
+    // ==========================
+    // ADMIN FILTER
+    // ==========================
+    if (role === "admin" && selectedGrade) {
+      learners = learners.filter(
+        s => s.grade === selectedGrade
+      );
+    }
+
+    // ==========================
+    // BUILD GRADES
+    // ==========================
+    const uniqueGrades = new Set();
+
+    learners.forEach(s => {
+      if (s.grade) uniqueGrades.add(s.grade);
+    });
+
+    let gradesHTML = `<option value="">All Grades</option>`;
+
+    uniqueGrades.forEach(g => {
+      gradesHTML += `<option value="${g}">${g}</option>`;
+    });
+
+    gradeSelect.innerHTML = gradesHTML;
+
+    // ==========================
+    // BUILD STUDENTS
+    // ==========================
+    let studentHTML =
+      `<option value="">Select Learner</option>`;
+
+    learners.forEach(s => {
+      studentHTML += `
+        <option value="${s.id}">
+          ${s.name} (${s.grade || ""})
+        </option>
+      `;
+    });
+
+    studentSelect.innerHTML = studentHTML;
+
+    if (role === "parent" && learners.length === 1) {
+      studentSelect.value = learners[0].id;
+    }
+  }
+
+  // ==========================
+  // EVENTS (FIXED TIMING)
+  // ==========================
+  setTimeout(renderStudents, 200);
+
+  gradeSelect.onchange = renderStudents;
+  phoneInput?.addEventListener("input", () => {
+    setTimeout(renderStudents, 50);
+  });
+};
+
+// =====================================================
+// 🔒 SECURE FEE CHECK (PARENT LOCK ENFORCED)
+// =====================================================
+
+window.checkFeeBalance = async function () {
+
+  try {
+
+    const role =
+      (window.currentUserRole || "")
+        .toLowerCase();
+
+    const year =
+      document.getElementById("feeBalanceYear").value;
+
+    const studentId =
+      document.getElementById("feeBalanceStudent").value;
+
+    const phoneInput =
+      document.getElementById("feeParentPhone")?.value.trim();
+
+    if (!studentId) {
+      return Swal.fire(
+        "Select Learner",
+        "Choose a learner first",
+        "warning"
+      );
+    }
+
+    // ==========================
+    // 🔐 PARENT SECURITY CHECK (PHONE MATCH)
+    // ==========================
+
+    if (role === "parent") {
+
+      const student =
+        allStudents.find(s => s.id === studentId);
+
+      if (!student || student.parentPhone !== phoneInput) {
+
+        return Swal.fire(
+          "Access Denied",
+          "This learner is not linked to the entered parent phone.",
+          "error"
+        );
+      }
+    }
+
+    // ==========================
+    // FETCH FEES
+    // ==========================
+
+    const snap =
+      await get(schoolRef(`fees/${year}`));
+
+    const data =
+      snap.val() || {};
+
+    let feeData = null;
+
+    Object.values(data).forEach(fee => {
+      if (fee.studentId === studentId) {
+        feeData = fee;
+      }
+    });
+
+    const result =
+      document.getElementById("feeBalanceResult");
+
+    if (!feeData) {
+
+      result.innerHTML = `
+        <div style="color:red;font-weight:bold;">
+          No fee record found for ${year}
+        </div>
+      `;
+
+      return;
+    }
+
+    // ==========================
+    // STATUS CALCULATION
+    // ==========================
+
+    let status = "OWING";
+
+    if (Number(feeData.balance || 0) <= 0) {
+      status = "PAID";
+    } else if (Number(feeData.totalPaid || 0) > 0) {
+      status = "PARTIAL";
+    }
+
+    // ==========================
+    // RENDER RESULT
+    // ==========================
+
+    result.innerHTML = `
+      <div style="
+        background:#f8fafc;
+        padding:20px;
+        border-radius:12px;
+        border:1px solid #e2e8f0;
+      ">
+
+        <h3>👨‍🎓 ${feeData.studentName}</h3>
+
+        <p>🎓 Grade: ${feeData.grade}</p>
+        <p>📅 Year: ${year}</p>
+        <p>💰 Total Paid: ${feeData.totalPaid || 0}</p>
+        <p>⚠ Balance: ${feeData.balance || 0}</p>
+        <p>📌 Status: <b>${status}</b></p>
+
+      </div>
+    `;
+
+  } catch (err) {
+
+    console.error(err);
+
+    Swal.fire(
+      "Error",
+      err.message,
+      "error"
+    );
+  }
+};
+
+window.applyPasswordModalPermissions = function () {
+
+  const role =
+    (window.currentUserRole || "").toLowerCase();
+
+  const modal =
+    document.getElementById("passwordModal");
+
+  if (!modal) return;
+
+  // ==========================
+  // ONLY ADMIN CAN SEE IT
+  // ==========================
+  if (role !== "admin") {
+
+    // hide entire modal UI
+    modal.style.display = "none";
+
+    // OPTIONAL: remove from DOM interaction completely
+    modal.style.pointerEvents = "none";
+    modal.style.visibility = "hidden";
+
+  } else {
+
+    // restore for admin
+    modal.style.display = "none"; // keep hidden until opened
+    modal.style.pointerEvents = "auto";
+    modal.style.visibility = "visible";
+  }
+};
+window.applyPasswordButtonPermissions = function () {
+
+  const role =
+    (window.currentUserRole || "").toLowerCase();
+
+  const btn =
+    document.getElementById("passwordBtn");
+
+  if (!btn) return;
+
+  if (role !== "admin") {
+    btn.style.display = "none";
+  } else {
+    btn.style.display = "block";
+  }
+};
+
+window.canAccessResults = function (studentId) {
+
+  const role =
+    (window.currentUserRole || "").toLowerCase();
+
+  if (!studentId) return false;
+
+  // ==========================
+  // ADMIN + TEACHER (FULL ACCESS)
+  // ==========================
+  if (role === "admin" || role === "teacher") {
+    return true;
+  }
+
+  // ==========================
+  // PARENT (STRICT LOCK)
+  // ==========================
+  if (role === "parent") {
+
+    const student =
+      allStudents?.find(s => s.id === studentId);
+
+    if (!student) return false;
+
+    return (
+      student.parentPhone === window.currentUserPhone
+    );
+  }
+
+  return false;
+};
+window.loadStudentResults = async function (studentId, examPeriod, grade) {
+
+  if (!window.canAccessResults(studentId)) {
+    return Swal.fire(
+      "Access Denied",
+      "You cannot view results for this student.",
+      "error"
+    );
+  }
+
+  try {
+
+    const schoolId =
+      window.schoolId ||
+      localStorage.getItem("schoolId") ||
+      sessionStorage.getItem("schoolId");
+
+    if (!schoolId) {
+      return Swal.fire("School missing", "", "error");
+    }
+
+    // 🔥 READ FROM YOUR REAL MARKS STRUCTURE
+    const path =
+      `schools/${schoolId}/students/${studentId}`;
+
+    const snap =
+      await get(schoolRef(path));
+
+    const data = snap.val();
+
+    if (!data || !data.marks || !data.marks[examPeriod]) {
+
+      document.getElementById("resultsContainer").innerHTML =
+        `<div style="color:red;font-weight:bold;">
+          No results found for ${examPeriod}
+        </div>`;
+
+      return;
+    }
+
+    const marks = data.marks[examPeriod];
+
+    const resultData = {
+      studentId,
+      name: data.name,
+      grade: data.grade,
+      examPeriod,
+      marks
+    };
+
+    document.getElementById("resultsContainer").innerHTML =
+      renderResultsUI(resultData);
+
+  } catch (err) {
+
+    console.error(err);
+
+    Swal.fire("Error", err.message, "error");
+  }
+};
+window.handleCheckResults = async function () {
+
+  const role =
+    (window.currentUserRole || "").toLowerCase();
+
+  const grade =
+    document.getElementById("checkResultsGrade")?.value;
+
+  const examPeriod =
+    document.getElementById("checkResultsExamPeriod")?.value;
+
+  const studentId =
+    document.getElementById("checkResultsStudent")?.value;
+
+  if (!grade || !examPeriod || !studentId) {
+    return Swal.fire(
+      "Missing Data",
+      "Select Grade, Exam Period and Learner",
+      "warning"
+    );
+  }
+
+  // parent lock
+  if (role === "parent") {
+
+    const student =
+      allStudents.find(s => s.id === studentId);
+
+    if (!student || student.parentPhone !== window.currentUserPhone) {
+      return Swal.fire(
+        "Access Denied",
+        "You can only view your child's results",
+        "error"
+      );
+    }
+  }
+
+  await window.loadStudentResults(
+    studentId,
+    examPeriod,
+    grade
+  );
+};
+window.loadResultsFilters = async function () {
+
+  const role =
+    (window.currentUserRole || "").toLowerCase();
+
+  const gradeSelect =
+    document.getElementById("checkResultsGrade");
+
+  const examPeriodSelect =
+    document.getElementById("checkResultsExamPeriod");
+
+  const studentSelect =
+    document.getElementById("checkResultsStudent");
+
+  if (!gradeSelect || !examPeriodSelect || !studentSelect) return;
+
+  if (!Array.isArray(allStudents) || allStudents.length === 0) {
+    studentSelect.innerHTML = `<option>Loading learners...</option>`;
+    return;
+  }
+
+  let learners = [...allStudents];
+
+  if (role === "parent") {
+
+    const phone = cleanPhone(window.currentUserPhone || "");
+
+    learners = learners.filter(
+      s => cleanPhone(s.parentPhone) === phone
+    );
+  }
+
+  // =========================
+  // GRADE LIST
+  // =========================
+  const grades = new Set();
+  learners.forEach(s => s.grade && grades.add(s.grade));
+
+  gradeSelect.innerHTML =
+    `<option value="">Select Grade</option>` +
+    [...grades].sort().map(g =>
+      `<option value="${g}">${g}</option>`
+    ).join("");
+
+  // =========================
+  // 🔥 EXAM PERIODS (NORMALIZED FIX)
+  // =========================
+
+  const normalizeExamPeriod = (str) =>
+    (str || "")
+      .toString()
+      .trim()
+      .replace(/\s+/g, " ")
+      .replace(/,\s*/g, "-")
+      .replace(/\s/g, "");
+
+  const terms = ["Term 1", "Term 2", "Term 3"];
+  const exams = ["Opener Exam", "Midterm Exam", "End Term Exam"];
+
+  let periodsHTML =
+    `<option value="">Select Exam Period</option>`;
+
+  for (let year = 2026; year <= 2050; year++) {
+
+    terms.forEach(term => {
+
+      exams.forEach(exam => {
+
+        const rawValue =
+          `${year}, ${term}, ${exam}`;
+
+        const safeValue =
+          normalizeExamPeriod(rawValue);
+
+        periodsHTML += `
+          <option value="${safeValue}">
+            ${year} ${term} ${exam.replace(" Exam","")}
+          </option>
+        `;
+      });
+    });
+  }
+
+  examPeriodSelect.innerHTML = periodsHTML;
+
+  // =========================
+  // STUDENTS
+  // =========================
+  function populateLearners() {
+
+    const selectedGrade = gradeSelect.value;
+
+    let filtered = [...learners];
+
+    if (selectedGrade) {
+      filtered = filtered.filter(s => s.grade === selectedGrade);
+    }
+
+    studentSelect.innerHTML =
+      `<option value="">Select Learner</option>` +
+      filtered.map(s =>
+        `<option value="${s.id}">${s.name}</option>`
+      ).join("");
+
+    if (role === "parent" && filtered.length === 1) {
+      studentSelect.value = filtered[0].id;
+    }
+  }
+
+  populateLearners();
+
+  gradeSelect.onchange = populateLearners;
+};
+window.showResultsSection = function () {
+
+  // hide all sections
+  document
+    .querySelectorAll(".main > div[id]")
+    .forEach(sec => {
+      sec.style.display = "none";
+    });
+
+  // show results section
+  document
+    .getElementById("resultsSection")
+    .style.display = "block";
+
+  // load filters
+  loadResultsFilters?.();
+
+  loadExamPeriods?.();
+};
+// =====================================================
+// ASSIGNMENT HELP MARKETPLACE + ESCROW + CHAT (FIVERR STYLE)
+// =====================================================
+
+// =========================
+// POST JOB (ESCROW INIT)
+// =========================
+window.postAssignmentHelp = async function () {
+
+  const schoolId = window.schoolId;
+  const uid = window.currentUser?.uid;
+
+  if (!schoolId || !uid) {
+    return Swal.fire("Error", "Login required", "error");
+  }
+
+  const title = document.getElementById("helpTitle").value.trim();
+  const subject = document.getElementById("helpSubject").value.trim();
+  const grade = document.getElementById("helpGrade").value.trim();
+  const questionRaw = document.getElementById("helpQuestion").value.trim();
+  let price = Number(document.getElementById("helpPrice").value || 0);
+
+  if (!title || !subject || !grade || !questionRaw) {
+    return Swal.fire("Missing Fields", "Fill all fields", "warning");
+  }
+
+  const questions = questionRaw.split("===")
+    .map(q => q.trim())
+    .filter(q => q);
+
+  const questionCount = questions.length;
+
+  let basePrice = 300;
+  if (questionCount > 3) basePrice += (questionCount - 3) * 150;
+  price = Math.max(price, basePrice);
+
+  const jobId = "JOB-" + Date.now();
+
+  const job = {
+    id: jobId,
+    uid,
+    schoolId,
+    title,
+    subject,
+    grade,
+    questions,
+    questionCount,
+    price,
+    status: "open", // open | in_progress | delivered | completed
+    acceptedBy: null,
+    escrow: {
+      funded: true,
+      released: false,
+      amount: price
+    },
+    createdAt: Date.now()
+  };
+
+  await set(ref(db, `schools/${schoolId}/jobs/${jobId}`), job);
+
+  Swal.fire("Posted", `Job created with escrow KES ${price}`, "success");
+
+  window.loadAssignmentHelp();
+};
+
+
+// =========================
+// ACCEPT JOB (LOCK HELPER)
+// =========================
+window.acceptJob = async function(jobId) {
+
+  const uid = window.currentUser?.uid;
+  const schoolId = window.schoolId;
+
+  if (!uid) return Swal.fire("Login required", "", "error");
+
+  const refJob = ref(db, `schools/${schoolId}/jobs/${jobId}`);
+  const snap = await get(refJob);
+
+  if (!snap.exists()) return;
+
+  const job = snap.val();
+
+  if (job.status !== "open") {
+    return Swal.fire("Taken", "Job already taken", "info");
+  }
+
+  await update(refJob, {
+    status: "in_progress",
+    acceptedBy: uid
+  });
+
+  Swal.fire("Accepted", "You are now working on this job", "success");
+
+  window.loadAssignmentHelp();
+};
+
+
+// =========================
+// DELIVER WORK
+// =========================
+window.submitHelpSolution = async function(jobId) {
+
+  const uid = window.currentUser?.uid;
+  const schoolId = window.schoolId;
+
+  const { value: solution } = await Swal.fire({
+    title: "Deliver Work",
+    input: "textarea",
+    inputPlaceholder: "Write full solution..."
+  });
+
+  if (!solution) return;
+
+  const deliveryId = "DEL-" + Date.now();
+
+  await set(ref(db, `schools/${schoolId}/deliveries/${deliveryId}`), {
+    jobId,
+    freelancer: uid,
+    solution,
+    status: "pending_review",
+    createdAt: Date.now()
+  });
+
+  await update(ref(db, `schools/${schoolId}/jobs/${jobId}`), {
+    status: "delivered"
+  });
+
+  Swal.fire("Delivered", "Waiting for client approval", "success");
+};
+
+
+// =========================
+// RELEASE ESCROW (CLIENT)
+// =========================
+window.releasePayment = async function(jobId) {
+
+  const schoolId = window.schoolId;
+
+  const jobRef = ref(db, `schools/${schoolId}/jobs/${jobId}`);
+  const snap = await get(jobRef);
+
+  if (!snap.exists()) return;
+
+  const job = snap.val();
+
+  await update(jobRef, {
+    status: "completed",
+    "escrow.released": true
+  });
+
+  Swal.fire("Paid", "Escrow released to worker", "success");
+};
+
+
+// =====================================================
+// CHAT SYSTEM (JOB BASED)
+// =====================================================
+
+// SEND MESSAGE
+window.sendJobMessage = async function(jobId, message) {
+
+  const uid = window.currentUser?.uid;
+  const schoolId = window.schoolId;
+
+  if (!message.trim()) return;
+
+  const msgId = "MSG-" + Date.now();
+
+  await set(ref(db, `schools/${schoolId}/jobChats/${jobId}/${msgId}`), {
+    uid,
+    message,
+    createdAt: Date.now()
+  });
+};
+
+
+// LOAD CHAT
+window.loadJobChat = async function(jobId) {
+
+  const schoolId = window.schoolId;
+
+  const snap = await get(ref(db, `schools/${schoolId}/jobChats/${jobId}`));
+
+  const box = document.getElementById(`chat-${jobId}`);
+  if (!box) return;
+
+  box.innerHTML = "";
+
+  if (!snap.exists()) {
+    box.innerHTML = "<p>No messages yet</p>";
+    return;
+  }
+
+  snap.forEach(c => {
+    const m = c.val();
+    box.innerHTML += `
+      <div style="padding:6px;border-bottom:1px solid #eee">
+        <b>${m.uid}</b>: ${m.message}
+      </div>
+    `;
+  });
+};
+
+
+// =====================================================
+// LOAD JOBS (FIVERR UI)
+// =====================================================
+window.loadAssignmentHelp = async function () {
+
+  const schoolId = window.schoolId;
+  const uid = window.currentUser?.uid;
+  const role = window.currentUserRole;
+
+  const snap = await get(ref(db, `schools/${schoolId}/jobs`));
+
+  const container = document.getElementById("helpPostsContainer");
+  container.innerHTML = "";
+
+  if (!snap.exists()) {
+    container.innerHTML = "<p>No jobs available</p>";
+    return;
+  }
+
+  snap.forEach(child => {
+
+    const p = child.val();
+    const isWorker = p.acceptedBy === uid;
+
+    container.innerHTML += `
+      <div style="background:#fff;padding:16px;margin-bottom:12px;border-radius:10px;border:1px solid #ddd">
+
+        <h3>📌 ${p.title}</h3>
+
+        <p>${p.subject} | Grade ${p.grade}</p>
+
+        <p>🧠 Questions: ${p.questionCount}</p>
+
+        <p><b>💰 Escrow: KES ${p.price}</b></p>
+
+        <p>Status: <b>${p.status}</b></p>
+
+        ${role === "helper" && p.status === "open" ? `
+          <button onclick="acceptJob('${p.id}')"
+            style="background:#2563eb;color:#fff;padding:8px;border:none;border-radius:6px;">
+            🚀 Accept Job
+          </button>
+        ` : ""}
+
+        ${isWorker ? `
+          <button onclick="submitHelpSolution('${p.id}')"
+            style="background:#16a34a;color:#fff;padding:8px;border:none;border-radius:6px;">
+            📤 Deliver
+          </button>
+        ` : ""}
+
+        <button onclick="loadJobChat('${p.id}')"
+          style="background:#111;color:#fff;padding:8px;border:none;border-radius:6px;margin-left:6px;">
+          💬 Chat
+        </button>
+
+        <div id="chat-${p.id}" style="margin-top:10px;max-height:200px;overflow:auto;"></div>
+
+        <input id="msg-${p.id}" placeholder="Type message..."
+          style="width:70%;padding:6px;margin-top:6px;">
+
+        <button onclick="sendJobMessage('${p.id}', document.getElementById('msg-${p.id}').value)"
+          style="padding:6px;">
+          Send
+        </button>
+
+        ${p.status === "delivered" ? `
+          <button onclick="releasePayment('${p.id}')"
+            style="background:gold;color:#000;padding:8px;border:none;border-radius:6px;margin-top:8px;">
+            💰 Release Payment
+          </button>
+        ` : ""}
+
+      </div>
+    `;
+  });
+};
 
 </script>
 
