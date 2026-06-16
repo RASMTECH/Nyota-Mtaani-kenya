@@ -1599,6 +1599,18 @@ button.primary{
   z-index: 2147483647 !important;
   display: flex !important;
 }
+
+@keyframes glowPulse {
+  0% {
+    box-shadow: 0 0 0px rgba(22,163,74,0.4);
+  }
+  50% {
+    box-shadow: 0 0 18px rgba(37,99,235,0.6);
+  }
+  100% {
+    box-shadow: 0 0 0px rgba(245,158,11,0.4);
+  }
+}
 </style>
 </head>
 
@@ -1606,11 +1618,19 @@ button.primary{
 
 
 <!-- ===================================================== -->
+<!-- ===================================================== -->
 <!-- AUTH SECTION -->
 <!-- ===================================================== -->
 <div id="authSection">
 
-  <div class="auth-card">
+  <div class="auth-card" style="
+    background:
+ 
+      url('https://i.imgur.com/DA3C7yq.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  ">
 
     <!-- HEADER -->
     <h2>🏫 RASM 360</h2>
@@ -1650,14 +1670,8 @@ button.primary{
 
       <a href="#"
          onclick="resetPassword();return false;"
-         style="color:#2563eb; text-decoration:none; font-weight:600;">
+         style="color:#2563eb;text-decoration:none;font-weight:600;">
         Forgot Password?
-      </a>
-
-      <a href="#"
-         onclick="openPasswordModal();return false;"
-         style="color:#16a34a; text-decoration:none; font-weight:600;">
-        Change Password
       </a>
 
     </div>
@@ -1672,7 +1686,7 @@ button.primary{
       🚀 Create School (Start Free Trial)
     </button>
 
-    <hr style="margin:18px 0; border:none; border-top:1px solid #e5e7eb;">
+    <hr style="margin:18px 0;border:none;border-top:1px solid #e5e7eb;">
 
     <!-- INFO -->
     <div style="
@@ -1682,12 +1696,10 @@ button.primary{
       font-weight:700;
       line-height:1.8;
     ">
-
-      ✔ 2 Months Free Trial<br>
+      ✔ 1 Term Free Trial<br>
       ✔ Auto Subscription Activation<br>
       ✔ Full School ERP Access<br>
-      ✔ Results, Fees, CBC & Reports
-
+      ✔ Enjoy all modules
     </div>
 
   </div>
@@ -1732,13 +1744,83 @@ button.primary{
       <!-- ================= END SUBSCRIPTION STATUS ================= -->
 
     </div>
-<h2 id="schoolNameDisplay" class="school-title">
-  Loading school...
-</h2>
-    <!-- SCROLLABLE MENU -->
-    <div class="sidebar-scroll">
+<!-- =====================================================
+  SIDEBAR SCHOOL PROFILE HEADER (UPGRADED)
+===================================================== -->
 
+<div style="text-align:center; padding-top:10px;">
 
+  <!-- LOGO (CLICKABLE + CENTERED + GLOW) -->
+  <div onclick="openSchoolProfile()" style="
+    display:flex;
+    justify-content:center;
+    cursor:pointer;
+    margin-bottom:8px;
+  ">
+
+    <!-- Gradient Ring -->
+    <div style="
+      width:92px;
+      height:92px;
+      border-radius:50%;
+      padding:3px;
+      background:linear-gradient(135deg,#16a34a,#2563eb,#f59e0b);
+      animation: glowPulse 2.5s infinite;
+    ">
+
+      <img id="sidebarSchoolLogo"
+           src="https://via.placeholder.com/80?text=LOGO"
+           alt="School Logo"
+           style="
+             width:100%;
+             height:100%;
+             border-radius:50%;
+             object-fit:cover;
+             background:white;
+           ">
+
+    </div>
+  </div>
+
+  <!-- SCHOOL NAME -->
+  <h2 id="schoolNameDisplay" class="school-title" style="
+    margin:0;
+    font-size:16px;
+    font-weight:700;
+  ">
+    Loading school...
+  </h2>
+
+  <!-- MOTTO (optional dynamic) -->
+  <div id="schoolMottoDisplay" style="
+    font-size:12px;
+    color:#6b7280;
+    margin-top:4px;
+  ">
+    Empowering Education
+  </div>
+
+  <!-- STATUS BADGE -->
+  <div style="
+    margin-top:6px;
+  ">
+    <span style="
+      display:inline-block;
+      padding:3px 10px;
+      font-size:11px;
+      border-radius:20px;
+      background:#dcfce7;
+      color:#16a34a;
+      font-weight:600;
+    ">
+      ● Active School
+    </span>
+  </div>
+
+</div>
+
+<!-- SCROLLABLE MENU -->
+<div class="sidebar-scroll">
 <!-- MAIN MENU -->
 <div class="menu-section" id="mainMenu">
 
@@ -1804,32 +1886,32 @@ button.primary{
   onclick="show('library')">
   📚 Library
 </button>
-
+<button id="checkResultsBtn"
+  onclick="show('checkResultsSection')">
+  📊 Check Results
+</button>
 <button id="menuELearning"
   onclick="show('eLearningSection')">
   🎓 E-Learning
 </button>
-
+<button id="menuAssignmentHelp"
+  onclick="show('assignmentHelpSection')">
+  🧠 Assignment Help
+</button>
 <!-- FIXED BUTTON (was missing closing tag) -->
 <button id="passwordBtn"
   onclick="openPasswordModal()">
   🔐 Change Password
 </button>
 
-<button id="checkResultsBtn"
-  onclick="show('checkResultsSection')">
-  📊 Check Results
-</button>
+
 
 <button id="menuUsers"
   onclick="show('adminUsersPanel')">
   👥 Create Users
 </button>
 
-<button id="menuAssignmentHelp"
-  onclick="show('assignmentHelpSection')">
-  🧠 Assignment Help
-</button>
+
 </div>
 
 
@@ -2099,36 +2181,86 @@ button.primary{
 
 </div>
 
-      <!-- SUBSCRIPTION -->
-      <div class="menu-section">
+   <!-- ADVERTISING SECTION -->
+<div class="menu-section">
 
-        <h4>SUBSCRIPTIONS</h4>
+  <h4>🚀 WHY SCHOOLS CHOOSE RASM 360</h4>
 
-        <div class="subscription-box">
+  <div class="subscription-box">
 
-          <div class="stats">
-            <div>✅ Active: <b id="activeCount">0</b></div>
-            <div>🟡 Trial: <b id="trialCount">0</b></div>
-            <div>🔴 Expired: <b id="expiredCount">0</b></div>
-            <div>📊 Total: <b id="totalCount">0</b></div>
-          </div>
+    <div style="
+      text-align:center;
+      padding:10px;
+      font-size:15px;
+      line-height:1.8;
+    ">
 
-          <hr>
+      <h3 style="color:#16a34a;">
+        🏫 RASM 360 School ERP
+      </h3>
 
-          <h5>Schools</h5>
-          <div id="subscriptionList"></div>
+      <p>
+        Transform your school with the most powerful,
+        affordable and easy-to-use School Management System.
+      </p>
 
-          <hr>
+      <hr>
 
-          <h5>Payments</h5>
-          <div id="paymentList"></div>
+      <div style="text-align:left;">
 
-        </div>
+        ✅ Student Registration & Admission<br>
+        ✅ CBC & Competency Based Assessment<br>
+        ✅ Exams, Marks & Report Cards<br>
+        ✅ Fee Management & Receipts<br>
+        ✅ Parent Portal Access<br>
+        ✅ SMS & Notifications<br>
+        ✅ Library Management<br>
+        ✅ Inventory & Asset Tracking<br>
+        ✅ Staff & Payroll Management<br>
+        ✅ Attendance Tracking<br>
+        ✅ School Analytics Dashboard<br>
+        ✅ Multi-School Cloud Platform<br>
 
       </div>
 
+      <hr>
+
+      <div style="
+        color:#2563eb;
+        font-weight:bold;
+        font-size:16px;
+      ">
+        🎁 FREE 1 TERM TRIAL
+      </div>
+
+      <p>
+        No installation required.<br>
+        Access anywhere, anytime.
+      </p>
+
+      <hr>
+
+      <div style="
+        background:#ecfdf5;
+        padding:12px;
+        border-radius:10px;
+      ">
+        🌍 Trusted by Schools Across Kenya and Beyond
+      </div>
+
+      <br>
+
+      <button class="primary-btn"
+        onclick="window.open('https://rasm360.com','_blank')">
+        🚀 Get Started Today
+      </button>
+
     </div>
 
+  </div>
+
+</div>
+</div>
     <!-- FIXED LOGOUT -->
     <div class="sidebar-footer">
       <button onclick="logout()" class="logout-btn">
@@ -2144,7 +2276,7 @@ button.primary{
 
   <div class="modal-box" style="
       background:
-        linear-gradient(rgba(255,255,255,0.92), rgba(255,255,255,0.92)),
+   
         url('https://i.imgur.com/AKxlwWo.jpeg');
       background-size: cover;
       background-position: center;
@@ -3428,7 +3560,7 @@ Peter Kimani"
 <div id="recordMarksSection" class="section" style="display:none;">
 
   <div style="max-width: 400px; margin: auto; background-color: #8BC34A; padding: 15px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    background-image: url('https://i.imgur.com/TRtvMZz.jpeg'), url('https://i.imgur.com/rvoDpM7.jpeg');
+    background-image: url('https://i.imgur.com/DA3C7yq.jpeg'), url('https://i.imgur.com/DA3C7yq.jpeg');
     background-size: cover, cover;
     background-position: center, bottom right;
     height: auto;">
@@ -5875,11 +6007,6 @@ window.logout = async function () {
   }
 };
 
-/* ================= GLOBAL BUTTON FIX ================= */
-
-
-
-/* ================= REGISTER (ULTRA UPGRADED + SAAS READY + SECURE) ================= */
 
 /* ================= REGISTER (CLEAN + SAAS READY + SECURE) ================= */
 
@@ -7034,12 +7161,13 @@ function startSubscriptionWatcher() {
       }
 
       // =====================================
-      // ACTIVE SUBSCRIPTION CHECK
+      // ACTIVE SUBSCRIPTION CHECK + RECEIPT
       // =====================================
       if (school.subscriptionStatus === "active") {
 
         const subscriptionEndsAt = Number(school.subscriptionEndsAt || 0);
 
+        // EXPIRE CHECK
         if (subscriptionEndsAt && now >= subscriptionEndsAt) {
 
           window.__subscriptionLocked = true;
@@ -7060,13 +7188,51 @@ function startSubscriptionWatcher() {
 
           return;
         }
+
+        // =====================================
+        // 🧾 RECEIPT GENERATION (RUN ONCE ONLY)
+        // =====================================
+        if (!school.__receiptGenerated) {
+
+          try {
+
+            const payment = {
+              amount: school.amountPaid || 0,
+              method: "M-Pesa",
+              transactionId: school.lastTransactionId || "N/A",
+              startDate: school.subscriptionStartsAt || Date.now(),
+              expiryDate: school.subscriptionEndsAt || Date.now()
+            };
+
+            const receipt = generateReceipt(
+              {
+                id: schoolId,
+                name: school.schoolName,
+                package: school.plan || "Standard",
+                status: school.subscriptionStatus
+              },
+              payment
+            );
+
+            await saveReceiptToDB(receipt);
+
+            printReceipt(receipt);
+
+            await update(ref(db, `schools/${schoolId}`), {
+              __receiptGenerated: true
+            });
+
+          } catch (err) {
+            console.warn("Receipt generation failed:", err);
+          }
+        }
       }
 
     } catch (err) {
       console.error("Subscription Watcher Error:", err);
     }
 
-  }, 10000); // 10 seconds (safe balance)
+  }, 10000); // 10 seconds
 }
 /* ======================================================
    🔥 LIVE SUBSCRIPTION UI (OPTIMIZED + CLEAN)
@@ -8252,109 +8418,28 @@ function getRandomAgeByGrade(grade) {
 
 async function generateAdmissionNumber() {
 
-    try {
+  const year = new Date().getFullYear();
 
-        const year =
-            new Date().getFullYear();
+  const counterRef = schoolRef(`system/admissionCounter/${year}`);
 
-        // =================================================
-        // 🔥 COUNTER PATH
-        // Faster than scanning all students
-        // =================================================
-        const counterRef =
-            schoolRef(
-                `system/admissionCounter/${year}`
-            );
+  const snap = await get(counterRef);
 
-        // =================================================
-        // 🔥 GET CURRENT COUNTER
-        // =================================================
-        const counterSnap =
-            await Promise.race([
+  let current = snap.exists() ? Number(snap.val()) : 0;
 
-                get(counterRef),
+  const next = current + 1;
 
-                new Promise((_, reject) =>
+  await set(counterRef, next);
 
-                    setTimeout(() =>
+  const formatted = String(next).padStart(3, "0");
 
-                        reject(
-                            new Error(
-                                "Counter timeout"
-                            )
-                        ),
-
-                    10000)
-                )
-
-            ]);
-
-        let currentNumber = 0;
-
-        if (counterSnap.exists()) {
-
-            currentNumber =
-                Number(
-                    counterSnap.val()
-                ) || 0;
-        }
-
-        // =================================================
-        // 🔥 NEXT NUMBER
-        // =================================================
-        const nextNumber =
-            currentNumber + 1;
-
-        // =================================================
-        // 🔥 SAVE UPDATED COUNTER
-        // =================================================
-        await set(
-            counterRef,
-            nextNumber
-        );
-
-        // =================================================
-        // 🔥 FORMAT ADM NO
-        // =================================================
-        const formattedNumber =
-            String(nextNumber)
-            .padStart(4, '0');
-
-        return `${year}/${formattedNumber}`;
-
-    } catch (error) {
-
-        console.error(
-            "Admission Generator Error:",
-            error
-        );
-
-        // =================================================
-        // 🔥 SAFE FALLBACK
-        // =================================================
-        const fallback =
-            Date.now()
-            .toString()
-            .slice(-4);
-
-        return `${new Date().getFullYear()}/${fallback}`;
-    }
+  return `${year}/${formatted}`;
 }
-/* =========================================================
-   🚀 ULTRA ADVANCED STUDENT REGISTRATION SYSTEM
-   FAST • SAFE • BULK OPTIMIZED • ENTERPRISE READY
-========================================================= */
-
 window.addStudent = async () => {
 
     if (window.__addingStudents) return;
     window.__addingStudents = true;
 
     try {
-
-        // =====================================================
-        // 🔹 GET FORM VALUES
-        // =====================================================
 
         const studentNameField = document.getElementById('studentName');
         const gradeField = document.getElementById('grade');
@@ -8375,22 +8460,13 @@ window.addStudent = async () => {
         let admissionNo = document.getElementById('admissionNo')?.value.trim();
         const photoFile = photoInput?.files?.[0];
 
-        // =====================================================
-        // 🔹 VALIDATION
-        // =====================================================
-
         if (!nameInput || !grade) {
             return Swal.fire({
                 icon: 'warning',
                 title: 'Missing Fields',
-                text: 'Student name and grade are required.',
-                confirmButtonColor: '#f59e0b'
+                text: 'Student name and grade are required.'
             });
         }
-
-        // =====================================================
-        // 🔹 CLEAN NAMES
-        // =====================================================
 
         let namesArray = nameInput
             .split(/\r?\n|\t|,/)
@@ -8416,10 +8492,6 @@ window.addStudent = async () => {
 
         const isBulk = total > 1;
 
-        // =====================================================
-        // 🔹 PHOTO
-        // =====================================================
-
         let photoURL = "";
 
         if (photoFile) {
@@ -8431,7 +8503,7 @@ window.addStudent = async () => {
         const year = new Date().getFullYear();
 
         // =====================================================
-        // 🔥 SINGLE MODE
+        // 🔥 SINGLE MODE (FIXED)
         // =====================================================
 
         if (!isBulk) {
@@ -8445,7 +8517,10 @@ window.addStudent = async () => {
             try {
 
                 if (!age) age = getRandomAgeByGrade(grade);
-                if (!admissionNo) admissionNo = await generateAdmissionNumber();
+
+                if (!admissionNo) {
+                    admissionNo = await generateAdmissionNumber();
+                }
 
                 const studentData = {
                     name: namesArray[0],
@@ -8491,7 +8566,7 @@ window.addStudent = async () => {
         }
 
         // =====================================================
-        // ⚡ ENTERPRISE BULK ENGINE (FAST + PARALLEL + SAFE)
+        // ⚡ BULK MODE (FAST LOCAL COUNTER - NO SLOWDOWN)
         // =====================================================
 
         const progressBox = document.createElement("div");
@@ -8504,14 +8579,11 @@ window.addStudent = async () => {
             padding:12px 16px;
             border-radius:10px;
             z-index:99999;
-            font-size:13px;
-            box-shadow:0 10px 20px rgba(0,0,0,0.3);
         `;
         document.body.appendChild(progressBox);
 
         Swal.fire({
             title: `Registering ${total} Learners`,
-            html: "Starting upload ⚡",
             allowOutsideClick: false,
             didOpen: () => Swal.showLoading()
         });
@@ -8520,7 +8592,6 @@ window.addStudent = async () => {
 
         const batchSize = 25;
         const concurrency = 4;
-        const maxRetries = 2;
 
         let processed = 0;
         let failed = 0;
@@ -8531,9 +8602,14 @@ window.addStudent = async () => {
             batches.push(namesArray.slice(i, i + batchSize));
         }
 
+        // 🔥 LOCAL FAST COUNTER (NO FIREBASE CALLS)
+        let bulkCounter = 0;
+
         const buildStudent = (name) => {
 
-            const admNo = adm || `${year}${Date.now()}${Math.floor(Math.random() * 1000)}`;
+            const admNo =
+                adm ||
+                `${year}/${String(++bulkCounter).padStart(3, "0")}`;
 
             return {
                 name,
@@ -8554,13 +8630,10 @@ window.addStudent = async () => {
             };
         };
 
-        const safeWrite = async (updates, attempt = 0) => {
+        const safeWrite = async (updates) => {
             try {
                 await update(studentsRef, updates);
             } catch (err) {
-                if (attempt < maxRetries) {
-                    return safeWrite(updates, attempt + 1);
-                }
                 failed += Object.keys(updates).length;
             }
         };
@@ -8586,30 +8659,23 @@ window.addStudent = async () => {
                 await safeWrite(updates);
 
                 progressBox.innerHTML = `
-                    <b>Uploading...</b><br>
-                    ${processed}/${total} learners<br>
-                    ${failed ? `Failed: ${failed}` : ""}
+                    Uploading...<br>
+                    ${processed}/${total}
                 `;
             }
         };
 
-        const workers = Array(concurrency).fill(0).map(worker);
+        await Promise.all(Array(concurrency).fill(0).map(worker));
 
-        await Promise.all(workers);
-
-        // =====================================================
-        // 🔥 FINAL REFRESH
-        // =====================================================
-
-        requestAnimationFrame(async () => {
-            await loadStudents?.();
+        requestAnimationFrame(() => {
+            loadStudents?.();
             loadGradeFilterOptions?.();
             applyStudentFilters?.();
         });
 
         Swal.fire({
             icon: 'success',
-            title: 'Bulk Registration Complete 🎉',
+            title: 'Done 🎉',
             html: `<b>${processed}</b> learners added`
         });
 
@@ -8621,12 +8687,10 @@ window.addStudent = async () => {
 
     } catch (error) {
 
-        console.error(error);
-
         Swal.fire({
             icon: 'error',
             title: 'Registration Failed',
-            text: error.message || 'Something went wrong.'
+            text: error.message
         });
 
     } finally {
@@ -11464,30 +11528,25 @@ window.loadFeeLearners = async function () {
     console.error("Error loading fee learners:", err);
   }
 };
-// ================= LOAD LEARNERS + PROGRESS (UPGRADED)
-// ================= FIXED: NO GRADE RESET + AUTO NEXT + QUEUE SYSTEM
 async function loadLearnersFromStudents() {
 
-  const grade =
-    document.getElementById("gradeSelect")?.value;
+  // 🔒 GLOBAL LOCK (THIS IS THE REAL FIX)
+  if (!window.__lockedGrade) {
+    window.__lockedGrade = document.getElementById("gradeSelect")?.value;
+  }
+  if (!window.__lockedExam) {
+    window.__lockedExam = document.getElementById("examPeriod")?.value;
+  }
 
-  const examPeriod =
-    document.getElementById("examPeriod")?.value;
+  const grade = window.__lockedGrade;
+  const examPeriod = window.__lockedExam;
 
-  const learnerSelect =
-    document.getElementById("learnerSelect");
-
-  const badge =
-    document.getElementById("marksCountBadge");
+  const learnerSelect = document.getElementById("learnerSelect");
+  const badge = document.getElementById("marksCountBadge");
 
   if (!learnerSelect) return;
 
-  // ❌ IMPORTANT FIX: DO NOT CLEAR GRADE OR EXAM
-  // (previous issue was UI reset/refresh)
-
-  learnerSelect.innerHTML =
-    `<option value="">Select Learner</option>`;
-
+  learnerSelect.innerHTML = `<option value="">Select Learner</option>`;
   if (badge) badge.innerHTML = "";
 
   if (!grade || !examPeriod) return;
@@ -11503,193 +11562,102 @@ async function loadLearnersFromStudents() {
 
     if (!schoolId) return;
 
-    const studentsRef =
-      ref(db, `schools/${schoolId}/students`);
+    const snapshot = await get(ref(db, `schools/${schoolId}/students`));
 
-    const snapshot = await get(studentsRef);
-
-    // ================= MAP RECORDED =================
     const recordedMap = {};
-
     snapshot.forEach(child => {
       const data = child.val();
-
       if (data?.marks?.[examPeriod]) {
         recordedMap[child.key] = true;
       }
     });
 
-    // ================= RESET QUEUE =================
     window.__learnerQueue = [];
 
     let recordedCount = 0;
-    let firstPendingLearner = null;
+    let firstPending = null;
 
-    // ================= BUILD LIST =================
     snapshot.forEach(child => {
 
       const data = child.val();
-
       if (data.grade !== grade) return;
 
       const isRecorded = recordedMap[child.key];
 
-      const studentObj = {
+      const obj = {
         key: child.key,
         name: data.name || "Unknown"
       };
 
-      if (!isRecorded) {
-
-        window.__learnerQueue.push(studentObj);
-
-        if (!firstPendingLearner) {
-          firstPendingLearner = studentObj;
-        }
-      } else {
-        recordedCount++;
-      }
-
-      const option = document.createElement("option");
-      option.value = child.key;
+      const opt = document.createElement("option");
+      opt.value = child.key;
 
       if (isRecorded) {
-
-        option.textContent =
-          `✔ ${data.name} (Recorded)`;
-
-        option.style.color = "#c62828";
-        option.style.fontWeight = "bold";
-        option.style.backgroundColor = "#ffebee";
-        option.disabled = true;
-
+        opt.textContent = `✔ ${data.name} (Recorded)`;
+        opt.disabled = true;
+        opt.style.color = "#c62828";
+        opt.style.fontWeight = "bold";
+        opt.style.background = "#ffebee";
+        recordedCount++;
       } else {
-
-        option.textContent = data.name;
+        opt.textContent = data.name;
+        window.__learnerQueue.push(obj);
+        if (!firstPending) firstPending = obj;
       }
 
-      learnerSelect.appendChild(option);
+      learnerSelect.appendChild(opt);
     });
 
-    // ================= AUTO SELECT FIRST PENDING =================
     window.__currentLearnerIndex = 0;
 
     setTimeout(() => {
-
-      if (firstPendingLearner) {
-
-        learnerSelect.value = firstPendingLearner.key;
+      if (firstPending) {
+        learnerSelect.value = firstPending.key;
 
         Swal.fire({
           toast: true,
           position: "top-end",
           icon: "info",
-          title: `Now recording marks for ${firstPendingLearner.name}`,
+          title: `Now recording marks for ${firstPending.name}`,
           timer: 2000,
           showConfirmButton: false
         });
       }
+    }, 200);
 
-    }, 300);
+    const total = recordedCount + window.__learnerQueue.length;
+    const percent = total ? Math.round((recordedCount / total) * 100) : 0;
 
-    // ================= PROGRESS CALC =================
-    const total =
-      recordedCount + window.__learnerQueue.length;
-
-    const percent =
-      total > 0
-        ? Math.round((recordedCount / total) * 100)
-        : 0;
-
-    // ================= BADGE =================
     if (badge) {
-
       badge.innerHTML = `
+        <div style="margin-top:12px;background:#fff;border-radius:14px;padding:14px;box-shadow:0 2px 10px rgba(0,0,0,0.08);border:1px solid #e0e0e0;">
 
-        <div style="
-          margin-top:12px;
-          background:#fff;
-          border-radius:14px;
-          padding:14px;
-          box-shadow:0 2px 10px rgba(0,0,0,0.08);
-          border:1px solid #e0e0e0;
-        ">
-
-          <div style="
-            display:flex;
-            justify-content:space-between;
-            font-weight:bold;
-            font-size:14px;
-            margin-bottom:8px;
-          ">
-
+          <div style="display:flex;justify-content:space-between;font-weight:bold;font-size:14px;margin-bottom:8px;">
             <span>📊 Marks Progress</span>
-
             <span style="color:${percent === 100 ? '#2e7d32' : '#1565c0'};">
               ${recordedCount}/${total}
             </span>
-
           </div>
 
-          <div style="
-            width:100%;
-            height:16px;
-            background:#eceff1;
-            border-radius:20px;
-            overflow:hidden;
-          ">
-
-            <div style="
-              width:${percent}%;
-              height:100%;
-              background:${percent === 100
-                ? 'linear-gradient(90deg,#43a047,#66bb6a)'
-                : 'linear-gradient(90deg,#1e88e5,#42a5f5)'};
-              transition:all .4s ease;
-            "></div>
-
+          <div style="width:100%;height:16px;background:#eceff1;border-radius:20px;overflow:hidden;">
+            <div style="width:${percent}%;height:100%;background:${percent === 100 ? 'linear-gradient(90deg,#43a047,#66bb6a)' : 'linear-gradient(90deg,#1e88e5,#42a5f5)'};"></div>
           </div>
 
-          <div style="
-            margin-top:8px;
-            display:flex;
-            justify-content:space-between;
-            font-size:13px;
-            color:#555;
-          ">
-
+          <div style="margin-top:8px;display:flex;justify-content:space-between;font-size:13px;color:#555;">
             <span>${percent}% Completed</span>
-
-            <span>
-              Remaining: ${window.__learnerQueue.length}
-            </span>
-
+            <span>Remaining: ${window.__learnerQueue.length}</span>
           </div>
 
         </div>
-
       `;
     }
+
+    // 🔒 FORCE RESTORE EVERY TIME (THIS PREVENTS RESET VISUAL BUG)
+    document.getElementById("gradeSelect").value = window.__lockedGrade;
+    document.getElementById("examPeriod").value = window.__lockedExam;
 
   } catch (err) {
-
-    console.error("LOAD_LEARNERS_ERROR:", err);
-
-    if (badge) {
-
-      badge.innerHTML = `
-        <div style="
-          margin-top:10px;
-          padding:10px;
-          border-radius:10px;
-          background:#ffebee;
-          color:#c62828;
-          font-weight:bold;
-        ">
-          Failed to load marks progress
-        </div>
-      `;
-    }
+    console.error(err);
   }
 }
 
@@ -11705,31 +11673,28 @@ window.__autoSaveTimer = null;
 window.__learnerQueue = [];
 window.__currentLearnerIndex = 0;
 
-
+window.__lockedGrade = null;
+window.__lockedExam = null;
 // =========================================================
 // 🚀 EVENTS
 // =========================================================
 document.addEventListener("DOMContentLoaded", () => {
 
-  const gradeEl =
-    document.getElementById("gradeSelect");
+  const gradeEl = document.getElementById("gradeSelect");
+  const examEl = document.getElementById("examPeriod");
 
-  const examEl =
-    document.getElementById("examPeriod");
+  gradeEl?.addEventListener("change", () => {
+    window.__lockedGrade = gradeEl.value;
+    loadLearnersFromStudents();
+  });
 
-  gradeEl?.addEventListener(
-    "change",
-    loadLearnersFromStudents
-  );
-
-  examEl?.addEventListener(
-    "change",
-    loadLearnersFromStudents
-  );
+  examEl?.addEventListener("change", () => {
+    window.__lockedExam = examEl.value;
+    loadLearnersFromStudents();
+  });
 
   attachAutoSaveListeners();
 });
-
 
 // =========================================================
 // 🔥 AUTO SAVE TOGGLE
@@ -11860,27 +11825,23 @@ function getSelectedLearner() {
 }
 
 
-// =========================================================
-// 🔴 MARK AS RECORDED
-// =========================================================
 function markLearnerAsRecorded(learnerKey) {
 
   const select = document.getElementById("learnerSelect");
   if (!select) return;
 
-  const option = Array.from(select.options)
-    .find(opt => opt.value === learnerKey);
-
+  const option = [...select.options].find(o => o.value === learnerKey);
   if (!option) return;
 
   option.textContent =
     `✔ ${option.textContent.replace("✔", "").replace("(Recorded)", "").trim()} (Recorded)`;
 
+  option.disabled = true;
   option.style.color = "#c62828";
   option.style.fontWeight = "bold";
-  option.disabled = true;
+  option.style.background = "#ffebee";
 
-  setTimeout(() => loadLearnersFromStudents(), 200);
+  // 🚀 DO NOT reload learners (this was causing grade reset)
 }
 
 
@@ -11900,10 +11861,7 @@ function clearMarksFormPreserveSelections() {
       el.value = "";
       el.style.border = "";
     }
-  });
-
-  const learner = document.getElementById("learnerSelect");
-  if (learner) learner.value = "";
+  });// DO NOT reset learner automatically (prevents workflow interruption)
 }
 
 
@@ -11920,53 +11878,6 @@ async function saveMarksToFirebase(schoolId, learnerKey, examPeriod, data) {
   await set(ref(db, path), data);
 }
 
-
-// =========================================================
-// 🚀 LOAD LEARNER QUEUE (NEW SYSTEM)
-// =========================================================
-window.loadLearnersFromStudents = async function () {
-
-  const grade = document.getElementById("gradeSelect")?.value;
-  const exam = document.getElementById("examPeriod")?.value;
-
-  if (!grade || !exam) return;
-
-  const schoolId = window.schoolId;
-  if (!schoolId) return;
-
-  const snap = await get(ref(db, `schools/${schoolId}/students`));
-
-  const select = document.getElementById("learnerSelect");
-  select.innerHTML = `<option value="">Select Learner</option>`;
-
-  window.__learnerQueue = [];
-
-  snap.forEach(child => {
-
-    const data = child.val();
-
-    if (data.grade !== grade) return;
-
-    const already = data.marks?.[exam]?.autoSaved;
-
-    if (!already) {
-
-      window.__learnerQueue.push({
-        key: child.key,
-        name: data.name
-      });
-
-      const opt = document.createElement("option");
-      opt.value = child.key;
-      opt.textContent = data.name;
-      select.appendChild(opt);
-    }
-  });
-
-  window.__currentLearnerIndex = 0;
-
-  autoSelectNextLearner();
-};
 
 
 // =========================================================
@@ -23140,9 +23051,7 @@ window.loadSchoolProfile = async function () {
 
     if (!snap.exists()) {
 
-      console.warn(
-        `School ${schoolId} not found`
-      );
+      console.warn(`School ${schoolId} not found`);
 
       window.currentSchool = {
         name: "",
@@ -23156,30 +23065,49 @@ window.loadSchoolProfile = async function () {
 
     window.currentSchool = snap.val();
 
-    console.log(
-      "🏫 School loaded:",
-      window.currentSchool.name
-    );
+    console.log("🏫 School loaded:", window.currentSchool.name);
 
+    // ===============================
+    // SCHOOL NAME
+    // ===============================
+
+const mottoEl = document.getElementById("schoolMottoDisplay");
+if (mottoEl) {
+  mottoEl.textContent =
+    window.currentSchool.motto || "Empowering Education";
+}
     const schoolNameDisplay =
-      document.getElementById(
-        "schoolNameDisplay"
-      );
+      document.getElementById("schoolNameDisplay");
 
     if (schoolNameDisplay) {
-
       schoolNameDisplay.textContent =
-        window.currentSchool.name ||
-        "RASM 360";
+        window.currentSchool.name || "RASM 360";
+    }
+
+    // ===============================
+    // SCHOOL LOGO (SIDEBAR)
+    // ===============================
+    const logoEl = document.getElementById("sidebarSchoolLogo");
+
+    if (logoEl) {
+
+      if (window.currentSchool.logo && window.currentSchool.logo !== "") {
+
+        logoEl.src = window.currentSchool.logo;
+        logoEl.style.display = "block";
+
+      } else {
+
+        logoEl.src = "https://via.placeholder.com/80?text=LOGO";
+        logoEl.style.display = "block";
+
+      }
 
     }
 
   } catch (err) {
 
-    console.error(
-      "School Profile Error:",
-      err
-    );
+    console.error("School Profile Error:", err);
 
   }
 
@@ -35450,6 +35378,35 @@ window.deleteJob = async function(jobId){
   }
 
 };
+
+function generateReceipt(school, payment) {
+
+  const receiptNumber = "RSM-" + Date.now();
+
+  const receipt = {
+    receiptNumber,
+    schoolName: school.name,
+    schoolId: school.id,
+    package: school.package,
+    amount: payment.amount,
+    method: payment.method,
+    transactionId: payment.transactionId,
+    startDate: payment.startDate,
+    expiryDate: payment.expiryDate,
+    status: school.status,
+    issuedAt: new Date().toISOString()
+  };
+
+  return receipt;
+}
+async function saveReceiptToDB(receipt) {
+
+  await firebase.database()
+    .ref("receipts/" + receipt.receiptNumber)
+    .set(receipt);
+
+}
+
 </script>
 
 
