@@ -1071,89 +1071,7 @@ button.primary{
     background-position:200% 0;
   }
 }
-/* =========================================================
-   🌍 FLOATING COUNTER (FIXED FOR MOBILE OVERLAP)
-========================================================= */
 
-#floatingSchoolsCounter{
-  position:fixed;
-  top:20px;
-  right:20px;
-
-  display:flex;
-  align-items:center;
-  gap:10px;
-
-  min-width:200px;
-  max-width:280px;
-
-  padding:12px 14px;
-
-  border-radius:16px;
-
-  background:rgba(255,255,255,0.95);
-  backdrop-filter:blur(12px);
-
-  border:1px solid rgba(255,255,255,0.3);
-
-  box-shadow:0 10px 35px rgba(0,0,0,0.15);
-
-  z-index:1000; /* FIX: was WAY too high */
-}
-
-/* ICON */
-.schools-counter-icon{
-  width:42px;
-  height:42px;
-
-  font-size:18px;
-
-  border-radius:12px;
-}
-
-/* TEXT */
-.schools-counter-title{
-  font-size:12px;
-  margin-bottom:2px;
-}
-
-.schools-counter-number{
-  font-size:22px;
-}
-
-/* =========================================================
-   🌍 MOBILE FIX (CRITICAL)
-========================================================= */
-
-@media (max-width:600px){
-
-  #floatingSchoolsCounter{
-
-    /* move away from blocking content */
-    top:auto;
-    bottom:12px;
-    right:12px;
-    left:12px;
-
-    width:calc(100% - 24px);
-
-    justify-content:space-between;
-
-    padding:10px 12px;
-
-    border-radius:12px;
-  }
-
-  .schools-counter-icon{
-    width:38px;
-    height:38px;
-    font-size:16px;
-  }
-
-  .schools-counter-number{
-    font-size:20px;
-  }
-}
 
 /* =========================================================
    🌍 DASHBOARD
@@ -1672,54 +1590,52 @@ button.primary{
 .close-btn:hover {
   background: #dc2626;
 }
+
+#floatingSchoolsCounter {
+  position: fixed !important;
+  top: 25px !important;
+  right: 25px !important;
+  bottom: auto !important;
+  z-index: 2147483647 !important;
+  display: flex !important;
+}
 </style>
 </head>
 
 <body>
 
 
+<!-- ===================================================== -->
+<!-- AUTH SECTION -->
+<!-- ===================================================== -->
 <div id="authSection">
 
   <div class="auth-card">
 
     <!-- HEADER -->
     <h2>🏫 RASM 360</h2>
-    <p class="subtitle">
-      Smart School ERP System
-    </p>
+    <p class="subtitle">Smart School ERP System</p>
 
-    <!-- ROLE -->
+    <!-- ROLE SELECT -->
     <select id="role">
       <option value="admin">👑 Admin</option>
       <option value="teacher">👨🏫 Teacher</option>
       <option value="parent">👨👩👧 Parent</option>
     </select>
 
-    <!-- SCHOOL -->
-    <input
-      id="schoolName"
-      placeholder="🏫 School Name">
+    <!-- SCHOOL NAME -->
+    <input id="schoolName" placeholder="🏫 School Name">
 
     <!-- EMAIL -->
-    <input
-      id="email"
-      type="email"
-      placeholder="📧 Email Address">
+    <input id="email" type="email" placeholder="📧 Email Address">
 
     <!-- PASSWORD -->
     <div class="password-box">
 
-      <input
-        id="password"
-        type="password"
-        placeholder="🔒 Password">
+      <input id="password" type="password" placeholder="🔒 Password">
 
-      <span
-        onclick="togglePassword()"
-        style="cursor:pointer;">
-
+      <span onclick="togglePassword()" style="cursor:pointer;">
         👁️
-
       </span>
 
     </div>
@@ -1728,64 +1644,37 @@ button.primary{
     <div style="
       display:flex;
       justify-content:space-between;
-      margin-top:-6px;
-      margin-bottom:15px;
+      margin:6px 0 15px;
       font-size:13px;
     ">
 
       <a href="#"
          onclick="resetPassword();return false;"
-         style="
-           color:#2563eb;
-           text-decoration:none;
-           font-weight:600;
-         ">
-
-         Forgot Password?
-
+         style="color:#2563eb; text-decoration:none; font-weight:600;">
+        Forgot Password?
       </a>
 
       <a href="#"
          onclick="openPasswordModal();return false;"
-         style="
-           color:#16a34a;
-           text-decoration:none;
-           font-weight:600;
-         ">
-
-         Change Password
-
+         style="color:#16a34a; text-decoration:none; font-weight:600;">
+        Change Password
       </a>
 
     </div>
 
     <!-- LOGIN -->
-    <button
-      onclick="login()"
-      class="secondary-btn">
-
+    <button onclick="login()" class="secondary-btn">
       🔓 Login
-
     </button>
 
     <!-- REGISTER -->
-    <button
-      id="registerBtn"
-      onclick="register()"
-      class="primary-btn">
-
-      🚀 Create School
-      (Start Free Trial)
-
+    <button id="registerBtn" onclick="register()" class="primary-btn">
+      🚀 Create School (Start Free Trial)
     </button>
 
-    <hr style="
-      margin:18px 0;
-      border:none;
-      border-top:1px solid #e5e7eb;
-    ">
+    <hr style="margin:18px 0; border:none; border-top:1px solid #e5e7eb;">
 
-    <!-- INFO PANEL -->
+    <!-- INFO -->
     <div style="
       font-size:13px;
       color:#16a34a;
@@ -1795,11 +1684,8 @@ button.primary{
     ">
 
       ✔ 2 Months Free Trial<br>
-
       ✔ Auto Subscription Activation<br>
-
       ✔ Full School ERP Access<br>
-
       ✔ Results, Fees, CBC & Reports
 
     </div>
@@ -1807,7 +1693,6 @@ button.primary{
   </div>
 
 </div>
-
 
 <!-- APP -->
 <!-- ================= MAIN APP ================= -->
@@ -2031,6 +1916,9 @@ button.primary{
       onclick="show('marksStatus')">
       👁️ Marks Recording Status
     </button>
+    <button onclick="printSelectedReport()" class="dark-btn">
+          🖨️ Print Selected
+        </button>
 
   </div>
 
@@ -2476,7 +2364,6 @@ button.primary{
     </div>
 
   </div>
-
 <!-- =========================================
      CREATE COURSE (MONETISED VERSION)
 ========================================= -->
@@ -2507,72 +2394,22 @@ button.primary{
   <!-- CONTENT -->
   <div style="position:relative;z-index:2;color:white;">
 
-    <h2 style="
-      margin-bottom:5px;
-      color:white;
-    ">
-      📘 Create Learning Content
-    </h2>
+    <h2>📘 Create Learning Content</h2>
 
-    <div style="
-      margin-bottom:18px;
-      color:#e5e7eb;
-      font-size:13px;
-    ">
+    <div style="margin-bottom:18px;color:#e5e7eb;font-size:13px;">
       Create free or paid courses and earn revenue from learners.
     </div>
 
-    <!-- TITLE -->
-    <input
-      id="courseTitle"
-      placeholder="Course Title"
-      style="
-        width:100%;
-        padding:12px;
-        margin-bottom:10px;
-        border:none;
-        border-radius:10px;
-      "
-    >
+    <!-- FORM FIELDS -->
+    <input id="courseTitle" placeholder="Course Title" style="width:100%;padding:12px;margin-bottom:10px;border:none;border-radius:10px;">
 
-    <!-- TEACHER -->
-    <input
-      id="courseTeacher"
-      placeholder="Teacher Name"
-      style="
-        width:100%;
-        padding:12px;
-        margin-bottom:10px;
-        border:none;
-        border-radius:10px;
-      "
-    >
+    <input id="courseTeacher" placeholder="Teacher Name" style="width:100%;padding:12px;margin-bottom:10px;border:none;border-radius:10px;">
 
-    <!-- GRADE -->
-    <select
-      id="courseGrade"
-      style="
-        width:100%;
-        padding:12px;
-        margin-bottom:10px;
-        border:none;
-        border-radius:10px;
-      "
-    >
+    <select id="courseGrade" style="width:100%;padding:12px;margin-bottom:10px;border:none;border-radius:10px;">
       <option value="">Select Grade</option>
     </select>
 
-    <!-- SUBJECT -->
-    <select
-      id="courseSubject"
-      style="
-        width:100%;
-        padding:12px;
-        margin-bottom:10px;
-        border:none;
-        border-radius:10px;
-      "
-    >
+    <select id="courseSubject" style="width:100%;padding:12px;margin-bottom:10px;border:none;border-radius:10px;">
       <option value="">Select Subject</option>
       <option>Mathematics</option>
       <option>English</option>
@@ -2586,179 +2423,91 @@ button.primary{
     </select>
 
     <!-- COURSE TYPE -->
-    <select
-      id="courseType"
-      onchange="toggleCoursePrice()"
-      style="
-        width:100%;
-        padding:12px;
-        margin-bottom:10px;
-        border:none;
-        border-radius:10px;
-      "
-    >
-      <option value="free">
-        📖 Free Course
-      </option>
-
-      <option value="paid">
-        💰 Paid Course
-      </option>
+    <select id="courseType" onchange="toggleCoursePrice()" style="width:100%;padding:12px;margin-bottom:10px;border:none;border-radius:10px;">
+      <option value="free">📖 Free Course</option>
+      <option value="paid">💰 Paid Course</option>
     </select>
 
-    <!-- PRICE BOX -->
-    <div
-      id="coursePriceBox"
-      style="
-        display:none;
-        margin-bottom:10px;
-      "
-    >
-
-      <input
-        type="number"
-        id="coursePrice"
-        min="0"
-        value="0"
-        placeholder="Course Price (KES)"
-        style="
-          width:100%;
-          padding:12px;
-          border:none;
-          border-radius:10px;
-        "
-      >
-
-      <div style="
-        margin-top:5px;
-        color:#d1fae5;
-        font-size:12px;
-      ">
-        Example: 100, 200, 500, 1000
-      </div>
-
+    <!-- PRICE -->
+    <div id="coursePriceBox" style="display:none;margin-bottom:10px;">
+      <input type="number" id="coursePrice" placeholder="Course Price (KES)" style="width:100%;padding:12px;border:none;border-radius:10px;">
     </div>
 
     <!-- DESCRIPTION -->
-    <textarea
-      id="courseDescription"
+    <textarea id="courseDescription"
       placeholder="Course Description"
-      style="
-        width:100%;
-        min-height:130px;
-        margin-top:5px;
-        padding:12px;
-        border:none;
-        border-radius:10px;
-      "
-    ></textarea>
+      style="width:100%;min-height:130px;padding:12px;border:none;border-radius:10px;">
+    </textarea>
 
     <!-- FILES -->
     <div style="margin-top:15px;">
-
-      <label style="
-        font-weight:bold;
-        color:white;
-      ">
-        📎 Upload Notes / PDF / Video
-      </label>
-
-      <input
-        type="file"
-        id="courseFile"
-        multiple
-        style="
-          margin-top:8px;
-          width:100%;
-          color:white;
-        "
-      >
-
-    </div>
-
-    <!-- REVENUE INFO -->
-    <div style="
-      margin-top:15px;
-      background:rgba(255,255,255,0.12);
-      padding:12px;
-      border-radius:10px;
-      font-size:13px;
-      color:#d1fae5;
-      line-height:1.7;
-    ">
-
-      💡 Monetisation Tips
-
-      <br>
-
-      ✔ Revision Packages
-
-      <br>
-
-      ✔ KCPE/KPSEA Preparation
-
-      <br>
-
-      ✔ CBC Assessment Training
-
-      <br>
-
-      ✔ Teacher Professional Courses
-
-      <br>
-
-      ✔ Holiday Tuition Content
-
+      <label>📎 Upload Files</label>
+      <input type="file" id="courseFile" multiple style="width:100%;margin-top:8px;">
     </div>
 
     <!-- PUBLISH -->
-    <button
-      onclick="createCourse()"
-      style="
-        margin-top:18px;
-        background:linear-gradient(135deg,#16a34a,#15803d);
-        color:white;
-        border:none;
-        padding:14px;
-        border-radius:10px;
-        cursor:pointer;
-        font-weight:bold;
-        width:100%;
-        font-size:15px;
-      "
-    >
+    <button onclick="createCourse()"
+      style="margin-top:18px;background:#16a34a;color:white;border:none;padding:14px;border-radius:10px;width:100%;">
       🚀 Publish Course
     </button>
 
   </div>
-
 </div>
 
-  <!-- =========================================
-       COURSE LIST
-  ========================================= -->
-  <div style="
-    margin-top:25px;
-    background:white;
-    padding:20px;
-    border-radius:16px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.08);
-  ">
+<!-- =========================================
+     BULK ACTION BAR
+========================================= -->
 
-    <h2 style="margin-bottom:15px;">
-      📚 Available Resources 
-    </h2>
+<div id="courseBulkBar"
+     style="display:none;position:sticky;top:0;z-index:999;
+     background:#111827;color:white;padding:10px;border-radius:10px;
+     margin-top:15px;justify-content:space-between;align-items:center;gap:10px;">
 
-    <div id="coursesContainer"
-      style="
-        display:grid;
-        grid-template-columns:
-        repeat(auto-fit,minmax(280px,1fr));
-        gap:18px;
-      ">
-    </div>
+  <div>
+    <input type="checkbox" id="selectAllCourses"
+      onchange="toggleSelectAllCourses(this)">
+    <span style="margin-left:6px;">Select All</span>
+  </div>
+
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+
+    <button onclick="deleteSelectedCourses()"
+      style="background:#dc2626;color:white;padding:8px;border:none;border-radius:8px;">
+      🗑 Delete
+    </button>
+
+    <button onclick="bulkLockCourses(true)"
+      style="background:#f59e0b;color:white;padding:8px;border:none;border-radius:8px;">
+      🔒 Lock
+    </button>
+
+    <button onclick="bulkLockCourses(false)"
+      style="background:#16a34a;color:white;padding:8px;border:none;border-radius:8px;">
+      🔓 Unlock
+    </button>
 
   </div>
+</div>
+
+<!-- =========================================
+     COURSES LIST
+========================================= -->
+
+<div style="
+  margin-top:25px;
+  background:white;
+  padding:20px;
+  border-radius:16px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+">
+
+  <h2>📚 Available Resources</h2>
+
+  <div id="coursesContainer"
+    style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;">
+  </div>
+
+</div>
 
 
 
@@ -5661,7 +5410,19 @@ background:rgba(0,0,0,0.5);justify-content:center;align-items:center;">
   Example:<br>
   Question 1 === Question 2 === Question 3
 </div>
-
+<div style="margin-bottom:10px;">
+  <label>Phone Number</label>
+  <input
+    type="tel"
+    id="helpPhone"
+    placeholder="e.g. 0712345678"
+    style="
+      width:100%;
+      padding:10px;
+      border:1px solid #cbd5e1;
+      border-radius:8px;
+    ">
+</div>
 <input
   id="helpTitle"
   class="swal2-input"
@@ -5750,6 +5511,39 @@ background:rgba(0,0,0,0.5);justify-content:center;align-items:center;">
   <div id="helpPostsContainer"></div>
 
 </div>
+<div id="teacherWalletCard" style="
+  background:white;
+  padding:15px;
+  border-radius:12px;
+  margin-bottom:15px;
+">
+
+  <h3>💰 My Wallet</h3>
+
+  <div style="
+    font-size:24px;
+    font-weight:bold;
+    color:#16a34a;
+  ">
+    KES <span id="walletBalance">0</span>
+  </div>
+
+  <button
+    onclick="requestWithdrawal()"
+    style="
+      margin-top:10px;
+      background:#16a34a;
+      color:white;
+      border:none;
+      padding:10px 15px;
+      border-radius:8px;
+      cursor:pointer;
+    "
+  >
+    Withdraw Funds
+  </button>
+
+</div>
 
 <script type="module">
 import {
@@ -5787,28 +5581,15 @@ import {
 /* ================= FIREBASE ================= */
 
 const firebaseConfig = {
-
-  apiKey: "AIzaSyBgYEyV7iTEJYn7BbONTTGS2vpuhN1HepM",
-
-  authDomain:
-    "wape-302f5.firebaseapp.com",
-
-  databaseURL:
-    "https://wape-302f5-default-rtdb.firebaseio.com",
-
-  projectId:
-    "wape-302f5",
-
-  storageBucket:
-    "wape-302f5.firebasestorage.app",
-
-  messagingSenderId:
-    "769934501138",
-
-  appId:
-    "1:769934501138:web:d2fcde2dccd561e4f1ffcb"
+  apiKey: "AIzaSyAzX_bte5pMfNi-gNI5zvUwqcyTyqFwJ-E",
+  authDomain: "nyota254-2739d.firebaseapp.com",
+  databaseURL: "https://nyota254-2739d-default-rtdb.firebaseio.com",
+  projectId: "nyota254-2739d",
+  storageBucket: "nyota254-2739d.firebasestorage.app",
+  messagingSenderId: "399728736071",
+  appId: "1:399728736071:web:86cf48a07ae5f57b133e62",
+  measurementId: "G-Q6WG98R487"
 };
-
 
 
 /* ================= PRIMARY APP ================= */
@@ -11683,7 +11464,8 @@ window.loadFeeLearners = async function () {
     console.error("Error loading fee learners:", err);
   }
 };
-// ================= LOAD LEARNERS + PROGRESS =================
+// ================= LOAD LEARNERS + PROGRESS (UPGRADED)
+// ================= FIXED: NO GRADE RESET + AUTO NEXT + QUEUE SYSTEM
 async function loadLearnersFromStudents() {
 
   const grade =
@@ -11700,40 +11482,15 @@ async function loadLearnersFromStudents() {
 
   if (!learnerSelect) return;
 
+  // ❌ IMPORTANT FIX: DO NOT CLEAR GRADE OR EXAM
+  // (previous issue was UI reset/refresh)
+
   learnerSelect.innerHTML =
     `<option value="">Select Learner</option>`;
 
-  if (badge) {
-    badge.innerHTML = "";
-  }
+  if (badge) badge.innerHTML = "";
 
   if (!grade || !examPeriod) return;
-
-  // FILTER LEARNERS
-  const filtered =
-    allStudents.filter(
-      s => s.grade === grade
-    );
-
-  if (!filtered.length) {
-
-    if (badge) {
-      badge.innerHTML = `
-        <div style="
-          padding:10px;
-          border-radius:10px;
-          background:#fff3cd;
-          color:#856404;
-          font-weight:bold;
-          margin-top:10px;
-        ">
-          No learners found
-        </div>
-      `;
-    }
-
-    return;
-  }
 
   try {
 
@@ -11744,26 +11501,17 @@ async function loadLearnersFromStudents() {
       sessionStorage.getItem("schoolId") ||
       sessionStorage.getItem("currentSchoolId");
 
-    let studentsRef;
+    if (!schoolId) return;
 
-    if (schoolId) {
+    const studentsRef =
+      ref(db, `schools/${schoolId}/students`);
 
-      studentsRef =
-        ref(db, `schools/${schoolId}/students`);
+    const snapshot = await get(studentsRef);
 
-    } else {
-
-      studentsRef =
-        ref(db, "students");
-    }
-
-    const snapshot =
-      await get(studentsRef);
-
+    // ================= MAP RECORDED =================
     const recordedMap = {};
 
     snapshot.forEach(child => {
-
       const data = child.val();
 
       if (data?.marks?.[examPeriod]) {
@@ -11771,48 +11519,89 @@ async function loadLearnersFromStudents() {
       }
     });
 
-    // COUNTERS
+    // ================= RESET QUEUE =================
+    window.__learnerQueue = [];
+
     let recordedCount = 0;
+    let firstPendingLearner = null;
 
-    filtered.forEach(student => {
+    // ================= BUILD LIST =================
+    snapshot.forEach(child => {
 
-      const option =
-        document.createElement("option");
+      const data = child.val();
 
-      option.value = student.id;
+      if (data.grade !== grade) return;
 
-      // ALREADY RECORDED
-      if (recordedMap[student.id]) {
+      const isRecorded = recordedMap[child.key];
 
+      const studentObj = {
+        key: child.key,
+        name: data.name || "Unknown"
+      };
+
+      if (!isRecorded) {
+
+        window.__learnerQueue.push(studentObj);
+
+        if (!firstPendingLearner) {
+          firstPendingLearner = studentObj;
+        }
+      } else {
         recordedCount++;
+      }
+
+      const option = document.createElement("option");
+      option.value = child.key;
+
+      if (isRecorded) {
 
         option.textContent =
-          `✔ ${student.name} (Recorded)`;
+          `✔ ${data.name} (Recorded)`;
 
         option.style.color = "#c62828";
         option.style.fontWeight = "bold";
         option.style.backgroundColor = "#ffebee";
-
         option.disabled = true;
 
       } else {
 
-        option.textContent =
-          student.name;
+        option.textContent = data.name;
       }
 
       learnerSelect.appendChild(option);
     });
 
-    // PROGRESS
-    const total = filtered.length;
+    // ================= AUTO SELECT FIRST PENDING =================
+    window.__currentLearnerIndex = 0;
+
+    setTimeout(() => {
+
+      if (firstPendingLearner) {
+
+        learnerSelect.value = firstPendingLearner.key;
+
+        Swal.fire({
+          toast: true,
+          position: "top-end",
+          icon: "info",
+          title: `Now recording marks for ${firstPendingLearner.name}`,
+          timer: 2000,
+          showConfirmButton: false
+        });
+      }
+
+    }, 300);
+
+    // ================= PROGRESS CALC =================
+    const total =
+      recordedCount + window.__learnerQueue.length;
 
     const percent =
       total > 0
         ? Math.round((recordedCount / total) * 100)
         : 0;
 
-    // BADGE UI
+    // ================= BADGE =================
     if (badge) {
 
       badge.innerHTML = `
@@ -11829,19 +11618,14 @@ async function loadLearnersFromStudents() {
           <div style="
             display:flex;
             justify-content:space-between;
-            align-items:center;
-            margin-bottom:8px;
             font-weight:bold;
             font-size:14px;
+            margin-bottom:8px;
           ">
 
-            <span>
-              📊 Marks Recording Progress
-            </span>
+            <span>📊 Marks Progress</span>
 
-            <span style="
-              color:${percent === 100 ? '#2e7d32' : '#1565c0'};
-            ">
+            <span style="color:${percent === 100 ? '#2e7d32' : '#1565c0'};">
               ${recordedCount}/${total}
             </span>
 
@@ -11858,14 +11642,11 @@ async function loadLearnersFromStudents() {
             <div style="
               width:${percent}%;
               height:100%;
-              border-radius:20px;
+              background:${percent === 100
+                ? 'linear-gradient(90deg,#43a047,#66bb6a)'
+                : 'linear-gradient(90deg,#1e88e5,#42a5f5)'};
               transition:all .4s ease;
-              background:
-                ${percent === 100
-                  ? 'linear-gradient(90deg,#43a047,#66bb6a)'
-                  : 'linear-gradient(90deg,#1e88e5,#42a5f5)'};
-            ">
-            </div>
+            "></div>
 
           </div>
 
@@ -11877,27 +11658,22 @@ async function loadLearnersFromStudents() {
             color:#555;
           ">
 
-            <span>
-              ${percent}% Completed
-            </span>
+            <span>${percent}% Completed</span>
 
             <span>
-              Remaining:
-              ${total - recordedCount}
+              Remaining: ${window.__learnerQueue.length}
             </span>
 
           </div>
 
         </div>
+
       `;
     }
 
   } catch (err) {
 
-    console.error(
-      "LOAD_LEARNERS_ERROR:",
-      err
-    );
+    console.error("LOAD_LEARNERS_ERROR:", err);
 
     if (badge) {
 
@@ -11924,6 +11700,10 @@ async function loadLearnersFromStudents() {
 window.__savingMarks = false;
 window.__autoSaveEnabled = false;
 window.__autoSaveTimer = null;
+
+// 👉 NEW: learner workflow system
+window.__learnerQueue = [];
+window.__currentLearnerIndex = 0;
 
 
 // =========================================================
@@ -11996,11 +11776,7 @@ function attachAutoSaveListeners() {
     clearTimeout(window.__autoSaveTimer);
 
     window.__autoSaveTimer =
-      setTimeout(() => {
-
-        autoSaveMarks();
-
-      }, 800);
+      setTimeout(() => autoSaveMarks(), 800);
   });
 }
 
@@ -12034,49 +11810,28 @@ function validateSubjects(subjects) {
   subjects.forEach(s => {
 
     const el = s.el;
-
-    const val =
-      el?.value?.trim() ?? "";
-
-    const num =
-      Number(val);
+    const val = el?.value?.trim() ?? "";
+    const num = Number(val);
 
     if (!el) return;
 
     el.style.border = "";
 
     if (val === "" || isNaN(num)) {
-
-      errors.push(
-        `${s.name} must be a valid number`
-      );
-
-      el.style.border =
-        "2px solid red";
-
+      errors.push(`${s.name} must be a valid number`);
+      el.style.border = "2px solid red";
       return;
     }
 
     if (num < 0 || num > 100) {
-
-      errors.push(
-        `${s.name} must be between 0 and 100`
-      );
-
-      el.style.border =
-        "2px solid red";
-
+      errors.push(`${s.name} must be between 0 and 100`);
+      el.style.border = "2px solid red";
       return;
     }
 
     if (!Number.isInteger(num)) {
-
-      errors.push(
-        `${s.name} must be a whole number`
-      );
-
-      el.style.border =
-        "2px solid red";
+      errors.push(`${s.name} must be a whole number`);
+      el.style.border = "2px solid red";
     }
 
   });
@@ -12090,17 +11845,13 @@ function validateSubjects(subjects) {
 // =========================================================
 function getSelectedLearner() {
 
-  const select =
-    document.getElementById("learnerSelect");
-
+  const select = document.getElementById("learnerSelect");
   if (!select) return null;
 
-  const option =
-    select.selectedOptions?.[0];
+  const option = select.selectedOptions?.[0];
 
   return {
     key: select.value,
-
     name: (option?.text || "")
       .replace("✔", "")
       .replace("(Recorded)", "")
@@ -12114,112 +11865,133 @@ function getSelectedLearner() {
 // =========================================================
 function markLearnerAsRecorded(learnerKey) {
 
-  const select =
-    document.getElementById("learnerSelect");
-
+  const select = document.getElementById("learnerSelect");
   if (!select) return;
 
-  const option =
-    Array.from(select.options)
-      .find(opt => opt.value === learnerKey);
+  const option = Array.from(select.options)
+    .find(opt => opt.value === learnerKey);
 
   if (!option) return;
 
-  let cleanName =
-    option.textContent
-      .replace("✔", "")
-      .replace("(Recorded)", "")
-      .trim();
-
   option.textContent =
-    `✔ ${cleanName} (Recorded)`;
+    `✔ ${option.textContent.replace("✔", "").replace("(Recorded)", "").trim()} (Recorded)`;
 
-  option.style.color =
-    "#c62828";
-
-  option.style.fontWeight =
-    "bold";
-
-  option.style.backgroundColor =
-    "#ffebee";
-
+  option.style.color = "#c62828";
+  option.style.fontWeight = "bold";
   option.disabled = true;
 
-  // REFRESH
-  setTimeout(() => {
-
-    loadLearnersFromStudents();
-
-  }, 200);
+  setTimeout(() => loadLearnersFromStudents(), 200);
 }
 
 
 // =========================================================
-// 🧹 CLEAR SCORES ONLY
+// 🧹 CLEAR FORM
 // =========================================================
 function clearMarksFormPreserveSelections() {
 
-  const ids = [
-    "eng",
-    "math",
-    "preTech",
-    "kiswahili",
-    "science",
-    "social",
-    "agriculture",
-    "cre",
-    "creativeArt"
-  ];
+  [
+    "eng","math","preTech","kiswahili",
+    "science","social","agriculture","cre","creativeArt"
+  ].forEach(id => {
 
-  ids.forEach(id => {
-
-    const el =
-      document.getElementById(id);
+    const el = document.getElementById(id);
 
     if (el) {
-
       el.value = "";
       el.style.border = "";
     }
   });
 
-  // CLEAR LEARNER ONLY
-  const learner =
-    document.getElementById("learnerSelect");
-
-  if (learner) {
-    learner.value = "";
-  }
+  const learner = document.getElementById("learnerSelect");
+  if (learner) learner.value = "";
 }
 
 
 // =========================================================
-// 💾 SAVE LAYER
+// 💾 SAVE TO FIREBASE
 // =========================================================
-async function saveMarksToFirebase(
-  schoolId,
-  learnerKey,
-  examPeriod,
-  data
-) {
+async function saveMarksToFirebase(schoolId, learnerKey, examPeriod, data) {
 
-  let path;
+  const path =
+    schoolId
+      ? `schools/${schoolId}/students/${learnerKey}/marks/${examPeriod}`
+      : `students/${learnerKey}/marks/${examPeriod}`;
 
-  if (schoolId) {
+  await set(ref(db, path), data);
+}
 
-    path =
-      `schools/${schoolId}/students/${learnerKey}/marks/${examPeriod}`;
 
-  } else {
+// =========================================================
+// 🚀 LOAD LEARNER QUEUE (NEW SYSTEM)
+// =========================================================
+window.loadLearnersFromStudents = async function () {
 
-    path =
-      `students/${learnerKey}/marks/${examPeriod}`;
+  const grade = document.getElementById("gradeSelect")?.value;
+  const exam = document.getElementById("examPeriod")?.value;
+
+  if (!grade || !exam) return;
+
+  const schoolId = window.schoolId;
+  if (!schoolId) return;
+
+  const snap = await get(ref(db, `schools/${schoolId}/students`));
+
+  const select = document.getElementById("learnerSelect");
+  select.innerHTML = `<option value="">Select Learner</option>`;
+
+  window.__learnerQueue = [];
+
+  snap.forEach(child => {
+
+    const data = child.val();
+
+    if (data.grade !== grade) return;
+
+    const already = data.marks?.[exam]?.autoSaved;
+
+    if (!already) {
+
+      window.__learnerQueue.push({
+        key: child.key,
+        name: data.name
+      });
+
+      const opt = document.createElement("option");
+      opt.value = child.key;
+      opt.textContent = data.name;
+      select.appendChild(opt);
+    }
+  });
+
+  window.__currentLearnerIndex = 0;
+
+  autoSelectNextLearner();
+};
+
+
+// =========================================================
+// 🚀 AUTO SELECT NEXT LEARNER
+// =========================================================
+function autoSelectNextLearner() {
+
+  const select = document.getElementById("learnerSelect");
+  const next = window.__learnerQueue[window.__currentLearnerIndex];
+
+  if (!next) {
+    Swal.fire("Done", "All learners completed", "success");
+    return;
   }
 
-  await set(
-    ref(db, path),
-    data
-  );
+  select.value = next.key;
+
+  Swal.fire({
+    toast: true,
+    position: "top-end",
+    icon: "info",
+    title: `Now recording marks for ${next.name}`,
+    timer: 2000,
+    showConfirmButton: false
+  });
 }
 
 
@@ -12230,47 +12002,29 @@ async function autoSaveMarks() {
 
   if (window.__savingMarks) return;
 
-  const schoolId =
-    window.schoolId ||
-    localStorage.getItem("schoolId") ||
-    localStorage.getItem("currentSchoolId") ||
-    sessionStorage.getItem("schoolId") ||
-    sessionStorage.getItem("currentSchoolId");
-
-  const examPeriod =
-    document.getElementById("examPeriod")?.value;
-
-  const grade =
-    document.getElementById("gradeSelect")?.value;
-
-  const learner =
-    getSelectedLearner();
+  const schoolId = window.schoolId;
+  const examPeriod = document.getElementById("examPeriod")?.value;
+  const grade = document.getElementById("gradeSelect")?.value;
+  const learner = getSelectedLearner();
 
   if (!learner?.key || !examPeriod || !grade) return;
 
-  const errors =
-    validateSubjects(
-      getSubjectInputs()
-    );
-
+  const errors = validateSubjects(getSubjectInputs());
   if (errors.length) return;
 
-  const marksData = {
-
+  const data = {
     schoolId,
     name: learner.name,
     grade,
-
-    eng: +document.getElementById("eng").value,
-    math: +document.getElementById("math").value,
-    preTech: +document.getElementById("preTech").value,
-    kiswahili: +document.getElementById("kiswahili").value,
-    science: +document.getElementById("science").value,
-    social: +document.getElementById("social").value,
-    agriculture: +document.getElementById("agriculture").value,
-    cre: +document.getElementById("cre").value,
-    creativeArt: +document.getElementById("creativeArt").value,
-
+    eng: +eng.value,
+    math: +math.value,
+    preTech: +preTech.value,
+    kiswahili: +kiswahili.value,
+    science: +science.value,
+    social: +social.value,
+    agriculture: +agriculture.value,
+    cre: +cre.value,
+    creativeArt: +creativeArt.value,
     createdAt: Date.now(),
     autoSaved: true
   };
@@ -12279,39 +12033,22 @@ async function autoSaveMarks() {
 
     window.__savingMarks = true;
 
-    await saveMarksToFirebase(
-      schoolId,
-      learner.key,
-      examPeriod,
-      marksData
-    );
+    await saveMarksToFirebase(schoolId, learner.key, examPeriod, data);
 
-    markLearnerAsRecorded(
-      learner.key
-    );
-
+    markLearnerAsRecorded(learner.key);
     clearMarksFormPreserveSelections();
 
-    console.log(
-      "✅ Auto-saved + marked"
-    );
-
-  } catch (err) {
-
-    console.error(
-      "AUTO_SAVE_ERROR:",
-      err
-    );
+    window.__currentLearnerIndex++;
+    autoSelectNextLearner();
 
   } finally {
-
     window.__savingMarks = false;
   }
 }
 
 
 // =========================================================
-// 🚀 MANUAL SAVE BUTTON
+// 🚀 MANUAL SAVE
 // =========================================================
 document.getElementById("saveMarksButton")
 ?.addEventListener("click", async () => {
@@ -12322,109 +12059,48 @@ document.getElementById("saveMarksButton")
 
   try {
 
-    const schoolId =
-      window.schoolId ||
-      localStorage.getItem("schoolId") ||
-      localStorage.getItem("currentSchoolId") ||
-      sessionStorage.getItem("schoolId") ||
-      sessionStorage.getItem("currentSchoolId");
-
-    const examPeriod =
-      document.getElementById("examPeriod")?.value;
-
-    const grade =
-      document.getElementById("gradeSelect")?.value;
-
-    const learner =
-      getSelectedLearner();
+    const schoolId = window.schoolId;
+    const examPeriod = document.getElementById("examPeriod")?.value;
+    const grade = document.getElementById("gradeSelect")?.value;
+    const learner = getSelectedLearner();
 
     if (!learner?.key || !examPeriod || !grade) {
-
-      return Swal.fire(
-        "Missing Data",
-        "Select learner, grade and exam period",
-        "error"
-      );
+      return Swal.fire("Missing Data", "Select all fields", "error");
     }
 
-    const errors =
-      validateSubjects(
-        getSubjectInputs()
-      );
-
+    const errors = validateSubjects(getSubjectInputs());
     if (errors.length) {
-
-      return Swal.fire(
-        "Invalid Input",
-        errors.join("<br>"),
-        "error"
-      );
+      return Swal.fire("Invalid", errors.join("<br>"), "error");
     }
 
-    const marksData = {
-
+    const data = {
       schoolId,
       name: learner.name,
       grade,
-
-      eng: +document.getElementById("eng").value,
-      math: +document.getElementById("math").value,
-      preTech: +document.getElementById("preTech").value,
-      kiswahili: +document.getElementById("kiswahili").value,
-      science: +document.getElementById("science").value,
-      social: +document.getElementById("social").value,
-      agriculture: +document.getElementById("agriculture").value,
-      cre: +document.getElementById("cre").value,
-      creativeArt: +document.getElementById("creativeArt").value,
-
+      eng: +eng.value,
+      math: +math.value,
+      preTech: +preTech.value,
+      kiswahili: +kiswahili.value,
+      science: +science.value,
+      social: +social.value,
+      agriculture: +agriculture.value,
+      cre: +cre.value,
+      creativeArt: +creativeArt.value,
       createdAt: Date.now()
     };
 
-    await saveMarksToFirebase(
-      schoolId,
-      learner.key,
-      examPeriod,
-      marksData
-    );
+    await saveMarksToFirebase(schoolId, learner.key, examPeriod, data);
 
-    markLearnerAsRecorded(
-      learner.key
-    );
-
+    markLearnerAsRecorded(learner.key);
     clearMarksFormPreserveSelections();
 
-    setTimeout(() => {
-
-      loadLearnersFromStudents();
-
-    }, 300);
-
-    Swal.fire({
-
-      toast: true,
-      position: "top-end",
-      icon: "success",
-      title: "Marks saved successfully",
-      timer: 1500,
-      showConfirmButton: false
-    });
-
-  } catch (err) {
-
-    console.error(err);
-
-    Swal.fire(
-      "Error",
-      err.message || "Failed to save marks",
-      "error"
-    );
+    window.__currentLearnerIndex++;
+    autoSelectNextLearner();
 
   } finally {
-
     window.__savingMarks = false;
   }
 });
-
 
 
 let allLoadedLearners = [];
@@ -29227,6 +28903,46 @@ totalCourses.textContent =
   }
 
 };
+
+window.deleteSelectedCourses = async function () {
+
+  const schoolId = window.schoolId;
+
+  const selected =
+    Array.from(
+      document.querySelectorAll(".courseSelectBox:checked")
+    ).map(el => el.value);
+
+  if (selected.length === 0) {
+    return Swal.fire("No Selection", "Select courses first", "warning");
+  }
+
+  const confirm = await Swal.fire({
+    title: `Delete ${selected.length} courses?`,
+    text: "This action cannot be undone",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#dc2626",
+    confirmButtonText: "Delete"
+  });
+
+  if (!confirm.isConfirmed) return;
+
+  for (const id of selected) {
+
+    await remove(
+      ref(db, `schools/${schoolId}/courses/${id}`)
+    );
+
+    window.courses =
+      window.courses.filter(c => c.id !== id);
+  }
+
+  window.renderCourses();
+  updateBulkBar();
+
+  Swal.fire("Deleted", "Courses removed", "success");
+};
 // =========================================
 // RENDER COURSES
 // =========================================
@@ -29263,13 +28979,36 @@ window.renderCourses = function () {
   }
 
   window.courses.forEach(course => {
-
+const isTeacher =
+  ["teacher", "admin"].includes(
+    (window.currentUserRole || "").toLowerCase()
+  );
     const price =
       Number(course.price || 0);
+container.innerHTML += `
 
-    container.innerHTML += `
+  <div class="course-card">
 
-      <div class="course-card">
+    ${isTeacher ? `
+      <div style="margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+        
+        <input type="checkbox"
+          class="courseSelectBox"
+          value="${course.id}"
+          onchange="updateBulkBar()"
+          style="transform:scale(1.2);"
+        />
+
+        <span style="font-size:12px;color:#64748b;">
+          Select for bulk delete
+        </span>
+
+      </div>
+    ` : ""}
+
+    <div style="
+      display:flex;
+      justify-content:space-between;
 
         <div style="
           display:flex;
@@ -29429,6 +29168,67 @@ window.renderCourses = function () {
     `;
   });
 
+};
+
+window.bulkLockCourses = async function (lock) {
+
+  const schoolId = window.schoolId;
+
+  const selected =
+    Array.from(
+      document.querySelectorAll(".courseSelectBox:checked")
+    ).map(el => el.value);
+
+  if (selected.length === 0) {
+    return Swal.fire("No Selection", "Select courses first", "warning");
+  }
+
+  for (const id of selected) {
+
+    await update(
+      ref(db, `schools/${schoolId}/courses/${id}`),
+      { locked: lock }
+    );
+
+    const course =
+      window.courses.find(c => c.id === id);
+
+    if (course) course.locked = lock;
+  }
+
+  window.renderCourses();
+  updateBulkBar();
+
+  Swal.fire(
+    "Updated",
+    lock ? "Courses locked" : "Courses unlocked",
+    "success"
+  );
+};
+window.updateBulkBar = function () {
+
+  const selected =
+    document.querySelectorAll(".courseSelectBox:checked").length;
+
+  const bar =
+    document.getElementById("courseBulkBar");
+
+  if (!bar) return;
+
+  bar.style.display =
+    selected > 0 ? "flex" : "none";
+};
+
+window.toggleSelectAllCourses = function (el) {
+
+  const boxes =
+    document.querySelectorAll(".courseSelectBox");
+
+  boxes.forEach(box => {
+    box.checked = el.checked;
+  });
+
+  updateBulkBar();
 };
 window.checkCourseAccess =
 async function(courseId, price){
@@ -30742,7 +30542,7 @@ window.renderAssignments = function () {
             margin-top:8px;
             line-height:1.7;
           ">
-            ${q}
+            ${escapeHtml(q)}
           </div>
         </div>
       `).join("");
@@ -30767,7 +30567,7 @@ window.renderAssignments = function () {
             ">
               <b>Question ${index + 1}</b>
               <div style="margin-top:8px; line-height:1.7;">
-                ${q}
+                ${escapeHtml(q)}
               </div>
             </div>
 
@@ -33751,8 +33551,8 @@ window.showResultsSection = function () {
 
   loadExamPeriods?.();
 };
-
-// POST JOB
+// =====================================================
+// POST JOB (PRO MARKETPLACE + MPESA + ESCROW + SPLIT)
 // =====================================================
 window.postAssignmentHelp = async function () {
 
@@ -33760,155 +33560,262 @@ window.postAssignmentHelp = async function () {
   const uid = window.currentUser?.uid;
 
   if (!schoolId || !uid) {
-    return Swal.fire(
-      "Error",
-      "Login required",
-      "error"
-    );
+    return Swal.fire("Error", "Login required", "error");
   }
 
-  const title =
-    document.getElementById("helpTitle")
-    .value.trim();
+  // ================= USER INFO =================
 
-  const subject =
-    document.getElementById("helpSubject")
-    .value.trim();
+  const role = window.currentUserRole;
+  const isAdmin = role === "admin";
 
-  const grade =
-    document.getElementById("helpGrade")
-    .value.trim();
-const phoneNumber =
-  window.currentUser?.phone ||
-  window.currentUser?.phoneNumber ||
-  "";
+  const posterName =
+    window.currentUser?.fullName ||
+    window.currentUser?.name ||
+    window.currentUser?.username ||
+    "User";
 
-const posterName =
-  window.currentUser?.fullName ||
-  window.currentUser?.name ||
-  window.currentUser?.username ||
-  "User";
-  const questionRaw =
-    document.getElementById("helpQuestion")
-    .value.trim();
+  const posterEmail = window.currentUser?.email || "";
 
-  if (
-    !title ||
-    !subject ||
-    !grade ||
-    !questionRaw
-  ) {
-    return Swal.fire(
-      "Missing Fields",
-      "Fill all fields",
-      "warning"
-    );
+  // ================= M-PESA PHONE (FOR PAYMENTS) =================
+
+  let posterPhone =
+    document.getElementById("helpPhone")?.value?.trim() ||
+    window.currentUser?.phone ||
+    window.currentUser?.phoneNumber ||
+    "";
+
+  // FORCE M-PESA NUMBER IF MISSING
+  if (!posterPhone) {
+
+    const result = await Swal.fire({
+      title: "M-Pesa Number Required",
+      input: "text",
+      inputPlaceholder: "07XXXXXXXX",
+      showCancelButton: true
+    });
+
+    if (!result.value) return;
+
+    posterPhone = result.value.trim();
+
+    await update(ref(db, `users/${uid}`), {
+      phone: posterPhone
+    });
   }
+
+  // ================= INPUTS =================
+
+  const title = document.getElementById("helpTitle")?.value?.trim();
+  const subject = document.getElementById("helpSubject")?.value?.trim();
+  const grade = document.getElementById("helpGrade")?.value?.trim();
+  const questionRaw = document.getElementById("helpQuestion")?.value?.trim();
+  const category = document.getElementById("helpCategory")?.value || "Homework";
+  const deadline = document.getElementById("helpDeadline")?.value || "";
+  const attachment = document.getElementById("helpAttachment")?.files?.[0] || null;
+
+  if (!title || !subject || !grade || !questionRaw) {
+    return Swal.fire("Missing Fields", "Fill all required fields", "warning");
+  }
+
+  // ================= QUESTIONS =================
 
   const questions = questionRaw
     .split("===")
     .map(q => q.trim())
-    .filter(q => q);
+    .filter(Boolean);
 
   const questionCount = questions.length;
 
-  // =====================================================
-  // AUTO PRICING
-  // =====================================================
+  // ================= PRICING =================
 
   let price = 300;
 
-  if (questionCount === 2) {
-    price = 500;
-  }
-  else if (questionCount === 3) {
-    price = 700;
-  }
-  else if (questionCount === 4) {
-    price = 900;
-  }
-  else if (questionCount === 5) {
-    price = 1100;
-  }
+  if (questionCount === 2) price = 500;
+  else if (questionCount === 3) price = 700;
+  else if (questionCount === 4) price = 900;
+  else if (questionCount === 5) price = 1100;
   else if (questionCount > 5) {
-    price =
-      1100 +
-      ((questionCount - 5) * 200);
+    price = 1100 + ((questionCount - 5) * 200);
   }
 
-  const depositAmount =
-    Math.ceil(price * 0.5);
+  const finalPrice = isAdmin ? 0 : price;
 
-  const balanceAmount =
-    price - depositAmount;
+  const depositAmount = isAdmin ? 0 : Math.ceil(finalPrice * 0.5);
+  const balanceAmount = isAdmin ? 0 : finalPrice - depositAmount;
+
+  // ================= SPLIT 20/80 =================
+
+  const teacherPercent = 20;
+  const platformPercent = 80;
+
+  const teacherExpectedPayout = Math.round(finalPrice * (teacherPercent / 100));
+  const platformExpectedFee = finalPrice - teacherExpectedPayout;
+
+  // ================= JOB ID =================
 
   const jobId =
-    "JOB-" + Date.now();
+    "JOB-" + Date.now() + "-" + Math.floor(Math.random() * 10000);
 
-const job = {
-  id: jobId,
-  uid,
-  schoolId,
+  // ================= JOB OBJECT =================
 
-  posterName,
-  phoneNumber,
+  const job = {
+    id: jobId,
+    uid,
+    schoolId,
 
-  title,
-  subject,
-  grade,
+    posterName,
+    posterEmail,
+    phoneNumber: posterPhone,
 
-  questions,
-  questionCount,
+    title,
+    subject,
+    grade,
+    category,
 
-  price,
-  depositAmount,
-  balanceAmount,
+    questions,
+    questionCount,
 
-  progress: 0, // ✅ ADD THIS HERE
+    deadline,
+    expiresAt: deadline ? new Date(deadline).getTime() : null,
 
-  depositPaid: false,
-  approvalStatus: "pending",
-  status: "draft",
+    price: finalPrice,
+    depositAmount,
+    balanceAmount,
 
-  acceptedBy: null,
+    teacherPercent,
+    platformPercent,
 
-  escrow: {
-    funded: false,
-    released: false,
-    amount: price
-  },
+    teacherExpectedPayout,
+    platformExpectedFee,
 
-  createdAt: Date.now()
+    progress: 0,
+
+    status: isAdmin ? "open" : "draft",
+    approvalStatus: isAdmin ? "approved" : "pending",
+    depositPaid: isAdmin,
+
+    acceptedBy: null,
+    acceptedByName: null,
+    acceptedByPhone: null,
+
+    escrow: {
+      funded: false,
+      released: false,
+      amount: finalPrice,
+      teacherAmount: teacherExpectedPayout,
+      platformAmount: platformExpectedFee
+    },
+
+    createdAt: Date.now()
+  };
+
+  // ================= SAVE =================
+
+  await set(ref(db, `schools/${schoolId}/jobs/${jobId}`), job);
+
+  // ================= FILE UPLOAD =================
+
+  if (attachment) {
+    await window.uploadJobFile(jobId, attachment);
+  }
+
+  // ================= UI =================
+
+  if (isAdmin) {
+
+    Swal.fire({
+      icon: "success",
+      title: "Assignment Posted",
+      html: `
+        Teacher earns: <b>KES ${teacherExpectedPayout}</b><br>
+        Platform earns: <b>KES ${platformExpectedFee}</b>
+      `
+    });
+
+  } else {
+
+    Swal.fire({
+      icon: "info",
+      title: "Deposit Required",
+      html: `
+        Pay via M-Pesa:<br>
+        <b style="color:green;font-size:18px;">0792755676</b><br><br>
+
+        Total Cost: <b>KES ${finalPrice}</b><br>
+        Deposit (50%): <b>KES ${depositAmount}</b><br>
+        Balance: <b>KES ${balanceAmount}</b><br><br>
+
+        Teacher Earnings (20%): <b>KES ${teacherExpectedPayout}</b><br><br>
+
+        Send deposit to the number above before approval.
+      `
+    });
+
+  }
+
+  // ================= CLEAR =================
+
+  ["helpTitle","helpSubject","helpQuestion","helpPhone"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = "";
+  });
+
+  window.loadAssignmentHelp();
 };
+window.requestWithdrawal = async function() {
+
+  const uid = window.currentUser?.uid;
+  const schoolId = window.schoolId;
+
+  const walletSnap = await get(
+    ref(db, `schools/${schoolId}/wallets/${uid}`)
+  );
+
+  const balance =
+    walletSnap.exists()
+      ? walletSnap.val().balance || 0
+      : 0;
+
+  if (balance <= 0) {
+    return Swal.fire(
+      "No Funds",
+      "Your wallet is empty",
+      "info"
+    );
+  }
+
+  const { value: amount } = await Swal.fire({
+    title: "Withdraw Amount",
+    input: "number",
+    inputAttributes: {
+      min: 1,
+      max: balance
+    }
+  });
+
+  if (!amount) return;
+
+  const requestId =
+    "WD-" + Date.now();
 
   await set(
     ref(
       db,
-      `schools/${schoolId}/jobs/${jobId}`
+      `schools/${schoolId}/withdrawRequests/${requestId}`
     ),
-    job
+    {
+      uid,
+      amount: Number(amount),
+      status: "pending",
+      createdAt: Date.now()
+    }
   );
 
-  Swal.fire({
-    icon: "info",
-    title: "Deposit Required",
-    html: `
-      Total Cost:
-      <b>KES ${price}</b><br><br>
-
-      Deposit Required:
-      <b>KES ${depositAmount}</b><br><br>
-
-      Remaining Balance:
-      <b>KES ${balanceAmount}</b><br><br>
-
-      After payment,
-      admin will approve
-      the assignment.
-    `
-  });
-
-  window.loadAssignmentHelp();
+  Swal.fire(
+    "Submitted",
+    "Withdrawal request sent to admin",
+    "success"
+  );
 };
 window.rejectJob = async function(jobId){
 
@@ -33972,7 +33879,7 @@ window.approveJob = async function(jobId){
   window.loadAssignmentHelp();
 };
 // =========================
-// ACCEPT JOB (LOCK HELPER)
+// ACCEPT JOB (MPESA + SAFE LOCK SYSTEM)
 // =========================
 window.acceptJob = async function(jobId) {
 
@@ -33980,46 +33887,326 @@ window.acceptJob = async function(jobId) {
   const schoolId = window.schoolId;
 
   if (!uid) {
-    return Swal.fire("Login required", "", "error");
+    return Swal.fire(
+      "Login required",
+      "",
+      "error"
+    );
   }
 
-  const refJob = ref(db, `schools/${schoolId}/jobs/${jobId}`);
-  const snap = await get(refJob);
+  const refJob =
+    ref(
+      db,
+      `schools/${schoolId}/jobs/${jobId}`
+    );
 
-  if (!snap.exists()) {
-    return Swal.fire("Error", "Job not found", "error");
+  try {
+
+    const snap = await get(refJob);
+
+    if (!snap.exists()) {
+      return Swal.fire(
+        "Error",
+        "Job not found",
+        "error"
+      );
+    }
+
+    const job = snap.val();
+
+    // ================= VALIDATION =================
+
+    if (job.status !== "open") {
+      return Swal.fire(
+        "Taken",
+        "Job already taken",
+        "info"
+      );
+    }
+
+    if (job.approvalStatus !== "approved") {
+      return Swal.fire(
+        "Not Available",
+        "Job not approved yet",
+        "warning"
+      );
+    }
+
+    if (!job.depositPaid) {
+      return Swal.fire(
+        "Pending Payment",
+        "Client has not paid deposit",
+        "warning"
+      );
+    }
+
+    if (
+      job.expiresAt &&
+      Date.now() > job.expiresAt
+    ) {
+
+      await update(refJob,{
+        status:"expired"
+      });
+
+      return Swal.fire(
+        "Expired",
+        "Deadline has passed",
+        "info"
+      );
+    }
+
+    if (job.uid === uid) {
+      return Swal.fire(
+        "Not Allowed",
+        "You cannot accept your own assignment",
+        "warning"
+      );
+    }
+
+    // ================= MPESA PHONE REQUIRED =================
+
+    let mpesaPhone =
+      window.currentUser?.phone ||
+      window.currentUser?.phoneNumber ||
+      "";
+
+    if (!mpesaPhone) {
+
+      const result = await Swal.fire({
+        title: "M-Pesa Number Required",
+        text: "Enter the number that will receive payments",
+        input: "text",
+        inputPlaceholder: "07XXXXXXXX",
+        showCancelButton: true,
+        confirmButtonText: "Save & Continue"
+      });
+
+      if (!result.value) return;
+
+      mpesaPhone =
+        result.value.trim();
+
+      // Basic Kenya validation
+      if (
+        !/^0\d{9}$/.test(mpesaPhone) &&
+        !/^254\d{9}$/.test(mpesaPhone)
+      ) {
+        return Swal.fire(
+          "Invalid Number",
+          "Use 07XXXXXXXX or 2547XXXXXXXX",
+          "warning"
+        );
+      }
+
+      // Save to user profile
+      await update(
+        ref(db, `users/${uid}`),
+        {
+          phone: mpesaPhone
+        }
+      );
+
+      // Update current session
+      if (!window.currentUser) {
+        window.currentUser = {};
+      }
+
+      window.currentUser.phone =
+        mpesaPhone;
+    }
+
+    // ================= DOUBLE CHECK STATUS =================
+
+    const latestSnap =
+      await get(refJob);
+
+    const latest =
+      latestSnap.val();
+
+    if (
+      !latest ||
+      latest.status !== "open"
+    ) {
+      return Swal.fire(
+        "Taken",
+        "Another user already accepted this assignment",
+        "info"
+      );
+    }
+
+    // ================= LOCK JOB =================
+
+    await update(refJob, {
+
+      status: "in_progress",
+
+      acceptedBy: uid,
+
+      acceptedByName:
+        window.currentUser?.fullName ||
+        window.currentUser?.name ||
+        window.currentUser?.username ||
+        "Teacher",
+
+      acceptedByPhone:
+        mpesaPhone,
+
+      acceptedAt:
+        Date.now(),
+
+      progress: 25,
+
+      escrow: {
+        ...(job.escrow || {}),
+        funded: true
+      }
+
+    });
+
+    Swal.fire(
+      "Accepted",
+      "You are now working on this assignment",
+      "success"
+    );
+
+    window.loadAssignmentHelp();
+
   }
+  catch(error) {
 
-  const job = snap.val();
+    console.error(error);
 
-  if (job.status !== "open") {
-    return Swal.fire("Taken", "Job already taken", "info");
+    Swal.fire(
+      "Error",
+      "Failed to accept assignment",
+      "error"
+    );
   }
+};
 
-  // =========================
-  // FIVERR-STYLE UPDATE
-  // =========================
-  await update(refJob, {
-    status: "in_progress",
-    acceptedBy: uid,
+window.ensureTeacherWallet = async function(uid){
 
-    // 🔥 PROGRESS STARTS HERE
-    progress: 25
+  const schoolId = window.schoolId;
+
+  const walletRef =
+    ref(
+      db,
+      `schools/${schoolId}/wallets/${uid}`
+    );
+
+  const snap = await get(walletRef);
+
+  if(!snap.exists()){
+
+    await set(walletRef,{
+      balance:0,
+      withdrawn:0,
+      pending:0,
+      createdAt:Date.now()
+    });
+
+  }
+};
+window.loadTeacherWallet = async function(){
+
+  const schoolId = window.schoolId;
+  const uid = window.currentUser?.uid;
+
+  if(!uid) return;
+
+  const snap = await get(
+    ref(
+      db,
+      `schools/${schoolId}/wallets/${uid}`
+    )
+  );
+
+  const wallet =
+    snap.exists()
+      ? snap.val()
+      : {
+          balance:0,
+          withdrawn:0
+        };
+
+  document.getElementById(
+    "teacherWalletCard"
+  ).innerHTML = `
+    <div style="
+      background:linear-gradient(
+        135deg,
+        #2563eb,
+        #1e40af
+      );
+      color:white;
+      padding:20px;
+      border-radius:16px;
+    ">
+      <h3>💰 My Wallet</h3>
+
+      <div>
+        Available:
+        <b>KES ${wallet.balance || 0}</b>
+      </div>
+
+      <div>
+        Withdrawn:
+        <b>KES ${wallet.withdrawn || 0}</b>
+      </div>
+    </div>
+  `;
+};
+window.approveWithdrawal = async function(requestId){
+
+  const schoolId = window.schoolId;
+
+  const reqRef =
+    ref(
+      db,
+      `schools/${schoolId}/withdrawals/${requestId}`
+    );
+
+  const snap =
+    await get(reqRef);
+
+  if(!snap.exists()) return;
+
+  const req = snap.val();
+
+  const walletRef =
+    ref(
+      db,
+      `schools/${schoolId}/wallets/${req.uid}`
+    );
+
+  const walletSnap =
+    await get(walletRef);
+
+  const wallet =
+    walletSnap.val();
+
+  await update(walletRef,{
+    balance:
+      (wallet.balance || 0) -
+      req.amount,
+
+    withdrawn:
+      (wallet.withdrawn || 0) +
+      req.amount
+  });
+
+  await update(reqRef,{
+    status:"paid",
+    paidAt:Date.now()
   });
 
   Swal.fire(
-    "Accepted",
-    "You are now working on this job",
+    "Paid",
+    "Withdrawal completed",
     "success"
   );
-
-  window.loadAssignmentHelp();
 };
-
-
-// =========================
-// DELIVER WORK
-// =========================
 window.submitHelpSolution = async function(jobId) {
 
   const uid = window.currentUser?.uid;
@@ -34035,7 +34222,9 @@ window.submitHelpSolution = async function(jobId) {
 
   const deliveryId = "DEL-" + Date.now();
 
-  await set(ref(db, `schools/${schoolId}/deliveries/${deliveryId}`), {
+  const deliveryRef = ref(db, `schools/${schoolId}/deliveries/${deliveryId}`);
+
+  await set(deliveryRef, {
     jobId,
     freelancer: uid,
     solution,
@@ -34043,32 +34232,168 @@ window.submitHelpSolution = async function(jobId) {
     createdAt: Date.now()
   });
 
-await update(ref(db, `schools/${schoolId}/jobs/${jobId}`), {
-  status: "delivered",
-  progress: 80
-});
+  // ✅ LINK DELIVERY TO JOB (IMPORTANT FIX)
+  await update(ref(db, `schools/${schoolId}/jobs/${jobId}`), {
+    status: "delivered",
+    progress: 80,
+    deliveredAt: Date.now(),
+    deliveryId: deliveryId   // 👈 THIS IS THE KEY FIX
+  });
 
-  Swal.fire("Delivered", "Waiting for client approval", "success");
+  Swal.fire("Delivered", "Waiting for client review", "success");
 };
 
+// =========================
+// VIEW ANSWER (POSTER)
+// =========================
+window.viewAnswer = async function(jobId) {
 
+  const schoolId = window.schoolId;
+
+  const snap = await get(
+    ref(db, `schools/${schoolId}/deliveries`)
+  );
+
+  if (!snap.exists()) {
+    return Swal.fire("No Answer", "No submissions found", "info");
+  }
+
+  let found = null;
+
+  snap.forEach(child => {
+    const data = child.val();
+
+    if (data.jobId === jobId) {
+      found = data;
+    }
+  });
+
+  if (!found) {
+    return Swal.fire(
+      "Answer not found",
+      "Teacher has not submitted work yet OR jobId mismatch",
+      "error"
+    );
+  }
+
+  Swal.fire({
+    title: "📄 Submitted Answer",
+    width: 600,
+    html: `
+      <div style="text-align:left;max-height:400px;overflow:auto;">
+
+        <b>Solution:</b>
+
+        <div style="
+          background:#f1f5f9;
+          padding:12px;
+          border-radius:10px;
+          margin-top:8px;
+          white-space:pre-wrap;
+        ">
+          ${found.solution || "No content"}
+        </div>
+
+        <hr>
+
+        <small>
+          Submitted at: ${new Date(found.createdAt).toLocaleString()}
+        </small>
+
+      </div>
+    `
+  });
+};
+window.viewDelivery = async function(deliveryId) {
+
+  const schoolId = window.schoolId;
+
+  const snap = await get(
+    ref(db, `schools/${schoolId}/deliveries/${deliveryId}`)
+  );
+
+  if (!snap.exists()) {
+    return Swal.fire("Error", "No delivery found", "error");
+  }
+
+  const d = snap.val();
+
+  Swal.fire({
+    title: "📦 Delivery Hub",
+    width: 700,
+    html: `
+      <div style="text-align:left">
+
+        <b>Status:</b> ${d.status}<br><br>
+
+        <b>Submitted Work:</b>
+        <div style="
+          background:#f8fafc;
+          padding:10px;
+          border-radius:10px;
+          max-height:250px;
+          overflow:auto;
+          border:1px solid #e2e8f0;
+        ">
+          ${escapeHtml(d.solution)}
+        </div>
+
+        <br>
+
+        <button onclick="requestRevision('${d.jobId}')"
+          style="background:#f97316;color:white;padding:8px;border:none;border-radius:10px;width:100%;">
+          🔁 Request Revision
+        </button>
+
+      </div>
+    `
+  });
+};
 // =========================
-// RELEASE ESCROW (CLIENT)
-// =========================
-// RELEASE ESCROW (CLIENT)
+// RELEASE PAYMENT (20% TEACHER / 80% PLATFORM)
 // =========================
 window.releasePayment = async function(jobId) {
 
   const schoolId = window.schoolId;
+  const uid = window.currentUser?.uid;
+  const role = window.currentUserRole;
 
-  const jobRef = ref(db, `schools/${schoolId}/jobs/${jobId}`);
+  if (!schoolId || !uid) {
+    return Swal.fire(
+      "Error",
+      "Login required",
+      "error"
+    );
+  }
+
+  const jobRef =
+    ref(
+      db,
+      `schools/${schoolId}/jobs/${jobId}`
+    );
+
   const snap = await get(jobRef);
 
   if (!snap.exists()) {
-    return Swal.fire("Error", "Job not found", "error");
+    return Swal.fire(
+      "Error",
+      "Job not found",
+      "error"
+    );
   }
 
   const job = snap.val();
+
+  const isOwner = job.uid === uid;
+  const isAdmin = role === "admin";
+
+  if (!isOwner && !isAdmin) {
+    return Swal.fire(
+      "Denied",
+      "Only client or admin can release payment",
+      "error"
+    );
+  }
 
   if (job.status !== "delivered") {
     return Swal.fire(
@@ -34078,22 +34403,389 @@ window.releasePayment = async function(jobId) {
     );
   }
 
-  await update(jobRef, {
-    status: "completed",
-    "escrow.released": true,
-    completedAt: Date.now(),
+  if (job.escrow?.released) {
+    return Swal.fire(
+      "Info",
+      "Payment already released",
+      "info"
+    );
+  }
 
-    // 🔥 FIVERR-STYLE FINAL PROGRESS
-    progress: 100
+  // ================= RATING =================
+
+  const { value: rating } =
+    await Swal.fire({
+      title: "Rate Teacher",
+      input: "range",
+      inputAttributes: {
+        min: 1,
+        max: 5,
+        step: 1
+      },
+      inputValue: 5,
+      showCancelButton: true
+    });
+
+  if (!rating) return;
+
+  // ================= PAYOUT =================
+
+  const totalAmount =
+    Number(job.price || 0);
+
+  const teacherPercent = 20;
+  const platformPercent = 80;
+
+  const teacherAmount =
+    Math.round(
+      totalAmount *
+      (teacherPercent / 100)
+    );
+
+  const platformAmount =
+    totalAmount -
+    teacherAmount;
+
+  const confirm =
+    await Swal.fire({
+      icon: "question",
+      title: "Release Payment?",
+      html: `
+        Total Job Value:
+        <b>KES ${totalAmount}</b><br><br>
+
+        Teacher Receives:
+        <b>KES ${teacherAmount}</b><br><br>
+
+        Platform Receives:
+        <b>KES ${platformAmount}</b>
+      `,
+      showCancelButton: true,
+      confirmButtonText: "Release Payment"
+    });
+
+  if (!confirm.isConfirmed) return;
+
+  // ================= SAVE RATING =================
+
+  if (job.acceptedBy) {
+
+    await set(
+      ref(
+        db,
+        `schools/${schoolId}/ratings/${job.acceptedBy}/${jobId}`
+      ),
+      {
+        rating: Number(rating),
+        from: uid,
+        jobId,
+        createdAt: Date.now()
+      }
+    );
+  }
+
+  // ================= CREDIT TEACHER WALLET =================
+
+  if (job.acceptedBy) {
+
+    await window.ensureTeacherWallet(
+      job.acceptedBy
+    );
+
+    const walletRef =
+      ref(
+        db,
+        `schools/${schoolId}/wallets/${job.acceptedBy}`
+      );
+
+    const walletSnap =
+      await get(walletRef);
+
+    const wallet =
+      walletSnap.val() || {};
+
+    const currentBalance =
+      Number(wallet.balance || 0);
+
+    await update(walletRef, {
+
+      balance:
+        currentBalance +
+        teacherAmount,
+
+      phone:
+        job.acceptedByPhone || "",
+
+      updatedAt:
+        Date.now()
+    });
+
+    // ================= EARNINGS RECORD =================
+
+    const earningId =
+      "EARN-" + Date.now();
+
+    await set(
+      ref(
+        db,
+        `schools/${schoolId}/earnings/${job.acceptedBy}/${earningId}`
+      ),
+      {
+        jobId,
+        title: job.title,
+
+        totalAmount,
+
+        teacherAmount,
+
+        platformAmount,
+
+        teacherPhone:
+          job.acceptedByPhone || "",
+
+        createdAt:
+          Date.now()
+      }
+    );
+  }
+
+  // ================= PLATFORM REVENUE =================
+
+  const platformId =
+    "PLAT-" + Date.now();
+
+  await set(
+    ref(
+      db,
+      `schools/${schoolId}/platformEarnings/${platformId}`
+    ),
+    {
+      jobId,
+      title: job.title,
+
+      amount:
+        platformAmount,
+
+      createdAt:
+        Date.now()
+    }
+  );
+
+  // ================= COMPLETE JOB =================
+
+  await update(jobRef, {
+
+    status: "completed",
+
+    progress: 100,
+
+    completedAt:
+      Date.now(),
+
+    clientRating:
+      Number(rating),
+
+    teacherPayout:
+      teacherAmount,
+
+    platformFee:
+      platformAmount,
+
+    escrow: {
+      ...(job.escrow || {}),
+      released: true,
+      releasedAt: Date.now()
+    }
   });
+
+  // ================= NOTIFY TEACHER =================
+
+  if (job.acceptedBy) {
+
+    const notificationId =
+      "NOTIF-" + Date.now();
+
+    await set(
+      ref(
+        db,
+        `schools/${schoolId}/notifications/${job.acceptedBy}/${notificationId}`
+      ),
+      {
+        type: "payment_released",
+
+        title:
+          "Payment Released",
+
+        message:
+          `KES ${teacherAmount} credited to your wallet for "${job.title}"`,
+
+        amount:
+          teacherAmount,
+
+        jobId,
+
+        read: false,
+
+        createdAt:
+          Date.now()
+      }
+    );
+  }
 
   Swal.fire(
     "Success",
-    "Payment released successfully",
+    `Teacher credited KES ${teacherAmount}`,
     "success"
   );
 
-  window.loadAssignmentHelp();
+};
+window.loadTeacherWallet = async function(){
+
+  const schoolId = window.schoolId;
+  const uid = window.currentUser.uid;
+
+  const snap = await get(
+    ref(
+      db,
+      `schools/${schoolId}/wallets/${uid}`
+    )
+  );
+
+  const wallet =
+    snap.exists()
+      ? snap.val()
+      : { balance:0 };
+
+  document.getElementById(
+    "teacherWallet"
+  ).innerHTML = `
+    <div style="
+      background:#16a34a;
+      color:white;
+      padding:20px;
+      border-radius:14px;
+      font-size:20px;
+      font-weight:bold;
+    ">
+      💰 Wallet Balance:
+      KES ${wallet.balance || 0}
+    </div>
+  `;
+};
+window.requestRevision = async function(jobId){
+
+  const schoolId = window.schoolId;
+
+  const { value: reason } = await Swal.fire({
+    title: "Request Revision",
+    input: "textarea",
+    inputPlaceholder: "What should be fixed?",
+    showCancelButton: true
+  });
+
+  if (!reason) return;
+
+  const revisionId = "REV-" + Date.now();
+
+  await set(
+    ref(db, `schools/${schoolId}/revisions/${jobId}/${revisionId}`),
+    {
+      reason,
+      status: "open",
+      createdAt: Date.now(),
+      from: window.currentUser?.uid
+    }
+  );
+
+  await update(
+    ref(db, `schools/${schoolId}/jobs/${jobId}`),
+    {
+      status: "revision_requested",
+      revisionReason: reason
+    }
+  );
+
+  Swal.fire("Sent", "Revision request sent", "success");
+};
+function renderActivity(job){
+
+  return `
+    <div style="margin-top:10px;font-size:12px;color:#64748b">
+
+      <b>Activity:</b><br>
+
+      🟢 Posted: ${new Date(job.createdAt).toLocaleString()}<br>
+
+      ${job.acceptedAt ? `
+        🔵 Accepted: ${new Date(job.acceptedAt).toLocaleString()}<br>
+      ` : ""}
+
+      ${job.deliveredAt ? `
+        🟡 Delivered: ${new Date(job.deliveredAt).toLocaleString()}<br>
+      ` : ""}
+
+      ${job.completedAt ? `
+        🟣 Completed: ${new Date(job.completedAt).toLocaleString()}<br>
+      ` : ""}
+
+    </div>
+  `;
+}
+function renderTimeline(job) {
+
+  const steps = [
+    "open",
+    "in_progress",
+    "delivered",
+    "completed"
+  ];
+
+  return `
+    <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
+      ${steps.map(step => {
+
+        const active =
+          steps.indexOf(job.status) >= steps.indexOf(step);
+
+        return `
+          <div style="
+            padding:6px 10px;
+            border-radius:20px;
+            font-size:12px;
+            background:${active ? '#16a34a' : '#e2e8f0'};
+            color:${active ? 'white' : '#64748b'};
+          ">
+            ${JOB_STAGES[step]}
+          </div>
+        `;
+      }).join("")}
+    </div>
+  `;
+}
+window.rateAfterDelivery = async function(jobId){
+
+  const { value: rating } = await Swal.fire({
+    title: "Rate Work",
+    input: "range",
+    inputAttributes: { min: 1, max: 5, step: 1 },
+    inputValue: 5,
+    showCancelButton: true
+  });
+
+  if (!rating) return;
+
+  const schoolId = window.schoolId;
+
+  await set(
+    ref(db, `schools/${schoolId}/ratings/${jobId}`),
+    {
+      rating: Number(rating),
+      from: window.currentUser?.uid,
+      createdAt: Date.now()
+    }
+  );
+
+  Swal.fire("Thanks!", "Rating submitted", "success");
 };
 window.rateWorker = async function(jobId, rating) {
 
@@ -34111,11 +34803,7 @@ window.rateWorker = async function(jobId, rating) {
 
 };
 // =====================================================
-// CHAT SYSTEM (JOB BASED)
-// =====================================================
-
-// =====================================================
-// SEND MESSAGE
+// SAFE CHAT SENDER (FIXED)
 // =====================================================
 window.sendJobMessage = async function(jobId, message) {
 
@@ -34123,8 +34811,25 @@ window.sendJobMessage = async function(jobId, message) {
   const schoolId = window.schoolId;
 
   if (!uid) return;
-  if (!message || !message.trim()) return;
 
+  const text = (message || "").trim();
+  if (!text) return;
+
+  // ================= SECURITY CHECK =================
+  const jobSnap = await get(ref(db, `schools/${schoolId}/jobs/${jobId}`));
+  if (!jobSnap.exists()) return;
+
+  const job = jobSnap.val();
+
+  const isOwner = job.uid === uid;
+  const isWorker = job.acceptedBy === uid;
+  const isAdmin = window.currentUserRole === "admin";
+
+  if (!isOwner && !isWorker && !isAdmin) {
+    return Swal.fire("Denied", "You cannot access this chat", "error");
+  }
+
+  // ================= SAFE DATA =================
   const senderName =
     window.currentUser?.fullName ||
     window.currentUser?.name ||
@@ -34132,28 +34837,29 @@ window.sendJobMessage = async function(jobId, message) {
     window.currentUser?.email ||
     "User";
 
-  const msgId = "MSG-" + Date.now();
+  // safer ID (avoids collision risk)
+  const msgId =
+    "MSG-" + Date.now() + "-" + Math.floor(Math.random() * 10000);
 
   await set(
     ref(db, `schools/${schoolId}/jobChats/${jobId}/${msgId}`),
     {
       uid,
       senderName,
-      message: message.trim(),
+      message: text, // store raw text, escape on render
       createdAt: Date.now()
     }
   );
 
+  // ================= CLEAR INPUT =================
   const input = document.getElementById(`msg-${jobId}`);
   if (input) input.value = "";
 
+  // ================= REFRESH CHAT =================
   window.loadJobChat(jobId);
 };
 
 
-// =====================================================
-// LOAD CHAT
-// =====================================================
 window.loadJobChat = async function(jobId) {
 
   const schoolId = window.schoolId;
@@ -34163,14 +34869,12 @@ window.loadJobChat = async function(jobId) {
   );
 
   const box = document.getElementById(`chat-${jobId}`);
-
   if (!box) return;
 
   box.innerHTML = "";
 
   if (!snap.exists()) {
-    box.innerHTML =
-      "<div style='color:#64748b'>No messages yet</div>";
+    box.innerHTML = "<div style='color:#64748b'>No messages yet</div>";
     return;
   }
 
@@ -34178,23 +34882,28 @@ window.loadJobChat = async function(jobId) {
 
     const m = c.val();
 
-    box.innerHTML += `
-      <div style="
-        padding:8px;
-        border-bottom:1px solid #e2e8f0;
-      ">
-        <b>${m.senderName || "User"}</b><br>
-        ${m.message}
-      </div>
+    const sender = escapeHtml(m.senderName || "User");
+    const message = escapeHtml(m.message || "");
+
+    const div = document.createElement("div");
+    div.style.padding = "8px";
+    div.style.borderBottom = "1px solid #e2e8f0";
+
+    div.innerHTML = `
+      <b>${sender}</b><br>
+      <span>${message}</span>
     `;
+
+    box.appendChild(div);
   });
 
   box.scrollTop = box.scrollHeight;
 };
+
 // =====================================================
-// PRO MARKETPLACE UI - LOAD JOBS
+// PRO MARKETPLACE UI - REALTIME LOAD JOBS (CLEAN VERSION)
 // =====================================================
-window.loadAssignmentHelp = async function () {
+window.loadAssignmentHelp = function () {
 
   const schoolId = window.schoolId;
   const uid = window.currentUser?.uid;
@@ -34202,254 +34911,303 @@ window.loadAssignmentHelp = async function () {
 
   if (!schoolId) return;
 
-  const snap = await get(
-    ref(db, `schools/${schoolId}/jobs`)
-  );
+  const jobsRef = ref(db, `schools/${schoolId}/jobs`);
 
-  const container = document.getElementById("helpPostsContainer");
-  container.innerHTML = "";
-
-  if (!snap.exists()) {
-    container.innerHTML = `
-      <div style="
-        padding:40px;
-        text-align:center;
-        background:#f8fafc;
-        border:1px dashed #cbd5e1;
-        border-radius:14px;
-        color:#64748b;
-      ">
-        <h3>📭 No Jobs Available</h3>
-        <p>Create your first assignment to get started</p>
-      </div>
-    `;
+  // ❗ prevent multiple listeners stacking (IMPORTANT FIX)
+  if (window._jobsListenerAttached) {
     return;
   }
+  window._jobsListenerAttached = true;
 
-  const jobs = [];
-  snap.forEach(child => jobs.push(child.val()));
+  onValue(jobsRef, (snap) => {
 
-  jobs.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+    const container = document.getElementById("helpPostsContainer");
+    if (!container) return;
 
-  jobs.forEach(p => {
+    container.innerHTML = "";
 
-    const isOwner = p.uid === uid;
-    const isAssignedTeacher = p.acceptedBy === uid;
-
-    const canAccept =
-      (role === "teacher" || role === "admin") &&
-      p.approvalStatus === "approved" &&
-      p.status === "open";
-
-    const canDeliver =
-      isAssignedTeacher && p.status === "in_progress";
-
-    const canRelease =
-      (isOwner || role === "admin") &&
-      p.status === "delivered";
-
-    const canChat =
-      isOwner || isAssignedTeacher || role === "admin";
-
-    const statusColor =
-      p.status === "open" ? "#16a34a" :
-      p.status === "in_progress" ? "#2563eb" :
-      p.status === "delivered" ? "#f59e0b" :
-      p.status === "completed" ? "#059669" :
-      "#64748b";
-
-    const statusIcon =
-      p.status === "open" ? "🟢" :
-      p.status === "in_progress" ? "🔵" :
-      p.status === "delivered" ? "🟡" :
-      p.status === "completed" ? "🟣" :
-      "⚪";
-
-    container.innerHTML += `
-      <div style="
-        background:#fff;
-        border:1px solid #e2e8f0;
-        border-left:6px solid ${statusColor};
-        border-radius:16px;
-        padding:18px;
-        margin-bottom:16px;
-        box-shadow:0 3px 10px rgba(0,0,0,0.05);
-        transition:0.2s;
-      "
-      onmouseover="this.style.transform='translateY(-3px)'"
-      onmouseout="this.style.transform='translateY(0)'">
-
-        <!-- HEADER -->
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <h3 style="margin:0; font-size:18px;">
-            📌 ${p.title}
-          </h3>
-
-          <span style="
-            background:${statusColor};
-            color:white;
-            padding:5px 10px;
-            border-radius:20px;
-            font-size:12px;
-            font-weight:bold;
-          ">
-            ${statusIcon} ${p.status}
-          </span>
+    // ================= ADMIN HEADER =================
+    if (role === "admin") {
+      container.innerHTML += `
+        <div style="margin-bottom:15px;text-align:right;">
+          <button
+            onclick="deleteAllAssignments()"
+            style="
+              background:#dc2626;
+              color:white;
+              border:none;
+              padding:10px 15px;
+              border-radius:10px;
+              font-weight:bold;
+            ">
+            🗑 Delete All Assignments
+          </button>
         </div>
-
-        <p style="margin:6px 0; color:#475569;">
-          <b>${p.subject}</b> • Grade ${p.grade}
-        </p>
-<!-- PROGRESS BAR -->
-<div style="margin:10px 0;">
-  <div style="
-    background:#e2e8f0;
-    height:6px;
-    border-radius:10px;
-    overflow:hidden;
-  ">
-    <div style="
-      width:${p.progress || 0}%;
-      height:6px;
-      background:#2563eb;
-      border-radius:10px;
-      transition:0.3s ease;
-    "></div>
-  </div>
-
-  <small style="color:#64748b;">
-    Progress: ${p.progress || 0}%
-  </small>
-</div>
-        <!-- PRICE CARD -->
-        <div style="
-          display:flex;
-          justify-content:space-between;
-          background:#f8fafc;
-          padding:10px;
-          border-radius:12px;
-          margin:10px 0;
-          font-size:13px;
-        ">
-          <div>🧠 Qs: <b>${p.questionCount}</b></div>
-          <div>💰 Total: <b>KES ${p.price}</b></div>
-          <div>💳 Deposit: <b>${p.depositAmount}</b></div>
-          <div>💰 Balance: <b>${p.balanceAmount}</b></div>
-        </div>
-
-        <!-- CLIENT INFO -->
-        <div style="
-          background:#f1f5f9;
-          padding:10px;
-          border-radius:12px;
-          font-size:13px;
-          margin-bottom:10px;
-        ">
-          👤 <b>${p.posterName || "User"}</b>
-          • 📱 ${p.phoneNumber || "N/A"}<br>
-          📅 ${p.createdAt ? new Date(p.createdAt).toLocaleString() : "-"}
-        </div>
-
-        <!-- STATUS LINE -->
-        <div style="font-size:13px; margin-bottom:10px;">
-          Approval:
-          <b style="color:#111827;">
-            ${p.approvalStatus || "pending"}
-          </b>
-        </div>
-
-        <!-- ACTION ZONES -->
-        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
-
-          ${
-            isOwner && !p.depositPaid
-              ? `<button onclick="confirmDepositPaid('${p.id}')"
-                  style="background:#f59e0b;color:white;padding:8px 12px;border:none;border-radius:10px;">
-                  💳 Deposit Paid
-                </button>`
-              : ""
-          }
-
-          ${
-            role === "admin" && p.status === "pending_admin_approval"
-              ? `
-                <button onclick="approveJob('${p.id}')"
-                  style="background:#16a34a;color:white;padding:8px 12px;border:none;border-radius:10px;">
-                  ✅ Approve
-                </button>
-
-                <button onclick="rejectJob('${p.id}')"
-                  style="background:#dc2626;color:white;padding:8px 12px;border:none;border-radius:10px;">
-                  ❌ Reject
-                </button>
-              `
-              : ""
-          }
-
-          ${
-            canAccept
-              ? `<button onclick="acceptJob('${p.id}')"
-                  style="background:#2563eb;color:white;padding:8px 12px;border:none;border-radius:10px;">
-                  🚀 Accept Job
-                </button>`
-              : ""
-          }
-
-          ${
-            canDeliver
-              ? `<button onclick="submitHelpSolution('${p.id}')"
-                  style="background:#16a34a;color:white;padding:8px 12px;border:none;border-radius:10px;">
-                  📤 Deliver
-                </button>`
-              : ""
-          }
-
-          ${
-            canRelease
-              ? `<button onclick="releasePayment('${p.id}')"
-                  style="background:gold;color:black;padding:8px 12px;border:none;border-radius:10px;">
-                  💰 Release
-                </button>`
-              : ""
-          }
-
-        </div>
-
-        <!-- CHAT -->
-        ${
-          canChat
-            ? `
-              <div style="margin-top:10px;">
-                <div id="chat-${p.id}" style="
-                  max-height:180px;
-                  overflow-y:auto;
-                  background:#f8fafc;
-                  padding:10px;
-                  border-radius:10px;
-                  font-size:13px;
-                "></div>
-
-                <div style="display:flex; gap:6px; margin-top:8px;">
-                  <input id="msg-${p.id}"
-                    placeholder="Type message..."
-                    style="flex:1;padding:8px;border:1px solid #cbd5e1;border-radius:8px;">
-
-                  <button onclick="sendJobMessage('${p.id}', document.getElementById('msg-${p.id}').value)"
-                    style="background:#0f172a;color:white;padding:8px 12px;border:none;border-radius:8px;">
-                    Send
-                  </button>
-                </div>
-              </div>
-            `
-            : ""
-        }
-
-      </div>
-    `;
-
-    if (canChat) {
-      setTimeout(() => window.loadJobChat(p.id), 120);
+      `;
     }
+
+    // ================= EMPTY STATE =================
+    if (!snap.exists()) {
+      container.innerHTML = `
+        <div style="
+          padding:40px;
+          text-align:center;
+          background:#f8fafc;
+          border:1px dashed #cbd5e1;
+          border-radius:14px;
+          color:#64748b;
+        ">
+          <h3>📭 No Jobs Available</h3>
+          <p>Create your first assignment to get started</p>
+        </div>
+      `;
+      return;
+    }
+
+    const jobs = [];
+
+    snap.forEach(child => {
+      jobs.push(child.val());
+    });
+
+    jobs.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+    jobs.forEach(p => {
+
+      const isOwner = p.uid === uid;
+      const isAssignedTeacher = p.acceptedBy === uid;
+
+      // ================= STATUS HANDLING =================
+      let status = p.status || "draft";
+
+      if (
+        p.expiresAt &&
+        Date.now() > p.expiresAt &&
+        status === "open"
+      ) {
+        status = "expired";
+      }
+
+      const canAccept =
+        p.approvalStatus === "approved" &&
+        status === "open" &&
+        !isOwner;
+
+      const canDeliver =
+        isAssignedTeacher &&
+        (status === "in_progress" || status === "revision_requested");
+
+      const canRelease =
+        (isOwner || role === "admin") &&
+        status === "delivered";
+
+      const canChat =
+        isOwner || isAssignedTeacher || role === "admin";
+const canViewQuestions =
+  isOwner ||
+  isAssignedTeacher ||
+  role === "admin";
+      // ================= STATUS UI =================
+      const statusColor =
+        status === "open" ? "#16a34a"
+        : status === "in_progress" ? "#2563eb"
+        : status === "revision_requested" ? "#f97316"
+        : status === "delivered" ? "#f59e0b"
+        : status === "completed" ? "#059669"
+        : status === "expired" ? "#dc2626"
+        : "#64748b";
+
+      const statusIcon =
+        status === "open" ? "🟢"
+        : status === "in_progress" ? "🔵"
+        : status === "revision_requested" ? "🟠"
+        : status === "delivered" ? "🟡"
+        : status === "completed" ? "🟣"
+        : status === "expired" ? "🔴"
+        : "⚪";
+
+      container.innerHTML += `
+        <div style="
+          background:#fff;
+          border:1px solid #e2e8f0;
+          border-left:6px solid ${statusColor};
+          border-radius:16px;
+          padding:18px;
+          margin-bottom:16px;
+          box-shadow:0 3px 10px rgba(0,0,0,0.05);
+        ">
+
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <h3 style="margin:0;">📌 ${p.title}</h3>
+
+            <span style="
+              background:${statusColor};
+              color:white;
+              padding:5px 10px;
+              border-radius:20px;
+              font-size:12px;
+              font-weight:bold;
+            ">
+              ${statusIcon} ${status}
+            </span>
+          </div>
+
+          <p style="margin:6px 0;color:#475569;">
+            <b>${p.subject}</b> • Grade ${p.grade}
+          </p>
+
+          <div style="font-size:13px;color:#475569;">
+            🏷️ ${p.category || "Homework"}
+          </div>
+
+          ${p.deadline ? `
+            <div style="color:#dc2626;font-size:13px;margin-top:5px;">
+              ⏰ Due: ${new Date(p.deadline).toLocaleString()}
+            </div>
+          ` : ""}
+
+          <div style="margin:10px 0;">
+            <div style="background:#e2e8f0;height:6px;border-radius:10px;overflow:hidden;">
+              <div style="width:${p.progress || 0}%;height:6px;background:#2563eb;"></div>
+            </div>
+            <small>Progress: ${p.progress || 0}%</small>
+          </div>
+
+          <div style="
+            display:flex;
+            justify-content:space-between;
+            background:#f8fafc;
+            padding:10px;
+            border-radius:12px;
+            font-size:13px;
+          ">
+            <div>🧠 Qs: <b>${p.questionCount}</b></div>
+            <div>💰 <b>KES ${p.price || 0}</b></div>
+          </div>
+${canViewQuestions ? `
+  <div style="
+    background:#f8fafc;
+    padding:12px;
+    border-radius:12px;
+    margin-top:10px;
+    font-size:13px;
+  ">
+    <b>📚 Questions:</b>
+
+    <ol style="
+      margin-top:8px;
+      padding-left:20px;
+    ">
+      ${(p.questions || [])
+        .map(q => `
+          <li style="margin-bottom:6px;">
+            ${q}
+          </li>
+        `)
+        .join("")}
+    </ol>
+  </div>
+` : `
+  <div style="
+    margin-top:10px;
+    background:#fff7ed;
+    border:1px solid #fed7aa;
+    color:#9a3412;
+    padding:10px;
+    border-radius:12px;
+    font-size:13px;
+  ">
+    🔒 Questions hidden until you accept this assignment.
+  </div>
+`}
+          <div style="background:#f1f5f9;padding:10px;border-radius:12px;font-size:13px;margin-top:10px;">
+            👤 ${p.posterName || "User"}<br>
+            📱 ${p.phoneNumber || "N/A"}<br>
+            📅 ${p.createdAt ? new Date(p.createdAt).toLocaleString() : "-"}
+          </div>
+
+          <div style="margin-top:10px;font-size:13px;">
+            Approval: <b>${p.approvalStatus || "pending"}</b>
+
+            ${p.acceptedByName ? `
+              <div style="background:#ecfeff;padding:10px;border-radius:10px;margin-top:8px;">
+                👨‍🏫 ${p.acceptedByName}<br>
+                📱 ${p.acceptedByPhone || "N/A"}
+              </div>
+            ` : ""}
+          </div>
+
+    <!-- ACTIONS -->
+<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;">
+
+  ${isOwner && !p.depositPaid ? `
+    <button onclick="confirmDepositPaid('${p.id}')"
+      style="background:#f59e0b;color:white;padding:8px;border:none;border-radius:10px;">
+      💳 Deposit Paid
+    </button>
+  ` : ""}
+
+  ${role === "admin" && p.status === "pending_admin_approval" ? `
+    <button onclick="approveJob('${p.id}')"
+      style="background:#16a34a;color:white;padding:8px;border:none;border-radius:10px;">
+      ✅ Approve
+    </button>
+
+    <button onclick="rejectJob('${p.id}')"
+      style="background:#dc2626;color:white;padding:8px;border:none;border-radius:10px;">
+      ❌ Reject
+    </button>
+  ` : ""}
+
+  ${canAccept ? `
+    <button onclick="acceptJob('${p.id}')"
+      style="background:#2563eb;color:white;padding:8px;border:none;border-radius:10px;">
+      🚀 Accept Job
+    </button>
+  ` : ""}
+
+  ${canDeliver ? `
+    <button onclick="submitHelpSolution('${p.id}')"
+      style="background:#16a34a;color:white;padding:8px;border:none;border-radius:10px;">
+      📤 Deliver
+    </button>
+  ` : ""}
+
+  ${canRelease ? `
+    <button onclick="requestRevision('${p.id}')"
+      style="background:#f97316;color:white;padding:8px;border:none;border-radius:10px;">
+      🔄 Revision
+    </button>
+
+    <button onclick="releasePayment('${p.id}')"
+      style="background:gold;color:black;padding:8px;border:none;border-radius:10px;">
+      💰 Release
+    </button>
+  ` : ""}
+
+  ${((p.status === "delivered" || p.status === "completed") && (isOwner || role === "admin")) ? `
+    <button onclick="viewAnswer('${p.id}')"
+      style="background:#0ea5e9;color:white;padding:8px;border:none;border-radius:10px;">
+      📄 View Answer
+    </button>
+  ` : ""}
+
+  ${role === "admin" ? `
+    <button onclick="deleteJob('${p.id}')"
+      style="background:#dc2626;color:white;padding:8px;border:none;border-radius:10px;">
+      🗑 Delete
+    </button>
+  ` : ""}
+
+</div>
+        </div>
+      `;
+
+      if (canChat) {
+        setTimeout(() => window.loadJobChat(p.id), 100);
+      }
+
+    });
 
   });
 };
@@ -34466,13 +35224,34 @@ function canTransition(from, to, role) {
 
   return allowed[from]?.includes(to);
 }
-
+// =========================
+// HTML ESCAPE (ANTI XSS)
+// =========================
+function escapeHtml(text) {
+  return String(text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+// =========================
+// SAFE CHAT LISTENER (FIXED)
+// =========================
 window.listenJobChat = function(jobId) {
-  const schoolId = window.schoolId;
 
+  const schoolId = window.schoolId;
   const chatRef = ref(db, `schools/${schoolId}/jobChats/${jobId}`);
 
-  onValue(chatRef, snap => {
+  // ================= CLEAN OLD LISTENER =================
+  if (!window._chatListeners) window._chatListeners = {};
+
+  if (window._chatListeners[jobId]) {
+    window._chatListeners[jobId](); // detach previous listener
+  }
+
+  const unsubscribe = onValue(chatRef, snap => {
+
     const box = document.getElementById(`chat-${jobId}`);
     if (!box) return;
 
@@ -34486,31 +35265,42 @@ window.listenJobChat = function(jobId) {
     snap.forEach(c => {
       const m = c.val();
 
-      box.innerHTML += `
-        <div style="
-          margin-bottom:6px;
-          padding:6px;
-          border-radius:8px;
-          background:#f1f5f9;
-        ">
-          <b>${m.senderName}</b><br>
-          <span>${m.message}</span>
-        </div>
+      // ================= SAFE TEXT RENDER =================
+      const sender = escapeHtml(m.senderName || "User");
+      const message = escapeHtml(m.message || "");
+
+      const div = document.createElement("div");
+      div.style.marginBottom = "6px";
+      div.style.padding = "6px";
+      div.style.borderRadius = "8px";
+      div.style.background = "#f1f5f9";
+
+      div.innerHTML = `
+        <b>${sender}</b><br>
+        <span>${message}</span>
       `;
+
+      box.appendChild(div);
     });
 
     box.scrollTop = box.scrollHeight;
   });
+
+  window._chatListeners[jobId] = unsubscribe;
 };
 window.updateJobProgress = async function(jobId, progress) {
 
   const schoolId = window.schoolId;
+
+  if (progress < 0) progress = 0;
+  if (progress > 100) progress = 100;
 
   await update(ref(db, `schools/${schoolId}/jobs/${jobId}`), {
     progress
   });
 
 };
+
 window.uploadJobFile = async function(jobId, file) {
 
   const schoolId = window.schoolId;
@@ -34570,8 +35360,96 @@ document.addEventListener("input", function(e){
     `KES ${balance}`;
 });
 
+// =========================
+// DELETE ALL ASSIGNMENTS
+// =========================
+window.deleteAllAssignments = async function() {
 
+  const schoolId = window.schoolId;
 
+  if (
+    window.currentUserRole !== "admin"
+  ) {
+    return Swal.fire(
+      "Denied",
+      "Admin only",
+      "error"
+    );
+  }
+
+  const confirm = await Swal.fire({
+    title: "Delete ALL Assignments?",
+    html: `
+      <b style="color:red">
+      This will remove every assignment
+      in the school.
+      </b>
+    `,
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "DELETE ALL"
+  });
+
+  if (!confirm.isConfirmed) return;
+
+  await remove(
+    ref(db, `schools/${schoolId}/jobs`)
+  );
+
+  Swal.fire(
+    "Deleted",
+    "All assignments removed",
+    "success"
+  );
+
+};
+window.deleteJob = async function(jobId){
+
+  const schoolId = window.schoolId;
+
+  const confirm = await Swal.fire({
+    title: "Delete Assignment?",
+    text: "This will remove the assignment and related records.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Delete"
+  });
+
+  if (!confirm.isConfirmed) return;
+
+  try {
+
+    await remove(
+      ref(db, `schools/${schoolId}/jobs/${jobId}`)
+    );
+
+    await remove(
+      ref(db, `schools/${schoolId}/jobChats/${jobId}`)
+    );
+
+    await remove(
+      ref(db, `schools/${schoolId}/jobFiles/${jobId}`)
+    );
+
+    Swal.fire(
+      "Deleted",
+      "Assignment deleted successfully",
+      "success"
+    );
+
+  } catch(error){
+
+    console.error(error);
+
+    Swal.fire(
+      "Error",
+      "Failed to delete assignment",
+      "error"
+    );
+
+  }
+
+};
 </script>
 
 
