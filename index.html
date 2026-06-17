@@ -1626,7 +1626,7 @@ button.primary{
   <div class="auth-card" style="
     background:
  
-      url('https://i.imgur.com/DA3C7yq.jpeg');
+      url('https://i.imgur.com/D8RXDZi.jpeg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -3336,16 +3336,24 @@ Peter Kimani"
 <!-- ================= ATTENDANCE SUMMARY ================= -->
 <div id="attendanceSummary" style="margin-top:15px; font-weight:bold;"></div>
 
-<!-- ================= FEES ================= -->
-<div id="fees" style="display:none; padding:20px;">
+<div id="fees" style="display:none;padding:20px;">
 
   <h3>💰 Fees Management</h3>
 
   <!-- ================= FORM ================= -->
-  <div>
- <select id="feeYear">
-  <option value="">-- Select Year --</option>
-</select>
+  <div style="
+    background:
+
+    url('https://i.imgur.com/D8RXDZi.jpeg') center center / cover no-repeat;
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:20px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.2);
+  ">
+
+    <select id="feeYear">
+      <option value="">-- Select Year --</option>
+    </select>
 
     <select id="feeGrade" onchange="loadFeeLearners()">
       <option value="">-- Select Grade --</option>
@@ -3356,7 +3364,7 @@ Peter Kimani"
     </select>
 
     <select id="feeType">
-        <option value="Tuition Fees">Tuition Fees</option>
+      <option value="Tuition Fees">Tuition Fees</option>
       <option value="Admission Registration Fees">Admission Registration Fees</option>
       <option value="Boarding Fees">Boarding Fees</option>
       <option value="Lunch">Lunch</option>
@@ -3391,61 +3399,66 @@ Peter Kimani"
       <option value="Clubs Fees">Clubs Fees</option>
       <option value="Scouts Fees">Scouts Fees</option>
     </select>
-<select id="paymentMethod">
-  <option value="">Select Payment Method</option>
-  <option value="Cash">Cash</option>
-  <option value="M-Pesa">M-Pesa</option>
-  <option value="Bank">Bank</option>
-</select>
+
+    <select id="paymentMethod">
+      <option value="">Select Payment Method</option>
+      <option value="Cash">Cash</option>
+      <option value="M-Pesa">M-Pesa</option>
+      <option value="Bank">Bank</option>
+    </select>
+
     <input id="feeAmount" type="number" placeholder="Amount (KES)">
     <button onclick="addFee()">💾 Save Fee</button>
+
   </div>
 
   <hr>
 
   <!-- ================= FINANCE SUMMARY ================= -->
-  <div style="margin:20px 0; padding:10px; border:1px solid #ccc;">
+  <div style="margin:20px 0;padding:10px;border:1px solid #ccc;">
     <h3>📊 Finance Summary</h3>
     <p>Total Expected: <b id="totalExpected">0</b></p>
     <p>Total Paid: <b id="totalPaid">0</b></p>
     <p>Total Balance: <b id="totalBalance">0</b></p>
   </div>
-<div style="display:flex;gap:15px;flex-wrap:wrap;margin-top:15px;">
 
-  <div style="
-    background:#16a34a;
-    color:white;
-    padding:15px;
-    border-radius:10px;
-    min-width:200px;
-  ">
-    <h3>💵 Cash</h3>
-    <h2 id="cashTotal">0</h2>
+  <div style="display:flex;gap:15px;flex-wrap:wrap;margin-top:15px;">
+
+    <div style="
+      background:#16a34a;
+      color:white;
+      padding:15px;
+      border-radius:10px;
+      min-width:200px;
+    ">
+      <h3>💵 Cash</h3>
+      <h2 id="cashTotal">0</h2>
+    </div>
+
+    <div style="
+      background:#059669;
+      color:white;
+      padding:15px;
+      border-radius:10px;
+      min-width:200px;
+    ">
+      <h3>📲 M-Pesa</h3>
+      <h2 id="mpesaTotal">0</h2>
+    </div>
+
+    <div style="
+      background:#2563eb;
+      color:white;
+      padding:15px;
+      border-radius:10px;
+      min-width:200px;
+    ">
+      <h3>🏦 Bank</h3>
+      <h2 id="bankTotal">0</h2>
+    </div>
+
   </div>
 
-  <div style="
-    background:#059669;
-    color:white;
-    padding:15px;
-    border-radius:10px;
-    min-width:200px;
-  ">
-    <h3>📲 M-Pesa</h3>
-    <h2 id="mpesaTotal">0</h2>
-  </div>
-
-  <div style="
-    background:#2563eb;
-    color:white;
-    padding:15px;
-    border-radius:10px;
-    min-width:200px;
-  ">
-    <h3>🏦 Bank</h3>
-    <h2 id="bankTotal">0</h2>
-  </div>
-
-</div>
 
 
 
@@ -3560,7 +3573,7 @@ Peter Kimani"
 <div id="recordMarksSection" class="section" style="display:none;">
 
   <div style="max-width: 400px; margin: auto; background-color: #8BC34A; padding: 15px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    background-image: url('https://i.imgur.com/DA3C7yq.jpeg'), url('https://i.imgur.com/DA3C7yq.jpeg');
+    background-image: url('https://i.imgur.com/D8RXDZi.jpeg'), url('https://i.imgur.com/D8RXDZi.jpeg');
     background-size: cover, cover;
     background-position: center, bottom right;
     height: auto;">
@@ -3606,9 +3619,9 @@ Peter Kimani"
 </div>
 
       <div style="text-align:center; margin-top:10px;">
-        <button type="button" id="saveMarksButton" style="background:#4CAF50; color:white; border:none; padding:10px 20px; border-radius:4px;">
-          Save Marks
-        </button>
+   <button type="button" id="saveMarksButton" style="background:#4CAF50; color:white; border:none; padding:10px 20px; border-radius:4px;">
+  💾 Save Marks
+</button>
         <div id="marksCountBadge"></div>
       </div>
 
@@ -23573,8 +23586,7 @@ window.printSelectedReport = function () {
 // 🏫 USE GLOBAL SCHOOL HEADER
 // =====================================
 
-const headerHTML =
-  window.getSchoolPrintHeader(printTitle);
+const headerHTML = "";
 
 // =====================================
 // 🧠 DETECT TABLE
