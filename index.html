@@ -1910,7 +1910,10 @@ button.primary{
   onclick="show('adminUsersPanel')">
   👥 Create Users
 </button>
-
+<button id="menuUsers"
+  onclick="show('usersSection')">
+  👤 Manage Users
+</button>
 
 </div>
 
@@ -3593,7 +3596,7 @@ Peter Kimani"
       </select>
 
   <label><strong>Exam Period</strong></label>
-<select id="examPeriod" required style="width:100%; padding:6px; margin:6px 0; background:#fff8c6;">
+<select id="examPeriod" required style="width:50%; padding:6px; margin:6px 0; background:#fff8c6;">
   <option value="">-- Select Period --</option>
 </select>
 
@@ -5366,6 +5369,102 @@ background:rgba(0,0,0,0.5);justify-content:center;align-items:center;">
   </div>
 
 </div>
+
+<!-- =========================================
+     USERS LIST SECTION (UPDATED STYLE)
+========================================= -->
+
+<section id="usersSection" class="section" style="display:none;">
+
+  <div style="
+       margin-top:20px;
+       background-image:url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f');
+       background-size:cover;
+       background-position:center;
+       border-radius:20px;
+       overflow:hidden;
+       position:relative;
+       box-shadow:0 10px 30px rgba(0,0,0,0.15);
+  ">
+
+    <!-- DARK OVERLAY -->
+    <div style="
+         position:absolute;
+         top:0;
+         left:0;
+         width:100%;
+         height:100%;
+         background:rgba(0,0,0,0.60);
+    "></div>
+
+    <!-- CONTENT -->
+    <div style="
+         position:relative;
+         z-index:2;
+         padding:30px;
+         color:white;
+    ">
+
+      <h2 style="
+           margin-bottom:8px;
+           font-size:28px;
+      ">
+        👤 User Management
+      </h2>
+
+      <p style="
+           opacity:.9;
+           margin-bottom:20px;
+      ">
+        View all registered users for this school.
+      </p>
+<input id="userSearch"
+  placeholder="🔍 Search users..."
+  oninput="window.renderUsersTable(window._allUsersCache, this.value.toLowerCase())"
+  style="padding:10px;width:100%;margin-bottom:10px;border-radius:10px;">
+      <!-- TABLE CARD -->
+      <div style="
+           background:rgba(255,255,255,0.12);
+           backdrop-filter:blur(10px);
+           padding:20px;
+           border-radius:16px;
+           border:1px solid rgba(255,255,255,0.2);
+           overflow-x:auto;
+      ">
+
+        <table style="
+            width:100%;
+            color:white;
+            border-collapse:collapse;
+            font-size:14px;
+        ">
+
+          <thead>
+            <tr style="
+                text-align:left;
+                border-bottom:1px solid rgba(255,255,255,0.3);
+            ">
+              <th style="padding:10px;">Name</th>
+              <th style="padding:10px;">Email</th>
+              <th style="padding:10px;">Role</th>
+              <th style="padding:10px;">School</th>
+              <th style="padding:10px;">Status</th>
+              <th style="padding:10px;">Created At</th>
+            </tr>
+          </thead>
+
+          <tbody id="usersTableBody">
+            <!-- loaded dynamically -->
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+  </div>
+
+</section>
 <!-- ===================================================== -->
 <!-- 📊 CHECK RESULTS SECTION -->
 <!-- ===================================================== -->
@@ -5689,6 +5788,7 @@ background:rgba(0,0,0,0.5);justify-content:center;align-items:center;">
   </button>
 
 </div>
+
 
 <script type="module">
 import {
@@ -11927,7 +12027,9 @@ async function autoSaveMarks() {
   if (window.__savingMarks) return;
 
   const schoolId = window.schoolId;
-  const examPeriod = document.getElementById("examPeriod")?.value;
+  const examPeriod = normalizeExamPeriod(
+  document.getElementById("examPeriod")?.value
+);
   const grade = document.getElementById("gradeSelect")?.value;
   const learner = getSelectedLearner();
 
@@ -11984,7 +12086,9 @@ document.getElementById("saveMarksButton")
   try {
 
     const schoolId = window.schoolId;
-    const examPeriod = document.getElementById("examPeriod")?.value;
+    const examPeriod = normalizeExamPeriod(
+  document.getElementById("examPeriod")?.value
+);
     const grade = document.getElementById("gradeSelect")?.value;
     const learner = getSelectedLearner();
 
@@ -12095,7 +12199,14 @@ window.__marksPagination = {
   finished: false
 };
 
-
+function normalizeExamPeriod(str) {
+  return (str || "")
+    .toString()
+    .trim()
+    .replace(/,\s*/g, "-")
+    .replace(/\s+/g, "")
+    .replace(/-+/g, "-");
+}
 // =========================================================
 // 🚀 LOAD MARKS (MAIN ENGINE)
 // =========================================================
@@ -15445,15 +15556,18 @@ window.generateBlankMeritList = async function (
     // ===============================
     // 🔥 FORCE READ FROM UI
     // ===============================
-    const gradeFromUI =
-      (
-        selectedGrade ??
-        document.getElementById("gradeFilter")?.value ??
-        window.reportContext?.grade ??
-        ""
-      )
-        .toString()
-        .trim();
+ const gradeFromUI =
+(
+  selectedGrade ||
+  document.getElementById("filterGrade")?.value ||
+  document.getElementById("gradeFilter")?.value ||
+  window.reportContext?.grade ||
+  ""
+)
+.toString()
+.trim();
+
+console.log("Blank Merit Grade:", gradeFromUI);
 
     const periodFromUI =
       (
@@ -15508,17 +15622,67 @@ window.generateBlankMeritList = async function (
     // ===============================
     // 🔥 FILTER LEARNERS
     // ===============================
-    updateProgress(
-      45,
-      "Filtering learners..."
-    );
+ // ===============================
+// 🔥 LOAD LEARNERS
+// SAME SOURCE AS CLASS LIST
+// ===============================
+updateProgress(
+  45,
+  "Loading learners..."
+);
 
-    await new Promise(r => setTimeout(r, 300));
+await new Promise(r => setTimeout(r, 300));
 
-    const learners = getFilteredLearners(
-      gradeFromUI,
-      periodFromUI
-    );
+const learners = [];
+
+try {
+
+  const snapshot =
+    await get(schoolRef("students"));
+
+  snapshot.forEach(childSnapshot => {
+
+    const learner =
+      childSnapshot.val() || {};
+
+    // SAME FILTER USED IN CLASS LIST
+  const learnerGrade =
+  (learner.grade || "")
+    .toString()
+    .trim();
+
+if (learnerGrade === gradeFromUI) {
+
+  learners.push({
+    id: childSnapshot.key,
+    ...learner
+  });
+
+}
+
+  });
+
+  // Sort by name
+  learners.sort((a, b) =>
+    (a.name || "")
+      .localeCompare(
+        b.name || ""
+      )
+  );
+
+  console.log(
+    "Blank Merit Learners:",
+    learners.length
+  );
+
+} catch (err) {
+
+  console.error(
+    "Failed loading learners:",
+    err
+  );
+
+}
 
     // ===============================
     // 🔥 NO DATA CHECK
@@ -15552,79 +15716,118 @@ window.generateBlankMeritList = async function (
     // ===============================
     // 🔹 SCHOOL DETAILS
     // ===============================
-    const schoolName =
-      "YOUR SCHOOL NAME";
-
-    const schoolMotto =
-      "Strive for Excellence";
-
+   
     const logoUrl =
       "logo.png";
 
     // ===============================
     // 🔹 STYLES
     // ===============================
-    const styles = `
+const styles = `
 <style>
 
-.merit-wrap {
-  font-family: Arial;
+@page{
+  size:A4 landscape;
+  margin:8mm;
 }
 
-.header {
+.merit-wrap{
+  width:100%;
+  font-family:Arial,sans-serif;
+  color:#000;
+}
+
+.header{
   display:flex;
   justify-content:center;
   align-items:center;
-  gap:10px;
-  margin-bottom:6px;
+  gap:15px;
+  margin-bottom:12px;
 }
 
-.header img {
-  width:45px;
-  height:45px;
+.header img{
+  width:70px;
+  height:70px;
+  object-fit:contain;
 }
 
-.title {
+.title{
   text-align:center;
-  line-height:1.1;
+  line-height:1.4;
 }
 
-.title h2 {
+.title h2{
   margin:0;
-  font-size:16px;
+  font-size:22px;
+  font-weight:700;
 }
 
-.title div {
+.title div{
   font-size:14px;
 }
 
-table {
+table{
   width:100%;
   border-collapse:collapse;
-  table-layout:fixed;
-  font-size:11px;
+  table-layout:auto;
+  font-size:13px;
 }
 
-th, td {
+th,
+td{
   border:1px solid #000;
-  padding:2px;
+  padding:6px 4px;
   text-align:center;
   vertical-align:middle;
 }
 
-th {
+th{
   background:#1e293b;
   color:#fff;
-  font-size:10px;
-  padding:3px;
+  font-size:12px;
+  font-weight:bold;
 }
 
-td.name {
+tbody tr{
+  height:34px;
+}
+
+td.name{
   text-align:left;
+  padding-left:8px;
+  white-space:nowrap;
 }
 
-tr {
-  page-break-inside: avoid;
+.adm-cell{
+  white-space:nowrap;
+}
+
+.no-col{
+  width:50px;
+}
+
+.name-col{
+  width:260px;
+}
+
+.adm-col{
+  width:120px;
+}
+
+.subject-col{
+  width:65px;
+}
+
+.total-col{
+  width:75px;
+}
+
+.pos-col{
+  width:75px;
+}
+
+tr{
+  page-break-inside:avoid;
 }
 
 </style>
@@ -15665,34 +15868,36 @@ tr {
     // ===============================
     // 🔹 TABLE HEADERS
     // ===============================
-    const subjectCols = `
-<th>NO</th>
+ const subjectCols = `
+<th class="no-col">NO</th>
 
-<th style="width:140px;">
-  NAME
+<th class="name-col">
+NAME
 </th>
 
-<th>ADM</th>
+<th class="adm-col">
+ADM NO
+</th>
 
-<th>ENG</th>
-<th>MATH</th>
-<th>PRE</th>
-<th>KISW</th>
-<th>SCI</th>
-<th>SST</th>
-<th>AGR</th>
-<th>CRE</th>
-<th>C/A</th>
+<th class="subject-col">ENG</th>
+<th class="subject-col">MATH</th>
+<th class="subject-col">PRE</th>
+<th class="subject-col">KISW</th>
+<th class="subject-col">SCI</th>
+<th class="subject-col">SST</th>
+<th class="subject-col">AGR</th>
+<th class="subject-col">CRE</th>
+<th class="subject-col">C/A</th>
 
-<th>TOT</th>
-<th>PTS</th>
-<th>POS</th>
+<th class="total-col">TOT</th>
+<th class="total-col">PTS</th>
+<th class="pos-col">POS</th>
 `;
 
     // ===============================
     // 🔹 TABLE ROWS
     // ===============================
-    const rows = learners.map((s, i) => `
+const rows = learners.map((s, i) => `
 
 <tr>
 
@@ -15704,8 +15909,13 @@ tr {
     ${s.name || ""}
   </td>
 
-  <td>
-    ${s.admissionNo || s.adm || ""}
+  <td class="adm-cell">
+    ${
+      s.admissionNo ||
+      s.admissionNumber ||
+      s.adm ||
+      ""
+    }
   </td>
 
   <td></td>
@@ -15717,6 +15927,7 @@ tr {
   <td></td>
   <td></td>
   <td></td>
+
   <td></td>
   <td></td>
   <td></td>
@@ -29006,9 +29217,9 @@ container.innerHTML += `
           📚 ${course.subject}
         </div>
 
-        <div class="course-description">
-          ${course.description}
-        </div>
+    <div class="course-description">
+  ${getCoursePreview(course)}
+</div>
 
         <div style="
           margin-top:12px;
@@ -29436,77 +29647,129 @@ window.checkCourseAccess = async function(courseId, price){
 };
 
 
-
 // =========================================
-// OPEN COURSE
+// OPEN COURSE (ROLE-BASED COPY CONTROL)
 // =========================================
 
-window.openCourse = function(id){
+window.openCourse = function (id) {
 
- const course =
-window.courses.find(
-      c => c.id === id
-    );
+  const course =
+    window.courses.find(c => c.id === id);
 
-  if(!course) return;
+  if (!course) return;
+
+  const role =
+    (window.currentUserRole || "").toLowerCase();
+
+  const uid =
+    window.currentUser?.uid;
+
+  const userTag =
+    window.currentUser?.email || uid || "UNKNOWN";
+
+  const allowCopy =
+    role === "admin" ||
+    role === "teacher" ||
+    role === "superadmin";
+
+  // =====================================
+  // REMOVE OLD WATERMARK
+  // =====================================
+  document.querySelectorAll(".course-watermark")
+    .forEach(el => el.remove());
+
+  // =====================================
+  // WATERMARK (ALL USERS)
+  // =====================================
+  const watermark = document.createElement("div");
+  watermark.className = "course-watermark";
+  watermark.innerHTML = `RASM 360 • ${userTag}`;
+
+  Object.assign(watermark.style, {
+    position: "fixed",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%) rotate(-30deg)",
+    fontSize: "42px",
+    opacity: "0.07",
+    fontWeight: "bold",
+    pointerEvents: "none",
+    zIndex: "999999"
+  });
+
+  document.body.appendChild(watermark);
+
+  // =====================================
+  // COPY CONTROL (ROLE BASED)
+  // =====================================
+  const blockCopy = (e) => {
+    if (!allowCopy) {
+      e.preventDefault();
+      Swal.fire("Protected", "Copying is disabled for students", "warning");
+    }
+  };
 
   Swal.fire({
 
-    title:course.title,
+    title: course.title,
 
-    html:`
+    width: 650,
 
-      <div style="
-        text-align:left;
-        line-height:1.8;
-      ">
+    html: `
+      <div id="courseViewer"
+        style="
+          text-align:left;
+          line-height:1.8;
+          ${allowCopy ? "" : "user-select:none;-webkit-user-select:none;"}
+        ">
 
-        <b>Teacher:</b>
-        ${course.teacher}
-
-        <br>
-
-        <b>Grade:</b>
-        ${course.grade}
-
-        <br>
-
-        <b>Subject:</b>
-        ${course.subject}
+        <b>Teacher:</b> ${course.teacher}<br>
+        <b>Grade:</b> ${course.grade}<br>
+        <b>Subject:</b> ${course.subject}
 
         <hr>
 
-        ${course.description}
+        ${getCoursePreview(course)}
+
+        ${
+          allowCopy
+            ? "<hr><small style='color:green'>✔ Admin/Teacher mode: copying enabled</small>"
+            : "<hr><small style='color:red'>🔒 Student mode: content protected</small>"
+        }
 
       </div>
-
     `,
 
-    width:600
+    didOpen: () => {
+
+      const popup = Swal.getPopup();
+
+      if (!allowCopy) {
+        popup.addEventListener("contextmenu", blockCopy);
+        popup.addEventListener("copy", blockCopy);
+      }
+
+    },
+
+    willClose: () => {
+      document.querySelectorAll(".course-watermark")
+        .forEach(el => el.remove());
+    }
 
   });
 
 };
 
-// =========================================
-// EDIT COURSE
-// =========================================
-
 window.editCourse = function(id){
 
   const role =
- (window.currentUserRole || "")
-      .toLowerCase();
+    (window.currentUserRole || "").toLowerCase();
 
   const isTeacher =
     ["teacher","admin"].includes(role);
 
-  const isParent =
-    role === "parent";
+  const isParent = role === "parent";
 
-  // =========================
-  // ROLE PROTECTION
-  // =========================
   if(!isTeacher){
 
     Swal.fire(
@@ -29520,9 +29783,13 @@ window.editCourse = function(id){
     return;
   }
 
-const course =
-window.courses.find(c => c.id === id);
+  const course = window.courses.find(c => c.id === id);
   if(!course) return;
+
+  // ==============================
+  // SHOW FULL TEXT IN EDIT (ALWAYS FULL FOR ADMIN)
+  // ==============================
+  const descriptionValue = course.description || "";
 
   Swal.fire({
 
@@ -29530,105 +29797,66 @@ window.courses.find(c => c.id === id);
 
     html: `
 
-      <input
-        id="editCourseTitle"
-        class="swal2-input"
-        value="${course.title}"
-      >
+      <input id="editCourseTitle" class="swal2-input"
+        value="${course.title}" />
 
-      <input
-        id="editCourseTeacher"
-        class="swal2-input"
-        value="${course.teacher}"
-      >
+      <input id="editCourseTeacher" class="swal2-input"
+        value="${course.teacher}" />
 
-      <input
-        id="editCourseGrade"
-        class="swal2-input"
-        value="${course.grade}"
-      >
+      <input id="editCourseGrade" class="swal2-input"
+        value="${course.grade}" />
 
-      <input
-        id="editCourseSubject"
-        class="swal2-input"
-        value="${course.subject}"
-      >
+      <input id="editCourseSubject" class="swal2-input"
+        value="${course.subject}" />
 
-      <textarea
-        id="editCourseDescription"
+      <textarea id="editCourseDescription"
         class="swal2-textarea"
-      >${course.description}</textarea>
+        style="height:200px;">${descriptionValue}</textarea>
 
     `,
 
     showCancelButton: true,
-
     confirmButtonText: "Save"
 
   }).then(async(result)=>{
 
-    if(result.isConfirmed){
+    if(!result.isConfirmed) return;
 
-      try{
+    try{
 
-        const schoolId = window.schoolId;
+      const schoolId = window.schoolId;
+      if(!schoolId) return;
 
-        if (!schoolId) {
-          console.warn("schoolId not ready");
-          return;
-        }
+      const updatedData = {
 
-        const updatedData = {
+        title: document.getElementById("editCourseTitle").value,
+        teacher: document.getElementById("editCourseTeacher").value,
+        grade: document.getElementById("editCourseGrade").value,
+        subject: document.getElementById("editCourseSubject").value,
+        description: document.getElementById("editCourseDescription").value
 
-          title:
-            document.getElementById("editCourseTitle").value,
+      };
 
-          teacher:
-            document.getElementById("editCourseTeacher").value,
+      await update(
+        ref(db, `schools/${schoolId}/courses/${id}`),
+        updatedData
+      );
 
-          grade:
-            document.getElementById("editCourseGrade").value,
+      Object.assign(course, updatedData);
 
-          subject:
-            document.getElementById("editCourseSubject").value,
+      window.renderCourses();
 
-          description:
-            document.getElementById("editCourseDescription").value
-        };
+      Swal.fire("Updated", "Course updated successfully", "success");
 
-        await update(
-          ref(
-            db,
-            `schools/${schoolId}/courses/${id}`
-          ),
-          updatedData
-        );
+    }catch(err){
 
-        Object.assign(course, updatedData);
+      console.error(err);
+      Swal.fire("Error", "Failed to update course", "error");
 
-        window.renderCourses();
-
-        Swal.fire(
-          "Updated",
-          "Course updated successfully",
-          "success"
-        );
-
-      }catch(err){
-
-        console.error(err);
-
-        Swal.fire(
-          "Error",
-          "Failed to update course",
-          "error"
-        );
-      }
     }
 
   });
 };
-
 
 
 
@@ -29727,7 +29955,43 @@ courses.filter(
 
   });
 
-};// CLEAR COURSE FORM
+};
+// =========================================
+// ANTI-TAB SWITCH (SCREENSHOT DETERRENT)
+// =========================================
+
+document.addEventListener("visibilitychange", function () {
+
+  if (document.hidden) {
+
+    const viewer = document.getElementById("courseViewer");
+
+    if (viewer) {
+      viewer.style.filter = "blur(8px)";
+      viewer.innerHTML =
+        "<h3 style='color:red'>Content hidden due to tab switch</h3>";
+    }
+
+  }
+
+});
+
+window.loadCourseAnalytics = async function(courseId){
+
+  const snap = await get(ref(db, `courseViews/${courseId}`));
+
+  let count = 0;
+
+  snap.forEach(() => count++);
+
+  Swal.fire(
+    "Course Analytics",
+    `Total Views: ${count}`,
+    "info"
+  );
+
+};
+// CLEAR COURSE FORM
 // =========================================
 
 window.clearCourseForm = function(){
@@ -29757,7 +30021,32 @@ window.clearCourseForm = function(){
   });
 };
 
+function getCoursePreview(course) {
 
+  const role =
+    (window.currentUserRole || "").toLowerCase();
+
+  const isTeacher =
+    ["admin", "teacher", "superadmin"].includes(role);
+
+  const text = course.description || "";
+
+  // Teachers always see full content
+  if (isTeacher) {
+    return text;
+  }
+
+  // If student → show only 50%
+  const half = Math.floor(text.length * 0.5);
+
+  return `
+    ${text.substring(0, half)}
+    <br><br>
+    <b style="color:#dc2626;">
+      🔒 Preview locked. Unlock to view full content.
+    </b>
+  `;
+}
 
 window.enableExamMode = function(){
 
@@ -31939,6 +32228,10 @@ window.loadAll = async function () {
         ? loadInventory()
         : Promise.resolve(),
 
+typeof loadUsersTable === "function"
+  ? Promise.resolve(loadUsersTable())
+  : Promise.resolve(),
+
       typeof loadICT === "function"
         ? loadICT()
         : Promise.resolve(),
@@ -32299,16 +32592,20 @@ const ROLE_PERMISSIONS = {
     "transport",
     "hostel",
     "ict",
- "assignmentHelpSection",
+   "adminUsersPanel",
+    "assignmentHelpSection",
     "inventory",
     "library",
-    "adminUsersPanel",
+
+    // ✅ FIXED NAME (match DOM section)
+    "usersSection",
+
     "examManagement",
     "eLearningSection",
     "reportsSection",
     "settingsSection",
     "resultsSection",
-"checkResultsSection"
+    "checkResultsSection"
   ],
 
   teacher: [
@@ -32479,7 +32776,12 @@ window.checkAccess = function(section) {
       "inventoryContent",
       "transportContent",
       "hostelContent",
-      "ictContent"
+      "ictContent",
+
+      // ======================
+      // ✅ ADD THIS LINE
+      // ======================
+      "usersSection"
     ];
 
     if (blocked.includes(section)) {
@@ -32489,7 +32791,6 @@ window.checkAccess = function(section) {
 
   return isAllowed;
 };
-
 // =====================================================
 // REPORT VISIBILITY
 // =====================================================
@@ -32640,7 +32941,6 @@ window.applyRolePermissions = function () {
   // =====================================
   document.getElementById("mainMenu")?.classList.remove("open");
 };
-
 window.show = function(section) {
 
   console.log("🔵 Switching to section:", section);
@@ -32656,6 +32956,9 @@ window.show = function(section) {
     return;
   }
 
+  // ===============================
+  // NORMAL ACCESS CONTROL
+  // ===============================
   if (
     section === "checkResultsSection" &&
     typeof loadResultsFilters === "function"
@@ -32690,6 +32993,9 @@ window.show = function(section) {
 
   requestAnimationFrame(() => {
 
+    // ===============================
+    // EXISTING HOOKS
+    // ===============================
     if (
       section === "eLearningSection" &&
       typeof configureELearningPermissions === "function"
@@ -32704,12 +33010,23 @@ window.show = function(section) {
       setTimeout(() => loadFeeBalanceStudents(), 50);
     }
 
-    // ✅ ADD YOUR NEW SECTION HOOK HERE (IMPORTANT)
     if (
       section === "assignmentHelpSection" &&
       typeof window.loadAssignmentHelp === "function"
     ) {
       setTimeout(() => window.loadAssignmentHelp(), 50);
+    }
+
+    // ===============================
+    // ✅ NEW: USERS SECTION HOOK
+    // ===============================
+    if (
+      section === "usersSection" &&
+      typeof window.loadUsersTable === "function"
+    ) {
+      setTimeout(() => {
+        window.loadUsersTable();
+      }, 50);
     }
 
     if (typeof runSectionLogic === "function") {
@@ -32747,12 +33064,7 @@ window.createUserAccount = async function() {
       document.getElementById("newUserRole")
       ?.value;
 
-    if (
-      !name ||
-      !email ||
-      !password ||
-      !role
-    ) {
+    if (!name || !email || !password || !role) {
 
       return Swal.fire({
         icon: "warning",
@@ -32762,14 +33074,13 @@ window.createUserAccount = async function() {
     }
 
     const cred =
-    await createUserWithEmailAndPassword(
-  secondaryAuth,
-  email,
-  password
-);
+      await createUserWithEmailAndPassword(
+        secondaryAuth,
+        email,
+        password
+      );
 
-    const uid =
-      cred.user.uid;
+    const uid = cred.user.uid;
 
     const schoolId =
       window.schoolId ||
@@ -32778,20 +33089,22 @@ window.createUserAccount = async function() {
     const schoolName =
       localStorage.getItem("schoolName");
 
+    const newUser = {
+      uid,
+      fullName: name,
+      email,
+      role,
+      schoolId,
+      schoolName,
+      active: true,
+      deleted: false,
+      createdAt: Date.now(),
+      lastLogin: 0
+    };
+
     await set(
       ref(db, `users/${uid}`),
-      {
-        uid,
-        fullName: name,
-        email,
-        role,
-        schoolId,
-        schoolName,
-        active: true,
-        deleted: false,
-        createdAt: Date.now(),
-        lastLogin: 0
-      }
+      newUser
     );
 
     Swal.fire({
@@ -32800,9 +33113,27 @@ window.createUserAccount = async function() {
       text: `${role} account created successfully`
     });
 
+    // clear form
     document.getElementById("newUserName").value = "";
     document.getElementById("newUserEmail").value = "";
     document.getElementById("newUserPassword").value = "";
+
+    // 🔥 INSTANT PRO UPDATE (CACHE + TABLE)
+    if (!window._allUsersCache) {
+      window._allUsersCache = [];
+    }
+
+    window._allUsersCache.push(newUser);
+
+    // render instantly if system exists
+    if (window.renderUsersTable) {
+      window.renderUsersTable(window._allUsersCache);
+    }
+
+    // fallback: single row render
+    if (window.renderUserRow) {
+      window.renderUserRow(newUser);
+    }
 
   } catch (error) {
 
@@ -32815,6 +33146,7 @@ window.createUserAccount = async function() {
     });
   }
 };
+
 
 // =========================================
 // E-LEARNING ROLE PERMISSIONS
@@ -33277,16 +33609,36 @@ window.loadStudentResults = async function (studentId, examPeriod, grade) {
       return Swal.fire("School missing", "", "error");
     }
 
-    // 🔥 READ FROM YOUR REAL MARKS STRUCTURE
     const path =
       `schools/${schoolId}/students/${studentId}`;
 
     const snap =
-      await get(schoolRef(path));
+      await get(ref(db, path)); // ✅ FIXED (avoid schoolRef ambiguity)
 
     const data = snap.val();
 
-    if (!data || !data.marks || !data.marks[examPeriod]) {
+    if (!data || !data.marks) {
+      document.getElementById("resultsContainer").innerHTML =
+        `<div style="color:red;font-weight:bold;">
+          No results found for ${examPeriod}
+        </div>`;
+      return;
+    }
+
+    // 🔥 NORMALIZE INPUT PERIOD
+    const normalizedInput = normalizeExamPeriod(examPeriod);
+
+    const marksMap = data.marks || {};
+
+    // 🔥 FIND MATCHING KEY SAFELY
+    const foundKey = Object.keys(marksMap).find(
+      k => normalizeExamPeriod(k) === normalizedInput
+    );
+
+    if (!foundKey) {
+
+      console.log("❌ Requested:", normalizedInput);
+      console.log("📦 Available:", Object.keys(marksMap));
 
       document.getElementById("resultsContainer").innerHTML =
         `<div style="color:red;font-weight:bold;">
@@ -33296,13 +33648,13 @@ window.loadStudentResults = async function (studentId, examPeriod, grade) {
       return;
     }
 
-    const marks = data.marks[examPeriod];
+    const marks = marksMap[foundKey];
 
     const resultData = {
       studentId,
       name: data.name,
       grade: data.grade,
-      examPeriod,
+      examPeriod: foundKey,
       marks
     };
 
@@ -33315,6 +33667,69 @@ window.loadStudentResults = async function (studentId, examPeriod, grade) {
 
     Swal.fire("Error", err.message, "error");
   }
+};
+
+window.renderResultsUI = function (data) {
+
+  const marks = data.marks || {};
+
+  let rows = "";
+
+  for (const [subject, score] of Object.entries(marks)) {
+
+    // skip metadata fields
+    if (
+      subject === "name" ||
+      subject === "grade" ||
+      subject === "createdAt" ||
+      subject === "schoolId"
+    ) continue;
+
+    const numericScore = Number(score || 0);
+    const level = getLevel(numericScore);
+
+    rows += `
+      <tr>
+        <td style="padding:8px;border:1px solid #ddd;">
+          ${subject}
+        </td>
+
+        <td style="padding:8px;border:1px solid #ddd;">
+          ${numericScore}
+        </td>
+
+        <td style="padding:8px;border:1px solid #ddd;font-weight:bold;color:#1565c0;">
+          Level ${level}
+        </td>
+      </tr>
+    `;
+  }
+
+  return `
+    <div style="padding:20px;font-family:Arial;">
+
+      <h2>📊 Student Results</h2>
+
+      <p><b>Name:</b> ${data.name}</p>
+      <p><b>Grade:</b> ${data.grade}</p>
+      <p><b>Exam:</b> ${data.examPeriod}</p>
+
+      <table style="width:100%;border-collapse:collapse;margin-top:15px;">
+        <thead>
+          <tr>
+            <th style="text-align:left;padding:8px;border:1px solid #ddd;">Subject</th>
+            <th style="text-align:left;padding:8px;border:1px solid #ddd;">Score</th>
+            <th style="text-align:left;padding:8px;border:1px solid #ddd;">Level</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          ${rows}
+        </tbody>
+      </table>
+
+    </div>
+  `;
 };
 window.handleCheckResults = async function () {
 
@@ -35390,35 +35805,236 @@ window.deleteJob = async function(jobId){
   }
 
 };
-
-function generateReceipt(school, payment) {
+window.generateReceipt = function (school, payment) {
 
   const receiptNumber = "RSM-" + Date.now();
 
   const receipt = {
     receiptNumber,
-    schoolName: school.name,
-    schoolId: school.id,
-    package: school.package,
-    amount: payment.amount,
-    method: payment.method,
-    transactionId: payment.transactionId,
-    startDate: payment.startDate,
-    expiryDate: payment.expiryDate,
-    status: school.status,
+
+    schoolName: school.name || school.schoolName || "Unknown School",
+    schoolId: school.id || school.schoolId || "",
+    package: school.package || school.plan || "Standard",
+
+    amount: payment.amount || 0,
+    method: payment.method || "M-Pesa",
+    transactionId: payment.transactionId || "N/A",
+
+    startDate: payment.startDate || Date.now(),
+    expiryDate: payment.expiryDate || Date.now(),
+
+    status: school.status || school.subscriptionStatus || "unknown",
+
     issuedAt: new Date().toISOString()
   };
 
   return receipt;
-}
-async function saveReceiptToDB(receipt) {
+};
+window.saveReceiptToDB = async function (receipt) {
 
-  await firebase.database()
-    .ref("receipts/" + receipt.receiptNumber)
-    .set(receipt);
+  try {
 
-}
+    await set(
+      ref(db, "receipts/" + receipt.receiptNumber),
+      receipt
+    );
 
+    console.log("✅ Receipt saved:", receipt.receiptNumber);
+
+  } catch (err) {
+
+    console.error("❌ Receipt save failed:", err);
+
+  }
+};
+window.generateManualReceipt = async function(id){
+
+  try {
+
+    const snap = await db.ref(`schools/${id}`).get();
+    if (!snap.exists()) return;
+
+    const school = snap.val();
+
+    const receipt = generateReceipt(
+      {
+        id,
+        name: school.name,
+        package: school.plan || "Manual Receipt",
+        subscriptionStatus: school.subscriptionStatus,
+        subscriptionStartedAt: school.subscriptionStartedAt,
+        subscriptionEndsAt: school.subscriptionEndsAt
+      },
+      {
+        amount: school.amountPaid || 0,
+        method: "manual",
+        transactionId: "MANUAL-" + id + "-" + Date.now()
+      }
+    );
+
+    await saveReceiptToDB(receipt);
+    printReceipt(receipt);
+
+    Swal.fire({
+      icon: "success",
+      title: "Receipt Generated"
+    });
+
+  } catch(err){
+
+    Swal.fire({
+      icon: "error",
+      title: "Failed",
+      text: err.message
+    });
+
+  }
+};
+window._allUsersCache = [];
+window._usersListener = null;
+
+window.loadUsersTable = function () {
+
+  const tbody = document.getElementById("usersTableBody");
+  if (!tbody) return;
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  if (!schoolId) {
+    console.warn("❌ Missing schoolId - retrying...");
+    setTimeout(window.loadUsersTable, 500);
+    return;
+  }
+
+  const usersRef = ref(db, "users");
+
+  // 🔥 IMPORTANT: remove old listener before attaching new one
+  if (window._usersListener) {
+    window._usersListener(); // unsubscribe old listener
+  }
+
+  window._usersListener = onValue(usersRef, (snapshot) => {
+
+    window._allUsersCache = [];
+    tbody.innerHTML = "";
+
+    if (!snapshot.exists()) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="7" style="padding:10px; text-align:center;">
+            No users found
+          </td>
+        </tr>`;
+      return;
+    }
+
+    snapshot.forEach((child) => {
+
+      const user = child.val();
+
+      // 🔥 SAFE FILTER
+      if (!user.schoolId || user.schoolId !== schoolId) return;
+
+      window._allUsersCache.push(user);
+    });
+
+    window.renderUsersTable(window._allUsersCache);
+
+  });
+};
+window.renderUsersTable = function(users = [], search = "") {
+  const tbody = document.getElementById("usersTableBody");
+  if (!tbody) return;
+
+  tbody.innerHTML = "";
+
+  const filtered = users.filter(u =>
+    (u.fullName || "").toLowerCase().includes(search) ||
+    (u.email || "").toLowerCase().includes(search) ||
+    (u.role || "").toLowerCase().includes(search)
+  );
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="7" style="padding:10px; text-align:center;">
+          No matching users
+        </td>
+      </tr>`;
+    return;
+  }
+
+  filtered.forEach(user => {
+
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+      <td style="padding:10px;">${user.fullName || ""}</td>
+      <td style="padding:10px;">${user.email || ""}</td>
+
+      <td style="padding:10px;">
+        <span style="
+          padding:4px 8px;
+          border-radius:8px;
+          background:#2563eb;
+          color:white;
+          font-size:12px;">
+          ${user.role || ""}
+        </span>
+      </td>
+
+      <td style="padding:10px;">
+        ${user.active ? "🟢 Active" : "🔴 Disabled"}
+      </td>
+
+      <td style="padding:10px;">
+        ${new Date(user.createdAt).toLocaleString()}
+      </td>
+
+      <td style="padding:10px;">
+        <button onclick="toggleUser('${user.uid}', ${user.active})">
+          ${user.active ? "Disable" : "Enable"}
+        </button>
+      </td>
+
+      <td style="padding:10px;">
+        <button onclick="deleteUser('${user.uid}')"
+          style="background:red;color:white;">
+          Deletelogin
+        </button>
+      </td>
+    `;
+
+    tbody.appendChild(row);
+  });
+};
+window.getActiveSchoolId = function () {
+
+  const id =
+    window.schoolId ||
+    localStorage.getItem("schoolId");
+
+  if (!id) return null;
+
+  window.schoolId = id;
+  localStorage.setItem("schoolId", id);
+
+  return id;
+};
+window.toggleUser = async function(uid, currentState) {
+
+  await update(ref(db, `users/${uid}`), {
+    active: !currentState
+  });
+
+};
+
+window.deleteUser = async function(uid) {
+  await remove(ref(db, `users/${uid}`));
+};
+document.addEventListener("DOMContentLoaded", () => {
+  window.loadUsersTable();
+});
 </script>
 
 
