@@ -32976,11 +32976,9 @@ window.show = function(section) {
     return;
   }
 
-  // Hide all sections
-  document.querySelectorAll(".main > div[id]").forEach(sec => {
-    sec.style.display = "none";
-  });
-
+document.querySelectorAll(".main > div[id], .main > section[id]").forEach(sec => {
+  sec.style.display = "none";
+});
   const target =
     document.getElementById(section);
 
@@ -33037,6 +33035,8 @@ window.show = function(section) {
 
   window.currentSection = section;
 };
+
+
 // =====================================================
 // INIT
 // =====================================================
