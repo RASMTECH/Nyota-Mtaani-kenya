@@ -1401,135 +1401,6 @@ button.primary {
   background: #2563eb;
   color: white;
 }
-
-
-/* =========================================================
-   📱 RESPONSIVE FIXES (PHONES & TABLETS)
-========================================================= */
-
-/* SMALL PHONES */
-@media screen and (max-width: 768px) {
-
-  /* SIDEBAR → becomes hidden off-canvas style */
-  .sidebar {
-    width: 100%;
-    height: auto;
-    position: relative;
-    flex-direction: row;
-    overflow-x: auto;
-  }
-
-  .sidebar-scroll {
-    display: flex;
-    flex-direction: row;
-    overflow-x: auto;
-    gap: 10px;
-  }
-
-  .menu-section {
-    min-width: 160px;
-  }
-
-  /* MAIN CONTENT FULL WIDTH */
-  .main {
-    margin-left: 0;
-    width: 100%;
-    padding: 12px;
-  }
-
-  /* DASHBOARD STACKS NICELY */
-  .dashboard-grid {
-    grid-template-columns: repeat(1, 1fr);
-    gap: 12px;
-  }
-
-  .dashboard-card {
-    flex-direction: row;
-    padding: 14px;
-  }
-
-  .card-content p {
-    font-size: 22px;
-  }
-
-  /* FORMS FULL WIDTH */
-  input,
-  select {
-    width: 100% !important;
-  }
-
-  /* TABLES SCROLL FIX */
-  .table-wrapper,
-  .table-responsive,
-  .table-container {
-    overflow-x: auto;
-  }
-
-  .learners-table,
-  .marks-table {
-    min-width: 600px;
-  }
-
-  /* REPORT GRID STACK */
-  .report-grid {
-    grid-template-columns: repeat(1, 1fr);
-  }
-
-  /* ACTION BUTTONS WRAP BETTER */
-  .action-buttons {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .action-btn {
-    width: 100%;
-  }
-
-  /* MODAL FITS SCREEN */
-  .modal-box {
-    width: 95%;
-    padding: 18px;
-  }
-
-  /* SCHOOL TITLE SMALLER */
-  .school-title {
-    font-size: 16px;
-  }
-
-  /* AUTH CARD FULL WIDTH */
-  .auth-card {
-    width: 90%;
-    padding: 20px;
-  }
-}
-
-/* VERY SMALL PHONES */
-@media screen and (max-width: 480px) {
-
-  .dashboard-card {
-    flex-direction: column;
-    text-align: center;
-    gap: 10px;
-  }
-
-  .card-icon {
-    width: 50px;
-    height: 50px;
-    font-size: 22px;
-  }
-
-  .card-content p {
-    font-size: 20px;
-  }
-
-  .sidebar-header h2 {
-    font-size: 18px;
-  }
-
-  .sidebar-header p {
-    font-size: 11px;
-  }
-}
 </style>
 </head>
 
@@ -9354,69 +9225,22 @@ window.viewTeacherMonthlyAttendance = async function () {
 };
 document.addEventListener("DOMContentLoaded", async () => {
 
-  try {
+  loadTeachers();
 
-    // ===============================
-    // 🔥 ENSURE SCHOOL CONTEXT FIRST
-    // ===============================
-    const schoolId =
-      window.schoolId ||
-      localStorage.getItem("schoolId");
+  await loadFeeYears();
 
-    if (!schoolId) {
-      console.warn("❌ Missing schoolId - retrying init...");
+  loadFeeFormYears();
 
-      setTimeout(() => {
-        location.reload();
-      }, 800);
+  loadFeeFilterGrades();
 
-      return;
-    }
+  loadFees();
 
-    // restore globally
-    window.schoolId = schoolId;
+  loadFinanceSummary();
 
-    // ===============================
-    // 🔥 OPTIONAL: WAIT FOR FIREBASE AUTH (SAFE GUARD)
-    // ===============================
-    if (typeof auth !== "undefined") {
-      await new Promise(resolve => {
-        const unsub = onAuthStateChanged(auth, (user) => {
-          unsub();
-          resolve(user);
-        });
-      });
-    }
+  loadStudents();
 
-    // ===============================
-    // 🔥 CORE SYSTEM LOADERS
-    // ===============================
-    loadTeachers();
 
-    await loadFeeYears();
-    loadFeeFormYears();
-    loadFeeFilterGrades();
 
-    loadFees();
-    loadFinanceSummary();
-    loadStudents();
-
-    // 🔥 USERS TABLE (IMPORTANT FOR YOUR ISSUE)
-    if (typeof loadUsersTable === "function") {
-      loadUsersTable();
-    }
-
-  } catch (error) {
-
-    console.error("Init error:", error);
-
-    Swal.fire({
-      icon: "error",
-      title: "System Init Failed",
-      text: "Please refresh the page"
-    });
-
-  }
 });
 let filtersReady = false;
 let allStudents = [];
@@ -11618,7 +11442,9 @@ async function loadLearnersFromStudents() {
   }
 
   const grade = window.__lockedGrade;
-  const examPeriod = window.__lockedExam;
+  const examPeriod = normalizeExamPeriod(
+  window.__lockedExam
+);
 
   const learnerSelect = document.getElementById("learnerSelect");
   const badge = document.getElementById("marksCountBadge");
@@ -11647,8 +11473,8 @@ async function loadLearnersFromStudents() {
     snapshot.forEach(child => {
       const data = child.val();
       if (data?.marks?.[examPeriod]) {
-        recordedMap[child.key] = true;
-      }
+  recordedMap[child.key] = true;
+}
     });
 
     window.__learnerQueue = [];
@@ -12174,12 +12000,16 @@ function normalizeExamPeriod(str) {
     .replace(/-+/g, "-");
 }
 // =========================================================
-// 🚀 LOAD MARKS (MAIN ENGINE)
+// 🚀 LOAD MARKS (FIXED VERSION)
 // =========================================================
 async function loadMarksUnifiedClean() {
 
   if (!auth.currentUser) {
-    return Swal.fire("Not Logged In", "Please login first", "error");
+    return Swal.fire(
+      "Not Logged In",
+      "Please login first",
+      "error"
+    );
   }
 
   const schoolId =
@@ -12188,24 +12018,45 @@ async function loadMarksUnifiedClean() {
     sessionStorage.getItem("schoolId");
 
   if (!schoolId) {
-    return Swal.fire("School Error", "School ID missing (login again)", "error");
+    return Swal.fire(
+      "School Error",
+      "School ID missing (login again)",
+      "error"
+    );
   }
 
   window.schoolId = schoolId;
 
-  const examPeriodEl = document.getElementById("resultsExamPeriod");
+  const examPeriodEl =
+    document.getElementById("resultsExamPeriod");
 
   if (!examPeriodEl) {
-    return Swal.fire("Exam period dropdown not found", "", "error");
+    return Swal.fire(
+      "Exam period dropdown not found",
+      "",
+      "error"
+    );
   }
 
-  const examPeriod = examPeriodEl.value.trim();
+  // =====================================================
+  // 🔥 NORMALIZE EXAM PERIOD
+  // =====================================================
+  const rawExamPeriod =
+    examPeriodEl.value.trim();
+
+  const examPeriod =
+    normalizeExamPeriod(rawExamPeriod);
 
   if (!examPeriod) {
-    return Swal.fire("Select Exam Period", "", "warning");
+    return Swal.fire(
+      "Select Exam Period",
+      "",
+      "warning"
+    );
   }
 
-  const gradeFilterEl = document.getElementById("resultsGradeFilter");
+  const gradeFilterEl =
+    document.getElementById("resultsGradeFilter");
 
   const selectedGrade =
     gradeFilterEl
@@ -12213,31 +12064,70 @@ async function loadMarksUnifiedClean() {
       : "ALL GRADES";
 
   showLoader();
-  updateProgress(10, "Initializing marks system...");
+
+  updateProgress(
+    10,
+    "Initializing marks system..."
+  );
+
   await new Promise(r => setTimeout(r, 300));
 
   const subjects = [
-    "eng","math","preTech","kiswahili",
-    "science","social","agriculture","cre","creativeArt"
+    "eng",
+    "math",
+    "preTech",
+    "kiswahili",
+    "science",
+    "social",
+    "agriculture",
+    "cre",
+    "creativeArt"
   ];
 
-  updateProgress(25, "Fetching student data...");
+  updateProgress(
+    25,
+    "Fetching student data..."
+  );
 
   let snapshot;
 
   try {
-    snapshot = await get(ref(db, `schools/${schoolId}/students`));
+
+    snapshot = await get(
+      ref(
+        db,
+        `schools/${schoolId}/students`
+      )
+    );
+
   } catch (err) {
+
     hideLoader();
-    return Swal.fire("Database Error", err.message || "Permission denied", "error");
+
+    return Swal.fire(
+      "Database Error",
+      err.message || "Permission denied",
+      "error"
+    );
+
   }
 
   if (!snapshot.exists()) {
+
     hideLoader();
-    return Swal.fire("No Data Found", "", "info");
+
+    return Swal.fire(
+      "No Data Found",
+      "",
+      "info"
+    );
+
   }
 
-  updateProgress(45, "Processing learners...");
+  updateProgress(
+    45,
+    "Processing learners..."
+  );
 
   const learners = [];
   const gradeSet = new Set();
@@ -12245,102 +12135,158 @@ async function loadMarksUnifiedClean() {
   snapshot.forEach(child => {
 
     const data = child.val();
-    const marks = data.marks?.[examPeriod];
+
+    // =================================================
+    // 🔥 LOAD USING NORMALIZED PERIOD
+    // =================================================
+    const marks =
+      data?.marks?.[examPeriod];
+
     if (!marks) return;
 
-    const name = marks.name || data.name || "Unknown";
+    const name =
+      marks.name ||
+      data.name ||
+      "Unknown";
 
     const grade =
-      (marks.grade || data.grade || "")
-        .toString()
-        .trim()
-        .toUpperCase();
+      (
+        marks.grade ||
+        data.grade ||
+        ""
+      )
+      .toString()
+      .trim()
+      .toUpperCase();
 
-    if (grade) gradeSet.add(grade);
+    if (grade) {
+      gradeSet.add(grade);
+    }
 
-    const total = subjects.reduce(
-      (sum, s) => sum + Number(marks[s] || 0),
-      0
-    );
+    const total =
+      subjects.reduce(
+        (sum, subject) =>
+          sum + Number(marks[subject] || 0),
+        0
+      );
 
     learners.push({
+
       id: child.key,
+
       schoolId,
+
       name,
+
       grade,
+
       marks,
+
       total,
-      average: total / subjects.length,
+
+      average:
+        total / subjects.length,
+
       examPeriod
+
     });
+
   });
 
-  updateProgress(70, "Sorting data...");
-  learners.sort((a, b) => b.total - a.total);
+  updateProgress(
+    70,
+    "Sorting data..."
+  );
+
+  learners.sort(
+    (a, b) => b.total - a.total
+  );
 
   allLoadedLearners = learners;
 
-  window.reportContext = window.reportContext || {};
-  window.reportContext.examPeriod = examPeriod;
+  window.reportContext =
+    window.reportContext || {};
+
+  window.reportContext.examPeriod =
+    examPeriod;
+
   window.reportContext.grade =
-    selectedGrade !== "ALL GRADES" ? selectedGrade : null;
+    selectedGrade !== "ALL GRADES"
+      ? selectedGrade
+      : null;
 
-  let filteredLearners = learners;
+  let filteredLearners =
+    learners;
 
-  if (window.reportContext.grade) {
-    filteredLearners = learners.filter(
-      l => l.grade === window.reportContext.grade
-    );
+  if (
+    window.reportContext.grade
+  ) {
+
+    filteredLearners =
+      learners.filter(
+        learner =>
+          learner.grade ===
+          window.reportContext.grade
+      );
+
   }
 
-  window.currentFilteredLearners = filteredLearners;
+  window.currentFilteredLearners =
+    filteredLearners;
 
+  // =====================================================
   // RESET PAGINATION
+  // =====================================================
   window.__marksPagination.page = 0;
   window.__marksPagination.loading = false;
   window.__marksPagination.finished = false;
 
   clearMarksTable();
+
   renderNextMarksBatch();
 
   renderTotals(filteredLearners);
+
   renderAverages(filteredLearners);
 
   requestAnimationFrame(() => {
-    populateGradeSelectors(gradeSet);
+    populateGradeSelectors(
+      gradeSet
+    );
   });
 
-  updateProgress(100, "Complete ✅");
+  updateProgress(
+    100,
+    "Complete ✅"
+  );
+
+  console.log(
+    "Loaded learners:",
+    filteredLearners.length,
+    "Exam Period:",
+    examPeriod
+  );
 
   Swal.fire({
+
     toast: true,
+
     position: "top-end",
+
     icon: "success",
-    title: `${filteredLearners.length} learners loaded`,
+
+    title:
+      `${filteredLearners.length} learners loaded`,
+
     showConfirmButton: false,
+
     timer: 2000
+
   });
 
   hideLoader();
+
 }
-
-
-// =========================================================
-// 🚀 INFINITE SCROLL
-// =========================================================
-window.addEventListener("scroll", () => {
-
-  const state = window.__marksPagination;
-
-  if (state.loading || state.finished) return;
-
-  if ((window.scrollY + window.innerHeight) >= document.body.offsetHeight - 200) {
-    renderNextMarksBatch();
-  }
-
-});
-
-
 // =========================================================
 // 🚀 BATCH RENDER ENGINE
 // =========================================================
@@ -15513,7 +15459,6 @@ window.addEventListener("scroll", () => {
   }
 }
 
-
 window.generateBlankMeritList = async function (
   selectedGrade,
   selectedExamPeriod
@@ -16085,8 +16030,6 @@ setTimeout(() => {
   );
 }
 };
-
-
 window.generateMarksRecordingSummary = async function (selectedExamPeriod) {
 
   const container = document.getElementById("marksStatusContent");
@@ -33119,44 +33062,28 @@ document.querySelectorAll(".main > div[id], .main > section[id]").forEach(sec =>
 window.addEventListener("load", () => {
   loadCurrentUser();
 });
-// ===============================
-// 🔥 SCHOOL ID HANDLER (IMPORTANT FIX)
-// ===============================
-window.getActiveSchoolId = function () {
-
-  const id =
-    localStorage.getItem("schoolId") ||
-    window.schoolId;
-
-  if (!id) return null;
-
-  window.schoolId = id;
-  localStorage.setItem("schoolId", id);
-
-  return id;
-};
-
-
-// ===============================
-// 🔥 CREATE USER ACCOUNT
-// ===============================
-window.createUserAccount = async function () {
+window.createUserAccount = async function() {
 
   try {
 
     const name =
-      document.getElementById("newUserName")?.value.trim();
+      document.getElementById("newUserName")
+      ?.value.trim();
 
     const email =
-      document.getElementById("newUserEmail")?.value.trim();
+      document.getElementById("newUserEmail")
+      ?.value.trim();
 
     const password =
-      document.getElementById("newUserPassword")?.value.trim();
+      document.getElementById("newUserPassword")
+      ?.value.trim();
 
     const role =
-      document.getElementById("newUserRole")?.value;
+      document.getElementById("newUserRole")
+      ?.value;
 
     if (!name || !email || !password || !role) {
+
       return Swal.fire({
         icon: "warning",
         title: "Missing Information",
@@ -33173,8 +33100,12 @@ window.createUserAccount = async function () {
 
     const uid = cred.user.uid;
 
-    const schoolId = window.getActiveSchoolId();
-    const schoolName = localStorage.getItem("schoolName");
+    const schoolId =
+      window.schoolId ||
+      localStorage.getItem("schoolId");
+
+    const schoolName =
+      localStorage.getItem("schoolName");
 
     const newUser = {
       uid,
@@ -33189,7 +33120,10 @@ window.createUserAccount = async function () {
       lastLogin: 0
     };
 
-    await set(ref(db, `users/${uid}`), newUser);
+    await set(
+      ref(db, `users/${uid}`),
+      newUser
+    );
 
     Swal.fire({
       icon: "success",
@@ -33202,13 +33136,21 @@ window.createUserAccount = async function () {
     document.getElementById("newUserEmail").value = "";
     document.getElementById("newUserPassword").value = "";
 
-    // instant cache update
-    if (!window._allUsersCache) window._allUsersCache = [];
+    // 🔥 INSTANT PRO UPDATE (CACHE + TABLE)
+    if (!window._allUsersCache) {
+      window._allUsersCache = [];
+    }
 
     window._allUsersCache.push(newUser);
 
+    // render instantly if system exists
     if (window.renderUsersTable) {
       window.renderUsersTable(window._allUsersCache);
+    }
+
+    // fallback: single row render
+    if (window.renderUserRow) {
+      window.renderUserRow(newUser);
     }
 
   } catch (error) {
@@ -33223,172 +33165,6 @@ window.createUserAccount = async function () {
   }
 };
 
-
-// ===============================
-// 🔥 GLOBAL CACHE
-// ===============================
-window._allUsersCache = [];
-window._usersListener = null;
-
-
-// ===============================
-// 🔥 LOAD USERS TABLE (FIXED)
-// ===============================
-window.loadUsersTable = function () {
-
-  const tbody = document.getElementById("usersTableBody");
-  if (!tbody) return;
-
-  // 🔥 ALWAYS resolve schoolId safely
-  const schoolId =
-    window.schoolId ||
-    localStorage.getItem("schoolId") ||
-    window.getActiveSchoolId?.();
-
-  if (!schoolId) {
-    console.warn("❌ Missing schoolId - retrying...");
-    setTimeout(window.loadUsersTable, 500);
-    return;
-  }
-
-  const usersRef = ref(db, "users");
-
-  // stop old listener properly
-  if (window._usersListener) {
-    window._usersListener(); // unsubscribe
-    window._usersListener = null;
-  }
-
-  window._usersListener = onValue(usersRef, (snapshot) => {
-
-    window._allUsersCache = [];
-    tbody.innerHTML = "";
-
-    if (!snapshot.exists()) {
-      tbody.innerHTML = `
-        <tr>
-          <td colspan="7" style="padding:10px; text-align:center;">
-            No users found
-          </td>
-        </tr>`;
-      return;
-    }
-
-    snapshot.forEach((child) => {
-
-      const user = child.val();
-
-      // 🔥 STRICT SAFE FILTER (prevents logout bugs)
-      const userSchoolId =
-        (user.schoolId || "").toString().trim();
-
-      if (userSchoolId !== schoolId.toString().trim()) return;
-
-      window._allUsersCache.push(user);
-    });
-
-    window.renderUsersTable(window._allUsersCache);
-
-  });
-};
-// ===============================
-// 🔥 RENDER USERS TABLE
-// ===============================
-window.renderUsersTable = function (users = [], search = "") {
-
-  const tbody = document.getElementById("usersTableBody");
-  if (!tbody) return;
-
-  tbody.innerHTML = "";
-
-  const filtered = users.filter(u =>
-    (u.fullName || "").toLowerCase().includes(search) ||
-    (u.email || "").toLowerCase().includes(search) ||
-    (u.role || "").toLowerCase().includes(search)
-  );
-
-  if (filtered.length === 0) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="7" style="padding:10px; text-align:center;">
-          No matching users
-        </td>
-      </tr>`;
-    return;
-  }
-
-  filtered.forEach(user => {
-
-    const row = document.createElement("tr");
-
-    row.innerHTML = `
-      <td style="padding:10px;">${user.fullName || ""}</td>
-      <td style="padding:10px;">${user.email || ""}</td>
-
-      <td style="padding:10px;">
-        <span style="
-          padding:4px 8px;
-          border-radius:8px;
-          background:#2563eb;
-          color:white;
-          font-size:12px;">
-          ${user.role || ""}
-        </span>
-      </td>
-
-      <td style="padding:10px;">
-        ${user.active ? "🟢 Active" : "🔴 Disabled"}
-      </td>
-
-      <td style="padding:10px;">
-        ${new Date(user.createdAt).toLocaleString()}
-      </td>
-
-      <td style="padding:10px;">
-        <button onclick="toggleUser('${user.uid}', ${user.active})">
-          ${user.active ? "Disable" : "Enable"}
-        </button>
-      </td>
-
-      <td style="padding:10px;">
-        <button onclick="deleteUser('${user.uid}')"
-          style="background:red;color:white;">
-          Delete
-        </button>
-      </td>
-    `;
-
-    tbody.appendChild(row);
-  });
-};
-
-
-// ===============================
-// 🔥 TOGGLE USER STATUS
-// ===============================
-window.toggleUser = async function (uid, currentState) {
-
-  await update(ref(db, `users/${uid}`), {
-    active: !currentState
-  });
-};
-
-
-// ===============================
-// 🔥 DELETE USER
-// ===============================
-window.deleteUser = async function (uid) {
-
-  await remove(ref(db, `users/${uid}`));
-};
-
-
-// ===============================
-// 🔥 AUTO LOAD ON PAGE READY
-// ===============================
-document.addEventListener("DOMContentLoaded", () => {
-  window.loadUsersTable();
-});
 
 // =========================================
 // E-LEARNING ROLE PERMISSIONS
@@ -36132,7 +35908,151 @@ window.generateManualReceipt = async function(id){
 
   }
 };
+window._allUsersCache = [];
+window._usersListener = null;
 
+window.loadUsersTable = function () {
+
+  const tbody = document.getElementById("usersTableBody");
+  if (!tbody) return;
+
+  const schoolId = localStorage.getItem("schoolId");
+
+  if (!schoolId) {
+    console.warn("❌ Missing schoolId - retrying...");
+    setTimeout(window.loadUsersTable, 500);
+    return;
+  }
+
+  const usersRef = ref(db, "users");
+
+  // 🔥 IMPORTANT: remove old listener before attaching new one
+  if (window._usersListener) {
+    window._usersListener(); // unsubscribe old listener
+  }
+
+  window._usersListener = onValue(usersRef, (snapshot) => {
+
+    window._allUsersCache = [];
+    tbody.innerHTML = "";
+
+    if (!snapshot.exists()) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="7" style="padding:10px; text-align:center;">
+            No users found
+          </td>
+        </tr>`;
+      return;
+    }
+
+    snapshot.forEach((child) => {
+
+      const user = child.val();
+
+      // 🔥 SAFE FILTER
+      if (!user.schoolId || user.schoolId !== schoolId) return;
+
+      window._allUsersCache.push(user);
+    });
+
+    window.renderUsersTable(window._allUsersCache);
+
+  });
+};
+window.renderUsersTable = function(users = [], search = "") {
+  const tbody = document.getElementById("usersTableBody");
+  if (!tbody) return;
+
+  tbody.innerHTML = "";
+
+  const filtered = users.filter(u =>
+    (u.fullName || "").toLowerCase().includes(search) ||
+    (u.email || "").toLowerCase().includes(search) ||
+    (u.role || "").toLowerCase().includes(search)
+  );
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="7" style="padding:10px; text-align:center;">
+          No matching users
+        </td>
+      </tr>`;
+    return;
+  }
+
+  filtered.forEach(user => {
+
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+      <td style="padding:10px;">${user.fullName || ""}</td>
+      <td style="padding:10px;">${user.email || ""}</td>
+
+      <td style="padding:10px;">
+        <span style="
+          padding:4px 8px;
+          border-radius:8px;
+          background:#2563eb;
+          color:white;
+          font-size:12px;">
+          ${user.role || ""}
+        </span>
+      </td>
+
+      <td style="padding:10px;">
+        ${user.active ? "🟢 Active" : "🔴 Disabled"}
+      </td>
+
+      <td style="padding:10px;">
+        ${new Date(user.createdAt).toLocaleString()}
+      </td>
+
+      <td style="padding:10px;">
+        <button onclick="toggleUser('${user.uid}', ${user.active})">
+          ${user.active ? "Disable" : "Enable"}
+        </button>
+      </td>
+
+      <td style="padding:10px;">
+        <button onclick="deleteUser('${user.uid}')"
+          style="background:red;color:white;">
+          Deletelogin
+        </button>
+      </td>
+    `;
+
+    tbody.appendChild(row);
+  });
+};
+window.getActiveSchoolId = function () {
+
+  const id =
+    window.schoolId ||
+    localStorage.getItem("schoolId");
+
+  if (!id) return null;
+
+  window.schoolId = id;
+  localStorage.setItem("schoolId", id);
+
+  return id;
+};
+window.toggleUser = async function(uid, currentState) {
+
+  await update(ref(db, `users/${uid}`), {
+    active: !currentState
+  });
+
+};
+
+window.deleteUser = async function(uid) {
+  await remove(ref(db, `users/${uid}`));
+};
+document.addEventListener("DOMContentLoaded", () => {
+  window.loadUsersTable();
+});
 </script>
 
 
