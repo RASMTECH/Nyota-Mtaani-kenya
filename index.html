@@ -1401,6 +1401,135 @@ button.primary {
   background: #2563eb;
   color: white;
 }
+
+
+/* =========================================================
+   📱 RESPONSIVE FIXES (PHONES & TABLETS)
+========================================================= */
+
+/* SMALL PHONES */
+@media screen and (max-width: 768px) {
+
+  /* SIDEBAR → becomes hidden off-canvas style */
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    flex-direction: row;
+    overflow-x: auto;
+  }
+
+  .sidebar-scroll {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 10px;
+  }
+
+  .menu-section {
+    min-width: 160px;
+  }
+
+  /* MAIN CONTENT FULL WIDTH */
+  .main {
+    margin-left: 0;
+    width: 100%;
+    padding: 12px;
+  }
+
+  /* DASHBOARD STACKS NICELY */
+  .dashboard-grid {
+    grid-template-columns: repeat(1, 1fr);
+    gap: 12px;
+  }
+
+  .dashboard-card {
+    flex-direction: row;
+    padding: 14px;
+  }
+
+  .card-content p {
+    font-size: 22px;
+  }
+
+  /* FORMS FULL WIDTH */
+  input,
+  select {
+    width: 100% !important;
+  }
+
+  /* TABLES SCROLL FIX */
+  .table-wrapper,
+  .table-responsive,
+  .table-container {
+    overflow-x: auto;
+  }
+
+  .learners-table,
+  .marks-table {
+    min-width: 600px;
+  }
+
+  /* REPORT GRID STACK */
+  .report-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  /* ACTION BUTTONS WRAP BETTER */
+  .action-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .action-btn {
+    width: 100%;
+  }
+
+  /* MODAL FITS SCREEN */
+  .modal-box {
+    width: 95%;
+    padding: 18px;
+  }
+
+  /* SCHOOL TITLE SMALLER */
+  .school-title {
+    font-size: 16px;
+  }
+
+  /* AUTH CARD FULL WIDTH */
+  .auth-card {
+    width: 90%;
+    padding: 20px;
+  }
+}
+
+/* VERY SMALL PHONES */
+@media screen and (max-width: 480px) {
+
+  .dashboard-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+
+  .card-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 22px;
+  }
+
+  .card-content p {
+    font-size: 20px;
+  }
+
+  .sidebar-header h2 {
+    font-size: 18px;
+  }
+
+  .sidebar-header p {
+    font-size: 11px;
+  }
+}
 </style>
 </head>
 
