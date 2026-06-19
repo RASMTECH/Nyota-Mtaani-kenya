@@ -15546,6 +15546,8 @@ window.addEventListener("scroll", () => {
     });
   }
 }
+
+
 window.generateBlankMeritList = async function (
   selectedGrade,
   selectedExamPeriod
@@ -15556,28 +15558,69 @@ window.generateBlankMeritList = async function (
     // ===============================
     // 🔥 FORCE READ FROM UI
     // ===============================
- const gradeFromUI =
-(
-  selectedGrade ||
-  document.getElementById("filterGrade")?.value ||
-  document.getElementById("gradeFilter")?.value ||
-  window.reportContext?.grade ||
-  ""
-)
-.toString()
-.trim();
 
-console.log("Blank Merit Grade:", gradeFromUI);
+// ===============================
+// 🔥 FORCE READ FROM UI (SAFE)
+// ===============================
+const getSafeValue = (value) => {
 
-    const periodFromUI =
-      (
-        selectedExamPeriod ??
-        document.getElementById("examPeriodSelect")?.value ??
-        window.reportContext?.examPeriod ??
-        ""
-      )
-        .toString()
-        .trim();
+  if (
+    value &&
+    typeof value === "object" &&
+    "value" in value
+  ) {
+    return (value.value || "")
+      .toString()
+      .trim();
+  }
+
+  return (value || "")
+    .toString()
+    .trim();
+};
+
+const gradeFromUI =
+  getSafeValue(selectedGrade) ||
+  getSafeValue(
+    document.getElementById("filterGrade")
+  ) ||
+  getSafeValue(
+    document.getElementById("gradeFilter")
+  ) ||
+  getSafeValue(
+    window.reportContext?.grade
+  ) ||
+  "";
+
+const periodFromUI =
+  getSafeValue(selectedExamPeriod) ||
+  getSafeValue(
+    document.getElementById("examPeriodSelect")
+  ) ||
+  getSafeValue(
+    window.reportContext?.examPeriod
+  ) ||
+  "";
+
+const safeSchoolName =
+  getSafeValue(schoolName);
+
+const safeSchoolMotto =
+  getSafeValue(schoolMotto);
+
+console.log(
+  "Blank Merit Grade:",
+  gradeFromUI
+);
+
+console.log(
+  "Blank Merit Period:",
+  periodFromUI
+);
+
+
+
+
 
     // ===============================
     // 🔥 START LOADER
@@ -15720,9 +15763,10 @@ if (learnerGrade === gradeFromUI) {
     const logoUrl =
       "logo.png";
 
-    // ===============================
-    // 🔹 STYLES
-    // ===============================
+
+// ===============================
+// 🔹 STYLES
+// ===============================
 const styles = `
 <style>
 
@@ -15830,13 +15874,31 @@ tr{
   page-break-inside:avoid;
 }
 
+tfoot tr{
+  font-weight:bold;
+}
+
+.total-row{
+  background:#e8f5e9;
+}
+
+.average-row{
+  background:#fff8e1;
+}
+
+tfoot td{
+  border-top:2px solid #000;
+  text-align:center;
+  padding:6px;
+}
+
 </style>
 `;
 
-    // ===============================
-    // 🔹 HEADER
-    // ===============================
-    const header = `
+// ===============================
+// 🔹 HEADER
+// ===============================
+const header = `
 <div class="header">
 
   <img
@@ -15846,9 +15908,10 @@ tr{
 
   <div class="title">
 
-    <h2>${schoolName}</h2>
+ 
+<h2>${safeSchoolName}</h2>
 
-    <div>${schoolMotto}</div>
+<div>${safeSchoolMotto}</div>
 
     <div>
       Blank Merit List |
@@ -15865,10 +15928,10 @@ tr{
 </div>
 `;
 
-    // ===============================
-    // 🔹 TABLE HEADERS
-    // ===============================
- const subjectCols = `
+// ===============================
+// 🔹 TABLE HEADERS
+// ===============================
+const subjectCols = `
 <th class="no-col">NO</th>
 
 <th class="name-col">
@@ -15881,7 +15944,7 @@ ADM NO
 
 <th class="subject-col">ENG</th>
 <th class="subject-col">MATH</th>
-<th class="subject-col">PRE</th>
+<th class="subject-col">Pre-tech</th>
 <th class="subject-col">KISW</th>
 <th class="subject-col">SCI</th>
 <th class="subject-col">SST</th>
@@ -15894,16 +15957,14 @@ ADM NO
 <th class="pos-col">POS</th>
 `;
 
-    // ===============================
-    // 🔹 TABLE ROWS
-    // ===============================
+// ===============================
+// 🔹 TABLE ROWS
+// ===============================
 const rows = learners.map((s, i) => `
 
 <tr>
 
-  <td>
-    ${i + 1}
-  </td>
+  <td>${i + 1}</td>
 
   <td class="name">
     ${s.name || ""}
@@ -15936,82 +15997,130 @@ const rows = learners.map((s, i) => `
 
 `).join("");
 
-    updateProgress(
-      90,
-      "Rendering report..."
-    );
+updateProgress(
+  90,
+  "Rendering report..."
+);
 
-    await new Promise(r => setTimeout(r, 300));
+await new Promise(r => setTimeout(r, 300));
 
-    // ===============================
-    // 🔥 RENDER REPORT
-    // ===============================
-    container.innerHTML = `
+// ===============================
+// 🔥 RENDER REPORT
+// ===============================
+container.innerHTML = `
 
-      ${styles}
+  ${styles}
 
-      <div class="merit-wrap">
+  <div class="merit-wrap">
 
-        ${header}
+    ${header}
 
-        <table>
+    <table>
 
-          <thead>
-            <tr>
-              ${subjectCols}
-            </tr>
-          </thead>
+      <thead>
+        <tr>
+          ${subjectCols}
+        </tr>
+      </thead>
 
-          <tbody>
-            ${rows}
-          </tbody>
+      <tbody>
+        ${rows}
+      </tbody>
 
-        </table>
+      <tfoot>
 
-      </div>
-    `;
+        <tr class="total-row">
 
-    // ===============================
-    // 📸 CAPTURE REPORT
-    // ===============================
-    if (typeof captureReport === "function") {
+          <td colspan="3">
+            TOTALS
+          </td>
 
-      captureReport(
-        "blankMeritContent",
-        "Blank Merit List"
-      );
-    }
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
 
-    updateProgress(100, "Complete ✅");
+          <td></td>
+          <td></td>
+          <td></td>
 
-    await new Promise(r => setTimeout(r, 300));
+        </tr>
 
-    hideLoader();
+        <tr class="average-row">
 
-    // ===============================
-    // ✨ SMOOTH SCROLL
-    // ===============================
-    setTimeout(() => {
+          <td colspan="3">
+            AVERAGES
+          </td>
 
-      container.scrollIntoView({
-        behavior: "smooth"
-      });
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
 
-    }, 200);
+          <td></td>
+          <td></td>
+          <td></td>
 
-  } catch (error) {
+        </tr>
 
-    console.error(error);
+      </tfoot>
 
-    hideLoader();
+    </table>
 
-    Swal.fire(
-      "Error",
-      "Something went wrong",
-      "error"
-    );
-  }
+  </div>
+`;
+
+// ===============================
+// 📸 CAPTURE REPORT
+// ===============================
+if (typeof captureReport === "function") {
+
+  captureReport(
+    "blankMeritContent",
+    "Blank Merit List"
+  );
+}
+
+updateProgress(100, "Complete ✅");
+
+await new Promise(r => setTimeout(r, 300));
+
+hideLoader();
+
+// ===============================
+// ✨ SMOOTH SCROLL
+// ===============================
+setTimeout(() => {
+
+  container.scrollIntoView({
+    behavior: "smooth"
+  });
+
+}, 200);
+
+} catch (error) {
+
+  console.error(error);
+
+  hideLoader();
+
+  Swal.fire(
+    "Error",
+    "Something went wrong",
+    "error"
+  );
+}
 };
+
+
 window.generateMarksRecordingSummary = async function (selectedExamPeriod) {
 
   const container = document.getElementById("marksStatusContent");
