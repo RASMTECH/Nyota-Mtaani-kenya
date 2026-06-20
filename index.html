@@ -1591,23 +1591,25 @@ button.primary{
    📱 MOBILE RESPONSIVE FIXES
    (DO NOT TOUCH SIDEBAR)
 ========================================================= */
+@media (max-width:768px){
 
-.sidebar{
-  width:200px;
-}
+  .sidebar{
+    width:200px;
+  }
 
-.main{
-  margin-left:200px;
-  width:calc(100% - 200px);
-}
+  .main{
+    margin-left:200px;
+    width:calc(100% - 200px);
+    padding:10px;
+  }
 
   /* ALL FORM CONTROLS */
   input,
   select,
-  textarea {
-    width: 100% !important;
-    max-width: 100%;
-    margin: 5px 0;
+  textarea{
+    width:100% !important;
+    max-width:100%;
+    margin:5px 0;
   }
 
   /* BUTTONS */
@@ -1615,109 +1617,35 @@ button.primary{
   .primary-btn,
   .secondary-btn,
   .load-btn,
-  .action-btn {
-    width: 100%;
-    margin-bottom: 8px;
+  .action-btn{
+    width:100%;
+    margin-bottom:8px;
   }
 
   /* ACTION BUTTON GROUPS */
   .action-buttons,
-  .action-groups {
-    flex-direction: column;
-    align-items: stretch;
+  .action-groups{
+    flex-direction:column;
+    align-items:stretch;
   }
 
   /* DROPDOWNS */
   .dropdown-actions,
-  .action-group {
-    width: 100%;
+  .action-group{
+    width:100%;
   }
 
-  .action-master-btn {
-    width: 100%;
-    min-width: unset;
+  .action-master-btn{
+    width:100%;
+    min-width:unset;
   }
-
-
 
   /* REPORT GRID */
-  .report-grid {
-    grid-template-columns: 1fr;
+  .report-grid{
+    grid-template-columns:1fr;
   }
 
   /* DASHBOARD */
-  .dashboard-grid {
-    grid-template-columns: 1fr;
-  }
-
-  /* MODALS */
-  .modal-box {
-    width: 95%;
-  }
-
-  /* TABLES */
-  .table-wrapper,
-  .table-responsive,
-  .table-container {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  /* SUPPORT STAFF */
-  #supportStaffTableWrapper {
-    padding: 5px;
-  }
-
-  /* SCHOOL TITLE */
-  .school-title {
-    font-size: 16px;
-    padding: 10px;
-  }
-
-  /* DASHBOARD HEADER */
-  .dashboard-header {
-    width: 100%;
-    text-align: center;
-    font-size: 18px;
-  }
-}
-
-@keyframes logoPulse {
-  0% { transform: scale(1); opacity:1; }
-  50% { transform: scale(1.12); opacity:0.85; }
-  100% { transform: scale(1); opacity:1; }
-}
-
-@keyframes glowMove {
-  0% { transform: translateY(-20px) scale(1); }
-  50% { transform: translateY(20px) scale(1.2); }
-  100% { transform: translateY(-20px) scale(1); }
-}
-
-/* PREMIUM EXIT */
-.splash-exit {
-  animation: splashZoomOut 0.8s ease forwards;
-}
-
-@keyframes splashZoomOut {
-  0% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  60% {
-    opacity: 0.6;
-    transform: scale(1.05);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(0.85);
-  }
-}
-/* =========================================
-   MOBILE DASHBOARD CARD FIX
-========================================= */
-@media (max-width:768px){
-
   .dashboard-grid{
     grid-template-columns:1fr;
     gap:12px;
@@ -1755,12 +1683,74 @@ button.primary{
 
   #currentDateTime{
     font-size:15px !important;
-    font-weight:600;
-    white-space:normal;
     line-height:1.4;
+    white-space:normal;
   }
 
+  /* MODALS */
+  .modal-box{
+    width:95%;
+  }
+
+  /* TABLES */
+  .table-wrapper,
+  .table-responsive,
+  .table-container{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  /* SUPPORT STAFF */
+  #supportStaffTableWrapper{
+    padding:5px;
+  }
+
+  /* SCHOOL TITLE */
+  .school-title{
+    font-size:16px;
+    padding:10px;
+  }
+
+  /* DASHBOARD HEADER */
+  .dashboard-header{
+    width:100%;
+    text-align:center;
+    font-size:18px;
+  }
 }
+
+@keyframes logoPulse {
+  0% { transform: scale(1); opacity:1; }
+  50% { transform: scale(1.12); opacity:0.85; }
+  100% { transform: scale(1); opacity:1; }
+}
+
+@keyframes glowMove {
+  0% { transform: translateY(-20px) scale(1); }
+  50% { transform: translateY(20px) scale(1.2); }
+  100% { transform: translateY(-20px) scale(1); }
+}
+
+/* PREMIUM EXIT */
+.splash-exit {
+  animation: splashZoomOut 0.8s ease forwards;
+}
+
+@keyframes splashZoomOut {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  60% {
+    opacity: 0.6;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+}
+
 </style>
 </head>
 
