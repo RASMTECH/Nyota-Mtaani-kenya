@@ -169,11 +169,21 @@ li{
 }
 
 .logout-btn{
-  background:#dc2626 !important;
+  position:absolute;
+  bottom:12px;
+  left:50%;
+  transform:translateX(-50%);
+
   width:90%;
-  margin:15px auto;
-  display:block;
+
+  background:#dc2626;
+  color:#fff;
+
+  border:none;
+  border-radius:10px;
+
   text-align:center;
+  cursor:pointer;
 }
 
 /* SUBMENU */
@@ -242,25 +252,7 @@ li{
 
   z-index: 10;
 }
-.logout-btn{
-  position: absolute;
-  bottom: 12px;
-  left: 50%;
-  transform: translateX(-50%);
 
-  width: 90%;
-
-  z-index: 999;
-
-  background: #dc2626;
-  color: white;
-
-  border: none;
-  padding: 12px;
-  border-radius: 10px;
-
-  cursor: pointer;
-}
 .subscription-box{
   background:#1e293b;
   padding:12px;
@@ -375,25 +367,19 @@ button.primary{
 ========================================================= */
 
 #authSection{
-  height:100vh;
+  position:fixed;
+  inset:0;
 
   display:flex;
-  align-items:center;
   justify-content:center;
-
-  position:relative;
+  align-items:center;
 
   overflow:hidden;
 
-  background:
-    linear-gradient(
-      135deg,
-      #0f2027,
-      #203a43,
-      #2c5364
-    );
-}
+  background:#f3f4f6;
 
+  animation:loginFade .6s ease forwards;
+}
 /* PARTICLES */
 
 #authSection::before{
@@ -782,16 +768,7 @@ button.primary{
    🌍 REPORTS
 ========================================================= */
 
-.report-grid{
-  display:grid;
 
-  grid-template-columns:
-    repeat(auto-fit,minmax(220px,1fr));
-
-  gap:15px;
-
-  margin-top:15px;
-}
 
 .report-card{
   background:#fff;
@@ -1420,7 +1397,8 @@ button.primary{
 }
 .report-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  grid-template-columns:
+    repeat(auto-fit,minmax(220px,1fr));
   gap:15px;
 }
 
@@ -1545,20 +1523,17 @@ button.primary{
 
 .primary-btn,
 .secondary-btn{
-  width:100%;
-  margin-bottom:10px;
-}
-
-.secondary-btn{
   background:#2563eb;
   color:white;
+  border:none;
 }
+
+
 
 .primary-btn{
   background:#16a34a;
   color:white;
 }
-
 .modal-box {
   position: relative;
 }
@@ -1617,14 +1592,14 @@ button.primary{
    (DO NOT TOUCH SIDEBAR)
 ========================================================= */
 
-@media (max-width: 768px) {
+.sidebar{
+  width:200px;
+}
 
-  /* MAIN CONTENT */
-  .main {
-    margin-left: 200px; /* keep sidebar */
-    width: calc(100% - 200px);
-    padding: 10px;
-  }
+.main{
+  margin-left:200px;
+  width:calc(100% - 200px);
+}
 
   /* ALL FORM CONTROLS */
   input,
@@ -1663,13 +1638,7 @@ button.primary{
     min-width: unset;
   }
 
-  /* CARDS */
-  .card,
-  .report-card,
-  .dashboard-card {
-    width: 100%;
-    margin: 8px 0;
-  }
+
 
   /* REPORT GRID */
   .report-grid {
@@ -1745,29 +1714,6 @@ button.primary{
   }
 }
 
-/* login fade-in */
-#authSection {
-  display:none;
-  animation: loginFade 0.6s ease forwards;
-}
-
-@keyframes loginFade {
-  from { opacity:0; transform:translateY(15px); }
-  to { opacity:1; transform:translateY(0); }
-}
-#authSection {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  background: #f3f4f6;
-}
 </style>
 </head>
 
