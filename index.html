@@ -1646,95 +1646,140 @@ button.primary{
     box-shadow: 0 0 0px rgba(245,158,11,0.4);
   }
 }
-/* =========================================================
-   📱 MOBILE DASHBOARD FIX
-========================================================= */
 
+/* =========================================================
+   📱 MOBILE RESPONSIVE FIXES
+   (DO NOT TOUCH SIDEBAR)
+========================================================= */
 @media (max-width:768px){
 
-  .dashboard-wrapper{
+  .sidebar{
+    width:240px;
+  }
+
+  .main{
+    margin-left:240px;
+    width:calc(100% - 240px);
     padding:10px;
   }
 
+}
+  /* ALL FORM CONTROLS */
+  input,
+  select,
+  textarea{
+    width:100% !important;
+    max-width:100%;
+    margin:5px 0;
+  }
+
+  /* BUTTONS */
+  button,
+  .primary-btn,
+  .secondary-btn,
+  .load-btn,
+  .action-btn{
+    width:100%;
+    margin-bottom:8px;
+  }
+
+  /* ACTION BUTTON GROUPS */
+  .action-buttons,
+  .action-groups{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  /* DROPDOWNS */
+  .dropdown-actions,
+  .action-group{
+    width:100%;
+  }
+
+  .action-master-btn{
+    width:100%;
+    min-width:unset;
+  }
+
+  /* REPORT GRID */
+  .report-grid{
+    grid-template-columns:1fr;
+  }
+
+  /* DASHBOARD */
   .dashboard-grid{
-    display:grid;
     grid-template-columns:1fr;
     gap:12px;
   }
 
   .dashboard-card{
-    width:100%;
     min-height:auto;
-    padding:16px;
+    padding:15px;
     gap:12px;
-
-    display:flex;
-    align-items:flex-start;
-
-    overflow:visible;
+    overflow:hidden;
   }
 
   .card-icon{
-    width:48px;
-    height:48px;
-    min-width:48px;
+    width:50px;
+    height:50px;
     font-size:22px;
-    border-radius:14px;
   }
 
   .card-content{
     flex:1;
     min-width:0;
-    overflow:visible;
   }
 
   .card-content h3{
-    font-size:14px;
-    line-height:1.4;
-    margin-bottom:6px;
-
-    white-space:normal;
-    word-break:break-word;
+    font-size:13px;
+    line-height:1.3;
   }
 
   .card-content p{
-    font-size:18px;
-    line-height:1.4;
-
-    white-space:normal;
+    font-size:20px;
+    line-height:1.3;
     word-break:break-word;
-    overflow-wrap:anywhere;
+    overflow-wrap:break-word;
   }
 
   #currentDateTime{
-    font-size:14px !important;
-    line-height:1.5 !important;
-
-    white-space:normal !important;
-    word-break:break-word;
-    overflow-wrap:anywhere;
+    font-size:15px !important;
+    line-height:1.4;
+    white-space:normal;
   }
 
+  /* MODALS */
+  .modal-box{
+    width:95%;
+  }
+
+  /* TABLES */
+  .table-wrapper,
+  .table-responsive,
+  .table-container{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  /* SUPPORT STAFF */
+  #supportStaffTableWrapper{
+    padding:5px;
+  }
+
+  /* SCHOOL TITLE */
+  .school-title{
+    font-size:16px;
+    padding:10px;
+  }
+
+  /* DASHBOARD HEADER */
   .dashboard-header{
     width:100%;
     text-align:center;
-
     font-size:18px;
-    padding:12px;
   }
-
-}
-.dashboard-card{
-  overflow:visible !important;
 }
 
-.card-content{
-  min-width:0;
-}
-
-.card-content p{
-  overflow-wrap:anywhere;
-}
 @keyframes logoPulse {
   0% { transform: scale(1); opacity:1; }
   50% { transform: scale(1.12); opacity:0.85; }
