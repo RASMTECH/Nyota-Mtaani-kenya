@@ -3806,7 +3806,7 @@ Peter Kimani"
 
   <input type="number" id="eng" placeholder="Eng" style="width:50%; padding:6px; margin:3px 0;">
   <input type="number" id="math" placeholder="Math" style="width:50%; padding:6px; margin:3px 0;">
-
+  <input type="number" id="preTech" placeholder="Pre-Tech" style="width:50%; padding:6px; margin:3px 0;">
   <input type="number" id="kiswahili" placeholder="Kiswahili" style="width:50%; padding:6px; margin:3px 0;">
   <input type="number" id="science" placeholder="Science" style="width:50%; padding:6px; margin:3px 0;">
   <input type="number" id="social" placeholder="Social" style="width:50%; padding:6px; margin:3px 0;">
@@ -3815,6 +3815,7 @@ Peter Kimani"
   <input type="number" id="creativeArt" placeholder="Creative Art" style="width:50%; padding:6px; margin:3px 0;">
 
 </div>
+
 
       <div style="text-align:center; margin-top:10px;">
    <button type="button" id="saveMarksButton" style="background:#4CAF50; color:white; border:none; padding:10px 20px; border-radius:4px;">
@@ -4001,7 +4002,7 @@ Peter Kimani"
       <th>Grade</th>
       <th>Eng</th><th>Lev</th>
       <th>Math</th><th>Lev</th>
- 
+      <th>Pre-Tech</th><th>Lev</th>
       <th>Kiswa</th><th>Lev</th>
       <th>Scie</th><th>Lev</th>
       <th>Sst</th><th>Lev</th>
@@ -4204,7 +4205,7 @@ Peter Kimani"
     <input id="metaTeacher" placeholder="Class Teacher Name" style="width:50%;margin:5px 0;padding:8px;">
     <input id="metaPrincipal" placeholder="Principal Name" style="width:50%;margin:5px 0;padding:8px;">
 
-    <!-- SUBJECT TEACHERS SECTION -->
+ <!-- SUBJECT TEACHERS SECTION -->
     <h4 style="margin-top:15px; text-align:center;">Subject Teachers</h4>
 <input id="metaGrade" placeholder="Grade (e.g. Grade 9B)">
     <input id="engTeacher" placeholder="English Teacher" style="width:50%;margin:4px 0;padding:6px;">
@@ -4212,9 +4213,9 @@ Peter Kimani"
     <input id="kiswahiliTeacher" placeholder="Kiswahili Teacher" style="width:50%;margin:4px 0;padding:6px;">
     <input id="scienceTeacher" placeholder="Science Teacher" style="width:50%;margin:4px 0;padding:6px;">
     <input id="socialTeacher" placeholder="Social Studies Teacher" style="width:50%;margin:4px 0;padding:6px;">
-    <input id="creTeacher" placeholder="CRE Teacher" style="width:50%;margin:4px 0;padding:6px;">
+    <input id="creTeacher" placeholder="CRE Teacher" style="width:100%;margin:4px 0;padding:6px;">
     <input id="agricultureTeacher" placeholder="Agriculture Teacher" style="width:50%;margin:4px 0;padding:6px;">
-   
+    <input id="preTechTeacher" placeholder="Pre-Technical Teacher" style="width:50%;margin:4px 0;padding:6px;">
     <input id="creativeArtTeacher" placeholder="Creative Arts Teacher" style="width:50%;margin:4px 0;padding:6px;">
 
   <!-- BUTTONS -->
@@ -12119,7 +12120,7 @@ function getSubjectInputs() {
   return [
     { name: "English", el: document.getElementById("eng") },
     { name: "Math", el: document.getElementById("math") },
-  
+    { name: "Pre Tech", el: document.getElementById("preTech") },
     { name: "Kiswahili", el: document.getElementById("kiswahili") },
     { name: "Science", el: document.getElementById("science") },
     { name: "Social Studies", el: document.getElementById("social") },
@@ -12216,7 +12217,7 @@ function markLearnerAsRecorded(learnerKey) {
 function clearMarksFormPreserveSelections() {
 
   [
-    "eng","math","kiswahili",
+    "eng","math", "preTech","kiswahili",
     "science","social","agriculture","cre","creativeArt"
   ].forEach(id => {
 
@@ -12291,7 +12292,7 @@ async function autoSaveMarks() {
     grade,
     eng: +eng.value,
     math: +math.value,
-  
+   preTech: +preTech.value,
     kiswahili: +kiswahili.value,
     science: +science.value,
     social: +social.value,
@@ -12348,13 +12349,13 @@ document.getElementById("saveMarksButton")
       return Swal.fire("Invalid", errors.join("<br>"), "error");
     }
 
-    const data = {
+   const data = {
       schoolId,
       name: learner.name,
       grade,
       eng: +eng.value,
       math: +math.value,
-
+      preTech: +preTech.value,
       kiswahili: +kiswahili.value,
       science: +science.value,
       social: +social.value,
@@ -12365,7 +12366,7 @@ document.getElementById("saveMarksButton")
     };
 
     await saveMarksToFirebase(schoolId, learner.key, examPeriod, data);
-
+showAppreciationMessage();
     markLearnerAsRecorded(learner.key);
     clearMarksFormPreserveSelections();
 
@@ -12376,6 +12377,26 @@ document.getElementById("saveMarksButton")
     window.__savingMarks = false;
   }
 });
+window.__showedAppreciation = false;
+function showAppreciationMessage() {
+  if (window.__showedAppreciation) return;
+
+  window.__showedAppreciation = true;
+
+  Swal.fire({
+    icon: "success",
+    title: "👏 Thank You!",
+    html: `
+      <div style="font-size:15px; line-height:1.6;">
+        Thank you for using the system.<br>
+        Your consistency helps improve learning outcomes.<br><br>
+        <b>Keep it up 💙</b>
+      </div>
+    `,
+    confirmButtonText: "Continue",
+    confirmButtonColor: "#1976d2"
+  });
+}
 function showCurrentLearnerNotice(name) {
 
   let box =
@@ -12609,17 +12630,9 @@ async function loadMarksUnifiedClean() {
   await new Promise(r => setTimeout(r, 300));
 
   const subjects = [
-    "eng",
-    "math",
-
-    "kiswahili",
-    "science",
-    "social",
-    "agriculture",
-    "cre",
-    "creativeArt"
+    "eng","math","preTech","kiswahili",
+    "science","social","agriculture","cre","creativeArt"
   ];
-
   updateProgress(
     25,
     "Fetching student data..."
@@ -12886,7 +12899,7 @@ function renderMarksTable(learners, append = false) {
 
         <td>${m.eng || 0}</td><td>${getLevel(m.eng)}</td>
         <td>${m.math || 0}</td><td>${getLevel(m.math)}</td>
-     
+        <td>${m.preTech || 0}</td><td>${getLevel(m.preTech)}</td>
         <td>${m.kiswahili || 0}</td><td>${getLevel(m.kiswahili)}</td>
         <td>${m.science || 0}</td><td>${getLevel(m.science)}</td>
         <td>${m.social || 0}</td><td>${getLevel(m.social)}</td>
@@ -12943,8 +12956,7 @@ function getLevel(score) {
 // =========================================================
 function getStudentPoints(m) {
 
-  const subjects = ["eng","math","kiswahili","science","social","agriculture","cre","creativeArt"];
-
+  const subjects = ["eng","math","preTech","kiswahili","science","social","agriculture","cre","creativeArt"];
   let total = 0;
 
   subjects.forEach(s => total += getLevel(m[s] || 0));
@@ -12961,7 +12973,7 @@ function getStudentPoints(m) {
 // =========================================================
 function getClassPointsSummary(learners) {
 
-  const subjects = ["eng","math","kiswahili","science","social","agriculture","cre","creativeArt"];
+  const subjects = ["eng","math","preTech","kiswahili","science","social","agriculture","cre","creativeArt"];
 
   let totalPoints = 0;
 
@@ -12983,7 +12995,7 @@ function getClassPointsSummary(learners) {
 // =========================================================
 function getSubjectTotals(learners) {
 
-  const subjects = ["eng","math","kiswahili","science","social","agriculture","cre","creativeArt"];
+  const subjects = ["eng","math","preTech","kiswahili","science","social","agriculture","cre","creativeArt"];
 
   let totals = Object.fromEntries(subjects.map(s => [s, 0]));
   totals.total = 0;
@@ -13015,7 +13027,7 @@ function renderTotals(learners) {
 
     <td>${totals.eng}</td><td></td>
     <td>${totals.math}</td><td></td>
-  
+    <td>${totals.preTech}</td><td></td>
     <td>${totals.kiswahili}</td><td></td>
     <td>${totals.science}</td><td></td>
     <td>${totals.social}</td><td></td>
@@ -13047,7 +13059,7 @@ function renderAverages(learners) {
 
     <td>${(totals.eng / count).toFixed(1)}</td><td></td>
     <td>${(totals.math / count).toFixed(1)}</td><td></td>
-   
+    <td>${(totals.preTech / count).toFixed(1)}</td><td></td>
     <td>${(totals.kiswahili / count).toFixed(1)}</td><td></td>
     <td>${(totals.science / count).toFixed(1)}</td><td></td>
     <td>${(totals.social / count).toFixed(1)}</td><td></td>
@@ -13565,7 +13577,7 @@ window.openReportMeta = function () {
   document.getElementById("socialTeacher").value = data.social || "";
   document.getElementById("creTeacher").value = data.cre || "";
   document.getElementById("agricultureTeacher").value = data.agriculture || "";
-
+  document.getElementById("preTechTeacher").value = data.preTech || "";
   document.getElementById("creativeArtTeacher").value = data.creativeArt || "";
 };
 
@@ -13716,9 +13728,8 @@ window.generateAssessmentReports = function () {
 
       const subjects = [
         "eng","math","kiswahili","science",
-        "social","cre","agriculture","creativeArt"
+        "social","cre","agriculture","preTech","creativeArt"
       ];
-
       const defaultAvatar = "https://i.imgur.com/AXrekYa.jpeg";
 
       function getPerformanceLevel(totalMarks) {
@@ -14277,10 +14288,11 @@ function generateTopStudents() {
         }[level] || 0;
       }
 
-      const subjects = [
-        "eng","math","kiswahili",
+    const subjects = [
+        "eng","math","preTech","kiswahili",
         "science","social","agriculture","cre","creativeArt"
       ];
+
 
       const colors = ["#4CAF50","#2196F3","#FF9800","#9C27B0","#F44336"];
 
@@ -14444,10 +14456,10 @@ function generateTermPerformance(selectedGrade, selectedExamPeriod) {
         return;
       }
 
-      const subjects = [
+     const subjects = [
         { key: "eng", name: "English" },
         { key: "math", name: "Mathematics" },
-    
+        { key: "preTech", name: "Pre-Tech" },
         { key: "kiswahili", name: "Kiswahili" },
         { key: "science", name: "Science" },
         { key: "social", name: "Social Studies" },
@@ -14455,6 +14467,7 @@ function generateTermPerformance(selectedGrade, selectedExamPeriod) {
         { key: "cre", name: "CRE" },
         { key: "creativeArt", name: "Creative Art" }
       ];
+
 
       function getLevel(avg) {
         if (avg >= 76) return { label: "EE", color: "#2e7d32" };
@@ -14915,7 +14928,7 @@ async function generateSubjectChampions(selectedGrade, selectedExamPeriod) {
   const subjects = [
     { name: "English", key: "eng" },
     { name: "Mathematics", key: "math" },
- 
+    { name: "Pre-Technical Studies", key: "preTech" },
     { name: "Kiswahili", key: "kiswahili" },
     { name: "Integrated Science", key: "science" },
     { name: "Social Studies", key: "social" },
@@ -14923,6 +14936,7 @@ async function generateSubjectChampions(selectedGrade, selectedExamPeriod) {
     { name: "CRE", key: "cre" },
     { name: "Creative Art", key: "creativeArt" }
   ];
+
 
   // ===============================
   // 🔹 LEVELS
@@ -15220,10 +15234,10 @@ async function generateLevelSummary(selectedGrade, selectedExamPeriod) {
   // ===============================
   // 🔹 SUBJECTS
   // ===============================
-  const subjects = [
+ const subjects = [
     { name: 'English', key: 'eng' },
     { name: 'Mathematics', key: 'math' },
-  
+    { name: 'Pre-Technical Studies', key: 'preTech' },
     { name: 'Kiswahili', key: 'kiswahili' },
     { name: 'Integrated Science', key: 'science' },
     { name: 'Social Studies', key: 'social' },
@@ -15231,6 +15245,7 @@ async function generateLevelSummary(selectedGrade, selectedExamPeriod) {
     { name: 'Religious Education', key: 'cre' },
     { name: 'Creative Art', key: 'creativeArt' }
   ];
+
 
   // ===============================
   // 🔹 LEVELS
@@ -15729,10 +15744,10 @@ window.addEventListener("scroll", () => {
   // ===============================
   // 🔹 SUBJECT MAP
   // ===============================
-  const subjects = [
+const subjects = [
     { name: 'English', key: 'eng' },
     { name: 'Mathematics', key: 'math' },
- 
+    { name: 'Pre-Technical Studies', key: 'preTech' },
     { name: 'Kiswahili', key: 'kiswahili' },
     { name: 'Integrated Science', key: 'science' },
     { name: 'Social Studies', key: 'social' },
@@ -15740,6 +15755,7 @@ window.addEventListener("scroll", () => {
     { name: 'Religious Education', key: 'cre' },
     { name: 'Creative Art', key: 'creativeArt' }
   ];
+
 
   // ===============================
   // 🔹 LEVEL FUNCTION
@@ -16711,7 +16727,7 @@ window.generateMarksRecordingSummary = async function (selectedExamPeriod) {
   const subjects = [
     "eng",
     "math",
-    
+    "preTech",
     "kiswahili",
     "science",
     "social",
@@ -16719,7 +16735,6 @@ window.generateMarksRecordingSummary = async function (selectedExamPeriod) {
     "cre",
     "creativeArt"
   ];
-
   const filteredStudents = (allStudents || []).filter(student => {
 
     const studentGrade =
@@ -17050,7 +17065,7 @@ window.generateGenderPerformance = async function (selectedGrade, selectedExamPe
     return (
       getLevel(entry.marks?.eng || 0) +
       getLevel(entry.marks?.math || 0) +
-    
+      getLevel(entry.marks?.preTech || 0) +
       getLevel(entry.marks?.kiswahili || 0) +
       getLevel(entry.marks?.science || 0) +
       getLevel(entry.marks?.social || 0) +
@@ -17079,7 +17094,7 @@ window.generateGenderPerformance = async function (selectedGrade, selectedExamPe
 
       english: Number(l.marks?.eng || 0),
       math: Number(l.marks?.math || 0),
-      
+      preTech: Number(l.marks?.preTech || 0),
       kiswahili: Number(l.marks?.kiswahili || 0),
       science: Number(l.marks?.science || 0),
       social: Number(l.marks?.social || 0),
@@ -17128,7 +17143,7 @@ window.generateGenderPerformance = async function (selectedGrade, selectedExamPe
     const totals = {
       eng: 0,
       math: 0,
-   
+      preTech: 0,
       kiswahili: 0,
       science: 0,
       social: 0,
@@ -17160,7 +17175,7 @@ window.generateGenderPerformance = async function (selectedGrade, selectedExamPe
 
               <th>Eng</th><th>Lev</th>
               <th>Math</th><th>Lev</th>
-              
+              <th>PreTech</th><th>Lev</th>
               <th>Kisw</th><th>Lev</th>
               <th>Scie</th><th>Lev</th>
               <th>SST</th><th>Lev</th>
@@ -17187,7 +17202,7 @@ window.generateGenderPerformance = async function (selectedGrade, selectedExamPe
 
           <td>${e.english}</td><td>${getLevel(e.english)}</td>
           <td>${e.math}</td><td>${getLevel(e.math)}</td>
-        
+          <td>${e.preTech}</td><td>${getLevel(e.preTech)}</td>
           <td>${e.kiswahili}</td><td>${getLevel(e.kiswahili)}</td>
           <td>${e.science}</td><td>${getLevel(e.science)}</td>
           <td>${e.social}</td><td>${getLevel(e.social)}</td>
@@ -17202,7 +17217,7 @@ window.generateGenderPerformance = async function (selectedGrade, selectedExamPe
 
       totals.eng += e.english;
       totals.math += e.math;
-   
+      totals.preTech += e.preTech;
       totals.kiswahili += e.kiswahili;
       totals.science += e.science;
       totals.social += e.social;
@@ -17221,7 +17236,7 @@ window.generateGenderPerformance = async function (selectedGrade, selectedExamPe
 
         <td>${totals.eng}</td><td>-</td>
         <td>${totals.math}</td><td>-</td>
-       
+        <td>${totals.preTech}</td><td>-</td>
         <td>${totals.kiswahili}</td><td>-</td>
         <td>${totals.science}</td><td>-</td>
         <td>${totals.social}</td><td>-</td>
@@ -17238,7 +17253,7 @@ window.generateGenderPerformance = async function (selectedGrade, selectedExamPe
 
         <td>${(totals.eng / count).toFixed(1)}</td><td>-</td>
         <td>${(totals.math / count).toFixed(1)}</td><td>-</td>
-        
+        <td>${(totals.preTech / count).toFixed(1)}</td><td>-</td>
         <td>${(totals.kiswahili / count).toFixed(1)}</td><td>-</td>
         <td>${(totals.science / count).toFixed(1)}</td><td>-</td>
         <td>${(totals.social / count).toFixed(1)}</td><td>-</td>
@@ -17391,7 +17406,7 @@ window.generateSubjectRanking = async function (grade, subjectKey, period) {
   const subjectNames = {
     eng: "English",
     math: "Mathematics",
-
+    preTech: "Pre-Technical Studies",
     kiswahili: "Kiswahili",
     science: "Integrated Science",
     social: "Social Studies",
@@ -17571,7 +17586,7 @@ window.generatePathwayGrouping = async function (selectedGrade, selectedExamPeri
         await new Promise(r => setTimeout(r, 300));
 
         const pathways = {
-            STEM: ['eng', 'math',  'kiswahili', 'science', 'agriculture'],
+            STEM: ['eng', 'math', 'preTech', 'kiswahili', 'science', 'agriculture'],
             SocialSciences: ['kiswahili', 'eng', 'social', 'cre'],
             SportsScience: ['kiswahili', 'eng', 'creativeArt']
         };
@@ -18004,7 +18019,7 @@ window.generateMeritList = async function (mainGrade, selectedPeriod) {
   const subjects = [
     { key: "eng", name: "English" },
     { key: "math", name: "Math" },
-  
+    { key: "preTech", name: "Pre-Tech" },
     { key: "kiswahili", name: "Kiswahili" },
     { key: "science", name: "Science" },
     { key: "social", name: "Social Studies" },
@@ -18476,6 +18491,94 @@ ${window.getSchoolPrintHeader("MERIT LIST REPORT")}
 };
 
 
+
+window.showCareerSuggestions = function(pathway, learnerName) {
+const careers = {
+
+    STEM: [
+        "⚙️ Engineer",
+        "🩺 Doctor",
+        "💻 Software Developer",
+        "🏗️ Architect",
+        "✈️ Pilot",
+        "📊 Data Scientist",
+        "⚡ Electrician",
+        "📐 Surveyor"
+    ],
+
+    "Social Sciences": [
+        "⚖️ Lawyer",
+        "👨‍🏫 Teacher",
+        "📰 Journalist",
+        "🌍 Diplomat",
+        "🤝 Social Worker",
+        "🧠 Psychologist",
+        "🏛️ Public Administrator"
+    ],
+
+    "Sports Science": [
+        "🏃 Athlete",
+        "🏅 Coach",
+        "📈 Sports Analyst",
+        "💪 Fitness Trainer",
+        "🏟️ Sports Manager",
+        "🩹 Physiotherapist"
+    ]
+
+};
+
+  Swal.fire({
+    title: `${learnerName}'s Career Suggestions`,
+    html: careers[pathway]
+        .map(c => `
+            <div style="
+                text-align:left;
+                padding:6px;
+                border-bottom:1px solid #eee;
+            ">
+                ${c}
+            </div>
+        `)
+        .join(""),
+    width: 650,
+    icon: "info"
+});
+
+};
+document.addEventListener("DOMContentLoaded", () => {
+
+  const btn = document.getElementById("generateMeritBtn");
+
+  if (!btn) return;
+
+  btn.addEventListener("click", () => {
+
+    const selectedGrade =
+      document.getElementById("reportGradeSelect")?.value ||
+      window.reportContext?.grade;
+
+    const selectedExamPeriod =
+      document.getElementById("reportExamPeriodSelect")?.value ||
+      window.reportContext?.examPeriod;
+
+    if (!selectedGrade || !selectedExamPeriod) {
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'warning',
+        title: 'Please select grade and exam period',
+        timer: 3000,
+        showConfirmButton: false
+      });
+      return;
+    }
+
+    generateMeritList(selectedGrade, selectedExamPeriod);
+  });
+});
+
+
+
 window.combineMarksByGradeWithDetails = async function (selectedGrade, selectedExamPeriod) {
 
   const container = document.getElementById("combineMarksByGradeContent");
@@ -18528,7 +18631,7 @@ window.combineMarksByGradeWithDetails = async function (selectedGrade, selectedE
   const subjects = [
     { name: "English", key: "eng" },
     { name: "Mathematics", key: "math" },
- 
+    { name: "Pre-Tech", key: "preTech" },
     { name: "Kiswahili", key: "kiswahili" },
     { name: "Science", key: "science" },
     { name: "Social", key: "social" },
@@ -18559,40 +18662,55 @@ window.combineMarksByGradeWithDetails = async function (selectedGrade, selectedE
 
   learners.forEach(l => {
 
-    const gradeText = normalize(l.grade);
-    const examPeriod = normalize(l.examPeriod || l.period);
+  const gradeText = normalize(l.grade);
+  const examPeriod = normalize(l.examPeriod || l.period);
 
-    // ===============================
-    // 🔥 FIXED FILTER LOGIC
-    // ===============================
-    const gradeMatch =
-      !gradeFromUI ||
-      gradeFromUI === "all grades" ||
-      gradeText === gradeFromUI;
+  // ===============================
+  // 🔥 EXTRACT BASE GRADE (5A → 5)
+  // ===============================
+  function getGradeBase(grade) {
+    return (grade || "")
+      .toString()
+      .trim()
+      .toUpperCase()
+      .match(/\d+/)?.[0];
+  }
 
-    const periodMatch =
-      !periodFromUI ||
-      periodFromUI === "all periods" ||
-      examPeriod === periodFromUI;
+  const selectedBase = getGradeBase(gradeFromUI);
+  const learnerBase = getGradeBase(gradeText);
 
-    if (!gradeMatch || !periodMatch) return;
+  // ===============================
+  // 🔥 FIXED FILTER LOGIC (GRADE GROUP + PERIOD)
+  // ===============================
+  const gradeMatch =
+    !selectedBase ||
+    selectedBase === "ALL" ||
+    learnerBase === selectedBase;
 
-    const learner = {
-      name: l.name,
-      grade: l.grade,
-      eng: Number(l.marks?.eng || 0),
-      math: Number(l.marks?.math || 0),
-    
-      kiswahili: Number(l.marks?.kiswahili || 0),
-      science: Number(l.marks?.science || 0),
-      social: Number(l.marks?.social || 0),
-      agriculture: Number(l.marks?.agriculture || 0),
-      cre: Number(l.marks?.cre || 0),
-      creativeArt: Number(l.marks?.creativeArt || 0)
-    };
+  const periodMatch =
+    !periodFromUI ||
+    periodFromUI === "all periods" ||
+    examPeriod === periodFromUI;
 
-    learner.totalMarks =
-     
+  if (!gradeMatch || !periodMatch) return;
+
+  const learner = {
+    name: l.name,
+    grade: l.grade,
+
+    eng: Number(l.marks?.eng || 0),
+    math: Number(l.marks?.math || 0),
+      preTech: Number(l.marks?.preTech || 0),
+    kiswahili: Number(l.marks?.kiswahili || 0),
+    science: Number(l.marks?.science || 0),
+    social: Number(l.marks?.social || 0),
+    agriculture: Number(l.marks?.agriculture || 0),
+    cre: Number(l.marks?.cre || 0),
+    creativeArt: Number(l.marks?.creativeArt || 0)
+  };
+
+ learner.totalMarks =
+      learner.eng + learner.math + learner.preTech +
       learner.kiswahili + learner.science + learner.social +
       learner.agriculture + learner.cre + learner.creativeArt;
 
@@ -19729,7 +19847,7 @@ function updateDashboardFromStudents() {
     uniqueGrades.length;
 
   // ================= SUBJECTS =================
-  const SCHOOL_SUBJECTS = [
+    const SCHOOL_SUBJECTS = [
     "English",
     "Kiswahili",
     "Mathematics",
@@ -20903,10 +21021,10 @@ async function generateSubjectRankingReport(selectedGrade, selectedExamPeriod) {
   // ===============================
   // 🎯 SUBJECT SELECTOR (UNCHANGED)
   // ===============================
-  const subjectOptions = {
+const subjectOptions = {
     eng: "📘 English",
     math: "📐 Mathematics",
- 
+    preTech: "🔧 Pre-Technical Studies",
     kiswahili: "🇰🇪 Kiswahili",
     science: "🔬 Integrated Science",
     social: "🌍 Social Studies",
