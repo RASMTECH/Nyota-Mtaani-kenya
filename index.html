@@ -11974,14 +11974,9 @@ learners.forEach(item => {
       if (firstPending) {
         learnerSelect.value = firstPending.key;
 
-        Swal.fire({
-          toast: true,
-          position: "top-end",
-          icon: "info",
-          title: `Now recording marks for ${firstPending.name}`,
-          timer: 2000,
-          showConfirmButton: false
-        });
+       showCurrentLearnerNotice(
+  firstPending.name
+);
       }
     }, 200);
 
@@ -12093,7 +12088,17 @@ function attachAutoSaveListeners() {
 
     const grade =
       document.getElementById("gradeSelect")?.value;
+const box =
+  document.getElementById(
+    "currentLearnerNotice"
+  );
 
+if (box) {
+
+  box.innerHTML =
+    `⌨️ Entering marks for <strong>${learner.name}</strong> ...`;
+
+}
     if (!learner?.key || !examPeriod || !grade) return;
 
     if (lastField.value.trim() === "") return;
@@ -12255,14 +12260,9 @@ function autoSelectNextLearner() {
 
   select.value = next.key;
 
-  Swal.fire({
-    toast: true,
-    position: "top-end",
-    icon: "info",
-    title: `Now recording marks for ${next.name}`,
-    timer: 2000,
-    showConfirmButton: false
-  });
+  showCurrentLearnerNotice(
+  next.name
+);
 }
 
 
@@ -12376,7 +12376,88 @@ document.getElementById("saveMarksButton")
     window.__savingMarks = false;
   }
 });
+function showCurrentLearnerNotice(name) {
 
+  let box =
+    document.getElementById(
+      "currentLearnerNotice"
+    );
+
+  if (!box) {
+
+    box = document.createElement("div");
+    box.id = "currentLearnerNotice";
+
+    box.style.marginTop = "15px";
+    box.style.padding = "14px 18px";
+    box.style.borderRadius = "12px";
+    box.style.background =
+      "linear-gradient(135deg,#e3f2fd,#bbdefb)";
+    box.style.borderLeft =
+      "6px solid #1976d2";
+    box.style.color = "#0d47a1";
+    box.style.fontWeight = "600";
+    box.style.fontSize = "15px";
+    box.style.boxShadow =
+      "0 4px 12px rgba(0,0,0,.08)";
+    box.style.minHeight = "55px";
+
+    const saveBtn =
+      document.getElementById(
+        "saveMarksButton"
+      );
+
+    saveBtn?.parentNode?.appendChild(box);
+  }
+
+  const text =
+    `✍️ Now recording marks for: ${name}`;
+
+  box.innerHTML = "";
+
+  let i = 0;
+
+  clearInterval(window.__typingNoticeTimer);
+
+  window.__typingNoticeTimer =
+    setInterval(() => {
+
+      box.innerHTML =
+        text.substring(0, i + 1) +
+        `<span style="
+          color:#1976d2;
+          animation:blink .8s infinite;
+        ">|</span>`;
+
+      i++;
+
+      if (i >= text.length) {
+        clearInterval(
+          window.__typingNoticeTimer
+        );
+      }
+
+    }, 40);
+
+  // inject blinking cursor animation once
+  if (!document.getElementById("typingNoticeStyle")) {
+
+    const style =
+      document.createElement("style");
+
+    style.id = "typingNoticeStyle";
+
+    style.innerHTML = `
+      @keyframes blink{
+        50%{
+          opacity:0;
+        }
+      }
+    `;
+
+    document.head.appendChild(style);
+  }
+}
 
 let allLoadedLearners = [];
 
