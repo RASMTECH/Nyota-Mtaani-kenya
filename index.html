@@ -18260,7 +18260,6 @@ ${window.getSchoolPrintHeader("MERIT LIST REPORT")}
   <div><strong>Total Learners:</strong> ${learnerCount}</div>
 
 </div>
-
 <div style="flex:1;"></div>
 
 </div>
@@ -24278,6 +24277,117 @@ window.closeSchoolProfileForm = function () {
 // 🖨️ GET SCHOOL PRINT HEADER
 // =====================================
 window.getSchoolPrintHeader = function (
+  title = "SCHOOL REPORT"
+) {
+
+  const school = {
+
+    name:
+      window.currentSchool?.name ||
+      "School Name",
+
+    motto:
+      window.currentSchool?.motto || "",
+
+    address:
+      window.currentSchool?.address || "",
+
+    logo:
+      window.currentSchool?.logo || ""
+
+  };
+
+  return `
+
+    <div style="
+      width:100%;
+      border-bottom:3px solid #000;
+      padding-bottom:15px;
+      margin-bottom:20px;
+    ">
+
+      <div style="
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        width:100%;
+      ">
+
+        <!-- LEFT SPACER -->
+        <div style="
+          width:100px;
+        "></div>
+
+        <!-- SCHOOL DETAILS -->
+        <div style="
+          flex:1;
+          text-align:center;
+        ">
+
+          <h1 style="
+            margin:0;
+            font-size:30px;
+            font-weight:800;
+          ">
+            ${school.name || "RASM 360 SCHOOL"}
+          </h1>
+
+          <div style="
+            font-size:15px;
+            margin-top:6px;
+            font-style:italic;
+          ">
+            ${school.motto || ""}
+          </div>
+
+          <div style="
+            font-size:14px;
+            margin-top:4px;
+          ">
+            ${school.address || ""}
+          </div>
+
+        </div>
+
+        <!-- LOGO FAR RIGHT -->
+        <div style="
+          width:100px;
+          text-align:right;
+        ">
+
+          ${
+            school.logo
+              ? `
+            <img
+              src="${school.logo}"
+              style="
+                width:90px;
+                height:90px;
+                object-fit:cover;
+                border-radius:50%;
+              "
+            >
+          `
+              : ""
+          }
+
+        </div>
+
+      </div>
+
+      <h2 style="
+        text-align:center;
+        margin-top:15px;
+        margin-bottom:0;
+        font-size:22px;
+      ">
+        ${title}
+      </h2>
+
+    </div>
+
+  `;
+};
 // =====================================
 // 🖨️ PRINT SELECTED REPORT
 // =====================================
