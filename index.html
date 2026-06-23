@@ -18249,29 +18249,15 @@ ${window.getSchoolPrintHeader("MERIT LIST REPORT")}
 
 <div style="
   text-align:center;
-  margin-bottom:20px;
-  font-size:14px;
+  margin:8px 0 12px 0;
+  font-size:13px;
+  line-height:1.3;
 ">
 
-  <p>
-    <strong>Year:</strong>
-    ${year}
-  </p>
-
-  <p>
-    <strong>Grade:</strong>
-    ${grade || "All Grades"}
-  </p>
-
-  <p>
-    <strong>Exam Period:</strong>
-    ${period || "All Periods"}
-  </p>
-
-  <p>
-    <strong>Total Learners:</strong>
-    ${learnerCount}
-  </p>
+  <div><strong>Year:</strong> ${year}</div>
+  <div><strong>Grade:</strong> ${grade || "All Grades"}</div>
+  <div><strong>Exam Period:</strong> ${period || "All Periods"}</div>
+  <div><strong>Total Learners:</strong> ${learnerCount}</div>
 
 </div>
 
@@ -24292,87 +24278,6 @@ window.closeSchoolProfileForm = function () {
 // 🖨️ GET SCHOOL PRINT HEADER
 // =====================================
 window.getSchoolPrintHeader = function (
-  title = "SCHOOL REPORT"
-) {
-
-const school = {
-
-  name:
-    window.currentSchool?.name ||
-    "School Name",
-
-  motto:
-    window.currentSchool?.motto || "",
-
-  address:
-    window.currentSchool?.address || "",
-
-  logo:
-    window.currentSchool?.logo || ""
-
-};
-  return `
-
-    <div style="
-      width:100%;
-      text-align:center;
-      border-bottom:3px solid #000;
-      padding-bottom:15px;
-      margin-bottom:20px;
-    ">
-
-      ${
-        school.logo
-          ? `
-        <img
-          src="${school.logo}"
-          style="
-            width:90px;
-            height:90px;
-            object-fit:cover;
-            border-radius:50%;
-            margin-bottom:10px;
-          "
-        >
-      `
-          : ""
-      }
-
-      <h1 style="
-        margin:0;
-        font-size:30px;
-        font-weight:800;
-      ">
-        ${school.name || "RASM 360 SCHOOL"}
-      </h1>
-
-      <div style="
-        font-size:15px;
-        margin-top:6px;
-        font-style:italic;
-      ">
-        ${school.motto || ""}
-      </div>
-
-      <div style="
-        font-size:14px;
-        margin-top:4px;
-      ">
-        ${school.address || ""}
-      </div>
-
-      <h2 style="
-        margin-top:18px;
-        font-size:22px;
-      ">
-        ${title}
-      </h2>
-
-    </div>
-
-  `;
-};
-
 // =====================================
 // 🖨️ PRINT SELECTED REPORT
 // =====================================
